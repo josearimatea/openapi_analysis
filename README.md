@@ -1,43 +1,61 @@
 # openapi_analysis
 
-A versioned instrument to measure a generated **rules bank** against the
-**official OpenAPI YAML**. Analysis only — this project never generates rules.
+A versioned instrument to evaluate what the two generators of this workspace
+produce, against the **official 3GPP OpenAPI YAML**. Analysis only — this project
+never generates rules or documents.
 
-It exists because the coverage/fidelity numbers used to judge the generator were
-measured ad-hoc and proved wrong more than once (a target extractor that counted
-54 targets where there were more by not descending into `oneOf`/`allOf`; a ref
-count taken from log lines rather than from rule fields). The measurement itself
-has to be trustworthy, so it lives here, versioned and pinned by tests.
+It exists because the numbers used to judge the generators were measured ad-hoc
+and proved wrong more than once (a target extractor that did not descend into
+`oneOf`/`allOf`; a ref count taken from log lines; rules indexed by a key that
+could repeat). The measurement itself has to be trustworthy, so it lives here,
+versioned and pinned by tests.
 
-## What it measures
+## Two evaluations
 
-- **Positional coverage** — does a bank rule exist for each target of the YAML,
-  matched by `(rule_type, openapi_object, openapi_field)` (and media type for
-  request bodies)?
-- **Value fidelity** — where measurable, does `openapi_value` match the YAML?
-- **Defect catalogue** — external `$ref` gone internal, operation parameters
-  addressed at path level, duplicate `(object, field)` on collection fields,
-  force-included invalid rules.
+| | Evaluates | Against | How |
+|---|---|---|---|
+| **rulesbank** | the rules bank from `openapi_rulesbank` | rules extracted from the official YAML, in the same rules-bank format | rule by rule: **coverage** (address) and **fidelity** (value) |
+| **openapi** | the YAML from `openapi_generator` | the official YAML itself | document against document, leaves split into contract / metadata / prose |
 
-## Design principle
-
-The target enumeration **mirrors the generator's addressing contract**
-(`openapi_rulesbank/utils/rules_check.py`): a target and a bank rule are addressed
-identically, or they would never line up. Changing the contract on either side is
-a deliberate edit reflected in both.
-
-## Layout
-
-```
-src/openapi_analysis/
-  targets.py    # enumerate the YAML's targets (recursive descent; pinned by tests)
-tests/
-  test_targets.py
-```
+What a rule is, and every counting decision, is in [docs/RULES.md](docs/RULES.md).
 
 ## Usage
 
 ```bash
 uv sync
-uv run pytest
+uv run pytest                                      # 61 tests, results pinned
+
+uv run openapi-analysis all                        # every input → data/outputs/<Service>/
+uv run openapi-analysis rulesbank <bank.json> <official.yaml> [--json]
+uv run openapi-analysis openapi   <generated.yaml> <official.yaml> [--json]
+uv run openapi-analysis extract   <official.yaml> [-o official_rules.json]
+```
+
+From another repo (the siblings, the chat UI):
+
+```python
+from openapi_analysis.services import evaluate_rules_bank, evaluate_openapi
+
+report = evaluate_rules_bank(bank_dict_or_path, official_yaml_dict_or_path)
+report.totals.coverage, report.totals.fidelity
+report.model_dump_json()          # the report is a Pydantic model
+```
+
+## Layout
+
+```
+src/openapi_analysis/
+  config/        paths, settings, logging
+  rulesbank/     evaluation 1 — rule_types (definition), extraction, comparison
+  openapi/       evaluation 2 — comparison
+  schemas/       the reports (Pydantic)
+  services/      entry points for callers (sibling repos, chat UI, CLI)
+  reporting/     text rendering
+  api/           optional HTTP adapter (FastAPI) — not built yet
+  cli.py
+data/
+  inputs/        official YAMLs, banks, generated YAMLs + manifest.json (versioned)
+  outputs/       reports (git-ignored)
+scripts/sync_data.py   copy inputs from the sibling repos, write the manifest
+docs/RULES.md          the rule definition and its decisions
 ```
