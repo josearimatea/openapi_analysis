@@ -1,24 +1,36 @@
 [project]
 name = "openapi-analysis"
-version = "0.1.0"
-description = "A versioned instrument to measure a generated rules bank against the official OpenAPI YAML (coverage, value fidelity, defect catalogue). Analysis only — never generation."
+dynamic = ["version"]
+description = "A versioned instrument to evaluate the rules bank (openapi_rulesbank) and the generated OpenAPI document (openapi_generator) against the official 3GPP OpenAPI YAML. Analysis only — never generation."
 readme = "README.md"
-requires-python = ">=3.11"
+# 3.10 floor: openapi_generator (>=3.10) must be able to depend on this package.
+requires-python = ">=3.10"
 dependencies = [
     "PyYAML>=6.0",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest>=8.0",
+    "pydantic>=2.0",   # reports (schemas/) — the siblings already use Pydantic 2
 ]
 
 [project.scripts]
 openapi-analysis = "openapi_analysis.cli:main"
 
+[project.optional-dependencies]
+# HTTP adapter (api/) — kept optional so importing the library never pulls FastAPI.
+api = [
+    "fastapi>=0.110",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/openapi_analysis/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/openapi_analysis"]
@@ -26,3 +38,8 @@ packages = ["src/openapi_analysis"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = ["--import-mode=importlib"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
