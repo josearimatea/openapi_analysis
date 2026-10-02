@@ -1,0 +1,525 @@
+{
+  "metadata": {
+    "source_document": "/home/arimatea/Documents/Pessoal/Mestrado/0-Mestrado_Unicamp_2025/5-Projeto_mestrado_ericsson/openapi_multiagents/Dataset/TSpec-LLM/3GPP-clean/Rel-18/28_series/28532-i00.md",
+    "generated_at": "2026-09-26T18:38:25.217072-03:00",
+    "model": "openai/gpt-5.6-luna",
+    "total_rules": 22,
+    "usage": {
+      "llm_calls": 135,
+      "prompt_tokens": 993199,
+      "completion_tokens": 44000,
+      "total_tokens": 1037199,
+      "reasoning_tokens": 25032,
+      "cached_prompt_tokens": 319980,
+      "cost_usd": 0.227383
+    },
+    "sections_total": 726,
+    "sections_for_planner": 719,
+    "sections_planned": 13,
+    "sections_with_rules": 6,
+    "excluded_by_reader_count": 7,
+    "excluded_by_planner_count": 706,
+    "excluded_by_reader": ["0", "708", "711", "714", "717", "720", "722"],
+    "excluded_by_planner": ["3.1", "3.2", "11.1", "11.1.0", "11.1.1", "11.1.1.1", "11.1.1.1.1", "11.1.1.1.2", "11.1.1.1.3", "11.1.1.1.4", "11.1.1.2", "11.1.1.2.1", "11.1.1.2.2", "11.1.1.2.3", "11.1.1.2.4", "11.1.1.3", "11.1.1.3.1", "11.1.1.3.2", "11.1.1.3.3", "11.1.1.3.4", "11.1.1.4", "11.1.1.4.1", "11.1.1.4.2", "11.1.1.4.3", "11.1.1.4.4", "11.1.1.5", "11.1.1.6", "11.1.1.7", "11.1.1.7.1", "11.1.1.7.2", "11.1.1.7.3", "11.1.1.7.3.1", "11.1.1.7.3.2", "11.1.1.8", "11.1.1.8.1", "11.1.1.8.2", "11.1.1.8.3", "11.1.1.8.3.1", "11.1.1.8.3.2", "11.1.1.9", "11.1.1.9.1", "11.1.1.9.2", "11.1.1.9.3", "11.1.1.9.3.1", "11.1.1.9.3.2", "11.1.1.10", "11.1.1.10.1", "11.1.1.10.2", "11.1.1.11", "11.1.1.11.1", "11.1.1.11.2", "11.1.2", "11.1.2.1", "11.1.2.1.1", "11.2", "11.2.1", "11.2.1.1", "11.2.1.1.1", "11.2.1.1.1.1", "11.2.1.1.1.2", "11.2.1.1.1.3", "11.2.1.1.1.4", "11.2.1.1.1.5", "11.2.1.1.1.6", "11.2.1.1.2", "11.2.1.1.2.1", "11.2.1.1.2.2", "11.2.1.1.2.3", "11.2.1.1.2.4", "11.2.1.1.2.5", "11.2.1.1.2.6", "11.2.1.1.3", "11.2.1.1.3.1", "11.2.1.1.3.2", "11.2.1.1.3.3", "11.2.1.1.3.4", "11.2.1.1.4", "11.2.1.1.4.1", "11.2.1.1.4.2", "80", "11.2.1.1.4.3", "11.2.1.1.4.3.1", "11.2.1.1.4.3.2", "11.2.1.1.5", "11.2.1.1.5.1", "11.2.1.1.5.2", "11.2.1.1.5.3", "11.2.1.1.5.3.1", "11.2.1.1.5.3.2", "11.2.1.1.6", "11.2.1.1.6.1", "11.2.1.1.6.2", "11.2.1.1.6.3", "11.2.1.1.6.3.1", "11.2.1.1.6.3.2", "11.2.1.1.7", "11.2.1.1.7.1", "11.2.1.1.7.2", "11.2.1.1.7.3", "11.2.1.1.7.3.1", "11.2.1.1.7.3.2", "11.2.1.1.8", "11.2.1.1.8.1", "11.2.1.1.8.2", "11.2.1.1.8.3", "11.2.1.1.8.4", "11.2.1.1.8.5", "11.2.1.1.8.6", "11.2.1.1.9", "11.2.1.1.9.1", "11.2.1.1.9.2", "11.2.1.1.9.3", "11.2.1.2", "11.2.1.2.1", "11.2.1.2.1.1", "11.2.1.2.1.2", "11.2.1.2.1.3", "11.2.1.2.1.4", "11.2.1.2.2", "11.2.1.2.2.1", "11.2.1.2.2.2", "11.2.1.2.2.3", "11.2.1.2.2.4", "11.2.1.2.3", "11.2.1.2.3.1", "11.2.1.2.3.2", "11.2.1.2.3.3", "11.2.1.2.3.4", "11.2.1.2.4", "11.2.1.2.4.1", "11.2.1.2.4.2", "11.2.1.2.4.3", "11.2.1.2.4.3.1", "11.2.1.2.4.3.2", "11.2.1.2.5", "11.2.1.2.5.1", "11.2.1.2.5.2", "11.2.1.2.5.3", "11.2.1.2.5.3.1", "140", "11.2.1.2.5.3.2", "11.2.1.2.6", "11.2.1.2.6.1", "11.2.1.2.6.2", "11.2.1.2.6.3", "11.2.1.2.6.3.1", "11.2.1.2.6.3.2", "11.2.1.2.7", "11.2.1.2.7.1", "11.2.1.2.7.2", "11.2.1.2.7.3", "11.2.1.2.7.3.1", "11.2.1.2.7.3.2", "11.2.1.2.8", "11.2.1.2.8.1", "11.2.1.2.8.2", "11.2.1.2.8.3", "11.2.1.2.8.4", "11.2.1.2.8.4.1", "11.2.2", "11.2.2.1", "11.2.2.1.1", "11.2.2.1.2", "11.2.2.1.2.1", "11.2.2.1.2.2", "11.2.2.1.3", "11.2.2.1.3.1", "11.2.2.1.3.1.1", "11.2.2.1.3.1.2", "11.2.2.1.3.1.3", "11.2.2.1.3.2", "11.2.2.1.3.2.1", "11.2.2.1.3.2.2", "11.2.2.1.3.3", "11.2.2.1.3.3.1", "11.2.2.1.3.3.2", "11.2.2.1.3.3.3", "11.2.2.1.3.4", "11.2.2.1.3.4.1", "11.2.2.1.3.4.2", "11.2.2.1.3.5", "11.2.2.1.3.5.1", "11.2.2.1.3.5.2", "11.2.2.1.3.6", "11.2.2.1.3.6.1", "11.2.2.1.3.6.2", "11.2.2.1.4", "11.2.2.1.4.1", "11.2.2.1.4.1.1", "11.2.2.1.4.1.2", "11.2.2.1.4.1.3", "11.2.2.1.4.2", "11.2.2.1.4.2.1", "11.2.2.1.4.2.2", "11.2.2.1.4.2.3", "11.2.2.1.4.3", "11.2.2.1.4.3.1", "11.2.2.1.4.3.2", "11.2.2.1.4.3.3", "11.2.2.1.4.4", "11.2.2.1.4.4.1", "11.2.2.1.4.4.2", "11.2.1.4.4.3", "11.2.2.1.4.5", "11.2.2.1.4.5.1", "11.2.2.1.4.5.2", "11.2.2.1.4.5.3", "11.2.2.1.4.6", "11.2.2.1.4.6.1", "11.2.2.1.4.6.2", "11.2.2.1.4.6.3", "11.2.2.1.5", "11.2.2.1.5.1", "11.2.2.1.5.2", "11.2.2.2", "11.2.2.2.1", "11.2.2.2.2", "11.2.2.2.2.1", "11.2.2.2.2.2", "11.2.2.2.3", "11.2.2.2.3.1", "11.2.2.2.3.1.1", "11.2.2.2.3.1.2", "11.2.2.2.3.2", "11.2.2.2.3.2.1", "11.2.2.2.3.2.2", "11.2.2.2.3.2.3", "11.2.2.2.3.3", "11.2.2.2.3.3.1", "11.2.2.2.4", "11.2.2.2.4.1", "11.2.2.2.4.1.1", "11.2.2.2.4.1.2", "11.2.2.2.4.1.3", "11.2.2.2.4.2", "11.2.2.2.4.2.1", "11.2.2.2.4.2.2", "11.2.2.2.4.2.3", "11.2.2.2.5", "11.2.2.2.5.0", "11.2.2.2.5.1", "11.2.2.2.5.2", "11.3", "11.3.1", "11.3.1.1", "11.3.1.2", "11.3.1.3", "11.3.1.3.1", "11.3.1.3.2", "11.3.2", "11.3.2.1", "11.3.2.1.1", "11.3.2.1.2", "11.3.2.1.3", "11.3.2.1.3.1", "11.3.2.1.3.2", "11.3.2.1.4", "11.3.2.1.4", "11.4", "11.4.1", "11.4.1.1", "11.4.1.1.1", "11.4.1.1.2", "11.4.1.1.3", "11.4.1.1.3.1", "11.4.1.1.3.2", "11.5", "11.5.1", "11.5.1.1", "11.5.1.1.1", "11.5.1.1.2", "11.5.1.1.3", "11.5.1.1.4", "11.5.1.2", "11.5.1.2.1", "11.5.1.2.2", "11.5.1.2.3", "11.5.1.2.4", "11.5.1.3", "11.5.1.3.1", "11.5.1.3.2", "11.5.1.3.3", "11.5.1.3.4", "11.5.1.4", "11.5.1.4.1", "11.5.1.4.2", "11.5.1.4.3", "11.5.1.4.4", "11.5.1.5", "11.5.1.5.1", "11.5.1.5.2", "11.5.1.5.3", "11.5.1.5.4", "11.5.1.6", "11.5.1.6.1", "11.5.1.6.2", "11.5.1.6.3", "11.5.1.6.4", "11.5.1.7", "11.5.1.7.1", "11.5.1.7.2", "11.5.1.7.3", "11.5.1.7.4", "11.6", "11.6.1", "11.6.1.1", "11.6.1.1.1", "11.6.1.1.2", "11.6.1.2", "11.6.1.2.1", "11.6.1.2.2", "11.6.1.3", "11.6.1.3.1", "11.6.1.3.2", "11.6.1.3.3", "11.6.1.3.4", "11.6.1.4", "11.6.1.4.1", "11.6.1.4.2", "11.6.1.4.3", "11.6.1.4.4", "11.6.1.5", "11.6.1.5.1", "11.6.1.5.2", "11.6.1.5.3", "11.6.1.5.4", "11.6.2", "12.1", "12.1.1", "12.1.1.1", "12.1.1.1.1", "12.1.1.1.2", "12.1.1.1.3", "12.1.1.1.4", "12.1.1.1.4.1", "12.1.1.1.4.2", "12.1.1.1.5", "12.1.1.1.6", "12.1.1.1.7", "12.1.1.2", "12.1.1.2.1", "12.1.1.2.2", "12.1.1.2.3", "12.1.1.2.4", "12.1.1.2.5", "12.1.1.3", "12.1.1.3.1", "12.1.1.3.1.1", "12.1.1.3.1.2", "12.1.1.3.2", "12.1.1.3.2.1", "12.1.1.3.2.1.1", "12.1.1.3.2.1.2", "12.1.1.3.2.1.3", "12.1.1.3.2.1.3.1", "12.1.1.3.2.1.3.2", "12.1.1.3.2.1.3.3", "12.1.1.3.2.1.3.4", "12.1.1.3.2.2", "12.1.1.3.2.3", "12.1.1.3.2.4", "12.1.1.3.2.4.1", "12.1.1.3.2.4.2", "12.1.1.3.2.4.3", "12.1.1.3.2.4.3.1", "12.1.1.4", "12.1.1.4.1", "368", "369", "370", "371", "372", "373", "374", "375", "376", "377", "12.1.1.4.2", "12.1.1.4.3", "12.1.1.4.4", "12.1.1.4.4.1", "12.1.1.4.4.2", "12.1.1.4.4.3", "12.1.1.4.4.4", "12.1.1.4.4.5", "12.1.1.4.4.6", "12.1.1.4.4.7", "12.1.1.4.4.8", "12.1.2", "12.1.2.1", "12.1.2.2", "12.1.2.2.1", "12.1.2.2.1.1", "12.1.2.2.1.2", "12.1.2.2.2", "12.1.2.2.3", "12.1.2.2.4", "12.1.2.2.5", "12.1.2.3", "12.1.2.3.1", "12.1.2.3.2", "12.1.2.4", "12.1.3", "12.1.3.1", "12.1.3.1.1", "12.1.3.1.2", "12.1.3.1.3", "12.1.3.1.4", "12.1.3.1.5", "12.1.3.2", "12.1.3.2.1", "12.1.3.2.5", "12.1.3.3", "12.1.3.3.1", "12.1.3.3.2", "12.2", "12.2.1", "12.2.1.1", "12.2.1.1.1", "12.2.1.1.2", "12.2.1.1.3", "12.2.1.1.4", "12.2.1.1.5", "12.2.1.1.6", "12.2.1.1.7", "12.2.1.1.8", "12.2.1.1.9", "12.2.1.2", "12.2.1.2.1", "12.2.1.2.2", "12.2.1.2.3", "12.2.1.2.4", "12.2.1.2.5", "12.2.1.2.6", "12.2.1.2.7", "12.2.1.2.8", "12.2.1.2.9", "12.2.1.2.10", "12.2.1.2.11", "12.2.1.2.12", "12.2.1.3", "12.2.1.3.1", "12.2.1.3.1.1", "12.2.1.3.1.2", "12.2.1.3.2", "12.2.1.3.2.1", "12.2.1.3.2.1.1", "12.2.1.3.2.1.2", "12.2.1.3.2.1.3", "12.2.1.3.2.1.3.1", "12.2.1.3.2.1.3.2", "12.2.1.3.2.1.3.3", "12.2.1.3.2.2", "12.2.1.3.2.2.1", "12.2.1.3.2.2.2", "12.2.1.3.2.2.3", "12.2.1.3.2.2.3.1", "12.2.1.3.2.3", "12.2.1.3.2.3.1", "12.2.1.3.2.3.2", "12.2.1.3.2.3.3", "12.2.1.3.2.3.3.1", "12.2.1.3.2.4", "12.2.1.3.2.4.1", "12.2.1.3.2.4.2", "12.2.1.3.2.4.3", "12.2.1.3.2.4.3.1", "12.2.1.3.2.5", "12.2.1.3.2.5.1", "12.2.1.3.2.5.2", "12.2.1.3.2.5.3", "12.2.1.3.2.6", "12.2.1.3.2.6.1", "12.2.1.3.2.6.2", "12.2.1.3.2.6.3", "12.2.1.3.2.6.3.1", "12.2.1.3.2.6.3.2", "12.2.1.3.2.7", "12.2.1.3.2.7.1", "12.2.1.3.2.7.2", "12.2.1.3.2.7.3", "12.2.1.3.2.7.3.1", "12.2.1.3.2.8", "12.2.1.3.2.8.1", "12.2.1.3.2.8.2", "12.2.1.3.2.8.3", "12.2.1.3.2.8.3.1", "12.2.1.4", "12.2.1.4.1", "490", "491", "492", "493", "494", "495", "496", "497", "498", "499", "500", "501", "502", "503", "504", "505", "506", "507", "508", "509", "510", "511", "512", "12.2.1.4.2", "12.2.1.4.3", "12.2.1.4.4", "12.2.1.4.4.1", "12.2.1.4.4.2", "12.2.1.4.4.3", "12.2.1.4.4.4", "12.2.1.4.4.5", "12.2.1.4.4.6", "12.2.1.4.4.7", "12.2.1.4.4.8", "12.2.1.4.4.9", "12.2.1.4.4.10", "12.2.2", "12.2.2.1", "12.2.2.2", "12.2.2.2.1", "12.2.2.2.1.1", "12.2.2.2.1.2", "12.2.2.2.2", "12.2.2.2.3", "12.2.2.2.4", "12.2.2.2.5", "12.2.2.2.6", "12.2.2.2.7", "12.2.2.2.8", "12.2.2.2.9", "12.2.2.2.10", "12.2.2.2.11", "12.2.2.2.12", "12.2.2.3", "12.2.2.3.1", "12.2.2.3.2", "12.2.2.4", "12.3", "12.3.1", "12.3.1.1", "12.3.1.2", "12.3.1.2.1", "12.3.1.2.2", "12.3.1.2.3", "12.3.1.2.3.2", "12.3.1.2.3.2.1", "12.3.1.2.3.2.1.1", "12.3.1.2.3.2.1.2", "12.3.1.2.3.2.1.3", "12.3.1.2.4", "12.3.1.2.4.2", "12.3.1.2.4.3", "12.3.1.2.4.4", "12.3.1.2.4.5", "12.3.1.2.4.6", "12.3.2", "12.3.2.3", "12.3.2.3.1", "12.3.2.3.2", "12.4", "12.4.1", "12.4.1.1", "12.4.1.2", "12.4.1.2.1", "12.4.1.2.2", "12.4.1.3", "12.4.1.4", "12.4.1.5", "12.4.1.5.1", "12.4.1.5.2", "12.4.1.5.3", "12.4.1.5.3.1", "12.4.1.5.3.2", "12.4.1.5.3.3", "12.4.2", "12.4.2.1", "12.4.2.2", "12.4.2.2.1", "12.4.2.2.1.1", "12.4.2.2.1.2", "12.4.2.2.2", "12.5", "12.5.1", "12.5.1.1", "12.5.1.1.1", "12.5.1.1.2", "12.5.1.1.3", "12.5.1.1.4", "12.5.1.1.5", "12.5.1.1.6", "12.5.1.1.7", "12.5.1.1.8", "12.5.1.2", "12.5.1.3", "12.5.1.3.1", "12.5.1.3.2", "12.5.1.3.2.1", "12.5.1.3.2.1.1", "12.5.1.3.2.1.2", "12.5.1.3.2.1.3", "12.5.1.3.2.1.3.1", "12.5.1.3.2.1.3.2", "12.5.1.3.2.2", "12.5.1.3.2.2.1", "12.5.1.3.2.2.2", "12.5.1.3.2.2.3", "12.5.1.3.2.2.3.1", "12.5.1.3.2.2.3.2", "12.5.1.3.2.3", "12.5.1.3.2.3.1", "12.5.1.3.2.3.2", "12.5.1.3.2.3.3", "12.5.1.3.2.3.3.1", "12.5.1.3.2.3.3.2", "12.5.1.3.2.3.3.3", "12.5.1.3.2.4", "12.5.1.3.2.4.1", "12.5.1.3.2.4.2", "12.5.1.3.2.4.3", "12.5.1.3.2.4.3.1", "12.5.1.4", "12.5.1.4.1", "12.5.1.4.2", "12.5.1.4.2.1", "12.5.1.4.2.2", "12.5.1.4.2.3", "12.5.1.4.2.4", "12.5.1.4.2.5", "12.5.1.4.2.6", "12.5.1.4.3", "12.5.1.4.3.1", "12.5.1.4.3.2", "12.6", "12.6.1", "12.6.1.1", "12.6.1.1.1", "12.6.1.1.2", "12.6.1.1.3", "12.6.1.1.4", "12.6.1.2", "12.6.1.2.1", "12.6.1.2.2", "12.6.1.2.3", "12.6.1.3", "12.6.1.3.1", "12.6.1.3.1.1", "12.6.1.3.1.2", "12.6.1.3.2", "12.6.1.3.2.1", "12.6.1.3.2.1.1", "12.6.1.3.2.1.2", "12.6.1.3.2.1.3", "12.6.1.3.2.1.3.1", "12.6.1.3.2.2", "12.6.1.3.2.2.1", "12.6.1.3.2.2.2", "12.6.1.3.2.2.3", "12.6.1.3.2.2.3.1", "12.6.1.3.2.2.3.2", "12.6.1.3.2.3", "12.6.1.3.2.3.1", "12.6.1.3.2.3.2", "12.6.1.3.2.3.3", "12.6.1.3.2.3.3.1", "12.6.1.3.2.4", "12.6.1.3.2.4.1", "12.6.1.3.2.4.2", "12.6.1.3.2.4.3", "12.6.1.3.2.4.3.1", "12.6.1.4", "12.6.1.4.1", "12.6.1.4.2", "12.6.1.4.2.1", "12.6.1.4.2.2", "12.6.1.4.2.3", "12.6.1.4.3", "12.6.1.4.4", "12.6.1.4.5", "12.6.1.4.6", "12.6.1.4.6.1", "12.6.1.4.6.2", "12.6.1.4.6.3", "12.6.1.4.6.4", "706", "707", "708", "709", "710", "711", "712", "713", "714", "715", "716", "717", "718", "719"]
+  },
+  "summary": {
+    "rules_validated_count": 22,
+    "rules_error_count": 0,
+    "rules_by_type": {
+      "schema_property": 17,
+      "response": 3,
+      "path_operation": 1,
+      "request_body": 1
+    },
+    "rules_by_section": {
+      "566": 14,
+      "562": 4,
+      "556": 1,
+      "572": 1,
+      "573": 1,
+      "574": 1
+    }
+  },
+  "rules": [
+    {
+      "section_id": "556",
+      "section_title": "12.3.1.2.3.1 Resource structure",
+      "rule_type": "path_operation",
+      "source_name": "notifyThresholdCrossing",
+      "rule_text": "The notificationSink resource is available at /notificationSink and supports HTTP POST for sending notifications.",
+      "openapi_mapping": {
+        "openapi_object": "paths./notificationSink",
+        "openapi_field": "post",
+        "openapi_value": "POST",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.3.1.2.3.1-1, which identifies the resource URI as `/notificationSink` and the applicable HTTP method as `POST`. The mapping to `paths./notificationSink` with field `post` and OpenAPI value `POST` is correct: the OpenAPI operation key is lowercase `post`, while the represented HTTP method value is `POST`. This is a path-operation rule, not a schema property, so the section's `is_schema_home: False` verdict does not disqualify it. The rule belongs to this resource-structure overview section and is within the PerfMnS service scope. The related notification mapping describes the purpose of the operation but does not invalidate this explicit resource/method mapping. The rule is atomic because its field specifies one HTTP method only.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "562",
+      "section_title": "12.3.1.2.3.2.1.3.1 POST",
+      "rule_type": "request_body",
+      "source_name": "notifyThresholdCrossing",
+      "rule_text": "The POST request body supports the NotifyThresholdCrossing data structure when a notifyThresholdCrossing notification is sent.",
+      "openapi_mapping": {
+        "openapi_object": "paths./notificationSink.post.requestBody",
+        "openapi_field": "content",
+        "openapi_value": "application/json",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The rule is explicitly grounded in the POST request-body table: NotifyThresholdCrossing is the mandatory data structure supported when a notifyThresholdCrossing notification is sent. The resource mapping to paths./notificationSink.post.requestBody is correct. The openapi_field content is valid for a Request Body Object, and application/json is an appropriate media-type key under content; the section does not state a media type, so this value is supplied by the OpenAPI modelling convention and is not an error. The canonical type spelling is NotifyThresholdCrossing, matching the Type NotifyThresholdCrossing heading. This is a request_body rule owned by the resource/operation section, not a schema_property rule, so the is_schema_home=False verdict does not disqualify it. The unresolved callback anchor is irrelevant because this rule is not a callback rule. The OpenAPI reference confirms that requestBody uses a required content map keyed by media type.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "562",
+      "section_title": "12.3.1.2.3.2.1.3.1 POST",
+      "rule_type": "response",
+      "source_name": "notifyThresholdCrossing",
+      "rule_text": "The POST method returns HTTP 204 No Content on success; no message body is returned.",
+      "openapi_mapping": {
+        "openapi_object": "paths./notificationSink.post.responses",
+        "openapi_field": "204",
+        "openapi_value": "No response body; 204 No Content.",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The rule is explicitly stated in table 12.3.1.2.3.2.1.3.1-3: the POST returns 204 No Content on success and no message body is returned. The mapping to paths./notificationSink.post.responses with field 204 is correct. OpenAPI models this as a 204 response with no response content; the referenced OpenAPI context confirms that responses are defined per operation and that a response may have no body. This is a resource-operation response rule, not a schema property, so the section's is_schema_home=False verdict does not disqualify it. The rule belongs to the PerfMnS service and is not inherited, duplicated, or owned by another section. The 204 status is a single atomic target and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "562",
+      "section_title": "12.3.1.2.3.2.1.3.1 POST",
+      "rule_type": "response",
+      "source_name": "notifyThresholdCrossing",
+      "rule_text": "The POST method returns a 4XX response in case of failure, with the error object returned in the response body.",
+      "openapi_mapping": {
+        "openapi_object": "paths./notificationSink.post.responses",
+        "openapi_field": "4XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.88,
+      "reflection_reasoning": "The rule is explicitly grounded in table 12.3.1.2.3.2.1.3.1-3: an Error-Response is returned for 4xx/5xx failures and the error object is returned in the response body. This resource section owns the POST operation at /notificationSink, so the response rule belongs here; it is not a schema_property and the section's non-schema-home verdict does not disqualify it. Mapping the 4xx range to the OpenAPI wildcard response field `4XX` is valid, and the OpenAPI reference confirms that `4XX` is an allowed response range. The supplied `#/components/schemas/ErrorResponse` is a plausible normalized schema reference for the table's `Error-Response` data type, although the retrieved context does not independently verify that component's existence or exact canonical name. The already validated 5XX rule covers the other half of the table's `4xx/5xx` range, so this rule is not incomplete and should not be split: its own field is already the single atomic target `4XX`.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "562",
+      "section_title": "12.3.1.2.3.2.1.3.1 POST",
+      "rule_type": "response",
+      "source_name": "notifyThresholdCrossing",
+      "rule_text": "The POST method returns a 5XX response in case of failure, with the error object returned in the response body.",
+      "openapi_mapping": {
+        "openapi_object": "paths./notificationSink.post.responses",
+        "openapi_field": "5XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.94,
+      "reflection_reasoning": "The rule is explicitly grounded in the POST response table: the Error-Response data type applies to both 4xx and 5xx responses, and an error object is returned in failure cases. The extracted sibling rule already covers 4XX, while this rule correctly covers the distinct 5XX range; it is not a duplicate or an incomplete split. OpenAPI requires response ranges to use uppercase wildcard notation, so the field value 5XX is correct. Mapping the response body to a schema reference at '#/components/schemas/ErrorResponse' is consistent with the stated error object and the OpenAPI Responses Object, which permits response content schemas or references. The section is a resource/operation section rather than a schema-home section, but this is an operation response rule, not a schema property, so the pre-analysis restriction does not disqualify it. No inherited-field, cross-section ownership, or unmappable-concept issue is present.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "NotifyThresholdCrossing",
+      "rule_text": "NotifyThresholdCrossing embeds the external NotificationHeader type.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "allOf",
+        "openapi_value": "$ref: 'TS28623_ComDefs.yaml#/components/schemas/NotificationHeader'",
+        "references": [
+          {
+            "file": "TS28623_ComDefs.yaml",
+            "schema_name": "NotificationHeader"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The section is the schema home for Type NotifyThresholdCrossing, and the section explicitly defines that type. The rule correctly models the type embedding the external NotificationHeader base through components/schemas/NotifyThresholdCrossing.allOf with a $ref to TS28623_ComDefs.yaml#/components/schemas/NotificationHeader. The pre-analysis verdict independently confirms this exact embedded base reference. This is not an own property or required entry for any inherited field, so it does not duplicate href, notificationId, notificationType, eventTime, or systemDN. The sibling type and notification context also support that NotifyThresholdCrossing is the relevant notification payload type for the PerfMnS threshold-crossing capability. The retrieved OpenAPI context does not contradict the use of a schema composition reference. The rule is atomic: allOf contains one base-schema target and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "observedPerfMetricName",
+      "rule_text": "The observedPerfMetricName attribute is a mandatory string containing the name of the performance metric that crossed the threshold.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "properties.observedPerfMetricName",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The rule is explicitly grounded in the Type NotifyThresholdCrossing table: observedPerfMetricName is marked mandatory (M), has data type string, and identifies the performance metric that crossed the threshold. This section is the schema home, so the rule belongs here. The property is not one of the inherited NotificationHeader fields, and its OpenAPI mapping is valid: components/schemas/NotifyThresholdCrossing.properties.observedPerfMetricName with value string. The corresponding mandatory constraint is correctly represented by the separate required rule already listed for this section. The OpenAPI context does not contradict this mapping, and the concept is within the PerfMnS service scope. The field contains only one property target, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "observedPerfMetricName",
+      "rule_text": "The observedPerfMetricName property is required.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "required",
+        "openapi_value": "[observedPerfMetricName]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly supported by Table 12.3.1.2.4.2.1-1: observedPerfMetricName has status M, so it is mandatory. This is an own property of NotifyThresholdCrossing, not one of the inherited NotificationHeader fields (href, notificationId, notificationType, eventTime, or systemDN). The section is the schema home, so a required-list entry belongs here. The mapping to components/schemas/NotifyThresholdCrossing.required with value observedPerfMetricName is valid OpenAPI, and the retrieved OpenAPI context supports required property lists. No correction is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "observedPerfMetricValue",
+      "rule_text": "The observedPerfMetricValue attribute is a mandatory PerfMetricValue containing the performance metric value observed at threshold crossing.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "properties.observedPerfMetricValue",
+        "openapi_value": "$ref: '#/components/schemas/PerfMetricValue'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "PerfMetricValue"
+          }
+        ]
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The section is explicitly the schema-home type definition for NotifyThresholdCrossing, so this own schema_property belongs in the final rule set. The source table explicitly defines observedPerfMetricValue as a mandatory attribute of data type PerfMetricValue and describes it as the observed performance metric value at threshold crossing. The mapping to components/schemas/NotifyThresholdCrossing.properties.observedPerfMetricValue is correct; observedPerfMetricValue is the property spelling from the owning type table. Because the attribute is typed by the named schema PerfMetricValue, the $ref value '#/components/schemas/PerfMetricValue' is the correct OpenAPI representation. The property is not one of the inherited NotificationHeader fields, and the related required rule separately captures its mandatory status. The OpenAPI reference context permits schema properties and references, and does not contradict this mapping.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "observedPerfMetricValue",
+      "rule_text": "The observedPerfMetricValue property is required.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "required",
+        "openapi_value": "[observedPerfMetricValue]",
+        "references": []
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.3.1.2.4.2.1-1: observedPerfMetricValue has status M (mandatory), so it must be listed in the schema's required array. The mapping to components/schemas/NotifyThresholdCrossing.required with value [observedPerfMetricValue] is correct; observedPerfMetricValue is an own property of this schema, not one of the inherited NotificationHeader fields. The section is the schema home, and the service scope includes threshold-crossing notifications. The OpenAPI context confirms that required properties belong in the schema required field, while the retrieved stage-2 context also identifies observedPerfMetricValue as mandatory. The rule is atomic because its field contains a single property name.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "observedPerfMetricDirection",
+      "rule_text": "The observedPerfMetricDirection attribute is a mandatory PerfMetricDirection indicating the direction of the performance metric when the threshold crossing was observed.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "properties.observedPerfMetricDirection",
+        "openapi_value": "$ref: '#/components/schemas/PerfMetricDirection'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "PerfMetricDirection"
+          }
+        ]
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The section is explicitly a schema home for Type NotifyThresholdCrossing, so a schema_property rule belongs here. The section table defines observedPerfMetricDirection as a mandatory PerfMetricDirection describing the direction when the threshold crossing was observed. This property is not listed among the inherited NotificationHeader fields, so it is an own property and must be emitted here. The mapping to components/schemas/NotifyThresholdCrossing.properties.observedPerfMetricDirection is correct, and the named data type is correctly represented as a schema reference to '#/components/schemas/PerfMetricDirection'. The sibling clause heading confirms the canonical type name PerfMetricDirection, and the existing enum rule separately captures its UP/DOWN restriction; that does not duplicate this type-reference rule. The OpenAPI context permits schema properties to use references and does not contradict the mapping. The rule is atomic because its field identifies one property and one target type.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "observedPerfMetricDirection",
+      "rule_text": "The observedPerfMetricDirection property is required.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "required",
+        "openapi_value": "[observedPerfMetricDirection]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The section is explicitly the schema-home definition for Type NotifyThresholdCrossing, so a schema_property rule belongs here. The source table marks observedPerfMetricDirection with status M (mandatory), and the rule correctly represents this as the required array entry observedPerfMetricDirection. This field is not listed among the inherited NotificationHeader fields, so it is an own required property and must be emitted by this schema. The OpenAPI mapping components/schemas/NotifyThresholdCrossing with field required and value [observedPerfMetricDirection] is correct; the OpenAPI reference confirms that required is the appropriate schema field for mandatory properties. The type name also uses the correct canonical UpperCamelCase form from the section heading. The rule is atomic and does not need splitting.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "thresholdValue",
+      "rule_text": "The thresholdValue attribute is a mandatory PerfMetricValue containing the triggered threshold value.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "properties.thresholdValue",
+        "openapi_value": "$ref: '#/components/schemas/PerfMetricValue'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "PerfMetricValue"
+          }
+        ]
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The rule is explicitly stated in the section's type definition table: thresholdValue has data type PerfMetricValue, description \"Threshold value of the triggered threshold,\" and status M (mandatory). The mapping to components/schemas/NotifyThresholdCrossing.properties.thresholdValue is therefore correct, and the named data type is correctly represented as the $ref '#/components/schemas/PerfMetricValue'. The mandatory status is also represented by the separate required rule already extracted for thresholdValue. NotifyThresholdCrossing is a schema home, and thresholdValue is not listed among the inherited fields from NotificationHeader, so this is an own property rather than an inherited duplicate. The stage 3 RESTful type definition and the related notification context both support the rule. The property is atomic and does not contain multiple targets.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "thresholdValue",
+      "rule_text": "The thresholdValue property is required.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "required",
+        "openapi_value": "[thresholdValue]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly grounded in the section's type-definition table: thresholdValue has status M (mandatory). Therefore NotifyThresholdCrossing must include thresholdValue in its OpenAPI required array. The mapping to components/schemas/NotifyThresholdCrossing, field required, value [thresholdValue] is correct. The property is an own field of this subtype and is not among the inherited NotificationHeader fields (href, notificationId, notificationType, eventTime, or systemDN), so the pre-analysis inheritance constraint does not require discarding it. The section is the schema home, and the rule is mappable to OpenAPI. The related abstract notification context also marks thresholdValue as mandatory, which confirms the rule. The rule is already atomic because it targets one property; no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "hysteresis",
+      "rule_text": "The hysteresis attribute is a mandatory PerfMetricValue containing the hysteresis of the triggered threshold.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "properties.hysteresis",
+        "openapi_value": "$ref: '#/components/schemas/PerfMetricValue'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "PerfMetricValue"
+          }
+        ]
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "The rule is explicitly grounded in the stage 3 definition table for Type NotifyThresholdCrossing: hysteresis is an attribute of the type, has data type PerfMetricValue, describes the hysteresis of the triggered threshold, and is marked mandatory (M). The section is a schema home, and hysteresis is not listed among the inherited fields from NotificationHeader, so it correctly belongs as an own property of components/schemas/NotifyThresholdCrossing. Mapping properties.hysteresis is correct, and the named data type is correctly represented as $ref: '#/components/schemas/PerfMetricValue'. The related stage 2 context labels hysteresis optional, but stage 2 has no protocol binding and is not the rule source; the stage 3 table explicitly marks it mandatory. The rule is atomic because its field targets one property only.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "hysteresis",
+      "rule_text": "The hysteresis property is required.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "required",
+        "openapi_value": "[hysteresis]",
+        "references": []
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The section is explicitly the schema-home definition for Type NotifyThresholdCrossing, so a schema_property rule belongs here. The source table marks the hysteresis attribute as mandatory (S = M), and the rule correctly expresses that requirement as the OpenAPI Schema Object's required array containing the property name hysteresis. The property is not listed among the inherited fields from NotificationHeader, so this is an own required field rather than an inherited requirement. The lowerCamelCase property spelling hysteresis is correct. The OpenAPI context confirms that required is a valid schema property mechanism, and there is no evidence of a conflicting mapping or duplicate rule. The rule is atomic because its field contains one property target.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "monitorGranularityPeriod",
+      "rule_text": "The monitorGranularityPeriod attribute is a mandatory integer specifying the granularity period of the threshold monitor.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "properties.monitorGranularityPeriod",
+        "openapi_value": "integer",
+        "references": []
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.3.1.2.4.2.1-1: monitorGranularityPeriod is an attribute of Type NotifyThresholdCrossing, has data type integer, is described as the granularity period of the threshold monitor, and is marked mandatory (M). The related notification information also marks monitorGranularityPeriod as mandatory and gives the same meaning. Section 566 is a schema home for NotifyThresholdCrossing, so this own property belongs here; it is not one of the inherited NotificationHeader fields (href, notificationId, notificationType, eventTime, or systemDN). The mapping to components/schemas/NotifyThresholdCrossing.properties.monitorGranularityPeriod with OpenAPI type integer is correct and consistent with the OpenAPI Schema Object context. The separate required rule for this property appropriately captures its mandatory status. The property name is the canonical lowerCamelCase form. This rule has one property and one type target, so it is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "monitorGranularityPeriod",
+      "rule_text": "The monitorGranularityPeriod property is required.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "required",
+        "openapi_value": "[monitorGranularityPeriod]",
+        "references": []
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.3.1.2.4.2.1-1: monitorGranularityPeriod has status M, so it must be represented as a required property. The mapping to components/schemas/NotifyThresholdCrossing and the required field value [monitorGranularityPeriod] is correct. NotifyThresholdCrossing is the schema defined by this section, which is confirmed by is_schema_home=True. monitorGranularityPeriod is not listed among the inherited fields from NotificationHeader, so this is an own required property rather than an inherited one. The OpenAPI context permits required property names in Schema Objects, and no context contradicts this mapping. The rule is atomic because the required array contains one property only.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "566",
+      "section_title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "rule_type": "schema_property",
+      "source_name": "additionalText",
+      "rule_text": "The optional additionalText attribute is a string containing vendor-specific information.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyThresholdCrossing",
+        "openapi_field": "properties.additionalText",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The rule is explicitly stated in the section's type-definition table: additionalText is an optional attribute with data type string and vendor-specific information. The section is the schema home for NotifyThresholdCrossing, so the property belongs in components/schemas/NotifyThresholdCrossing. The mapping to properties.additionalText with value string is correct. Because the attribute is optional, it should not be added to the schema's required list, but this rule does not claim that it is required. It is not one of the inherited NotificationHeader fields, and it is not owned by another section. The OpenAPI reference confirms that reusable schemas belong under components/schemas and that schema properties are appropriate. The rule is atomic and requires no split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "572",
+      "section_title": "12.3.1.2.4.6.2 Simple data types",
+      "rule_type": "schema_property",
+      "source_name": "PerfMetricValue",
+      "rule_text": "Define PerfMetricValue as a union allowing either an integer or the imported Float type.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PerfMetricValue",
+        "openapi_field": "oneOf",
+        "openapi_value": "[{\"type\":\"integer\"},{\"$ref\":\"TS28623_ComDefs.yaml#/components/schemas/Float\"}]",
+        "references": [
+          {
+            "file": "TS28623_ComDefs.yaml",
+            "schema_name": "Float"
+          }
+        ]
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.3.1.2.4.6.2-1, which defines the type PerfMetricValue as Union(integer, Float), with the description that a performance metric value is either an integer or Float. This section is a schema home, so defining components/schemas/PerfMetricValue belongs here and is not inherited or owned by another section. Mapping the union to oneOf is correct: the integer alternative is represented by {\"type\":\"integer\"}, and the named Float alternative is correctly represented by a reference to the imported schema at TS28623_ComDefs.yaml#/components/schemas/Float. The OpenAPI context confirms that oneOf accepts inline or referenced Schema Objects and that integer is a valid primitive type. The schema name PerfMetricValue is already the appropriate UpperCamelCase type form. The oneOf alternatives are the contents of a single union schema, not separate independently targetable rules, so no split is recommended.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "573",
+      "section_title": "12.3.1.2.4.6.3 Enumeration PerfNotificationTypes",
+      "rule_type": "schema_property",
+      "source_name": "PerfNotificationTypes",
+      "rule_text": "The PerfNotificationTypes enumeration shall contain the value notifyThresholdCrossing, as specified in Table 12.3.1.2.4.6.3-1.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PerfNotificationTypes",
+        "openapi_field": "enum",
+        "openapi_value": "[notifyThresholdCrossing]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The section is explicitly an enumeration definition and the pre-analysis verdict confirms it is the schema home, so this schema_property rule belongs here. The table explicitly states that the PerfNotificationTypes enumeration contains the value notifyThresholdCrossing, making the mapping to components/schemas/PerfNotificationTypes with field enum and value [notifyThresholdCrossing] correct and complete. The sibling mapping and notification heading independently confirm the canonical notification spelling notifyThresholdCrossing. The rule is atomic because its enum field contains a single value; no split is needed. The rule is mappable to OpenAPI and is neither inherited, cross-section-owned, duplicated, nor an absence statement.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "574",
+      "section_title": "12.3.1.2.4.6.4 Enumeration PerfMetricDirection",
+      "rule_type": "schema_property",
+      "source_name": "PerfMetricDirection",
+      "rule_text": "The PerfMetricDirection enumeration shall contain the string values UP, meaning performance metric values are going up, and DOWN, meaning performance metric values are going down.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PerfMetricDirection",
+        "openapi_field": "enum",
+        "openapi_value": "[UP, DOWN]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The section is explicitly an enumeration definition and is marked as a schema home, so a schema_property rule for components/schemas/PerfMetricDirection belongs here. The source table names the enumeration PerfMetricDirection and explicitly lists exactly two enumeration values, UP and DOWN, with the stated meanings. Mapping the values to the enum field of components/schemas/PerfMetricDirection is valid OpenAPI modeling. The OpenAPI reference context does not contradict this rule. The rule is atomic because its enum field contains a single enumeration target, not multiple fields or independently mapped rule targets.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    }
+  ]
+}

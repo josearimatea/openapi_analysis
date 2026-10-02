@@ -1,0 +1,100 @@
+openapi: 3.0.1
+info:
+  x-openapi-generator:
+    generator: openapi_generator
+    model: gpt-5.6-luna
+    generated-at: '2026-08-23T03:14:23.553537-03:00'
+    rules-bank:
+      source-document: 28532-i00.md
+      generated-at: '2026-08-18T21:53:57.987870-03:00'
+      model: gpt-5.6-luna
+      total-rules: 17
+  # --------------------------------------------------------------------
+  title: TS 28.532 Generic management services
+  version: 18.0.0
+  description: OAS 3.0.1 definition of TS 28.532 Generic management services © 2023,
+    3GPP Organizational Partners (ARIB, ATIS, CCSA, ETSI, TSDSI, TTA, TTC). All rights
+    reserved.
+externalDocs:
+  url: http://www.3gpp.org/ftp/Specs/archive/28_series/28.532/
+  description: 3GPP TS 28.532; Generic management services
+servers:
+  - url: ''
+    description: The server could not be determined from the specification.
+    x-openapi-gen-note: The document's path is /notificationSink. Its description
+      states that this resource is on an MnS consumer and that its URI is provided
+      by the notification subscription. The corresponding notificationTarget is therefore
+      consumer-side and cannot be named as a producer-hosted server; the other URI
+      prefixes belong to different services.
+paths:
+  /notificationSink:
+    post:
+      operationId: notifyThresholdCrossing
+      summary: Send threshold crossing notifications
+      description: The notificationSink resource is available at /notificationSink
+        and supports the POST method for sending notifications.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyThresholdCrossing'
+      responses:
+        '204':
+          description: The notification was sent successfully; no message body is
+            returned.
+        4XX:
+          description: The notification could not be processed because of a client
+            error; an Error-Response error object is returned.
+          content:
+            application/json:
+              schema:
+                $ref: TS28623_ComDefs.yaml#/components/schemas/ErrorResponse
+        5XX:
+          description: The notification could not be processed because of a server
+            failure; an Error-Response error object is returned.
+          content:
+            application/json:
+              schema:
+                $ref: TS28623_ComDefs.yaml#/components/schemas/ErrorResponse
+components:
+  schemas:
+    NotifyThresholdCrossing:
+      allOf:
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+        - type: object
+          properties:
+            observedPerfMetricName:
+              type: string
+            observedPerfMetricValue:
+              $ref: '#/components/schemas/PerfMetricValue'
+            observedPerfMetricDirection:
+              $ref: '#/components/schemas/PerfMetricDirection'
+            thresholdValue:
+              $ref: '#/components/schemas/PerfMetricValue'
+            hysteresis:
+              $ref: '#/components/schemas/PerfMetricValue'
+            monitorGranularityPeriod:
+              type: integer
+            additionalText:
+              type: string
+          required:
+            - observedPerfMetricName
+            - observedPerfMetricValue
+            - observedPerfMetricDirection
+            - thresholdValue
+            - hysteresis
+            - monitorGranularityPeriod
+    PerfMetricValue:
+      oneOf:
+        - type: integer
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/Float
+    PerfNotificationTypes:
+      type: string
+      enum:
+        - notifyThresholdCrossing
+    PerfMetricDirection:
+      type: string
+      enum:
+        - UP
+        - DOWN

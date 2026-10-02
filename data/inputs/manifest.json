@@ -1,0 +1,174 @@
+{
+  "synced_at": "2026-09-29T18:12:06+00:00",
+  "reference": [
+    {
+      "service": "FaultMnS",
+      "version": "17.2.0",
+      "sha256": "7f4d325d1bf6276f5696fc40ffade2e05ddb6fd9f3cf69ba61d4ef0e474bd6f6",
+      "path": "data/inputs/reference/FaultMnS/TS28532_FaultMnS_v17.2.0.yaml",
+      "source": "openapi_rulesbank/data/inputs/yamls/TS28532_FaultMnS.yaml",
+      "also_at": []
+    },
+    {
+      "service": "FileDataReportingMnS",
+      "version": "17.1.0",
+      "sha256": "62ff26660b3651755af03effb3f9310ad2bee8597a0157c5d358e8d4cd6679b9",
+      "path": "data/inputs/reference/FileDataReportingMnS/TS28532_FileDataReportingMnS_v17.1.0.yaml",
+      "source": "openapi_rulesbank/data/inputs/yamls/TS28532_FileDataReportingMnS.yaml",
+      "also_at": []
+    },
+    {
+      "service": "HeartbeatNtf",
+      "version": "17.1.0",
+      "sha256": "0b71a97b1c0962527057b29832eaa29456da0486c03c93b0bb6eb6207927b76c",
+      "path": "data/inputs/reference/HeartbeatNtf/TS28532_HeartbeatNtf_v17.1.0.yaml",
+      "source": "openapi_rulesbank/data/inputs/yamls/TS28532_HeartbeatNtf.yaml",
+      "also_at": []
+    },
+    {
+      "service": "PerfMnS",
+      "version": "17.1.0",
+      "sha256": "e0803197ced3bae36e4c04e172822ee8ad2020411c6d3f5a31c3fc8a82d4dffe",
+      "path": "data/inputs/reference/PerfMnS/TS28532_PerfMnS_v17.1.0.yaml",
+      "source": "openapi_rulesbank/data/inputs/yamls/TS28532_PerfMnS.yaml",
+      "also_at": [
+        "openapi_generator/data/inputs/legacy/PerfMnS/rel_17_TS28532_PerfMnS.yaml"
+      ]
+    },
+    {
+      "service": "PerfMnS",
+      "version": "18.1.0",
+      "sha256": "85e3bcbb028d1fa6752af60295b81c741ecf6841ebfab43381bc60b5304d740c",
+      "path": "data/inputs/reference/PerfMnS/TS28532_PerfMnS_v18.1.0.yaml",
+      "source": "openapi_generator/data/inputs/legacy/PerfMnS/rel_18_TS28532_PerfMnS.yaml",
+      "also_at": []
+    },
+    {
+      "service": "ProvMnS",
+      "version": "17.5.0",
+      "sha256": "66f6aa4bdf5e03bf0ee8ae5e3b78273f4cdc6bf901f6ade1d1cb753121265af3",
+      "path": "data/inputs/reference/ProvMnS/TS28532_ProvMnS_v17.5.0.yaml",
+      "source": "openapi_rulesbank/data/inputs/yamls/TS28532_ProvMnS.yaml",
+      "also_at": []
+    },
+    {
+      "service": "ProvMnS",
+      "version": "17.7.0",
+      "sha256": "f02996d000a26befcf4e9c2ed579ae961603eddfec064b60810b129d86705a00",
+      "path": "data/inputs/reference/ProvMnS/TS28532_ProvMnS_v17.7.0.yaml",
+      "source": "openapi_rulesbank/data/inputs/yamls/rel17_TS28532_ProvMnS.yaml",
+      "also_at": [
+        "openapi_generator/data/inputs/legacy/ProvMnS/rel_17_TS28532_ProvMnS.yaml"
+      ]
+    },
+    {
+      "service": "ProvMnS",
+      "version": "18.2.0",
+      "sha256": "21df25b6c79bfc3ebdee70c01cbf00e0d1aa8eb2e24690db51b2bc445b5fec49",
+      "path": "data/inputs/reference/ProvMnS/TS28532_ProvMnS_v18.2.0.yaml",
+      "source": "openapi_rulesbank/data/inputs/yamls/rel18_TS28532_ProvMnS.yaml",
+      "also_at": [],
+      "variants": [
+        {
+          "source": "openapi_generator/data/inputs/legacy/ProvMnS/rel_18_TS28532_ProvMnS.yaml",
+          "sha256": "8e8596a467f51d02f87650a2bbd070bc883cfc38ea7aae1135fe6ee8fe316009",
+          "same_parsed_content": true
+        }
+      ]
+    },
+    {
+      "service": "StreamingDataMnS",
+      "version": "17.1.0",
+      "sha256": "ceb317113174fcf7d52d1724a888c11a9579d7da91361bf1be700caa1d07adf2",
+      "path": "data/inputs/reference/StreamingDataMnS/TS28532_StreamingDataMnS_v17.1.0.yaml",
+      "source": "openapi_rulesbank/data/inputs/yamls/TS28532_StreamingDataMnS.yaml",
+      "also_at": []
+    }
+  ],
+  "rulesbank": [
+    {
+      "service": "ProvMnS",
+      "path": "data/inputs/rulesbank/ProvMnS/rules_bank_28532-i20_full_20260915_214107.json",
+      "source": "openapi_rulesbank/data/outputs/rules_bank/ProvMnS/Final_rules/rules_bank_28532-i20_full_20260915_214107.json",
+      "sha256": "08e55e572b5a183ad6d20b98f4a8eb69fac583f9e8640b369ef0a6b37e8e8afa",
+      "spec": "i20",
+      "spec_version": "18.2.0",
+      "generated_at": "2026-09-15T22:54:58.508129-03:00",
+      "model": "openai/gpt-5.6-luna",
+      "total_rules": 122
+    },
+    {
+      "service": "ProvMnS",
+      "path": "data/inputs/rulesbank/ProvMnS/rules_bank_28532-i00_full_20260828_210819.json",
+      "source": "openapi_rulesbank/data/outputs/rules_bank/ProvMnS/Final_rules/rules_bank_28532-i00_full_20260828_210819.json",
+      "sha256": "cd3f603f00e26442c8b6400d54cb9d776b8a90ed6dd2a8ea889889f3ad106ac7",
+      "spec": "i00",
+      "spec_version": "18.0.0",
+      "generated_at": "2026-08-28T21:58:10.818347-03:00",
+      "model": "gpt-5.6-luna",
+      "total_rules": 97
+    },
+    {
+      "service": "PerfMnS",
+      "path": "data/inputs/rulesbank/PerfMnS/rules_bank_28532-i20_full_20260915_232343.json",
+      "source": "openapi_rulesbank/data/outputs/rules_bank/PerfMnS/Final_rules/rules_bank_28532-i20_full_20260915_232343.json",
+      "sha256": "975378f1ab0c81c3804abd54e206bc97ed6dc050642378fef0026eb2a0c8d8ed",
+      "spec": "i20",
+      "spec_version": "18.2.0",
+      "generated_at": "2026-09-15T23:30:55.453641-03:00",
+      "model": "openai/gpt-5.6-luna",
+      "total_rules": 18
+    },
+    {
+      "service": "PerfMnS",
+      "path": "data/inputs/rulesbank/PerfMnS/rules_bank_28532-i00_full_20260926_182802.json",
+      "source": "openapi_rulesbank/data/outputs/rules_bank/PerfMnS/Final_rules/rules_bank_28532-i00_full_20260926_182802.json",
+      "sha256": "9c9ee4fa1c762e262d2fbe0437834f9c767182c32ef28e2b03eef82728b73034",
+      "spec": "i00",
+      "spec_version": "18.0.0",
+      "generated_at": "2026-09-26T18:38:25.217072-03:00",
+      "model": "openai/gpt-5.6-luna",
+      "total_rules": 22
+    },
+    {
+      "service": "PerfMnS",
+      "path": "data/inputs/rulesbank/PerfMnS/rules_bank_28532-i00_full_20260818_214526.json",
+      "source": "openapi_rulesbank/data/outputs/rules_bank/PerfMnS/Final_rules/rules_bank_28532-i00_full_20260818_214526.json",
+      "sha256": "038d11aa7e0a1fd5d04ccb00bff0d5cd267ef119f2ef484eeea2a1b6f5e783d2",
+      "spec": "i00",
+      "spec_version": "18.0.0",
+      "generated_at": "2026-08-18T21:53:57.987870-03:00",
+      "model": "gpt-5.6-luna",
+      "total_rules": 17
+    }
+  ],
+  "generated": [
+    {
+      "service": "ProvMnS",
+      "path": "data/inputs/generated/ProvMnS/provmns_20260920_194130.yaml",
+      "source": "openapi_generator/data/outputs/test_pipeline/provmns_20260920_194130.yaml",
+      "sha256": "274c8f834ebefcc52487c1945458ba857df69afef5ddcf60fd12e680be5f8a58",
+      "generated_at": "2026-09-20T19:41:46.512859-03:00",
+      "model": "openai/gpt-5.6-luna",
+      "rules_bank": "data/inputs/rulesbank/ProvMnS/rules_bank_28532-i20_full_20260915_214107.json"
+    },
+    {
+      "service": "ProvMnS",
+      "path": "data/inputs/generated/ProvMnS/provmns_20260828_232853.yaml",
+      "source": "openapi_generator/data/outputs/test_pipeline/ProvMnS/provmns_20260828_232853.yaml",
+      "sha256": "437799c72866853d431e060b187a7b2d546f4c7f44496214aa1b159395a3f044",
+      "generated_at": "2026-08-28T23:28:56.553961-03:00",
+      "model": "gpt-5.6-luna",
+      "rules_bank": "data/inputs/rulesbank/ProvMnS/rules_bank_28532-i00_full_20260828_210819.json"
+    },
+    {
+      "service": "PerfMnS",
+      "path": "data/inputs/generated/PerfMnS/perfmns_20260823_031421.yaml",
+      "source": "openapi_generator/data/outputs/test_pipeline/PerfMnS/perfmns_20260823_031421.yaml",
+      "sha256": "08ee16d4e3ad4c6d8caec90cf07c20dee0214857d0f9a8b1a97735e8fe3356c4",
+      "generated_at": "2026-08-23T03:14:23.553537-03:00",
+      "model": "gpt-5.6-luna",
+      "rules_bank": "data/inputs/rulesbank/PerfMnS/rules_bank_28532-i00_full_20260818_214526.json"
+    }
+  ]
+}

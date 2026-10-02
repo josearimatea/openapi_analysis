@@ -1,0 +1,623 @@
+openapi: 3.0.1
+info:
+  x-openapi-generator:
+    generator: openapi_generator
+    model: gpt-5.6-luna
+    generated-at: '2026-08-28T23:28:56.553961-03:00'
+    rules-bank:
+      source-document: 28532-i00.md
+      generated-at: '2026-08-28T21:58:10.818347-03:00'
+      model: gpt-5.6-luna
+      total-rules: 97
+  # --------------------------------------------------------------------
+  title: TS 28.532 Generic management services
+  version: 18.0.0
+  description: OAS 3.0.1 definition of TS 28.532 Generic management services © 2023,
+    3GPP Organizational Partners (ARIB, ATIS, CCSA, ETSI, TSDSI, TTA, TTC).
+externalDocs:
+  url: http://www.3gpp.org/ftp/Specs/archive/28_series/28.532/
+  description: 3GPP TS 28.532; Generic management services
+paths:
+  /{className}={id}:
+    delete:
+      parameters:
+        - name: className
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: scope
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Scope'
+      responses:
+        '200':
+          description: Deleted-resource URIs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uri
+        '204':
+          description: No Content
+        4XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: deleteClassResource
+    get:
+      parameters:
+        - name: className
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: filter
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Filter'
+        - name: attributes
+          in: query
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: fields
+          in: query
+          required: false
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: scope
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Scope'
+      responses:
+        '200':
+          description: Resource representation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
+                $ref: '#/components/schemas/Resource'
+        4XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: getResource
+    put:
+      operationId: createResource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+      responses:
+        '200':
+          description: Resource representation returned when the resource is replaced
+            or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '204':
+          description: No Content
+        4XX:
+          description: Error response for a 4XX client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response for a 5XX server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      parameters:
+        - name: className
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+    patch:
+      operationId: modifyResource
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+      responses:
+        '400':
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        4XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      parameters:
+        - name: className
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+  /{MnSRoot}/{MnSVersion}/{URI-LDN-first-part}={id}:
+    delete:
+      operationId: deleteResourceByMnSUri
+      parameters:
+        - name: MnSRoot
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: MnSVersion
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: URI-LDN-first-part
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: scope
+          in: query
+          required: false
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Scope'
+      responses:
+        '200':
+          description: Deleted-resource URIs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uri
+        '204':
+          description: No Content
+        4XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /{notificationTarget}:
+    post:
+      operationId: notifyMoiCreation
+      parameters:
+        - name: notificationTarget
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyMoiAttributeValueChanges'
+      responses:
+        '204':
+          description: No Content
+        4XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}:
+    put:
+      operationId: createMOI
+      parameters:
+        - name: MnSRoot
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: MnSVersion
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: URI-LDN-first-part
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: className
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+      responses:
+        '200':
+          description: Resource representation returned when the resource is replaced
+            or updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '204':
+          description: No Content
+        4XX:
+          description: Error response for a 4XX client error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response for a 5XX server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      operationId: deleteMOI
+      parameters:
+        - name: MnSRoot
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: MnSVersion
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: URI-LDN-first-part
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: className
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Deleted-resource URIs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uri
+        '204':
+          description: No Content
+        4XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /eventListener:
+    post:
+      operationId: notifyMOICreation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotifyMoiAttributeValueChanges'
+      responses:
+        '204':
+          description: No Content
+        4XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    Resource:
+      type: object
+      properties:
+        id:
+          type: string
+        objectClass:
+          type: string
+        objectInstance:
+          $ref: TS28623_ComDefs.yaml#/components/schemas/Dn
+        attributes:
+          type: object
+      required:
+        - id
+        - attributes
+      additionalProperties:
+        type: array
+        items:
+          type: object
+    Scope:
+      type: object
+      properties:
+        scopeType:
+          $ref: '#/components/schemas/ScopeType'
+        scopeLevel:
+          type: integer
+      required:
+        - scopeType
+        - scopeLevel
+    PatchItem:
+      type: object
+      properties:
+        op:
+          $ref: '#/components/schemas/PatchOperation'
+        from:
+          type: string
+        path:
+          type: string
+        value: {}
+      required:
+        - op
+        - from
+        - path
+        - value
+    MoiChange:
+      type: object
+      properties:
+        notificationId:
+          $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationId
+        additionalText:
+          type: string
+        sourceIndicator:
+          $ref: '#/components/schemas/SourceIndicator'
+        op:
+          $ref: '#/components/schemas/Operation'
+        path:
+          type: string
+        insert:
+          $ref: '#/components/schemas/Insert'
+        correlatedNotifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/CorrelatedNotification'
+        value: {}
+        oldValue: {}
+      required:
+        - notificationId
+        - op
+        - path
+        - value
+    NotifyMoiCreation:
+      allOf:
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+      type: object
+      properties:
+        additionalText:
+          type: string
+        sourceIndicator:
+          $ref: '#/components/schemas/SourceIndicator'
+        attributeList:
+          $ref: '#/components/schemas/AttributeNameValuePairSet'
+        correlatedNotifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/CorrelatedNotification'
+    NotifyMoiDeletion:
+      allOf:
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+      type: object
+      properties:
+        correlatedNotifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/CorrelatedNotification'
+        additionalText:
+          type: string
+        sourceIndicator:
+          $ref: '#/components/schemas/SourceIndicator'
+        attributeList:
+          $ref: '#/components/schemas/AttributeNameValuePairSet'
+    NotifyMoiAttributeValueChanges:
+      allOf:
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+      type: object
+      properties:
+        correlatedNotifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/CorrelatedNotification'
+        additionalText:
+          type: string
+        sourceIndicator:
+          $ref: '#/components/schemas/SourceIndicator'
+        attributeListValueChanges:
+          $ref: '#/components/schemas/AttributeValueChangeSet'
+      required:
+        - attributeListValueChanges
+    NotifyMoiChanges:
+      allOf:
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+      type: object
+      properties:
+        moiChanges:
+          type: array
+          items:
+            $ref: '#/components/schemas/MoiChange'
+      required:
+        - moiChanges
+    CorrelatedNotification:
+      type: object
+      properties:
+        source:
+          $ref: TS28623_ComDefs.yaml#/components/schemas/Dn
+        notificationIds:
+          type: array
+          items:
+            $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationId
+      required:
+        - source
+        - notificationIds
+    Filter:
+      type: object
+    ErrorResponse:
+      type: object
+    ScopeType:
+      type: string
+      enum:
+        - BASE_ONLY
+        - BASE_AND_SUBCLASS
+        - SUBTREE
+    PatchOperation:
+      type: string
+      enum:
+        - add
+        - remove
+        - replace
+        - move
+        - copy
+        - test
+    SourceIndicator:
+      type: string
+      enum:
+        - UNKNOWN
+        - OPERATOR
+        - MANAGEMENT_SYSTEM
+        - AUTOMATIC
+    Operation:
+      type: string
+      enum:
+        - add
+        - remove
+        - replace
+    Insert:
+      type: string
+      enum:
+        - before
+        - after
+    AttributeNameValuePairSet:
+      type: object
+      additionalProperties: true
+    AttributeValueChangeSet:
+      type: object
+      additionalProperties: true

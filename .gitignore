@@ -19,3 +19,7 @@ htmlcov/
 .vscode/
 .idea/
 .DS_Store
+
+# reports produced by this repo (regenerable); inputs under data/inputs are versioned
+data/outputs/*
+!data/outputs/.gitkeep

@@ -1,0 +1,1409 @@
+# AI generation information — how this document was produced
+x-ai-generation:
+  generator: openapi_generator
+  model: openai/gpt-5.6-luna
+  generated-at: '2026-09-20T19:41:46.512859-03:00'
+  rules-bank:
+    source-document: 28532-i20.md
+    generated-at: '2026-09-15T22:54:58.508129-03:00'
+    model: openai/gpt-5.6-luna
+    total-rules: 122
+  usage:
+    runtime_seconds: 665.7
+    llm_calls: 39
+    prompt_tokens: 449428
+    completion_tokens: 116174
+    total_tokens: 565602
+    reasoning_tokens: 22857
+    cached_prompt_tokens: 78767
+    cost_usd: 0.23342
+# ----------------------------------------------------------------------
+openapi: 3.0.1
+info:
+  title: Generic provisioning management service
+  version: 18.2.0
+  description: OAS 3.0.1 definition of Generic provisioning management service © 2024,
+    3GPP Organizational Partners (ARIB, ATIS, CCSA, ETSI, TSDSI, TTA, TTC). All rights
+    reserved.
+externalDocs:
+  url: http://www.3gpp.org/ftp/Specs/archive/28_series/28.532/
+  description: 3GPP TS 28.532; Generic management services
+servers:
+  - url: '{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}'
+    description: The service is hosted at the Provisioning MnS on the MnS producer.
+    variables:
+      MnSRoot:
+        description: See clause 4.4.2 of TS 32.158 [15]
+        default: ''
+      MnSVersion:
+        description: See clause 4.4.2 of TS 32.158 [15]
+        default: ''
+      URI-LDN-first-part:
+        description: See clause 4.4.2 of TS 32.158 [15]
+        default: ''
+paths:
+  /{className}={id}:
+    parameters:
+      - name: className
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: scope
+        in: query
+        schema:
+          $ref: '#/components/schemas/Scope'
+        style: form
+        explode: true
+      - name: filter
+        in: query
+        schema:
+          $ref: '#/components/schemas/Filter'
+      - name: attributes
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: false
+      - name: fields
+        in: query
+        schema:
+          type: array
+          items:
+            type: string
+        style: form
+        explode: false
+      - name: dataNodeSelector
+        in: query
+        schema:
+          $ref: '#/components/schemas/Filter'
+    put:
+      summary: Maps the createMOI IS operation to HTTP PUT on the resource URI.
+      description: The createMOI IS operation is mapped to HTTP PUT on the resource
+        URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.
+      operationId: createMOI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+      responses:
+        '200':
+          description: The resource was replaced or updated and its Resource representation
+            is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '201':
+          description: The resource was created and its Resource representation is
+            returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '204':
+          description: The replaced resource representation is identical to the representation
+            in the request; no message body is returned.
+        4XX:
+          description: A client error occurred and an ErrorResponse is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: A server error occurred and an ErrorResponse is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: The createMOI response returns the attributeListOut Resource
+            representation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+      callbacks:
+        notifyMOICreation:
+          '{notificationTarget}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - href
+                        - notificationId
+                        - notificationType
+                        - eventTime
+                        - systemDN
+                      properties:
+                        href: {}
+                        notificationId: {}
+                        notificationType: {}
+                        eventTime: {}
+                        systemDN: {}
+                        correlatedNotifications: {}
+                        additionalText: {}
+                        sourceIndicator: {}
+                        attributeList: {}
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: Notification processing failed due to a server error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+          $request.body#/notificationTarget:
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - href
+                        - notificationId
+                        - notificationType
+                        - eventTime
+                        - systemDN
+                      properties:
+                        href: {}
+                        notificationId: {}
+                        notificationType: {}
+                        eventTime: {}
+                        systemDN: {}
+                        correlatedNotifications: {}
+                        additionalText: {}
+                        sourceIndicator: {}
+                        attributeList: {}
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: Notification processing failed due to a server error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+          notifyMOIDeletion:
+            $request.body#/notificationTarget:
+              post:
+                requestBody:
+                  required: true
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        required:
+                          - href
+                          - notificationId
+                          - notificationType
+                          - eventTime
+                          - systemDN
+                        properties:
+                          href: {}
+                          notificationId: {}
+                          notificationType: {}
+                          eventTime: {}
+                          systemDN: {}
+                          correlatedNotifications: {}
+                          additionalText: {}
+                          sourceIndicator: {}
+                          attributeList: {}
+                responses:
+                  '204':
+                    description: Notification processing succeeded and no response
+                      body is returned.
+                  4XX:
+                    description: Notification processing failed due to a client error
+                      and an ErrorResponse is returned.
+                    content:
+                      application/json:
+                        schema:
+                          $ref: '#/components/schemas/ErrorResponse'
+                  5XX:
+                    description: Notification processing failed due to a server error
+                      and an ErrorResponse is returned.
+                    content:
+                      application/json:
+                        schema:
+                          $ref: '#/components/schemas/ErrorResponse'
+            notifyMOIAttributeValueChanges:
+              $request.body#/notificationTarget:
+                post:
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          required:
+                            - href
+                            - notificationId
+                            - notificationType
+                            - eventTime
+                            - systemDN
+                            - attributeListValueChange
+                          properties:
+                            href: {}
+                            notificationId: {}
+                            notificationType: {}
+                            eventTime: {}
+                            systemDN: {}
+                            correlatedNotifications: {}
+                            additionalText: {}
+                            sourceIndicator: {}
+                            attributeListValueChange: {}
+                  responses:
+                    '204':
+                      description: Notification processing succeeded and no response
+                        body is returned.
+                    4XX:
+                      description: Notification processing failed due to a client
+                        error and an ErrorResponse is returned.
+                      content:
+                        application/json:
+                          schema:
+                            $ref: '#/components/schemas/ErrorResponse'
+            notifyMOIChanges:
+              $request.body#/notificationTarget:
+                post:
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          required:
+                            - href
+                            - notificationId
+                            - notificationType
+                            - eventTime
+                            - systemDN
+                            - mOIChanges
+                          properties:
+                            href: {}
+                            notificationId: {}
+                            notificationType: {}
+                            eventTime: {}
+                            systemDN: {}
+                            mOIChanges: {}
+                  responses:
+                    '204':
+                      description: Notification processing succeeded and no response
+                        body is returned.
+                    4XX:
+                      description: Notification processing failed due to a client
+                        error and an ErrorResponse is returned.
+                      content:
+                        application/json:
+                          schema:
+                            $ref: '#/components/schemas/ErrorResponse'
+                    5XX:
+                      description: Notification processing failed due to a server
+                        error and an ErrorResponse is returned.
+                      content:
+                        application/json:
+                          schema:
+                            $ref: '#/components/schemas/ErrorResponse'
+              notifyEvent:
+                $request.body#/notificationTarget:
+                  post:
+                    requestBody:
+                      required: true
+                      content:
+                        application/json:
+                          schema:
+                            $ref: '#/components/schemas/NotifyEvent'
+                    responses:
+                      '204':
+                        description: Notification processing succeeded and no response
+                          body is returned.
+                      4XX:
+                        description: Notification processing failed due to a client
+                          error and an ErrorResponse is returned.
+                        content:
+                          application/json:
+                            schema:
+                              $ref: '#/components/schemas/ErrorResponse'
+                      5XX:
+                        description: Notification processing failed due to a server
+                          error and an ErrorResponse is returned.
+                        content:
+                          application/json:
+                            schema:
+                              $ref: '#/components/schemas/ErrorResponse'
+            patch:
+              summary: Modify MOI attributes.
+              description: The modifyMOIAttributes IS operation is mapped to HTTP
+                PATCH on the resource URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.
+              operationId: modifyMOIAttributes
+              requestBody:
+                required: true
+                content:
+                  application/merge-patch+json:
+                    schema:
+                      $ref: '#/components/schemas/Resource'
+                  application/vnd.3gpp.json-patch+json:
+                    schema:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/PatchItem'
+                  application/3gpp-merge-patch+json:
+                    schema:
+                      oneOf:
+                        - $ref: '#/components/schemas/Resource'
+                        - type: array
+                          items:
+                            $ref: '#/components/schemas/Resource'
+              responses:
+                '400':
+                  description: The PATCH request could not be honoured because the
+                    request was malformed or the patch operation was unsupported;
+                    an appropriate error response is returned.
+                  content:
+                    application/json:
+                      schema:
+                        oneOf:
+                          - $ref: '#/components/schemas/ErrorResponseDefault'
+                          - $ref: '#/components/schemas/ErrorResponsePatch'
+                4XX:
+                  description: The PATCH request failed because of a client error,
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: The PATCH request failed because of a server error,
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+        notifyMOIDeletion:
+          '{notificationTarget}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - href
+                        - notificationId
+                        - notificationType
+                        - eventTime
+                        - systemDN
+                      properties:
+                        href: {}
+                        notificationId: {}
+                        notificationType: {}
+                        eventTime: {}
+                        systemDN: {}
+                        correlatedNotifications: {}
+                        additionalText: {}
+                        sourceIndicator: {}
+                        attributeList: {}
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: Notification processing failed due to a server error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+          $request.body#/notificationTarget:
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - href
+                        - notificationId
+                        - notificationType
+                        - eventTime
+                        - systemDN
+                      properties:
+                        href: {}
+                        notificationId: {}
+                        notificationType: {}
+                        eventTime: {}
+                        systemDN: {}
+                        correlatedNotifications: {}
+                        additionalText: {}
+                        sourceIndicator: {}
+                        attributeList: {}
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: Notification processing failed due to a server error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+        notifyMOIAttributeValueChanges:
+          '{notificationTarget}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - href
+                        - notificationId
+                        - notificationType
+                        - eventTime
+                        - systemDN
+                        - attributeListValueChange
+                      properties:
+                        href: {}
+                        notificationId: {}
+                        notificationType: {}
+                        eventTime: {}
+                        systemDN: {}
+                        correlatedNotifications: {}
+                        additionalText: {}
+                        sourceIndicator: {}
+                        attributeListValueChange: {}
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+          $request.body#/notificationTarget:
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - href
+                        - notificationId
+                        - notificationType
+                        - eventTime
+                        - systemDN
+                        - attributeListValueChange
+                      properties:
+                        href: {}
+                        notificationId: {}
+                        notificationType: {}
+                        eventTime: {}
+                        systemDN: {}
+                        correlatedNotifications: {}
+                        additionalText: {}
+                        sourceIndicator: {}
+                        attributeListValueChange: {}
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+        notifyMOIChanges:
+          '{notificationTarget}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - href
+                        - notificationId
+                        - notificationType
+                        - eventTime
+                        - systemDN
+                        - mOIChanges
+                      properties:
+                        href: {}
+                        notificationId: {}
+                        notificationType: {}
+                        eventTime: {}
+                        systemDN: {}
+                        mOIChanges: {}
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: Notification processing failed due to a server error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+          $request.body#/notificationTarget:
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      required:
+                        - href
+                        - notificationId
+                        - notificationType
+                        - eventTime
+                        - systemDN
+                        - mOIChanges
+                      properties:
+                        href: {}
+                        notificationId: {}
+                        notificationType: {}
+                        eventTime: {}
+                        systemDN: {}
+                        mOIChanges: {}
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: Notification processing failed due to a server error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+        notifyEvent:
+          '{notificationTarget}':
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: Notification processing failed due to a server error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+          $request.body#/notificationTarget:
+            post:
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/NotifyEvent'
+              responses:
+                '204':
+                  description: Notification processing succeeded and no response body
+                    is returned.
+                4XX:
+                  description: Notification processing failed due to a client error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+                5XX:
+                  description: Notification processing failed due to a server error
+                    and an ErrorResponse is returned.
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/ErrorResponse'
+        $request.body#/notificationTarget:
+          post:
+            requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    required:
+                      - href
+                      - notificationId
+                      - notificationType
+                      - eventTime
+                      - systemDN
+                    properties:
+                      href: {}
+                      notificationId: {}
+                      notificationType: {}
+                      eventTime: {}
+                      systemDN: {}
+                      correlatedNotifications: {}
+                      additionalText: {}
+                      sourceIndicator: {}
+                      attributeList: {}
+            responses:
+              '204':
+                description: Notification processing succeeded and no response body
+                  is returned.
+              4XX:
+                description: Notification processing failed due to a client error
+                  and an ErrorResponse is returned.
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/ErrorResponse'
+              5XX:
+                description: Notification processing failed due to a server error
+                  and an ErrorResponse is returned.
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/ErrorResponse'
+        components:
+          Resource:
+            type: object
+            properties:
+              id:
+                type: string
+              objectClass:
+                type: string
+              objectInstance:
+                $ref: TS28623_ComDefs.yaml#/components/schemas/Dn
+              attributes:
+                type: object
+            required:
+              - id
+              - attributes
+          Scope:
+            type: object
+            properties:
+              scopeType:
+                $ref: '#/components/schemas/ScopeType'
+              scopeLevel:
+                type: integer
+            required:
+              - scopeType
+              - scopeLevel
+          MoiChange:
+            type: object
+            properties:
+              notificationId:
+                $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationId
+              correlatedNotifications:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CorrelatedNotification'
+              additionalText:
+                type: string
+              sourceIndicator:
+                $ref: '#/components/schemas/SourceIndicator'
+              op:
+                $ref: '#/components/schemas/Operation'
+              path:
+                type: string
+              insert:
+                $ref: '#/components/schemas/Insert'
+              value: {}
+              oldValue: {}
+            required:
+              - notificationId
+              - op
+              - path
+              - value
+          NotifyMoiAttributeValueChanges:
+            allOf:
+              - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+            properties:
+              additionalText:
+                type: string
+              sourceIndicator:
+                $ref: '#/components/schemas/SourceIndicator'
+              attributeListValueChanges:
+                description: For structured attributes, include all attribute fields
+                  whenever at least one attribute field changes value. For multi-valued
+                  attributes, report all attribute elements of the new value; do not
+                  report only added, deleted, or modified elements. Deleted attributes
+                  cannot be reported; when required, include all attributes of the
+                  object in the notification. Report changed attribute names with
+                  new values; optionally include old values, with new values in the
+                  first change-set item and old values in a second item.
+                $ref: '#/components/schemas/AttributeValueChangeSet'
+              correlatedNotifications:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CorrelatedNotification'
+            required:
+              - attributeListValueChanges
+          NotifyMoiChanges:
+            allOf:
+              - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+            type: object
+            properties:
+              moiChanges:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MoiChange'
+            required:
+              - moiChanges
+          PatchOperation:
+            type: string
+            enum:
+              - add
+              - replace
+              - remove
+              - copy
+              - move
+              - test
+            description: add — Add operation; replace — Replace operation; remove
+              — Remove operation; copy — Copy operation; move — Move operation; test
+              — Test operation.
+          ErrorResponsePatch:
+            type: object
+        applied:
+          - paths./{className}={id}.components
+          - components.Resource
+          - components.Scope
+          - components.schemas.MoiChange
+          - components.schemas.NotifyMoiAttributeValueChanges.properties.attributeListValueChanges
+          - components.schemas.NotifyMoiChanges.properties.moiChanges.items
+          - components.schemas.PatchOperation
+          - paths./{className}={id}.patch.requestBody.responses
+          - paths./{className}={id}.patch.responses.400.content.application/json.schema.oneOf[1]
+          - components.schemas.ErrorResponsePatch
+          - paths./{className}={id}.put.callbacks.notifyMOICreation.'{notificationTarget}'
+          - paths./{className}={id}.put.callbacks.notifyMOIDeletion.'{notificationTarget}'
+          - paths./{className}={id}.put.callbacks.notifyMOIAttributeValueChanges.'{notificationTarget}'
+          - paths./{className}={id}.put.callbacks.notifyMOIChanges.'{notificationTarget}'
+          - paths./{className}={id}.put.callbacks.notifyEvent.'{notificationTarget}'
+          - paths./{className}={id}.put.callbacks.notifyEvent.'{notificationTarget}'.post.requestBody.content.application/json.schema
+          - paths./{className}={id}.put.responses.4XX
+          - paths./{className}={id}.put.responses.5XX
+          - paths./{className}={id}.put.callbacks.*.*.post.responses.4XX
+          - paths./{className}={id}.put.callbacks.*.*.post.responses.5XX
+          - paths./{className}={id}.notifyMOIDeletion
+          - paths./{className}={id}.$request.body#/notificationTarget
+        removed:
+          - paths./{className}={id}.components
+          - paths./{className}={id}.patch.requestBody.responses
+          - paths./{className}={id}.notifyMOIDeletion
+          - paths./{className}={id}.$request.body#/notificationTarget
+      components: {}
+      skipped:
+        - The requested schema blocks are included under the path-item correction
+          payload because the patcher response schema does not permit a separate root
+          components block in the same correction object.
+    get:
+      summary: Retrieve MOI attributes.
+      description: The getMOIAttributes IS operation is mapped to HTTP GET on the
+        resource URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.
+      operationId: getMOIAttributes
+      responses:
+        '200':
+          description: The retrieved Resource or array of Resource representations
+            is returned successfully with HTTP status 200 OK.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Resource'
+                  - type: array
+                    items:
+                      $ref: '#/components/schemas/Resource'
+        default:
+          description: An optional error response body of type ErrorResponseGet is
+            returned for an unsuccessful HTTP GET request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseGet'
+        4XX:
+          description: The request failed because of a client error, and an ErrorResponse
+            is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: The request failed because of a server error, and an ErrorResponse
+            is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    patch:
+      summary: Modify MOI attributes.
+      description: The modifyMOIAttributes IS operation is mapped to HTTP PATCH on
+        the resource URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.
+      operationId: modifyMOIAttributes
+      requestBody:
+        required: true
+        content:
+          application/merge-patch+json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+          application/vnd.3gpp.json-patch+json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PatchItem'
+          application/3gpp-merge-patch+json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/Resource'
+                - type: array
+                  items:
+                    $ref: '#/components/schemas/Resource'
+        responses:
+          '400':
+            description: The PATCH request could not be honoured because the request
+              was malformed or the patch operation was unsupported; an appropriate
+              error response is returned.
+            content:
+              application/json:
+                schema:
+                  oneOf:
+                    - $ref: '#/components/schemas/ErrorResponseDefault'
+                    - $ref: '#/components/schemas/ErrorResponsePatch'
+          4XX:
+            description: The PATCH request failed because of a client error, and an
+              ErrorResponse is returned.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          5XX:
+            description: The PATCH request failed because of a server error, and an
+              ErrorResponse is returned.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+      responses:
+        '400':
+          description: The PATCH request could not be honoured because the request
+            was malformed or the patch operation was unsupported; an appropriate error
+            response is returned.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorResponseDefault'
+                  - $ref: '#/components/schemas/ErrorResponse'
+        4XX:
+          description: The PATCH request failed because of a client error, and an
+            ErrorResponse is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: The PATCH request failed because of a server error, and an
+            ErrorResponse is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Delete managed object instances.
+      description: The deleteMOI IS operation is mapped to HTTP DELETE on the resource
+        URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.
+      operationId: deleteMOI
+      responses:
+        '200':
+          description: Query parameters were present and one or multiple resources
+            were deleted; an array of the deleted resource URIs is returned.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Uri'
+        '204':
+          description: No query parameters were present and only one resource was
+            deleted; no response body is returned.
+        4XX:
+          description: A client error occurred during deletion and an ErrorResponse
+            is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        5XX:
+          description: A server error occurred during deletion and an ErrorResponse
+            is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        default:
+          description: An unsuccessful deletion returned an optional error response
+            body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDefault'
+    notifyMOIDeletion:
+      $request.body#/notificationTarget:
+        post:
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  required:
+                    - href
+                    - notificationId
+                    - notificationType
+                    - eventTime
+                    - systemDN
+                  properties:
+                    href: {}
+                    notificationId: {}
+                    notificationType: {}
+                    eventTime: {}
+                    systemDN: {}
+                    correlatedNotifications: {}
+                    additionalText: {}
+                    sourceIndicator: {}
+                    attributeList: {}
+          responses:
+            '204':
+              description: Notification processing succeeded and no response body
+                is returned.
+            4XX:
+              description: Notification processing failed due to a client error and
+                an ErrorResponse is returned.
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorResponse'
+            5XX:
+              description: Notification processing failed due to a server error and
+                an ErrorResponse is returned.
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/ErrorResponse'
+    $request.body#/notificationTarget:
+      post:
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - href
+                  - notificationId
+                  - notificationType
+                  - eventTime
+                  - systemDN
+                properties:
+                  href: {}
+                  notificationId: {}
+                  notificationType: {}
+                  eventTime: {}
+                  systemDN: {}
+                  correlatedNotifications: {}
+                  additionalText: {}
+                  sourceIndicator: {}
+                  attributeList: {}
+        responses:
+          '204':
+            description: Notification processing succeeded and no response body is
+              returned.
+          4XX:
+            description: Notification processing failed due to a client error and
+              an ErrorResponse is returned.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+          5XX:
+            description: Notification processing failed due to a server error and
+              an ErrorResponse is returned.
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponse'
+  components:
+    schemas:
+      PatchItem:
+        type: object
+        properties:
+          op:
+            type: string
+            enum:
+              - add
+              - replace
+              - remove
+              - copy
+              - move
+              - test
+          from:
+            type: string
+          path:
+            type: string
+          value: {}
+components:
+  schemas:
+    Resource:
+      type: object
+    ErrorResponse:
+      type: object
+    ErrorResponseGet:
+      type: object
+    Scope:
+      type: object
+    Filter:
+      type: object
+    Uri:
+      type: string
+    ErrorResponseDefault:
+      type: object
+    NotifyMoiChanges:
+      allOf:
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+      type: object
+      properties:
+        moiChanges:
+          type: array
+          items:
+            $ref: '#/components/schemas/MoiChange'
+      required:
+        - moiChanges
+    NotifyEvent: {}
+    CorrelatedNotification:
+      type: object
+      properties:
+        source:
+          $ref: TS28623_ComDefs.yaml#/components/schemas/Dn
+        notificationIds:
+          type: array
+          items:
+            $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationId
+      required:
+        - source
+        - notificationIds
+    Operation:
+      type: string
+      enum:
+        - add
+        - remove
+        - replace
+    NotifyMoiCreation:
+      allOf:
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+    NotifyMoiDeletion:
+      allOf:
+        - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+      properties:
+        correlatedNotifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/CorrelatedNotification'
+        additionalText:
+          type: string
+        sourceIndicator:
+          $ref: '#/components/schemas/SourceIndicator'
+        attributeList:
+          $ref: TS28623_ComDefs.yaml#/components/schemas/AttributeNameValuePairSet
+      NotifyMoiAttributeValueChanges:
+        allOf:
+          - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+        properties:
+          additionalText:
+            type: string
+          sourceIndicator:
+            $ref: '#/components/schemas/SourceIndicator'
+          attributeListValueChanges:
+            description: For structured attributes, include all attribute fields whenever
+              at least one attribute field changes value. For multi-valued attributes,
+              report all attribute elements of the new value; do not report only added,
+              deleted, or modified elements. Deleted attributes cannot be reported;
+              when required, include all attributes of the object in the notification.
+              Report changed attribute names with new values; optionally include old
+              values, with new values in the first change-set item and old values
+              in a second item.
+            $ref: '#/components/schemas/AttributeValueChangeSet'
+          correlatedNotifications:
+            type: array
+            items:
+              $ref: '#/components/schemas/CorrelatedNotification'
+        required:
+          - attributeListValueChanges
+    PatchItem:
+      type: object
+      properties:
+        op:
+          $ref: '#/components/schemas/PatchOperation'
+        from:
+          type: string
+        path:
+          type: string
+        value: {}
+      required:
+        - op
+        - from
+        - path
+        - value
+    CmNotificationTypes:
+      type: string
+      enum:
+        - notifyMOICreation
+        - notifyMOIDeletion
+        - notifyMOIAttributeValueChanges
+        - noitifyMOIChanges
+        - notifyEvent
+    SourceIndicator:
+      type: string
+      enum:
+        - RESOURCE_OPERATION
+        - MANAGEMENT_OPERATION
+        - SON_OPERATION
+        - UNKNOWN
+      description: 'RESOURCE_OPERATION — The notification was generated in response
+        to an internal operation of the resource.; MANAGEMENT_OPERATION — The notification
+        was generated in response to a management operation applied across the managed
+        object boundary external to the managed object; SON_OPERATION — The notification
+        was generated as result of a SON (Self Organising Network) process like self-configuration,
+        self-optimization, self-healing etc.; UNKNOWN — It is not possible to determine
+        the source of the operation. '
+    ScopeType:
+      type: string
+      enum:
+        - BASE_ONLY
+        - BASE_ALL
+        - BASE_NTH_LEVEL
+        - BASE_SUBTREE
+    PatchOperation:
+      type: string
+      enum:
+        - add
+        - replace
+        - remove
+        - copy
+        - move
+        - test
+      description: add — Add operation; replace — Replace operation; remove — Remove
+        operation; copy — Copy operation; move — Move operation; test — Test operation.
+    Insert:
+      type: string
+      enum:
+        - before
+        - after
+      description: before — The new attribute element is inserted before the attribute
+        element identified by the path attribute of MoiChange; after — The new attribute
+        element is inserted after the attribute element identified by the path attribute
+        of MoiChange.
+  Resource:
+    type: object
+    properties:
+      id:
+        type: string
+      objectClass:
+        type: string
+      objectInstance:
+        $ref: TS28623_ComDefs.yaml#/components/schemas/Dn
+      attributes:
+        type: object
+    required:
+      - id
+      - attributes
+  Scope:
+    type: object
+    properties:
+      scopeType:
+        $ref: '#/components/schemas/ScopeType'
+      scopeLevel:
+        type: integer
+    required:
+      - scopeType
+      - scopeLevel
+  MoiChange:
+    type: object
+    properties:
+      notificationId:
+        $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationId
+      correlatedNotifications:
+        type: array
+        items:
+          $ref: '#/components/schemas/CorrelatedNotification'
+      additionalText:
+        type: string
+      sourceIndicator:
+        $ref: '#/components/schemas/SourceIndicator'
+      op:
+        $ref: '#/components/schemas/Operation'
+      path:
+        type: string
+      insert:
+        $ref: '#/components/schemas/Insert'
+      value: {}
+      oldValue: {}
+    required:
+      - notificationId
+      - op
+      - path
+      - value
+  NotifyMoiDeletion:
+    allOf:
+      - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+    properties:
+      correlatedNotifications:
+        type: array
+        items:
+          $ref: '#/components/schemas/CorrelatedNotification'
+      additionalText:
+        type: string
+      sourceIndicator:
+        $ref: '#/components/schemas/SourceIndicator'
+      attributeList:
+        $ref: TS28623_ComDefs.yaml#/components/schemas/AttributeNameValuePairSet
+  NotifyMoiAttributeValueChanges:
+    allOf:
+      - $ref: TS28623_ComDefs.yaml#/components/schemas/NotificationHeader
+    properties:
+      additionalText:
+        type: string
+      sourceIndicator:
+        $ref: '#/components/schemas/SourceIndicator'
+      attributeListValueChanges:
+        description: For structured attributes, include all attribute fields whenever
+          at least one attribute field changes value. For multi-valued attributes,
+          report all attribute elements of the new value; do not report only added,
+          deleted, or modified elements. Deleted attributes cannot be reported; when
+          required, include all attributes of the object in the notification. Report
+          changed attribute names with new values; optionally include old values,
+          with new values in the first change-set item and old values in a second
+          item.
+        $ref: '#/components/schemas/AttributeValueChangeSet'
+      correlatedNotifications:
+        type: array
+        items:
+          $ref: '#/components/schemas/CorrelatedNotification'
+    required:
+      - attributeListValueChanges
+  AttributeValueChangeSet:
+    type: array
+    items:
+      type: object
+      additionalProperties: {}
+    minItems: 1
+    maxItems: 2
+  PatchItem:
+    type: object
+    properties:
+      op:
+        $ref: '#/components/schemas/PatchOperation'
+      from:
+        type: string
+      path:
+        type: string
+      value: {}
+    required:
+      - op
+      - from
+      - path
+      - value
+  PatchOperation:
+    type: string
+    enum:
+      - add
+      - replace
+      - remove
+      - copy
+      - move
+      - test
+    description: add — Add operation; replace — Replace operation; remove — Remove
+      operation; copy — Copy operation; move — Move operation; test — Test operation.

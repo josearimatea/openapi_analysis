@@ -1,0 +1,2195 @@
+{
+  "metadata": {
+    "source_document": "/home/arimatea/Documents/Pessoal/Mestrado/0-Mestrado_Unicamp_2025/5-Projeto_mestrado_ericsson/openapi_multiagents/Dataset/TSpec-LLM/3GPP-clean/Rel-18/28_series/28532-i00.md",
+    "generated_at": "2026-08-28T21:58:10.818347-03:00",
+    "model": "gpt-5.6-luna",
+    "total_rules": 97,
+    "sections_total": 726,
+    "sections_for_planner": 719,
+    "sections_planned": 38,
+    "sections_with_rules": 24,
+    "excluded_by_reader_count": 7,
+    "excluded_by_planner_count": 681,
+    "excluded_by_reader": ["0", "708", "711", "714", "717", "720", "722"],
+    "excluded_by_planner": ["3.1", "3.2", "11.1", "11.1.0", "11.1.1", "11.1.1.1", "11.1.1.1.1", "11.1.1.1.2", "11.1.1.1.3", "11.1.1.1.4", "11.1.1.2", "11.1.1.2.1", "11.1.1.2.2", "11.1.1.2.3", "11.1.1.2.4", "11.1.1.3", "11.1.1.3.1", "11.1.1.3.2", "11.1.1.3.3", "11.1.1.3.4", "11.1.1.4", "11.1.1.4.1", "11.1.1.4.2", "11.1.1.4.3", "11.1.1.4.4", "11.1.1.5", "11.1.1.6", "11.1.1.7", "11.1.1.7.1", "11.1.1.7.2", "11.1.1.7.3", "11.1.1.7.3.1", "11.1.1.7.3.2", "11.1.1.8", "11.1.1.8.1", "11.1.1.8.2", "11.1.1.8.3", "11.1.1.8.3.1", "11.1.1.8.3.2", "11.1.1.9", "11.1.1.9.1", "11.1.1.9.2", "11.1.1.9.3", "11.1.1.9.3.1", "11.1.1.9.3.2", "11.1.1.10", "11.1.1.10.1", "11.1.1.10.2", "11.1.1.11", "11.1.1.11.1", "11.1.1.11.2", "11.1.2", "11.1.2.1", "11.1.2.1.1", "11.2", "11.2.1", "11.2.1.1", "11.2.1.1.1", "11.2.1.1.1.1", "11.2.1.1.1.2", "11.2.1.1.1.3", "11.2.1.1.1.4", "11.2.1.1.1.5", "11.2.1.1.1.6", "11.2.1.1.2", "11.2.1.1.2.1", "11.2.1.1.2.2", "11.2.1.1.2.3", "11.2.1.1.2.4", "11.2.1.1.2.5", "11.2.1.1.2.6", "11.2.1.1.3", "11.2.1.1.3.1", "11.2.1.1.3.2", "11.2.1.1.3.3", "11.2.1.1.3.4", "11.2.1.1.4", "11.2.1.1.4.1", "11.2.1.1.4.2", "80", "11.2.1.1.4.3", "11.2.1.1.4.3.1", "11.2.1.1.4.3.2", "11.2.1.1.5", "11.2.1.1.5.1", "11.2.1.1.5.2", "11.2.1.1.5.3", "11.2.1.1.5.3.1", "11.2.1.1.5.3.2", "11.2.1.1.6", "11.2.1.1.6.1", "11.2.1.1.6.2", "11.2.1.1.6.3", "11.2.1.1.6.3.1", "11.2.1.1.6.3.2", "11.2.1.1.7", "11.2.1.1.7.1", "11.2.1.1.7.2", "11.2.1.1.7.3", "11.2.1.1.7.3.1", "11.2.1.1.7.3.2", "11.2.1.1.8", "11.2.1.1.8.1", "11.2.1.1.8.2", "11.2.1.1.8.3", "11.2.1.1.8.4", "11.2.1.1.8.5", "11.2.1.1.8.6", "11.2.1.1.9", "11.2.1.1.9.1", "11.2.1.1.9.2", "11.2.1.1.9.3", "11.2.1.2", "11.2.1.2.1", "11.2.1.2.1.1", "11.2.1.2.1.2", "11.2.1.2.1.3", "11.2.1.2.1.4", "11.2.1.2.2", "11.2.1.2.2.1", "11.2.1.2.2.2", "11.2.1.2.2.3", "11.2.1.2.2.4", "11.2.1.2.3", "11.2.1.2.3.1", "11.2.1.2.3.2", "11.2.1.2.3.3", "11.2.1.2.3.4", "11.2.1.2.4", "11.2.1.2.4.1", "11.2.1.2.4.2", "11.2.1.2.4.3", "11.2.1.2.4.3.1", "11.2.1.2.4.3.2", "11.2.1.2.5", "11.2.1.2.5.1", "11.2.1.2.5.2", "11.2.1.2.5.3", "11.2.1.2.5.3.1", "140", "11.2.1.2.5.3.2", "11.2.1.2.6", "11.2.1.2.6.1", "11.2.1.2.6.2", "11.2.1.2.6.3", "11.2.1.2.6.3.1", "11.2.1.2.6.3.2", "11.2.1.2.7", "11.2.1.2.7.1", "11.2.1.2.7.2", "11.2.1.2.7.3", "11.2.1.2.7.3.1", "11.2.1.2.7.3.2", "11.2.1.2.8", "11.2.1.2.8.1", "11.2.1.2.8.2", "11.2.1.2.8.3", "11.2.1.2.8.4", "11.2.1.2.8.4.1", "11.2.2", "11.2.2.1", "11.2.2.1.1", "11.2.2.1.2", "11.2.2.1.2.1", "11.2.2.1.2.2", "11.2.2.1.3", "11.2.2.1.3.1", "11.2.2.1.3.1.1", "11.2.2.1.3.1.2", "11.2.2.1.3.1.3", "11.2.2.1.3.2", "11.2.2.1.3.2.1", "11.2.2.1.3.2.2", "11.2.2.1.3.3", "11.2.2.1.3.3.1", "11.2.2.1.3.3.2", "11.2.2.1.3.3.3", "11.2.2.1.3.4", "11.2.2.1.3.4.1", "11.2.2.1.3.4.2", "11.2.2.1.3.5", "11.2.2.1.3.5.1", "11.2.2.1.3.5.2", "11.2.2.1.3.6", "11.2.2.1.3.6.1", "11.2.2.1.3.6.2", "11.2.2.1.4", "11.2.2.1.4.1", "11.2.2.1.4.1.1", "11.2.2.1.4.1.2", "11.2.2.1.4.1.3", "11.2.2.1.4.2", "11.2.2.1.4.2.1", "11.2.2.1.4.2.2", "11.2.2.1.4.2.3", "11.2.2.1.4.3", "11.2.2.1.4.3.1", "11.2.2.1.4.3.2", "11.2.2.1.4.3.3", "11.2.2.1.4.4", "11.2.2.1.4.4.1", "11.2.2.1.4.4.2", "11.2.1.4.4.3", "11.2.2.1.4.5", "11.2.2.1.4.5.1", "11.2.2.1.4.5.2", "11.2.2.1.4.5.3", "11.2.2.1.4.6", "11.2.2.1.4.6.1", "11.2.2.1.4.6.2", "11.2.2.1.4.6.3", "11.2.2.1.5", "11.2.2.1.5.1", "11.2.2.1.5.2", "11.2.2.2", "11.2.2.2.1", "11.2.2.2.2", "11.2.2.2.2.1", "11.2.2.2.2.2", "11.2.2.2.3", "11.2.2.2.3.1", "11.2.2.2.3.1.1", "11.2.2.2.3.1.2", "11.2.2.2.3.2", "11.2.2.2.3.2.1", "11.2.2.2.3.2.2", "11.2.2.2.3.2.3", "11.2.2.2.3.3", "11.2.2.2.3.3.1", "11.2.2.2.4", "11.2.2.2.4.1", "11.2.2.2.4.1.1", "11.2.2.2.4.1.2", "11.2.2.2.4.1.3", "11.2.2.2.4.2", "11.2.2.2.4.2.1", "11.2.2.2.4.2.2", "11.2.2.2.4.2.3", "11.2.2.2.5", "11.2.2.2.5.0", "11.2.2.2.5.1", "11.2.2.2.5.2", "11.3", "11.3.1", "11.3.1.1", "11.3.1.2", "11.3.1.3", "11.3.1.3.1", "11.3.1.3.2", "11.3.2", "11.3.2.1", "11.3.2.1.1", "11.3.2.1.2", "11.3.2.1.3", "11.3.2.1.3.1", "11.3.2.1.3.2", "11.3.2.1.4", "11.3.2.1.4", "11.4", "11.4.1", "11.4.1.1", "11.4.1.1.1", "11.4.1.1.2", "11.4.1.1.3", "11.4.1.1.3.1", "11.4.1.1.3.2", "11.5", "11.5.1", "11.5.1.1", "11.5.1.1.1", "11.5.1.1.2", "11.5.1.1.3", "11.5.1.1.4", "11.5.1.2", "11.5.1.2.1", "11.5.1.2.2", "11.5.1.2.3", "11.5.1.2.4", "11.5.1.3", "11.5.1.3.1", "11.5.1.3.2", "11.5.1.3.3", "11.5.1.3.4", "11.5.1.4", "11.5.1.4.1", "11.5.1.4.2", "11.5.1.4.3", "11.5.1.4.4", "11.5.1.5", "11.5.1.5.1", "11.5.1.5.2", "11.5.1.5.3", "11.5.1.5.4", "11.5.1.6", "11.5.1.6.1", "11.5.1.6.2", "11.5.1.6.3", "11.5.1.6.4", "11.5.1.7", "11.5.1.7.1", "11.5.1.7.2", "11.5.1.7.3", "11.5.1.7.4", "11.6", "11.6.1", "11.6.1.1", "11.6.1.1.1", "11.6.1.1.2", "11.6.1.2", "11.6.1.2.1", "11.6.1.2.2", "11.6.1.3", "11.6.1.3.1", "11.6.1.3.2", "11.6.1.3.3", "11.6.1.3.4", "11.6.1.4", "11.6.1.4.1", "11.6.1.4.2", "11.6.1.4.3", "11.6.1.4.4", "11.6.1.5", "11.6.1.5.1", "11.6.1.5.2", "11.6.1.5.3", "11.6.1.5.4", "11.6.2", "12.1", "12.1.1", "12.1.1.1", "12.1.1.1.4", "12.1.1.1.6", "12.1.1.1.7", "12.1.1.2", "12.1.1.3", "12.1.1.3.1", "12.1.1.3.2", "12.1.1.3.2.1", "12.1.1.3.2.1.1", "12.1.1.3.2.1.3", "12.1.1.3.2.2", "12.1.1.3.2.3", "12.1.1.3.2.4", "12.1.1.3.2.4.1", "12.1.1.3.2.4.3", "12.1.1.4", "368", "12.1.1.4.2", "12.1.1.4.3", "12.1.1.4.4", "12.1.1.4.4.1", "12.1.1.4.4.2", "12.1.2", "12.1.2.1", "12.1.2.2", "12.1.2.2.1", "12.1.2.2.1.2", "12.1.2.2.2", "12.1.2.2.3", "12.1.2.2.4", "12.1.2.2.5", "12.1.2.3", "12.1.2.3.2", "12.1.2.4", "12.1.3", "12.1.3.1", "12.1.3.1.1", "12.1.3.1.2", "12.1.3.1.3", "12.1.3.1.4", "12.1.3.1.5", "12.1.3.2", "12.1.3.2.1", "12.1.3.2.5", "12.1.3.3", "12.1.3.3.1", "12.1.3.3.2", "12.2", "12.2.1", "12.2.1.1", "12.2.1.1.1", "12.2.1.1.2", "12.2.1.1.3", "12.2.1.1.4", "12.2.1.1.5", "12.2.1.1.6", "12.2.1.1.7", "12.2.1.1.8", "12.2.1.1.9", "12.2.1.2", "12.2.1.2.1", "12.2.1.2.2", "12.2.1.2.3", "12.2.1.2.4", "12.2.1.2.5", "12.2.1.2.6", "12.2.1.2.7", "12.2.1.2.8", "12.2.1.2.9", "12.2.1.2.10", "12.2.1.2.11", "12.2.1.2.12", "12.2.1.3", "12.2.1.3.1", "12.2.1.3.1.1", "12.2.1.3.1.2", "12.2.1.3.2", "12.2.1.3.2.1", "12.2.1.3.2.1.1", "12.2.1.3.2.1.2", "12.2.1.3.2.1.3", "12.2.1.3.2.1.3.1", "12.2.1.3.2.1.3.2", "12.2.1.3.2.1.3.3", "12.2.1.3.2.2", "12.2.1.3.2.2.1", "12.2.1.3.2.2.2", "12.2.1.3.2.2.3", "12.2.1.3.2.2.3.1", "12.2.1.3.2.3", "12.2.1.3.2.3.1", "12.2.1.3.2.3.2", "12.2.1.3.2.3.3", "12.2.1.3.2.3.3.1", "12.2.1.3.2.4", "12.2.1.3.2.4.1", "12.2.1.3.2.4.2", "12.2.1.3.2.4.3", "12.2.1.3.2.4.3.1", "12.2.1.3.2.5", "12.2.1.3.2.5.1", "12.2.1.3.2.5.2", "12.2.1.3.2.5.3", "12.2.1.3.2.6", "12.2.1.3.2.6.1", "12.2.1.3.2.6.2", "12.2.1.3.2.6.3", "12.2.1.3.2.6.3.1", "12.2.1.3.2.6.3.2", "12.2.1.3.2.7", "12.2.1.3.2.7.1", "12.2.1.3.2.7.2", "12.2.1.3.2.7.3", "12.2.1.3.2.7.3.1", "12.2.1.3.2.8", "12.2.1.3.2.8.1", "12.2.1.3.2.8.2", "12.2.1.3.2.8.3", "12.2.1.3.2.8.3.1", "12.2.1.4", "12.2.1.4.1", "490", "491", "492", "493", "494", "495", "496", "497", "498", "499", "500", "501", "502", "503", "504", "505", "506", "507", "508", "509", "510", "511", "512", "12.2.1.4.2", "12.2.1.4.3", "12.2.1.4.4", "12.2.1.4.4.1", "12.2.1.4.4.2", "12.2.1.4.4.3", "12.2.1.4.4.4", "12.2.1.4.4.5", "12.2.1.4.4.6", "12.2.1.4.4.7", "12.2.1.4.4.8", "12.2.1.4.4.9", "12.2.1.4.4.10", "12.2.2", "12.2.2.1", "12.2.2.2", "12.2.2.2.1", "12.2.2.2.1.1", "12.2.2.2.1.2", "12.2.2.2.2", "12.2.2.2.3", "12.2.2.2.4", "12.2.2.2.5", "12.2.2.2.6", "12.2.2.2.7", "12.2.2.2.8", "12.2.2.2.9", "12.2.2.2.10", "12.2.2.2.11", "12.2.2.2.12", "12.2.2.3", "12.2.2.3.1", "12.2.2.3.2", "12.2.2.4", "12.3", "12.3.1", "12.3.1.1", "12.3.1.2", "12.3.1.2.1", "12.3.1.2.2", "12.3.1.2.2.1", "12.3.1.2.2.2", "12.3.1.2.3", "12.3.1.2.3.1", "12.3.1.2.3.2", "12.3.1.2.3.2.1", "12.3.1.2.3.2.1.1", "12.3.1.2.3.2.1.2", "12.3.1.2.3.2.1.3", "12.3.1.2.3.2.1.3.1", "12.3.1.2.4", "12.3.1.2.4.1", "12.3.1.2.4.2", "12.3.1.2.4.2.1", "12.3.1.2.4.3", "12.3.1.2.4.4", "12.3.1.2.4.5", "12.3.1.2.4.6", "12.3.1.2.4.6.1", "12.3.1.2.4.6.2", "12.3.1.2.4.6.3", "12.3.1.2.4.6.4", "12.3.2", "12.3.2.1", "12.3.2.2", "12.3.2.3", "12.3.2.3.1", "12.3.2.3.2", "12.3.2.4", "12.4", "12.4.1", "12.4.1.1", "12.4.1.2", "12.4.1.2.1", "12.4.1.2.2", "12.4.1.3", "12.4.1.4", "12.4.1.5", "12.4.1.5.1", "12.4.1.5.2", "12.4.1.5.3", "12.4.1.5.3.1", "12.4.1.5.3.2", "12.4.1.5.3.3", "12.4.2", "12.4.2.1", "12.4.2.2", "12.4.2.2.1", "12.4.2.2.1.1", "12.4.2.2.1.2", "12.4.2.2.2", "12.5", "12.5.1", "12.5.1.1", "12.5.1.1.1", "12.5.1.1.2", "12.5.1.1.3", "12.5.1.1.4", "12.5.1.1.5", "12.5.1.1.6", "12.5.1.1.7", "12.5.1.1.8", "12.5.1.2", "12.5.1.3", "12.5.1.3.1", "12.5.1.3.2", "12.5.1.3.2.1", "12.5.1.3.2.1.1", "12.5.1.3.2.1.2", "12.5.1.3.2.1.3", "12.5.1.3.2.1.3.1", "12.5.1.3.2.1.3.2", "12.5.1.3.2.2", "12.5.1.3.2.2.1", "12.5.1.3.2.2.2", "12.5.1.3.2.2.3", "12.5.1.3.2.2.3.1", "12.5.1.3.2.2.3.2", "12.5.1.3.2.3", "12.5.1.3.2.3.1", "12.5.1.3.2.3.2", "12.5.1.3.2.3.3", "12.5.1.3.2.3.3.1", "12.5.1.3.2.3.3.2", "12.5.1.3.2.3.3.3", "12.5.1.3.2.4", "12.5.1.3.2.4.1", "12.5.1.3.2.4.2", "12.5.1.3.2.4.3", "12.5.1.3.2.4.3.1", "12.5.1.4", "12.5.1.4.1", "12.5.1.4.2", "12.5.1.4.2.1", "12.5.1.4.2.2", "12.5.1.4.2.3", "12.5.1.4.2.4", "12.5.1.4.2.5", "12.5.1.4.2.6", "12.5.1.4.3", "12.5.1.4.3.1", "12.5.1.4.3.2", "12.6", "12.6.1", "12.6.1.1", "12.6.1.1.1", "12.6.1.1.2", "12.6.1.1.3", "12.6.1.1.4", "12.6.1.2", "12.6.1.2.1", "12.6.1.2.2", "12.6.1.2.3", "12.6.1.3", "12.6.1.3.1", "12.6.1.3.1.1", "12.6.1.3.1.2", "12.6.1.3.2", "12.6.1.3.2.1", "12.6.1.3.2.1.1", "12.6.1.3.2.1.2", "12.6.1.3.2.1.3", "12.6.1.3.2.1.3.1", "12.6.1.3.2.2", "12.6.1.3.2.2.1", "12.6.1.3.2.2.2", "12.6.1.3.2.2.3", "12.6.1.3.2.2.3.1", "12.6.1.3.2.2.3.2", "12.6.1.3.2.3", "12.6.1.3.2.3.1", "12.6.1.3.2.3.2", "12.6.1.3.2.3.3", "12.6.1.3.2.3.3.1", "12.6.1.3.2.4", "12.6.1.3.2.4.1", "12.6.1.3.2.4.2", "12.6.1.3.2.4.3", "12.6.1.3.2.4.3.1", "12.6.1.4", "12.6.1.4.1", "12.6.1.4.2", "12.6.1.4.2.1", "12.6.1.4.2.2", "12.6.1.4.2.3", "12.6.1.4.3", "12.6.1.4.4", "12.6.1.4.5", "12.6.1.4.6", "12.6.1.4.6.1", "12.6.1.4.6.2", "12.6.1.4.6.3", "12.6.1.4.6.4", "706", "707", "708", "709", "710", "711", "712", "713", "714", "715", "716", "717", "718", "719"]
+  },
+  "summary": {
+    "rules_validated_count": 92,
+    "rules_error_count": 5,
+    "rules_by_type": {
+      "schema_property": 57,
+      "response": 19,
+      "path_operation": 6,
+      "path_parameter": 6,
+      "query_parameter": 5,
+      "request_body": 4
+    },
+    "rules_by_section": {
+      "372": 12,
+      "331": 9,
+      "333": 7,
+      "358": 6,
+      "369": 6,
+      "375": 6,
+      "355": 5,
+      "365": 5,
+      "373": 5,
+      "374": 5,
+      "377": 5,
+      "370": 4,
+      "371": 4,
+      "376": 4,
+      "335": 2,
+      "336": 2,
+      "357": 2,
+      "384": 2,
+      "363": 1,
+      "383": 1,
+      "385": 1,
+      "386": 1,
+      "387": 1,
+      "393": 1
+    }
+  },
+  "rules": [
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_operation",
+      "source_name": "createMOI",
+      "rule_text": "The createMOI IS operation is mapped to HTTP PUT on the resource URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "put",
+        "openapi_value": "PUT",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly stated in Table 12.1.1.1.1-1: the createMOI operation uses HTTP PUT and the listed resource URI. 2. The mapping is correct: the resource URI identifies an OpenAPI Paths Object entry, and the HTTP method is represented by the `put` Operation Object field with value `PUT`. 3. The retrieved OpenAPI context confirms that HTTP methods are modeled as operations under a path; it does not contradict this mapping. 4. This is a path-operation mapping, not a schema property. The section is a mapping section rather than a schema home, so the non-schema-home verdict does not require discarding it. The rule is owned by this section and is not an inherited or cross-section duplicate. 5. The rule has one path and one HTTP method, so it is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_operation",
+      "source_name": "getMOIAttributes",
+      "rule_text": "The getMOIAttributes IS operation is mapped to HTTP GET on the resource URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "get",
+        "openapi_value": "GET",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.1.1-1: getMOIAttributes is mapped to HTTP GET on the stated resource URI. 2. The rule is a path_operation rule, not a schema property, so the section's is_schema_home=false verdict does not disqualify it. 3. The mapping to the Paths Object path template and its get operation is valid and complete: the path identifies the resource URI and the operation field is get with HTTP method GET. 4. The OpenAPI context confirms that paths contain Path Item Objects and that a Path Item may define a GET operation. 5. The rule is atomic because its field contains one method, get; it should not be split. 6. It belongs to this mapping section and is not inherited, owned by another section, duplicated, absent, or unmappable. The path should ultimately be serialized as a valid OpenAPI path template, including any required leading slash and parameter declarations, but that does not invalidate this rule.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_operation",
+      "source_name": "modifyMOIAttributes",
+      "rule_text": "The modifyMOIAttributes IS operation is mapped to HTTP PATCH on the resource URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "patch",
+        "openapi_value": "PATCH",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The source table explicitly maps modifyMOIAttributes to both PUT and PATCH on the stated resource URI, so the PATCH mapping is directly supported. The rule targets a single HTTP method and a single path operation; it is therefore atomic and must not be split. The OpenAPI context defines `paths` and the `patch` Path Item operation, confirming that `paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.patch` is a valid mapping. This section is a mapping section rather than a schema home, and the rule is a path operation—not a schema property or inherited field—so it belongs in this section. The sibling PUT rule is complementary and does not make this rule a duplicate or incomplete.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_operation",
+      "source_name": "deleteMOI",
+      "rule_text": "The deleteMOI IS operation is mapped to HTTP DELETE on the resource URI {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "delete",
+        "openapi_value": "DELETE",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly stated in Table 12.1.1.1.1-1: deleteMOI is mapped to HTTP DELETE and uses the specified resource URI. 2. The OpenAPI mapping is appropriate: the URI identifies a path item under paths, and the delete field represents the DELETE operation. The value DELETE correctly captures the HTTP method. 3. The related deleteMOI description confirms that this is a deletion operation, supporting the DELETE mapping. 4. This is a mapping/resource rule, and the section is classified as a mapping section rather than a schema home. It is not an inherited property, schema-property rule, cross-section duplicate, or absence rule, so it belongs in the final rule set for this section. 5. The rule has one target method and one path operation; it is atomic and does not require splitting.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_parameter",
+      "source_name": "MnSRoot",
+      "rule_text": "The resource URI template for the createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI operations contains the path variable {MnSRoot}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "parameters[in=path,name=MnSRoot]",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "1. The rule is explicitly supported by Table 12.1.1.1.1-1: all four listed operations use a resource URI containing the variable {MnSRoot}. 2. The mapping is appropriate: {MnSRoot} is represented as a path parameter named MnSRoot with a string value under the resource path. OpenAPI path parameters are supported at the Path Item level and apply to the operations on that path. 3. The retrieved OpenAPI context confirms the use of parameters with in=path and name, and does not contradict this mapping. In a complete OpenAPI document, the path parameter would also need required=true, but that requirement is not part of this extracted rule and does not invalidate the mapping for the stated URI variable. 4. This section is a mapping/resource section, not a schema home, so the rule is not an improperly emitted schema property. It is also distinct from the sibling path parameters MnSVersion, URI-LDN-first-part, className, and id, and therefore is not a duplicate. 5. The rule targets one path parameter, MnSRoot, so it is atomic and should not be split. It belongs in the final rule set for this section.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_parameter",
+      "source_name": "MnSVersion",
+      "rule_text": "The resource URI template for the createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI operations contains the path variable {MnSVersion}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "parameters[in=path,name=MnSVersion]",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.1.1-1: the resource URI for createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI contains the path variable {MnSVersion}. 2. The mapping is appropriate: MnSVersion is a URI-template variable, so it maps to an OpenAPI path parameter named MnSVersion under the path item's parameters. The declared value string is also appropriate for the parameter schema type. 3. The OpenAPI context confirms that Path Item Objects support parameters applicable to all operations under the path, which is consistent with this parameter being shared by the four mapped operations. It does not contradict the rule. 4. This section is a mapping/resource section, and the rule is a path-parameter mapping rather than a schema property. Therefore, the is_schema_home=false verdict does not exclude it. The rule belongs to this section and does not duplicate an already validated rule; the sibling parameters are distinct path variables. 5. The rule targets one parameter, MnSVersion, so it is atomic and should not be split. 6. No discard condition applies.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_parameter",
+      "source_name": "URI-LDN-first-part",
+      "rule_text": "The resource URI template for the createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI operations contains the path variable {URI-LDN-first-part}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "parameters[in=path,name=URI-LDN-first-part]",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.97,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.1.1-1: the resource URI for createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI contains the variable {URI-LDN-first-part}. 2. The mapping is correct: {URI-LDN-first-part} is a path-template variable, and parameters[in=path,name=URI-LDN-first-part] is the appropriate OpenAPI representation. The value string is consistent with the variable being represented as a string-valued path parameter. 3. The OpenAPI context confirms that path-level parameters may apply to all operations under a path, which matches the rule's applicability to the four operations. The path item itself contains the corresponding URI template. 4. This section is a mapping/resource section, not a schema home, so the rule is not an improperly emitted schema property or inherited field. It is owned by this section's IS-to-SS resource URI mapping and does not duplicate an already validated rule. 5. The openapi_field identifies one parameter target only, so no split is needed. 6. The rule belongs in the final rule set and should not be discarded. Although a complete OpenAPI path-parameter definition would also normally include required=true and a schema declaration, those are implementation details not contradicted by this extracted rule; the asserted mapping to a string path parameter is valid.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_parameter",
+      "source_name": "className",
+      "rule_text": "The resource URI template for the createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI operations contains the path variable {className}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "parameters[in=path,name=className]",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.1.1-1, where the resource URI for createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI contains the template segment {className}={id}. 2. The OpenAPI mapping is correct: className is represented as a path parameter at the path-item level, and its value type is string. The URI also contains the corresponding {className} template expression. 3. The OpenAPI reference confirms that path-level parameters belong in paths.<path-template>.parameters and apply to all operations under that path, matching the four operations identified in the rule. 4. This is a path-parameter mapping rule, not a schema-property rule. Although the section is not a schema home, that restriction does not apply. The rule is owned by this resource-URI mapping section and is not an inherited field or a duplicate. 5. The rule targets one parameter, className, so it is atomic and does not require splitting. The OpenAPI parameter would ordinarily also require required: true because it is a path parameter, but that omission does not invalidate this extracted type mapping.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "331",
+      "section_title": "12.1.1.1.1 Introduction",
+      "rule_type": "path_parameter",
+      "source_name": "id",
+      "rule_text": "The resource URI template for the createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI operations contains the path variable {id}.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "parameters[in=path,name=id]",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.1.1.1.1-1, where the resource URI for createMOI, getMOIAttributes, modifyMOIAttributes, and deleteMOI ends with /{className}={id}. The OpenAPI mapping correctly identifies id as a path parameter on the resource path and maps its value type to string. The retrieved OpenAPI context confirms that path-level parameters are valid and applicable to all operations under the path. This is a path-parameter mapping, not a schema property, so the section's is_schema_home=False verdict does not disqualify it. The rule belongs to this mapping/resource section and does not duplicate the separately listed path parameters for MnSRoot, MnSVersion, URI-LDN-first-part, or className. The rule is atomic because its field targets one parameter, id; no split is required.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "333",
+      "section_title": "12.1.1.1.3 Operation getMOIAttributes",
+      "rule_type": "query_parameter",
+      "source_name": "filter",
+      "rule_text": "The optional SS query parameter `filter` is of type `Filter`.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}",
+        "openapi_field": "parameters[in=query,name=filter]",
+        "openapi_value": "$ref: '#/components/schemas/Filter'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Filter"
+          }
+        ]
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.1.1.1.3-1: `filter` is an optional SS query parameter whose type is `Filter`. Mapping it to `parameters[in=query,name=filter]` under the GET operation path is correct. Representing the parameter type with `$ref: '#/components/schemas/Filter'` is a valid OpenAPI mapping, assuming the `Filter` schema is defined in Components. The retrieved OpenAPI context confirms that query parameters are modeled as Parameter Objects with `in: query`, a name, and a schema or schema reference. This section owns the GET operation's input parameter mapping; the rule is not a schema property, inherited field, cross-section duplicate, or absence claim. The rule has one atomic target (`filter`) and does not need splitting.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "333",
+      "section_title": "12.1.1.1.3 Operation getMOIAttributes",
+      "rule_type": "query_parameter",
+      "source_name": "attributes",
+      "rule_text": "The optional SS query parameter `attributes` is an array of strings and uses form style with explode set to false.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}",
+        "openapi_field": "parameters[in=query,name=attributes]",
+        "openapi_value": "array",
+        "references": []
+      },
+      "reflector_score": 0.92,
+      "reflection_reasoning": "1. The rule is explicitly stated in Table 12.1.1.1.3-1: the optional `attributes` query parameter has type `array(string)`, style `form`, and `explode=false`.\n2. The mapping to `paths./{className}={id}` and `parameters[in=query,name=attributes]` is appropriate for the GET operation's query parameter. The OpenAPI value `array` correctly captures the top-level type; the string item type, optionality (`required=false`), style, and explode setting are additional parameter details that should also be represented if the mapping format supports them.\n3. The OpenAPI context confirms that query parameters are represented by Parameter Objects and that array parameters support `style` and `explode`. It specifically supports `style: form` and `explode: false`; optionality corresponds to `required: false`.\n4. This is an operation-level query parameter, not a schema property. Therefore, the pre-analysis verdict that this section is not a schema home does not require discarding it. The rule belongs to this operation section and is not an inherited-field or cross-section duplicate.\n5. The target is a single parameter field (`attributes`), so no split is appropriate.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "333",
+      "section_title": "12.1.1.1.3 Operation getMOIAttributes",
+      "rule_type": "query_parameter",
+      "source_name": "fields",
+      "rule_text": "The optional SS query parameter `fields` is an array of strings and uses form style with explode set to false.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}",
+        "openapi_field": "parameters[in=query,name=fields]",
+        "openapi_value": "array",
+        "references": []
+      },
+      "reflector_score": 0.94,
+      "reflection_reasoning": "1. The rule is explicitly stated in Table 12.1.1.1.3-1: the optional SS query parameter `fields` is an array of strings with `style: form` and `explode: false`.\n2. The rule type `query_parameter` is correct. The mapping targets the query parameter named `fields` under the GET operation path, and the value `array` correctly represents its OpenAPI schema type. The string item type, optionality, form style, and explode setting are expressed in the rule text and are valid OpenAPI Parameter constraints; an expanded mapping could additionally identify `schema.items.type: string`, `required: false`, `style: form`, and `explode: false`.\n3. The OpenAPI reference confirms that query parameters may use a schema, form style, and an explicit explode value. Although the retrieved examples use other parameter names and show the default `explode: true` for form style, OpenAPI permits explicitly setting `explode: false`, so there is no contradiction.\n4. This is an operation-specific query parameter, not a schema property. The section being a non-schema-home/resource section does not disqualify it. It belongs in this operation section and is not inherited, cross-section-owned, or a duplicate of a validated sibling.\n5. The rule has one target parameter (`fields`), so it is atomic and should not be split.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "333",
+      "section_title": "12.1.1.1.3 Operation getMOIAttributes",
+      "rule_type": "query_parameter",
+      "source_name": "scope",
+      "rule_text": "The optional SS query parameter `scope` is of type `Scope` and uses form style with explode set to true.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}",
+        "openapi_field": "parameters[in=query,name=scope]",
+        "openapi_value": "$ref: '#/components/schemas/Scope'; required: false; style: form; explode: true",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Scope"
+          }
+        ]
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "1. The section explicitly defines `scope` as an optional SS query parameter of type `Scope`, with form style and explode set to true. 2. The mapping targets the GET operation's query parameter named `scope` on `paths./{className}={id}`, which is the appropriate OpenAPI location. The `$ref` to `#/components/schemas/Scope` correctly represents the declared `Scope` type; `required: false`, `style: form`, and `explode: true` are also correct. 3. The OpenAPI context confirms that query parameters may use a schema reference and that `style` and `explode` are valid Parameter Object fields. The related 3GPP context further confirms that `scope` is a structured parameter composed of `scopeType` and `scopeLevel`, supporting a dedicated `Scope` schema. 4. This is an operation-level query-parameter rule owned by this operation section, not a schema property. The section is not a schema home, but that restriction does not apply. It is not inherited, a duplicate, or an absence rule. 5. The rule has one target parameter and is atomic; no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "333",
+      "section_title": "12.1.1.1.3 Operation getMOIAttributes",
+      "rule_type": "response",
+      "source_name": "getMOIAttributes",
+      "rule_text": "The HTTP GET operation returns a mandatory response body containing an array of `Resource` objects with status code 200.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.get.responses",
+        "openapi_field": "200",
+        "openapi_value": "array of $ref: '#/components/schemas/Resource'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Resource"
+          }
+        ]
+      },
+      "reflector_score": 0.86,
+      "reflection_reasoning": "1. The section explicitly defines the HTTP GET output as a mandatory response body containing Resource or array(Resource), and marks the status output as mandatory. Thus the response rule is grounded in the section. 2. Mapping the successful response to paths./{className}={id}.get.responses with field 200 and an array of '#/components/schemas/Resource' is valid OpenAPI: Responses Object entries are keyed by quoted HTTP status codes and the response content schema may be an array whose items use a $ref. 3. The retrieved OpenAPI context confirms that responses are required and that status-code keys such as 200 map to Response Objects. It does not independently require status 200 specifically, so the choice of 200 is an inference from the successful GET convention and should receive validation attention. 4. This is an operation response rule, not a schema property. The section's is_schema_home=False verdict therefore does not disqualify it; that restriction applies to schema properties or required fields. The rule belongs to this operation section and is not an inherited or cross-section duplicate. 5. The openapi_field is the single atomic target 200, so no split is appropriate.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "333",
+      "section_title": "12.1.1.1.3 Operation getMOIAttributes",
+      "rule_type": "response",
+      "source_name": "getMOIAttributes",
+      "rule_text": "The HTTP GET operation may return an `ErrorResponse` body for a 4XX error status.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.get.responses",
+        "openapi_field": "4XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.86,
+      "reflection_reasoning": "The section explicitly defines an optional ErrorResponse as an output response body, and the related operation context states that failure information is provided in the output parameters. Therefore, a response rule belongs to this operation section; it is not a schema property and the section's non-schema-home status does not disqualify it. The mapping to paths./{className}={id}.get.responses with a 4XX response key and a reference to #/components/schemas/ErrorResponse is valid. OpenAPI permits the 4XX wildcard response range and permits a response value to be a Reference Object. The source does not explicitly enumerate 4XX versus other failure status ranges, so the specific 4XX classification is a reasonable but somewhat inferential mapping. The rule is atomic because its field contains only one target, 4XX, and should not be split.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "333",
+      "section_title": "12.1.1.1.3 Operation getMOIAttributes",
+      "rule_type": "response",
+      "source_name": "getMOIAttributes",
+      "rule_text": "The HTTP GET operation may return an `ErrorResponse` body for a 5XX error status.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.get.responses",
+        "openapi_field": "5XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.82,
+      "reflection_reasoning": "1. The rule is grounded in Section 12.1.1.1.3: the HTTP GET output mapping includes an optional error response body of type ErrorResponse, and the operation includes response status codes. The related Results text also states that failures provide an indication in the output parameters. However, the supplied section does not explicitly enumerate 5XX; it only identifies an optional error response generally. The 5XX designation is therefore a reasonable but not fully explicit specialization, supported by the existing 4XX sibling rule and standard HTTP error-status modeling. 2. The OpenAPI mapping is valid: an operation's responses object may use the quoted wildcard status key 5XX, and the response value may reference a schema through '#/components/schemas/ErrorResponse'. 3. The OpenAPI context confirms that 5XX is an allowed response-range key and that responses are defined under an operation's required responses object. 4. This rule belongs in this section because it describes the response of the GET operation itself. It is not a schema property, is not inherited, and is not owned by another type-definition section. 5. The rule has one target status range, 5XX, so it is atomic and should not be split. 6. It should not be discarded; the only issue is that the precise 5XX classification is somewhat implicit rather than directly stated in the table.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "335",
+      "section_title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "rule_type": "request_body",
+      "source_name": "modifyMOIAttributes",
+      "rule_text": "The mandatory modificationList input parameter is mapped to the HTTP PUT request body and is represented as a Resource using application/json.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.put.requestBody",
+        "openapi_field": "content",
+        "openapi_value": "application/json",
+        "references": []
+      },
+      "reflector_score": 0.78,
+      "reflection_reasoning": "1. The rule is grounded in Table 12.1.1.1.4.1-1: modificationList is mandatory, is located in the request body, and has SS type Resource. 2. This section owns the HTTP PUT operation mapping, so a requestBody rule belongs here; it is not an inherited schema property and the section is not required to be a schema home for this rule type. 3. Mapping requestBody.content to application/json is valid OpenAPI and is consistent with representing the Resource payload as JSON, although the supplied section text explicitly states the Resource type but does not itself explicitly name application/json. 4. The mapping is incomplete for the word 'mandatory': OpenAPI would additionally require requestBody.required: true. That should be represented by a complementary rule or an amended mapping, not by splitting this atomic content rule. 5. The retrieved OpenAPI context confirms that requestBody content is represented as a media-type map and that application/json is a valid media type, but it does not independently establish the 3GPP-specific Resource schema. The rule should therefore remain, with priority validation for the JSON media type and the missing required flag.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "335",
+      "section_title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "rule_type": "response",
+      "source_name": "modifyMOIAttributes",
+      "rule_text": "The HTTP PUT operation uses the default response to represent either a Resource response body for attributeListOut or an ErrorResponse response body for error, expressed as a oneOf schema.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.put.responses",
+        "openapi_field": "default",
+        "openapi_value": "oneOf: [$ref: '#/components/schemas/Resource', $ref: '#/components/schemas/ErrorResponse']",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Resource"
+          },
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.2,
+      "reflection_reasoning": "1. The section explicitly maps attributeListOut to a response body of type Resource and error to a response body of type ErrorResponse. Thus, the existence of both response payload types is grounded in the section. 2. However, the section does not state that both are represented by the OpenAPI default response or combined in a oneOf schema. It distinguishes a successful Resource response from an ErrorResponse associated with error status handling. 3. The OpenAPI mapping is invalid/incomplete: responses.default is a Response Object, and oneOf is a Schema Object keyword that would need to appear under response content, such as content.application/json.schema.oneOf. The mapping also omits the required response status-code distinction and media type. 4. This is a response rule for the PUT operation, so it is owned by this mapping section rather than a schema definition section; the non-schema-home verdict does not independently disqualify it. Nevertheless, the rule as written must be removed because its OpenAPI mapping and default-response semantics are not valid. It should be replaced by correctly mapped success and error response rules, with the appropriate status-code ranges or codes. 5. The openapi_field is the single target default, so no split is suggested under the stated split rules; correcting the response into success and error rules is a replacement/mapping correction, not a literal split of a multi-target field.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "Force-included at max attempts. Failed: Correct the PUT response mapping: do not use `default` with a `oneOf` to combine the successful `Resource` response and the error `ErrorResponse`. Emit separate response rules for the documented success status and error status/range, with `Resource` and `ErrorResponse` respectively under the response content media type schema (for example, `content.application/json.schema`). Use `default` only for an explicitly documented catch-all response.",
+      "validation_passed": false
+    },
+    {
+      "section_id": "336",
+      "section_title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "rule_type": "request_body",
+      "source_name": "modifyMOIAttributes",
+      "rule_text": "The mandatory HTTP PATCH request body may use application/merge-patch+json and contains a Resource representation.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{MnSVersion}/{URI-LDN-first-part}/{className}={id}.patch.requestBody",
+        "openapi_field": "content",
+        "openapi_value": "application/merge-patch+json",
+        "references": []
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Section 12.1.1.1.4.2: application/merge-patch+json is listed as an available PATCH request-body media type, with Resource as its request-body type. The request body is mandatory because modificationList is marked mandatory. 2. The mapping to the PATCH operation's requestBody.content is correct: the media type is the content map key, and application/merge-patch+json is a valid media type value. The mapping does not explicitly encode the Resource schema, so it is somewhat incomplete if schema typing is required as a separate rule, but that omission does not invalidate this media-type rule. 3. The retrieved OpenAPI context does not contradict the mapping. Its listed GitHub media types are unrelated and do not establish this specific media type, but the generic OpenAPI response/content model is consistent with using media-type keys. 4. This is an operation request-body mapping, not a schema_property. Therefore, the section's is_schema_home=false verdict does not require discarding it; the rule belongs to this PATCH mapping section. It is also distinct from the sibling request-body rules for the other three PATCH media types. 5. The target is one media type in the content field, so the rule is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "336",
+      "section_title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "rule_type": "response",
+      "source_name": "modifyMOIAttributes",
+      "rule_text": "If the MnS producer cannot honor the PATCH request, such as because of a malformed request or unsupported patch operation, it shall return an appropriate error response such as HTTP 400 Bad Request with an ErrorResponse body.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{MnSVersion}/{URI-LDN-first-part}/{className}={id}.patch.responses",
+        "openapi_field": "400",
+        "openapi_value": "ErrorResponse",
+        "references": []
+      },
+      "reflector_score": 0.93,
+      "reflection_reasoning": "The rule is explicitly grounded in Section 12.1.1.1.4.2: an unhonourable or malformed PATCH request shall result in an appropriate error response, such as HTTP 400 Bad Request, and the output mapping identifies ErrorResponse as the error body. The OpenAPI mapping to the PATCH operation's responses object and status code 400 is appropriate; OpenAPI permits a 400 response whose response content/schema represents ErrorResponse. This is an operation response rule, not a schema property, so the section's is_schema_home=False verdict does not disqualify it. The rule belongs to this PATCH mapping section and is not an inherited field, cross-section duplicate, or absence rule. The single status code 400 is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "355",
+      "section_title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "rule_type": "response",
+      "source_name": "createMOI",
+      "rule_text": "The PUT operation may return status code 204 No Content when the replaced resource representation is identical to the representation in the request; the response has no message body.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.put.responses",
+        "openapi_field": "204",
+        "openapi_value": "No Content; no response message body",
+        "references": []
+      },
+      "reflector_score": 0.97,
+      "reflection_reasoning": "1. The rule is explicitly stated in the PUT response table: status 204 No Content may be returned only when the replaced representation is identical to the request representation, and the response has no message body. 2. The mapping to paths./{className}={id}.put.responses with field 204 is correct. In OpenAPI, the response can be represented with a description and no content member, which captures the absence of a response body; the identity condition should be retained in the response description. 3. The retrieved OpenAPI context confirms that operation responses are defined under the operation's responses object and does not contradict this mapping. The unrelated 200, 201, 4XX, and 5XX responses do not duplicate the 204 response. 4. This is an operation-level response rule owned by the HTTP PUT resource section, not a schema property or inherited field, so it belongs in the final rule set. 5. The target is a single status code, 204, so no split is appropriate.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "355",
+      "section_title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "rule_type": "response",
+      "source_name": "createMOI",
+      "rule_text": "The PUT operation returns a Resource representation with status code 200 OK when the resource is replaced or updated.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.put.responses",
+        "openapi_field": "200",
+        "openapi_value": "{\"description\":\"Resource representation returned when the resource is replaced or updated\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/Resource\"}}}}",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Resource"
+          }
+        ]
+      },
+      "reflector_score": 0.95,
+      "reflection_reasoning": "1. The rule is explicitly grounded in the PUT response table: a Resource response with status code 200 OK is mandatory when the resource is replaced or updated, and the resource representation is returned in the response body. 2. The mapping to paths./{className}={id}.put.responses with field 200 is correct and atomic. The Resource response body is appropriately represented using an application/json content schema referencing #/components/schemas/Resource. 3. The OpenAPI context confirms that operation responses may define a 200 response with content and a schema reference. It also supports the use of status-code response keys. 4. This is a response rule owned by this HTTP PUT section, not a schema-property rule; therefore the is_schema_home=false verdict does not require discarding it. It does not duplicate the separately listed 201, 204, 4XX, or 5XX response rules. 5. The field contains only one target, 200, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "355",
+      "section_title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "rule_type": "response",
+      "source_name": "createMOI",
+      "rule_text": "The PUT operation returns a Resource representation with status code 201 Created when the resource is created.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.put.responses",
+        "openapi_field": "201",
+        "openapi_value": "{\"description\":\"Created\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/Resource\"}}}}",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Resource"
+          }
+        ]
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "1. The rule is explicitly grounded in the PUT response table: a Resource is returned with status code 201 Created when the resource is created, and its representation is included in the response body. 2. The mapping targets the PUT operation's responses object and the atomic 201 response field. The description correctly identifies the response as Created, and the application/json content schema correctly maps the returned Resource representation to #/components/schemas/Resource. 3. The retrieved OpenAPI context confirms that response status codes may be defined as response fields and that response bodies may reference schemas. It does not show this exact PUT path, but it does not contradict the mapping. 4. This is a response rule owned by the current HTTP PUT operation section, not a schema property, inherited field, or cross-section duplicate. The section's is_schema_home=false verdict therefore does not require discarding it. 5. The rule has one status-code target (201), so it is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "355",
+      "section_title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "rule_type": "response",
+      "source_name": "createMOI",
+      "rule_text": "The PUT operation may return an ErrorResponse with a 4XX status code in case of an error.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.put.responses",
+        "openapi_field": "4XX",
+        "openapi_value": "{\"description\":\"Error response for a 4XX client error\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/ErrorResponse\"}}}}",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly grounded in the PUT response table: ErrorResponse is returned for an error with a 4xx/5xx response code, and the optional status is correctly represented as a 4XX response range. The mapping targets the PUT operation's responses object at paths./{className}={id}.put.responses, which is the appropriate OpenAPI owner for an operation response. OpenAPI permits the 4XX wildcard response code and supports an ErrorResponse schema reference in the response content. This is not a schema property or inherited field, so the section's is_schema_home=false verdict does not require discarding it. The existing 5XX rule is a distinct counterpart, not a reason to split or discard this atomic 4XX rule.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "355",
+      "section_title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "rule_type": "response",
+      "source_name": "createMOI",
+      "rule_text": "The PUT operation may return an ErrorResponse with a 5XX status code in case of an error.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.put.responses",
+        "openapi_field": "5XX",
+        "openapi_value": "{\"description\":\"Error response for a 5XX server error\",\"content\":{\"application/json\":{\"schema\":{\"$ref\":\"#/components/schemas/ErrorResponse\"}}}}",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.1.1.3.2.1.3.1-3, which specifies that an ErrorResponse may be returned for 4xx/5xx errors. The extracted 5XX target is a valid, atomic specialization of that range and is not a request/response schema property. The mapping to paths./{className}={id}.put.responses with the OpenAPI response-range field 5XX is valid; OpenAPI permits the uppercase 5XX wildcard for server-error responses, and the ErrorResponse component reference is appropriate. This resource section owns the PUT operation response mapping, so the rule is not displaced to a schema-definition section or another operation section. The existing 4XX rule is the natural counterpart, not a duplication or reason to split this rule. The related context discusses generic success/failure behavior and does not contradict the rule.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "357",
+      "section_title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "rule_type": "response",
+      "source_name": "modifyMOIAttributes",
+      "rule_text": "The PATCH operation returns an ErrorResponse body for a 5XX error status.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.patch.responses",
+        "openapi_field": "5XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The source table explicitly specifies an ErrorResponse for response codes 4xx/5xx, returned in case of an error. The assessed 5XX rule is therefore a valid, specific instantiation of the source requirement. 2. The mapping is correct: the PATCH operation's responses object is at paths./{className}={id}.patch.responses, and 5XX is an allowed OpenAPI response-range key. Referencing '#/components/schemas/ErrorResponse' correctly maps the specified response body. 3. The OpenAPI context confirms that 5XX response ranges are permitted and that a response may reference a schema. The related 3GPP context, which generally describes failure output parameters, does not contradict this resource-level ErrorResponse mapping. 4. This is a response rule owned by the current HTTP PATCH resource section, not a schema_property, inherited field, or cross-section duplicate. It belongs in the final rule set. 5. The openapi_field is the single atomic target 5XX, so no split is appropriate. The sibling 4XX rule already exists and is a separate co-existing rule.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "357",
+      "section_title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "rule_type": "response",
+      "source_name": "modifyMOIAttributes",
+      "rule_text": "The PATCH operation returns an ErrorResponse body for a 4XX error status.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{className}={id}.patch.responses",
+        "openapi_field": "4XX",
+        "openapi_value": "{description: Error response, content: {application/json: {schema: {$ref: '#/components/schemas/ErrorResponse'}}}}",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is directly grounded in the section's response table: ErrorResponse is returned for 4xx/5xx error responses. The already validated 5XX rule covers the sibling range, so this rule correctly represents the distinct 4XX response target. 2. The mapping to paths./{className}={id}.patch.responses with field 4XX is valid OpenAPI: response-range keys use uppercase X, and 4XX represents 400–499 responses. The response value supplies an appropriate description and an application/json schema reference to ErrorResponse. 3. The OpenAPI reference confirms that 4XX is an allowed response-range key and that response content may reference a schema. 4. This is an operation response rule owned by this PATCH resource-operation section; it is not a schema property, inherited field, absence rule, or cross-section duplicate. The fact that this section is not a schema home does not disqualify an operation response mapping. 5. The openapi_field contains only one target, 4XX, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "358",
+      "section_title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "rule_type": "query_parameter",
+      "source_name": "scope",
+      "rule_text": "The DELETE method supports the optional scope URI query parameter of data type Scope; its style is form and explode is true.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+        "openapi_field": "parameters[in=query,name=scope]",
+        "openapi_value": "$ref: '#/components/schemas/Scope'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Scope"
+          }
+        ]
+      },
+      "reflector_score": 0.68,
+      "reflection_reasoning": "1. The rule is explicitly supported by the DELETE section's query-parameter table: scope has data type Scope, is optional, and specifies style=form and explode=true. 2. The query-parameter target is correctly identified as a parameter with in=query and name=scope, and the Scope schema reference is appropriate. Optionality is consistent with OpenAPI's default of required=false; form style and explode=true are also the OpenAPI defaults for query parameters. 3. The OpenAPI context confirms that query parameters are represented through Parameter Objects in a parameters array. 4. The mapping is potentially incomplete in scope: because the rule applies specifically to DELETE, it should preferably be attached to the DELETE operation's parameters rather than an unqualified Path Item parameters array, which would apply to all operations on the path. The mapping also does not explicitly encode style or explode, although their OpenAPI defaults match the rule. 5. The rule has one target parameter only and is atomic; it should not be split. 6. This is a valid rule for this resource/operation section, not a schema property, inherited field, cross-section duplicate, or absence rule. It should be retained subject to priority validation of the operation-level mapping.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "358",
+      "section_title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "rule_type": "response",
+      "source_name": "deleteMOI",
+      "rule_text": "The DELETE operation returns an array of deleted-resource URIs with status code 200 OK when query parameters are present and one or multiple resources are deleted.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.delete.responses",
+        "openapi_field": "200",
+        "openapi_value": "array(Uri)",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly stated in Table 12.1.1.3.2.1.3.4-3: an array(Uri) response with status code 200 OK is returned when query parameters are present and one or multiple resources are deleted. 2. The mapping targets the DELETE operation's responses object and the single 200 response field, with an array of URI values, which is an appropriate OpenAPI representation (array schema with string/URI items). 3. The retrieved OpenAPI context confirms that DELETE responses belong under paths...delete.responses and that response bodies and status codes are modeled there. It does not contradict the rule, although it provides only general DELETE semantics rather than this exact 200 behavior. 4. This is a response rule owned by this HTTP DELETE resource section, not an inherited schema property, schema-home rule, absence rule, or cross-section duplicate. The presence of separate 204, 4XX, and 5XX sibling rules does not make this rule incomplete. 5. The rule targets one status code, 200, so it is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "358",
+      "section_title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "rule_type": "response",
+      "source_name": "deleteMOI",
+      "rule_text": "The DELETE operation returns no content with status code 204 No Content when no query parameters are present and only one resource is deleted.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.delete.responses",
+        "openapi_field": "204",
+        "openapi_value": "no content",
+        "references": []
+      },
+      "reflector_score": 0.9,
+      "reflection_reasoning": "1. The rule is explicitly stated in Table 12.1.1.3.2.1.3.4-3: a 204 No Content response is returned when no query parameters are present and only one resource is deleted, and the message body is empty. 2. The mapping to the DELETE operation's responses object, status code 204, with no response content is correct. OpenAPI represents this with a 204 response whose content is omitted or empty. 3. The retrieved OpenAPI context confirms that response status codes and response bodies belong under an operation's responses object; it does not contradict this mapping. 4. This is a resource-operation response rule, not a schema property, and the section is the owner of the DELETE operation behavior. It is therefore not excluded by the non-schema-home verdict. The conditional relationship to query parameters and deletion cardinality is described in the rule text, although OpenAPI does not directly encode that condition through the 204 response mapping alone. 5. The rule targets one status code, 204, so it is atomic and must not be split.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "358",
+      "section_title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "rule_type": "response",
+      "source_name": "deleteMOI",
+      "rule_text": "The DELETE operation returns an ErrorResponse with a 4XX status code in case of an error.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.delete.responses",
+        "openapi_field": "4XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The source section explicitly specifies an ErrorResponse for 4xx/5xx responses in case of an error. This rule correctly captures the 4XX portion, while the separate 5XX rule covers the sibling status range. The mapping to the DELETE operation's responses object, with a 4XX response referencing components/schemas/ErrorResponse, is valid and complete. The retrieved OpenAPI context confirms that response mappings belong under an operation's responses object and does not contradict this mapping. The section is a resource/operation section rather than a schema home, but this is a response rule, not a schema property, so that restriction does not apply. The rule is atomic because its field contains only one target status range.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "358",
+      "section_title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "rule_type": "response",
+      "source_name": "deleteMOI",
+      "rule_text": "The DELETE operation returns an ErrorResponse with a 5XX status code in case of an error.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.delete.responses",
+        "openapi_field": "5XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.3.2.1.3.4-3, which specifies ErrorResponse for 4xx/5xx responses returned in case of an error. The already validated 4XX sibling covers the 4xx case, so this atomic rule correctly covers the distinct 5xx case. 2. The mapping to the DELETE operation's responses collection is appropriate: paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.delete.responses, with 5XX mapped to the ErrorResponse schema reference. 3. The rule is a response rule, not a schema property, so the pre-analysis verdict that this section is not a schema home does not disqualify it. It is owned by this HTTP DELETE operation section and is not an inherited field or cross-section duplicate. 4. The retrieved OpenAPI context discusses operation references and runtime expressions rather than this specific DELETE response, so it neither materially confirms nor contradicts the mapping. 5. The openapi_field contains only one target, 5XX; it is atomic and must not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "358",
+      "section_title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "rule_type": "request_body",
+      "source_name": "deleteMOI",
+      "rule_text": "The DELETE method supports no request body data structure; the request body data type is n/a.",
+      "openapi_mapping": {
+        "openapi_object": "paths.{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}.delete.requestBody",
+        "openapi_field": "content",
+        "openapi_value": "n/a",
+        "references": []
+      },
+      "reflector_score": 0.0,
+      "reflection_reasoning": "1. The section explicitly states that the DELETE request-body data structure is 'n/a', so the extraction is grounded in the source text. 2. However, the OpenAPI mapping is not valid: `requestBody.content` must be a map of media types to Media Type Objects, and `n/a` is not an OpenAPI value for that field. 3. OpenAPI represents an operation with no request body by omitting `requestBody`; it does not represent the absence of a body using `content: n/a`. 4. Therefore, although the source statement is correct, this rule is not mappable to OpenAPI as expressed and must not be included in the final rule set. This is unrelated to schema ownership or inherited fields; the problem is the attempted mapping of an absence to a concrete `content` value. 5. The rule has one target field, `content`, so no split is appropriate.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "Force-included at max attempts. Failed: Discard — absence of a request body is not a valid OpenAPI request_body rule; omit the requestBody object.",
+      "validation_passed": false
+    },
+    {
+      "section_id": "363",
+      "section_title": "12.1.1.3.2.4.2 URI",
+      "rule_type": "path_parameter",
+      "source_name": "notificationTarget",
+      "rule_text": "The resource URI is {notificationTarget}; notificationTarget is the URI of the notification target on the MnS consumer.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{notificationTarget}",
+        "openapi_field": "parameters[in=path,name=notificationTarget]",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.9,
+      "reflection_reasoning": "The rule is explicitly grounded in the section: the resource URI is {notificationTarget}, and the URI-variable table defines notificationTarget as the URI of the notification target on the MnS consumer. The mapping to the path template /{notificationTarget} and to a path parameter named notificationTarget is appropriate. The OpenAPI Path Item context confirms that path-level parameters are valid, and a path parameter is the correct representation for a variable embedded in the URI. The pre-analysis verdict that this section is not a schema home does not disqualify the rule because this is a path_parameter rule, not a schema_property or required-property rule. The scalar value type string is reasonable, although the URI semantics could additionally be represented with format: uri, and OpenAPI path parameters generally require required: true; these are validation details rather than grounds for discarding the rule. The rule is atomic because its field identifies one path parameter.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "365",
+      "section_title": "12.1.1.3.2.4.3.1 POST",
+      "rule_type": "path_operation",
+      "source_name": "notifyMOICreation",
+      "rule_text": "The POST method is supported on the notification-target resource URI.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{notificationTarget}",
+        "openapi_field": "post",
+        "openapi_value": "POST",
+        "references": []
+      },
+      "reflector_score": 0.9,
+      "reflection_reasoning": "1. The rule is clearly implied by the section: the section is specifically the POST operation for this resource, and its normative text repeatedly states what “this method” shall support, including request and response behavior. 2. The mapping is correct: the resource path is represented by the OpenAPI Paths Object key `/{notificationTarget}`, the operation is the `post` field, and the value `POST` correctly identifies the HTTP method. 3. The retrieved context lists the notification data structures associated with this operation and does not contradict the existence of a POST operation. 4. This is a resource/path-operation rule, not a schema property, and the section is the appropriate owner of the operation. It is not inherited, a duplicate, or an absence claim, so it belongs in the final rule set. 5. The OpenAPI field contains one method only (`post`), so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "365",
+      "section_title": "12.1.1.3.2.4.3.1 POST",
+      "rule_type": "response",
+      "source_name": "notifyMOICreation",
+      "rule_text": "The POST operation returns no message body with status code 204 No Content when the notification is processed successfully.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{notificationTarget}.post.responses",
+        "openapi_field": "204",
+        "openapi_value": "No Content",
+        "references": []
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "The rule is explicitly grounded in table 12.1.1.3.2.4.3.1-3: response code 204 No Content applies on success and no message body is returned. It is correctly mapped to the POST operation's responses object at paths./{notificationTarget}.post.responses, with status-code field 204 and the value/description 'No Content'. A 204 response is also consistent with OpenAPI, where the response description identifies the successful no-content response and no content schema is provided. The section is a resource/operation section rather than a schema home, but this rule is an operation response rule, not a schema property. It does not duplicate the sibling 4XX or 5XX rules and is atomic because it targets one status code.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "365",
+      "section_title": "12.1.1.3.2.4.3.1 POST",
+      "rule_type": "response",
+      "source_name": "notifyMOICreation",
+      "rule_text": "The POST operation returns an ErrorResponse body for a 4XX failure status.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{notificationTarget}.post.responses",
+        "openapi_field": "4XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.1.1.3.2.4.3.1-3, which states that an ErrorResponse is returned for 4xx/5xx failure responses. The 4XX portion is correctly represented as a response under paths./{notificationTarget}.post.responses, with the response body mapped to the ErrorResponse schema reference. The sibling 5XX rule already covers the other part of the specification statement, so this rule is complete and should not be split. The OpenAPI context confirms that operation responses are defined under the operation's responses object and that response content may reference a component schema. Although this section is not a schema home, the rule defines an operation response mapping rather than a schema property, so the schema-home restriction does not disqualify it.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "365",
+      "section_title": "12.1.1.3.2.4.3.1 POST",
+      "rule_type": "response",
+      "source_name": "notifyMOICreation",
+      "rule_text": "The POST operation returns an ErrorResponse body for a 5XX failure status.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{notificationTarget}.post.responses",
+        "openapi_field": "5XX",
+        "openapi_value": "$ref: '#/components/schemas/ErrorResponse'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ErrorResponse"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The source table explicitly specifies ErrorResponse for both 4xx and 5xx failure responses, with the error object returned in failure cases. Therefore, the 5XX rule is grounded in this section. 2. The rule is atomic: its field targets only 5XX, so it must not be split. The separate 4XX sibling already exists and is not part of this rule. 3. The mapping to paths./{notificationTarget}.post.responses and an ErrorResponse schema reference is appropriate for an operation response. The OpenAPI context confirms that responses are defined on the operation and that response bodies can be represented using schema references. 4. This is a response rule owned by the POST operation section, not an inherited schema property and not a schema-home rule. The is_schema_home=False verdict does not require discarding it because the rule is not a schema_property. It belongs in the final rule set.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "365",
+      "section_title": "12.1.1.3.2.4.3.1 POST",
+      "rule_type": "request_body",
+      "source_name": "notifyMOIAttributeValueChanges",
+      "rule_text": "The POST request body supports the mandatory NotifyAttributeValueChanges data structure. It uses application/json, with the payload schema referenced as NotifyAttributeValueChanges.",
+      "openapi_mapping": {
+        "openapi_object": "paths./{notificationTarget}.post.requestBody",
+        "openapi_field": "content",
+        "openapi_value": "application/json",
+        "references": []
+      },
+      "reflector_score": 0.82,
+      "reflection_reasoning": "1. The rule is explicitly grounded in the section: Table 12.1.1.3.2.4.3.1-2 lists NotifyAttributeValueChanges as a mandatory (M) POST request-body data structure. The related specification context also confirms this notification type.\n2. The mapping to paths./{notificationTarget}.post.requestBody.content with value application/json is valid: OpenAPI represents supported request media types under Request Body Object.content, and the retrieved context states that content is required.\n3. The payload schema reference to NotifyAttributeValueChanges is conceptually appropriate, but it is not represented in the supplied mapping, which only identifies the media type. The schema should additionally be mapped under application/json.schema.$ref, if that schema is defined in the component schemas.\n4. The separate request_body.required rule correctly handles the mandatory nature of the request body; this rule need not duplicate that boolean requirement. The rule is not a schema_property and therefore is not disqualified by is_schema_home=False. It belongs to this resource operation rather than to the schema definition section.\n5. The rule has one target media type, application/json, so it is atomic and should not be split.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "369",
+      "section_title": "12.1.1.4.1a.1 Type Resource",
+      "rule_type": "schema_property",
+      "source_name": "id",
+      "rule_text": "The Resource schema shall define id as a mandatory string identifying the resource object.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Resource",
+        "openapi_field": "properties.id",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.82,
+      "reflection_reasoning": "1. The source table explicitly defines Resource.id as data type string and marks it mandatory (M), so the rule is grounded in the section. 2. This section is the schema home for Resource, so a schema_property rule for components/schemas/Resource belongs here and is not an inherited or cross-section rule. 3. The mapping properties.id with value string correctly represents the property type. However, it does not fully represent the word mandatory; that constraint should also be represented through required: [id], which is addressed by the separate required rule listed for this section. 4. The OpenAPI context confirms that reusable schemas are defined under components.schemas and supports schema properties, with no contradiction. 5. The rule is atomic because it targets one property, so no split is needed. It should remain in the final set, although its mandatory aspect requires the complementary required mapping.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "369",
+      "section_title": "12.1.1.4.1a.1 Type Resource",
+      "rule_type": "schema_property",
+      "source_name": "objectClass",
+      "rule_text": "The Resource schema shall define objectClass as an optional string identifying the object class of the resource object.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Resource",
+        "openapi_field": "properties.objectClass",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "1. The source table explicitly defines objectClass with data type string and support qualifier O (optional), and describes it as the object class of the resource object. 2. The mapping to components/schemas/Resource.properties.objectClass with value string is correct. Optionality is represented by omitting objectClass from the schema's required list; this rule does not incorrectly add it as required. 3. The OpenAPI context confirms that Schema Object properties use schema definitions and support the string type. Nothing in the retrieved context contradicts the mapping. 4. The pre-analysis verdict identifies this section as the schema home, and objectClass is not listed as inherited, so this rule belongs in this section. 5. The field targets one property and is atomic; no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "369",
+      "section_title": "12.1.1.4.1a.1 Type Resource",
+      "rule_type": "schema_property",
+      "source_name": "objectInstance",
+      "rule_text": "The Resource schema shall define objectInstance as an optional Dn identifying the object instance of the resource object.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Resource",
+        "openapi_field": "properties.objectInstance",
+        "openapi_value": "$ref: 'TS28623_ComDefs.yaml#/components/schemas/Dn'",
+        "references": [
+          {
+            "file": "TS28623_ComDefs.yaml",
+            "schema_name": "Dn"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The source table explicitly defines objectInstance with data type Dn and status O (optional) as the object instance of the resource object. 2. The rule type schema_property is appropriate because this section is the schema home for Resource. 3. The mapping to components/schemas/Resource.properties.objectInstance is correct. Referencing TS28623_ComDefs.yaml#/components/schemas/Dn is an appropriate OpenAPI Reference Object mapping for the Dn type. 4. Optionality is correctly represented by defining the property without including objectInstance in the Resource schema's required list; the sibling required rule lists the mandatory attributes and does not include it. 5. The OpenAPI context permits Schema Object properties and referenced schemas, and does not contradict this mapping. 6. The field targets one property only, so no split is needed. This rule belongs in the final rule set for this section.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "369",
+      "section_title": "12.1.1.4.1a.1 Type Resource",
+      "rule_type": "schema_property",
+      "source_name": "attributes",
+      "rule_text": "The Resource schema shall define attributes as a mandatory object whose members are the IOC attributes, except for id, objectClass, and objectInstance.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Resource",
+        "openapi_field": "properties.attributes",
+        "openapi_value": "object",
+        "references": []
+      },
+      "reflector_score": 0.92,
+      "reflection_reasoning": "1. The source table explicitly defines `attributes` as an `object`, marks it mandatory (`M`), and states that its members are the IOC attributes except `id`, `objectClass`, and `objectInstance`.\n2. This section is the schema home for `Resource`, so the rule belongs here and is not an inherited-field re-emission or a rule owned by another section.\n3. The mapping `components/schemas/Resource.properties.attributes` with value `object` correctly captures the property and its object type. The mandatory aspect is represented separately by the already-listed `required` rule, while the exception for the object members should be retained as schema documentation/description if needed.\n4. The OpenAPI context confirms that schema properties use Schema Objects and that required properties are represented through `required`; it neither contradicts nor invalidates this rule.\n5. The field targets one property only, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "369",
+      "section_title": "12.1.1.4.1a.1 Type Resource",
+      "rule_type": "schema_property",
+      "source_name": "required",
+      "rule_text": "The mandatory Resource attributes are id, attributes, and the name-contained-objects map represented by n/a.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Resource",
+        "openapi_field": "required",
+        "openapi_value": "[id, attributes, n/a]",
+        "references": []
+      },
+      "reflector_score": 0.9,
+      "reflection_reasoning": "1. The source table explicitly marks id, attributes, and n/a (the name-contained-objects map) as mandatory, so the rule is grounded in this section. 2. This section is the schema home for Resource, so a schema_property rule belongs here; the pre-analysis verdict does not indicate that these fields are inherited or owned elsewhere. 3. Mapping the mandatory attributes to the Resource schema's required field is appropriate, and the sibling rules establish corresponding properties for id, attributes, and n/a. 4. The OpenAPI context confirms that these are Schema Object properties and does not contradict the use of a required list, although it does not explicitly reproduce the required keyword. 5. The rule's required value contains three distinct targets, so it should be split into separate required rules for id, attributes, and n/a. The n/a name is unusual but is supported by the source table and the sibling properties.n/a rule.",
+      "reflection_flagged": true,
+      "split_suggestion": "Split into three schema_property rules: required=id; required=attributes; required=n/a.",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "369",
+      "section_title": "12.1.1.4.1a.1 Type Resource",
+      "rule_type": "schema_property",
+      "source_name": "n/a",
+      "rule_text": "The Resource schema shall define mandatory generic name-contained objects as a map whose values are arrays of objects.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Resource",
+        "openapi_field": "additionalProperties",
+        "openapi_value": "{\"type\":\"array\",\"items\":{\"type\":\"object\"}}",
+        "references": []
+      },
+      "reflector_score": 0.86,
+      "reflection_reasoning": "1. The rule is explicitly grounded in the Resource definition: the n/a row specifies a mandatory name-contained-object value of map(array(object)). 2. The mapping to components/schemas/Resource.additionalProperties with value type array and items type object correctly represents a map whose arbitrary property values are arrays of objects. 3. The OpenAPI context confirms that additionalProperties may be an inline Schema Object, so this mapping is valid. 4. This section is the schema home for Resource, and the rule is not inherited, owned by another section, or a duplicate; therefore it belongs in the final rule set. 5. The field is a single atomic target, so no split is needed. 6. The mapping does not express the table's mandatory/non-empty requirement for having at least one name-contained object: additionalProperties constrains value shapes but does not require any map entry. This is a mapping limitation or coverage gap, not sufficient reason to discard the valid type-shape rule.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "370",
+      "section_title": "12.1.1.4.1a.2 Type Scope",
+      "rule_type": "schema_property",
+      "source_name": "scopeType",
+      "rule_text": "The Scope schema shall define the mandatory scopeType attribute with data type ScopeType.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Scope",
+        "openapi_field": "properties.scopeType",
+        "openapi_value": "$ref: '#/components/schemas/ScopeType'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "ScopeType"
+          }
+        ]
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "1. The source table explicitly defines the Scope schema's scopeType attribute, gives it data type ScopeType, and marks it mandatory (M). 2. The section is a schema home, so this schema_property rule belongs in Section 370 and is not an inherited or cross-section rule. 3. Mapping components/schemas/Scope.properties.scopeType to a reference to components/schemas/ScopeType is correct and supported by OpenAPI: property values must be Schema Objects or Reference Objects. 4. The mapping captures the attribute's type. The mandatory aspect is represented separately by the already-extracted required rule for scopeType, so this rule does not need to duplicate that required mapping. 5. The rule targets one property only and is atomic; no split is appropriate.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "370",
+      "section_title": "12.1.1.4.1a.2 Type Scope",
+      "rule_type": "schema_property",
+      "source_name": "scopeType",
+      "rule_text": "The scopeType attribute of Scope is mandatory.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Scope",
+        "openapi_field": "required",
+        "openapi_value": "[scopeType]",
+        "references": []
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "1. The source table explicitly marks the scopeType attribute with cardinality 'M' (mandatory), so the rule is directly grounded in the section. 2. The section is a schema home (type_definition, is_schema_home: True), and Scope is correctly identified as the owning schema. 3. Mapping the requirement to components/schemas/Scope.required with value [scopeType] is the correct OpenAPI representation of a mandatory schema property. 4. The OpenAPI context confirms that Schema Objects support required-property declarations, and it does not contradict this mapping. 5. This rule is distinct from the sibling required rule for scopeLevel and is already atomic: it targets one required field, so no split is needed. 6. It belongs in the final rule set and is not inherited, cross-section-owned, duplicated, absent, or unmappable.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "370",
+      "section_title": "12.1.1.4.1a.2 Type Scope",
+      "rule_type": "schema_property",
+      "source_name": "scopeLevel",
+      "rule_text": "The Scope schema shall define the mandatory scopeLevel attribute with data type integer.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Scope",
+        "openapi_field": "properties.scopeLevel",
+        "openapi_value": "integer",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.1.1.4.1a.2-1, which defines scopeLevel with data type integer and marks it mandatory. The pre-analysis verdict confirms that this section is the schema home for Scope, so the rule belongs here rather than being owned by another section or inherited through allOf. The mapping to components/schemas/Scope.properties.scopeLevel is valid, and the OpenAPI Schema Object supports integer as a primitive type. The mandatory aspect is represented separately by the already-listed required rule for scopeLevel, so this schema_property rule is appropriately scoped and not incomplete. The field targets a single property and is therefore atomic.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "370",
+      "section_title": "12.1.1.4.1a.2 Type Scope",
+      "rule_type": "schema_property",
+      "source_name": "scopeLevel",
+      "rule_text": "The scopeLevel attribute of Scope is mandatory.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Scope",
+        "openapi_field": "required",
+        "openapi_value": "[scopeLevel]",
+        "references": []
+      },
+      "reflector_score": 0.97,
+      "reflection_reasoning": "1. The source table explicitly marks the Scope attribute scopeLevel as mandatory ('M'), so the rule is grounded in this section. 2. This is a type-definition section and the pre-analysis verdict confirms it is the schema home for Scope; the rule is therefore owned here, not inherited or duplicated from another section. 3. Mapping the requirement to components/schemas/Scope.required with value [scopeLevel] is correct and complete in OpenAPI. The sibling scopeType requirement is separately represented and does not make this rule redundant. 4. The related stage-2 excerpt describes scopeLevel as optional in a particular operation/parameter context, but that does not override the explicit Scope type definition table; it may warrant validation of usage semantics, not removal of this schema requirement. 5. The target is a single required property, so the rule is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "371",
+      "section_title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "rule_type": "schema_property",
+      "source_name": "source",
+      "rule_text": "The CorrelatedNotification type shall define the mandatory source attribute with data type Dn, identifying the source of the correlated notifications.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/CorrelatedNotification",
+        "openapi_field": "properties.source",
+        "openapi_value": "$ref: '#/components/schemas/Dn'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Dn"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Section 12.1.1.4.1a.3: the CorrelatedNotification table defines a source attribute of data type Dn, with multiplicity M, meaning mandatory. 2. The section is a schema home, so a schema_property rule for CorrelatedNotification belongs here and is not an inherited or cross-section rule. 3. The mapping to components/schemas/CorrelatedNotification.properties.source is correct, and the $ref to '#/components/schemas/Dn' correctly represents the Dn data type. 4. The mandatory aspect is represented separately by the section's required rule for source and notificationIds; therefore this property rule need not encode requiredness itself and is not incomplete in this context. 5. The OpenAPI context confirms that properties are defined with Schema Objects or Reference Objects, so the referenced Dn schema is valid. The rule is atomic because its field targets only the single source property and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "371",
+      "section_title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "rule_type": "schema_property",
+      "source_name": "notificationIds",
+      "rule_text": "The CorrelatedNotification type shall define the mandatory notificationIds attribute as an array of NotificationId values identifying the correlated notifications of that source.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/CorrelatedNotification",
+        "openapi_field": "properties.notificationIds",
+        "openapi_value": "array",
+        "references": []
+      },
+      "reflector_score": 0.97,
+      "reflection_reasoning": "1. The source table explicitly defines notificationIds as a mandatory attribute of CorrelatedNotification with data type array(NotificationId), so the schema_property rule is grounded in this section. 2. The mapping to components/schemas/CorrelatedNotification.properties.notificationIds with value array is correct for the collection type. The element type constraint, NotificationId, is represented by the separate items rule, while mandatory status is represented by the separate required rule; therefore this rule does not need to duplicate either constraint. 3. The OpenAPI context supports modeling the attribute as a Schema property with an array type; no contradiction is present. 4. This section is the schema home, and the field is not identified as inherited or owned by another section, so the rule belongs in the final set. 5. The field targets one property and is atomic; it should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "371",
+      "section_title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "rule_type": "schema_property",
+      "source_name": "notificationIds",
+      "rule_text": "The notificationIds array shall contain NotificationId values.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/CorrelatedNotification",
+        "openapi_field": "items",
+        "openapi_value": "$ref: '#/components/schemas/NotificationId'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "NotificationId"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.4.1a.3-1, which defines notificationIds as array(NotificationId). 2. The mapping is correct: components/schemas/CorrelatedNotification is the schema owned by this type-definition section, and the array's items should reference #/components/schemas/NotificationId. The mapping captures the element type; the array nature is represented by the surrounding notificationIds property rule. 3. The OpenAPI context supports reusable schema references through components/schemas and composition, and does not contradict this mapping. 4. The pre-analysis verdict confirms this section is the schema home, and the field is not inherited through allOf. This rule is therefore owned by and belongs in this section. It does not duplicate the sibling rules for the property name or required status because it expresses the distinct element-type constraint. 5. The target is a single items field and is atomic, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "371",
+      "section_title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "rule_type": "schema_property",
+      "source_name": "required",
+      "rule_text": "The mandatory attributes of CorrelatedNotification are source and notificationIds.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/CorrelatedNotification",
+        "openapi_field": "required",
+        "openapi_value": "[source, notificationIds]",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The section is explicitly a type-definition/schema home, so a schema_property rule for CorrelatedNotification belongs here. 2. The source table marks both source and notificationIds as mandatory (M), so the rule is grounded in the specification. 3. Mapping the mandatory attributes to components/schemas/CorrelatedNotification.required with value [source, notificationIds] is valid and complete for the combined rule. 4. The OpenAPI context supports required properties through the Schema Object model and does not contradict this mapping; the readOnly/writeOnly material is not relevant. 5. The rule's required value contains two property targets, source and notificationIds, so it should be split into one required rule per property. It is not inherited, owned by another section, duplicated, absent, or unmappable.",
+      "reflection_flagged": false,
+      "split_suggestion": "Split into two schema_property rules: required: [source] and required: [notificationIds], retaining components/schemas/CorrelatedNotification as the OpenAPI object.",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "notificationId",
+      "rule_text": "The MoiChange notificationId attribute is mandatory and uses the NotificationId data type.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.notificationId",
+        "openapi_value": "$ref: 'TS28623_ComDefs.yaml#/components/schemas/NotificationId'",
+        "references": [
+          {
+            "file": "TS28623_ComDefs.yaml",
+            "schema_name": "NotificationId"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The source table explicitly defines notificationId as having data type NotificationId and status M, so the rule is grounded in this section. 2. The mapping to components/schemas/MoiChange.properties.notificationId is correct for the property, and the external $ref to TS28623_ComDefs.yaml#/components/schemas/NotificationId correctly represents its data type. The mandatory aspect is separately represented by the section's validated required rule listing notificationId. 3. The retrieved OpenAPI context concerns the Responses Object and does not contradict this schema-property mapping; it provides no more specific alternative. 4. The pre-analysis verdict identifies this section as a schema home, and there is no indication that notificationId is inherited through an allOf reference or owned by another section. Therefore this rule belongs in the final rule set for this section. 5. The rule targets one property only, so it is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "additionalText",
+      "rule_text": "The MoiChange additionalText attribute is optional and is a free-form string description.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.additionalText",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The source table explicitly defines additionalText as data type string with status O and describes it as free-form text, so the rule is grounded in the section. 2. The mapping to components/schemas/MoiChange.properties.additionalText with value string is correct. Its optionality is represented by the property not being included in the required list; the separate required rule appropriately handles mandatory fields. 3. The OpenAPI context confirms that string description/text fields are valid and may support CommonMark, but it does not contradict this property mapping. 4. This section is the schema home for MoiChange, and additionalText is not identified as inherited, duplicated, or owned by another section. Therefore, the rule belongs in the final rule set. 5. The field targets one property and is atomic, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "sourceIndicator",
+      "rule_text": "The MoiChange sourceIndicator attribute is optional and uses the SourceIndicator data type.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.sourceIndicator",
+        "openapi_value": "$ref: '#/components/schemas/SourceIndicator'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "SourceIndicator"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The MoiChange definition table explicitly lists sourceIndicator with data type SourceIndicator and status O, establishing that the property is optional and uses the SourceIndicator type. The pre-analysis verdict confirms that this section is the schema home for MoiChange, so the rule belongs here and is not an inherited or cross-section-owned field. Mapping to components/schemas/MoiChange.properties.sourceIndicator is correct, and using a $ref to '#/components/schemas/SourceIndicator' is an appropriate OpenAPI representation of the referenced data type. Because the property is optional, it should not be included in MoiChange's required list; this rule does not incorrectly assert that it is required. The retrieved OpenAPI context permits schema properties to be Schema Objects or references, so it supports the mapping. The rule targets one property and is atomic.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "op",
+      "rule_text": "The MoiChange op attribute is mandatory, uses the Operation data type, and reports the add, remove, or replace operation.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.op",
+        "openapi_value": "$ref: '#/components/schemas/Operation'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Operation"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly supported by the MoiChange definition table: the `op` attribute has data type `Operation`, is mandatory (M), and carries the add, remove, and replace operation semantics. 2. The mapping to `components/schemas/MoiChange.properties.op` is correct, and `$ref: '#/components/schemas/Operation'` is the appropriate OpenAPI representation of the `Operation` data type. 3. The OpenAPI context confirms that schema properties may be Schema Objects or references, so this property mapping is valid. The mandatory constraint is also represented by the separately extracted `required` rule containing `op`; it does not invalidate this property rule. The enum/value restriction is separately represented by the existing `enum` rule and should not be folded into this rule. 4. This section is explicitly a schema home, and `op` is an own property of `MoiChange`, not an inherited field or a type owned by another section. Therefore the rule belongs in the final rule set. 5. The rule targets one property, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "path",
+      "rule_text": "The MoiChange path attribute is mandatory and is a string containing URI path component segments that specify the reported resource when appended to href.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.path",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.4.1a.4: the `path` attribute has data type `string` and status M (mandatory), and its description specifies URI path component segments appended to `href`. 2. This section is explicitly a schema home for `MoiChange`, so `components/schemas/MoiChange.properties.path` is owned by this section rather than inherited or delegated elsewhere. 3. Mapping the property value to the OpenAPI type `string` is correct. The mandatory aspect is represented separately by the already extracted `required` rule containing `path`; it does not make this property rule invalid or require merging. The URI-path semantics are descriptive constraints and do not require a different standard OpenAPI type or format. 4. The retrieved OpenAPI context concerns Path Item Objects and does not contradict this schema-property mapping; it provides no more specific mapping for this field. 5. `properties.path` names one property and is therefore atomic; no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "insert",
+      "rule_text": "The MoiChange insert attribute is conditionally supported, uses the Insert data type, applies only to ordered attributes, can be before or after, and defaults to before when absent. It shall be supported only for changes reported from YANG-defined NRMs and shall not be supported for JSON-defined NRMs.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.insert",
+        "openapi_value": "$ref: '#/components/schemas/Insert'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "Insert"
+          }
+        ]
+      },
+      "reflector_score": 0.82,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.4.1a.4: insert has data type Insert, is conditionally mandatory/supported, applies to ordered attributes, permits before/after, defaults to before when absent, and is restricted to YANG-defined NRMs. 2. The pre-analysis verdict confirms that this section is the schema home for MoiChange, so a schema_property rule for components/schemas/MoiChange.properties.insert belongs here and is not an inherited-field re-emission. 3. The mapping to properties.insert with value $ref: '#/components/schemas/Insert' is valid for the declared data type. 4. The mapping is not fully complete: the OpenAPI property reference alone does not express the ordered-attribute condition, YANG-versus-JSON NRM applicability, or the default value. The before/after value restriction may be represented by the Insert schema if that schema defines the corresponding enum, but that is not established by the supplied OpenAPI context. 5. The retrieved OpenAPI context neither contradicts the mapping nor specifically confirms the conditional semantics; it only confirms that schema properties and referenced Schema Objects are valid OpenAPI constructs. 6. The rule should remain in the final set because the property and its type are owned by this Type MoiChange definition. The unsupported or incompletely mapped conditional semantics should receive priority validation rather than causing the entire property rule to be discarded.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "required",
+      "rule_text": "The required MoiChange attributes are notificationId, op, path, and value.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "required",
+        "openapi_value": "[notificationId, op, path, value]",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The section is explicitly a schema home for Type MoiChange, so a schema_property rule belongs here. 2. The source table marks notificationId, op, path, and value as mandatory (M), directly supporting the required list. 3. Mapping components/schemas/MoiChange.required is valid OpenAPI Schema Object usage, and the retrieved context confirms that required arrays are used to declare mandatory schema properties, although it does not define MoiChange itself. 4. This is not an inherited-field rule, an operation-owned rule, an absence rule, or a cross-section duplicate; the aggregate required constraint belongs to this schema definition. 5. The openapi_field value contains four targets, so it should be split into four more-specific required-property rules for validation granularity.",
+      "reflection_flagged": false,
+      "split_suggestion": "Split into four schema_property rules with the same object and field: required=[notificationId], required=[op], required=[path], and required=[value].",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "correlatedNotifications",
+      "rule_text": "The MoiChange correlatedNotifications attribute is optional and is an array whose items reference CorrelatedNotification.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.correlatedNotifications",
+        "openapi_value": "{\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/CorrelatedNotification\"}}",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "CorrelatedNotification"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The source table explicitly defines correlatedNotifications as an optional (O) array whose item type is CorrelatedNotification. 2. The mapping to components/schemas/MoiChange.properties.correlatedNotifications is correct, and the array items reference is correctly expressed with a local $ref to #/components/schemas/CorrelatedNotification. 3. The OpenAPI context confirms that reusable schemas may be defined under components/schemas and that Schema Objects support references; nothing in the context contradicts this array schema. 4. The pre-analysis verdict identifies this section as the schema home for MoiChange, so this is not a rule owned by another section or an inherited field. Its optionality is also consistent with correlatedNotifications being absent from the validated required list. 5. The rule targets one property and is atomic; no split is needed. 6. It belongs in the final rule set and should not be discarded.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "value",
+      "rule_text": "The mandatory value attribute accepts any JSON type and contains the new value of a created or updated resource, or optionally the old value of a deleted resource.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.value",
+        "openapi_value": "{}",
+        "references": []
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.4.1a.4: the value attribute has data type \"any type\", is mandatory, and carries the new value of a created or updated resource, with an optional deleted-resource value. 2. This section is the schema home for MoiChange, so a schema_property rule for properties.value belongs here and is not inherited or owned by another section. 3. The mapping to components/schemas/MoiChange.properties.value is correct. An empty Schema Object ({}) is the appropriate OpenAPI representation for an unconstrained value that may be any JSON type. The mandatory requirement is appropriately represented by the separately validated required rule, rather than needing to be duplicated in this property rule. 4. The OpenAPI context confirms that Schema Objects define property types and that an unconstrained schema can represent arbitrary values; the requestBody context is not directly applicable and neither contradicts nor supersedes this schema property. 5. The field targets only one property, properties.value, so it is atomic and does not require splitting. The rule belongs in the final rule set.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "oldValue",
+      "rule_text": "The optional oldValue attribute accepts any JSON type and reports the value that an updated secondary resource had before replacement; it is an optional extension for notifyMOIChanges.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.oldValue",
+        "openapi_value": "{}",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Section 12.1.1.4.1a.4: oldValue is an optional attribute with data type \"any type\" and reports the old value of an updated secondary resource. The following text further identifies oldValue as an optional extension for notifyMOIChanges.\n2. The mapping to components/schemas/MoiChange, properties.oldValue is correct because this section is the schema home for MoiChange. The OpenAPI value {} is an appropriate unconstrained Schema Object representation for a property accepting any JSON type; because the attribute is optional, it must not be added to required.\n3. The OpenAPI context confirms that reusable schemas belong under components.schemas and that schema properties are represented using Schema Objects. It neither contradicts the mapping nor indicates that oldValue is inherited through an allOf reference.\n4. This rule belongs in the final rule set for this section. It is not an inherited field, is not owned by another section, and is not a duplicate of a validated sibling rule.\n5. The rule targets one property only, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "op, path, and value",
+      "rule_text": "The op, path, and value properties shall use the 3GPP JSON Patch format for reporting NRM changes.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/MoiChange",
+        "openapi_field": "properties.op",
+        "openapi_value": "string (3GPP JSON Patch format)",
+        "references": []
+      },
+      "reflector_score": 0.25,
+      "reflection_reasoning": "1. The rule is grounded in the section: the source explicitly states that op, path, and value shall use the 3GPP JSON Patch format. 2. The section is a schema home, so a schema_property rule for MoiChange is appropriate and is not rejected as inherited or owned elsewhere. 3. The mapping is incomplete: it maps only components/schemas/MoiChange/properties.op, while the rule also constrains properties.path and properties.value. 4. The OpenAPI context supports representing these as Schema Object properties, but it does not define a native '3GPP JSON Patch format' value for a string schema. The mapping's value, 'string (3GPP JSON Patch format)', is therefore not a complete or standard OpenAPI constraint without expressing the requirement through a description, reference, enum, or separately defined schema. 5. The op portion also overlaps with the already validated op rule, although the JSON Patch-format statement is broader than the allowed-value constraint. As currently extracted, this rule should not be retained because its single mapping does not represent the full multi-property assertion. Separate atomic rules for properties.op, properties.path, and properties.value would be needed, with suitable OpenAPI mappings. The split_suggestion remains empty because the openapi_field itself is a single field; this is a mapping correction/coverage issue rather than a permitted literal field split.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "Force-included at max attempts. Failed: Duplicate of already-validated rule",
+      "validation_passed": false
+    },
+    {
+      "section_id": "372",
+      "section_title": "12.1.1.4.1a.4 Type MoiChange",
+      "rule_type": "schema_property",
+      "source_name": "insert",
+      "rule_text": "The Insert type supports the values before and after.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Insert",
+        "openapi_field": "enum",
+        "openapi_value": "[before, after]",
+        "references": []
+      },
+      "reflector_score": 0.15,
+      "reflection_reasoning": "1. The source text explicitly states that the `insert` attribute can take the values `before` and `after`, so the value constraint is grounded in the section content. 2. The proposed OpenAPI mapping to `components/schemas/Insert.enum` with values `[before, after]` is structurally valid for a string enum. 3. The retrieved OpenAPI context confirms that enum values are valid schema constraints, although it does not provide a specific `Insert` schema. 4. However, this section is the schema home for `MoiChange`, not for the referenced `Insert` data type. The `Insert` type is used as the datatype of the `MoiChange.insert` property; its enum definition belongs in the separate `Type Insert` schema-definition section. Therefore this rule is owned by another section and must not be emitted here. 5. The rule is atomic: the enum field represents one target constraint, so it should not be split. 6. Because it does not belong to this section, it should be discarded despite being textually supported and otherwise mappable.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "Force-included at max attempts. Failed: Discard — the enum constraint belongs in the separate Type Insert schema-definition section, not in the Type MoiChange section.",
+      "validation_passed": false
+    },
+    {
+      "section_id": "373",
+      "section_title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "rule_type": "schema_property",
+      "source_name": "NotifyMoiCreation",
+      "rule_text": "NotifyMoiCreation shall include the NotificationHeader base type through an allOf reference.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiCreation",
+        "openapi_field": "allOf",
+        "openapi_value": "$ref: 'TS28623_ComDefs.yaml#/components/schemas/NotificationHeader'",
+        "references": [
+          {
+            "file": "TS28623_ComDefs.yaml",
+            "schema_name": "NotificationHeader"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is appropriate for this section because the pre-analysis identifies Section 373 as the schema home for NotifyMoiCreation and explicitly records NotificationHeader as its embedded base. 2. The mapping is correct: components/schemas/NotifyMoiCreation.allOf contains a reference to TS28623_ComDefs.yaml#/components/schemas/NotificationHeader. 3. The OpenAPI context confirms that allOf is the mechanism for composing and extending schemas, including use of a referenced parent schema. 4. This is not an inherited-field re-emission: it represents the single base-schema reference itself, while href, notificationId, notificationType, eventTime, and systemDN are correctly supplied by that base and should not be duplicated as own properties. 5. The rule has one target field and one base reference, so it is atomic and does not require splitting. It belongs in the final rule set for this type-definition section.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "373",
+      "section_title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "rule_type": "schema_property",
+      "source_name": "additionalText",
+      "rule_text": "The optional additionalText attribute of NotifyMoiCreation is a string.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiCreation",
+        "openapi_field": "properties.additionalText",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The section explicitly defines additionalText as an optional attribute with data type string. The rule is a schema_property rule, and this section is the schema home for NotifyMoiCreation. The field is mapped to components/schemas/NotifyMoiCreation/properties/additionalText, with the OpenAPI value string, which is correct. additionalText is not listed among the inherited fields from NotificationHeader, so it is valid as an own property and is not a duplicate inherited rule. The retrieved OpenAPI context does not define or contradict this schema property. The rule has one atomic target and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "373",
+      "section_title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "rule_type": "schema_property",
+      "source_name": "sourceIndicator",
+      "rule_text": "The optional sourceIndicator attribute of NotifyMoiCreation uses the SourceIndicator data type.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiCreation",
+        "openapi_field": "properties.sourceIndicator",
+        "openapi_value": "$ref: '#/components/schemas/SourceIndicator'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "SourceIndicator"
+          }
+        ]
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly supported by Table 12.1.1.4.1a.5: sourceIndicator is an optional attribute of NotifyMoiCreation and its data type is SourceIndicator. The pre-analysis verdict identifies this section as the schema home, so a schema_property rule belongs here. sourceIndicator is not listed among the inherited fields from NotificationHeader, so it is correctly emitted as an own property. The mapping to components/schemas/NotifyMoiCreation.properties.sourceIndicator with a $ref to #/components/schemas/SourceIndicator is valid and appropriate: OpenAPI Schema Object properties may use Schema Objects or Reference Objects. The related specification context also identifies sourceIndicator as an optional parameter indicating the source operation. The rule targets one property and is atomic; no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "373",
+      "section_title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "rule_type": "schema_property",
+      "source_name": "attributeList",
+      "rule_text": "The optional attributeList of NotifyMoiCreation uses the AttributeNameValuePairSet data type and contains the attributes as name/value pairs of the created MOI.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiCreation",
+        "openapi_field": "properties.attributeList",
+        "openapi_value": "$ref: '#/components/schemas/AttributeNameValuePairSet'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "AttributeNameValuePairSet"
+          }
+        ]
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.4.1a.5: attributeList has data type AttributeNameValuePairSet, contains the created MOI's attributes as name/value pairs, and is optional. 2. The mapping to components/schemas/NotifyMoiCreation.properties.attributeList with a $ref to '#/components/schemas/AttributeNameValuePairSet' is valid and appropriately represents the referenced Schema Object. The optionality is correctly conveyed by defining the property without placing it in required. 3. The OpenAPI context confirms that schema properties may be Schema Objects or references, so the mapping is supported. 4. This section is the schema home for NotifyMoiCreation, and attributeList is not among the inherited fields from NotificationHeader; therefore this rule belongs in this section. 5. The rule targets one property and is atomic, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "373",
+      "section_title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "rule_type": "schema_property",
+      "source_name": "correlatedNotifications",
+      "rule_text": "The optional correlatedNotifications attribute of NotifyMoiCreation is an array of CorrelatedNotification values.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiCreation",
+        "openapi_field": "properties.correlatedNotifications",
+        "openapi_value": "{\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/CorrelatedNotification\"}}",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "CorrelatedNotification"
+          }
+        ]
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.1.1.4.1a.5, which defines correlatedNotifications as an optional array(CorrelatedNotification). This section is the schema home for NotifyMoiCreation, so a schema_property rule belongs here. The field is not one of the inherited NotificationHeader fields, and therefore is correctly emitted as an own property. The OpenAPI mapping is correct and complete: properties.correlatedNotifications is an array whose items reference the CorrelatedNotification schema. Because the source marks the attribute optional, omitting it from any required list is also consistent. The rule has a single target property and does not need splitting.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "374",
+      "section_title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "rule_type": "schema_property",
+      "source_name": "NotificationHeader",
+      "rule_text": "NotifyMoiDeletion shall include the NotificationHeader base type through an allOf reference.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiDeletion",
+        "openapi_field": "allOf",
+        "openapi_value": "[$ref: 'TS28623_ComDefs.yaml#/components/schemas/NotificationHeader']",
+        "references": [
+          {
+            "file": "TS28623_ComDefs.yaml",
+            "schema_name": "NotificationHeader"
+          }
+        ]
+      },
+      "reflector_score": 0.95,
+      "reflection_reasoning": "1. The rule belongs to a type-definition section whose schema home is components/schemas/NotifyMoiDeletion. The pre-analysis explicitly identifies NotificationHeader as the embedded base and identifies href, notificationId, notificationType, eventTime, and systemDN as inherited fields. Therefore representing the inheritance with a single allOf $ref is appropriate.\n2. The mapping is correct: the target object is components/schemas/NotifyMoiDeletion, the field is allOf, and the value is a reference to NotificationHeader. It avoids incorrectly re-emitting the inherited fields as own properties or required fields.\n3. The retrieved OpenAPI context confirms that schemas may use allOf with $ref to a parent schema. Although the context is generic and does not independently name NotifyMoiDeletion or NotificationHeader, it is consistent with this mapping and does not contradict it.\n4. This rule belongs in the final set because this section is the schema home for NotifyMoiDeletion. It is not an inherited-field rule; rather, it correctly declares the inheritance relationship itself. It is also not owned by a separate mapping/resource or operation section.\n5. The allOf value contains one referenced base target, so the rule is atomic and should not be split.\n6. The rule should not be discarded.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "374",
+      "section_title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "rule_type": "schema_property",
+      "source_name": "correlatedNotifications",
+      "rule_text": "The optional correlatedNotifications attribute has data type array(CorrelatedNotification).",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiDeletion",
+        "openapi_field": "properties.correlatedNotifications",
+        "openapi_value": "array",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly stated in Table 12.1.1.4.1a.6: correlatedNotifications is optional and has data type array(CorrelatedNotification). This section is the schema home for NotifyMoiDeletion, so a schema_property rule belongs here. The field is not one of the inherited NotificationHeader fields, which are href, notificationId, notificationType, eventTime, and systemDN; therefore it may be emitted as an own property. The mapping to components/schemas/NotifyMoiDeletion.properties.correlatedNotifications is correct, and the value array accurately represents the declared array type. The item type CorrelatedNotification is represented separately by the existing items rule, so this rule does not need to repeat it. The OpenAPI context confirms that properties use Schema Objects and that array schemas are supported; it does not contradict the mapping. The rule targets one property and is atomic, so no split is required.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "374",
+      "section_title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "rule_type": "schema_property",
+      "source_name": "additionalText",
+      "rule_text": "The optional additionalText attribute has data type string.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiDeletion",
+        "openapi_field": "properties.additionalText",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "1. The source table explicitly defines additionalText as an optional attribute with data type string. 2. The section is the schema home for NotifyMoiDeletion, so a schema_property rule for properties.additionalText belongs to this section. 3. additionalText is not listed among the inherited fields from NotificationHeader; therefore it is an own property and should be emitted here. 4. The mapping to components/schemas/NotifyMoiDeletion.properties.additionalText with value string is correct and mappable to an OpenAPI Schema Object property. 5. The related specification context also identifies additionalText as optional text information, supporting the mapping. 6. The rule has one property target and is atomic; no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "374",
+      "section_title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "rule_type": "schema_property",
+      "source_name": "sourceIndicator",
+      "rule_text": "The optional sourceIndicator attribute has data type SourceIndicator.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiDeletion",
+        "openapi_field": "properties.sourceIndicator",
+        "openapi_value": "$ref: '#/components/schemas/SourceIndicator'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "SourceIndicator"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly supported by Table 12.1.1.4.1a.6: NotifyMoiDeletion defines an optional sourceIndicator attribute with data type SourceIndicator. 2. The section is a schema home, so a schema_property rule belongs here. sourceIndicator is not listed among the inherited fields (href, notificationId, notificationType, eventTime, or systemDN); therefore it is an own property and should be emitted on NotifyMoiDeletion. 3. The mapping is correct and complete: components/schemas/NotifyMoiDeletion/properties.sourceIndicator is mapped to a reference to components/schemas/SourceIndicator. The OpenAPI context confirms that schema properties use Schema Objects or Reference Objects, so the $ref is valid. 4. The rule does not assert requiredness, which is correct because the specification marks sourceIndicator as optional (O). 5. The rule has one target field, sourceIndicator, so no split is needed. 6. It belongs in the final rule set and should not be discarded.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "374",
+      "section_title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "rule_type": "schema_property",
+      "source_name": "attributeList",
+      "rule_text": "The optional attributeList attribute has data type AttributeNameValuePairSet.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiDeletion",
+        "openapi_field": "properties.attributeList",
+        "openapi_value": "$ref: '#/components/schemas/AttributeNameValuePairSet'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "AttributeNameValuePairSet"
+          }
+        ]
+      },
+      "reflector_score": 0.99,
+      "reflection_reasoning": "1. The rule is explicitly stated in Table 12.1.1.4.1a.6: attributeList is optional and has data type AttributeNameValuePairSet. 2. This section is a schema home, and attributeList is not listed among the inherited fields from NotificationHeader, so it correctly belongs as an own property of NotifyMoiDeletion. 3. The mapping to components/schemas/NotifyMoiDeletion.properties.attributeList with a reference to #/components/schemas/AttributeNameValuePairSet is valid and complete, assuming the referenced component is a Schema Object as required by OpenAPI. 4. The OpenAPI context confirms that property definitions may be schema references and does not contradict the mapping. 5. The rule has one property target and is atomic; it should not be split. 6. The attribute is optional, so no required-field rule should be inferred.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "375",
+      "section_title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "rule_type": "schema_property",
+      "source_name": "NotificationHeader",
+      "rule_text": "NotifyMoiAttributeValueChanges includes the NotificationHeader type as an embedded base.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiAttributeValueChanges",
+        "openapi_field": "allOf",
+        "openapi_value": "$ref: 'TS28623_ComDefs.yaml#/components/schemas/NotificationHeader'",
+        "references": [
+          {
+            "file": "TS28623_ComDefs.yaml",
+            "schema_name": "NotificationHeader"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is appropriate for this section because the section is a schema home for NotifyMoiAttributeValueChanges. 2. The pre-analysis explicitly identifies NotificationHeader as the embedded base and identifies href, notificationId, notificationType, eventTime, and systemDN as inherited fields, matching the rule's allOf reference. 3. Mapping the embedded base to components/schemas/NotifyMoiAttributeValueChanges.allOf with a $ref to NotificationHeader is valid OpenAPI schema composition. 4. The OpenAPI context confirms that allOf is the mechanism for combining model definitions and does not contradict this mapping. 5. This is an atomic allOf reference to one base schema, so no split is needed. The inherited fields should not be emitted again as own properties or required entries, but this rule correctly represents the single base-schema reference.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "375",
+      "section_title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "rule_type": "schema_property",
+      "source_name": "correlatedNotifications",
+      "rule_text": "The optional correlatedNotifications attribute is an array of CorrelatedNotification values.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiAttributeValueChanges",
+        "openapi_field": "properties.correlatedNotifications",
+        "openapi_value": "array",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.4.1a.7: correlatedNotifications has data type array(CorrelatedNotification) and status O, meaning it is optional. 2. The section is a schema home, and correlatedNotifications is not listed among the inherited fields from NotificationHeader, so it is an own property that belongs in NotifyMoiAttributeValueChanges. 3. The mapping to components/schemas/NotifyMoiAttributeValueChanges.properties.correlatedNotifications with value array is correct. The companion rule for items specifies that each array item is a CorrelatedNotification, completing the item-type mapping. 4. The OpenAPI context supports arrays through Schema Object properties and does not contradict this mapping. No required constraint should be added for this optional property. 5. The rule targets one property, so it is atomic and does not require splitting.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "375",
+      "section_title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "rule_type": "schema_property",
+      "source_name": "additionalText",
+      "rule_text": "The optional additionalText attribute is a string containing free-form descriptive text.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiAttributeValueChanges",
+        "openapi_field": "properties.additionalText",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The section explicitly defines additionalText as an optional attribute of type string, allowing free-form text, so the rule is directly grounded in the source table. 2. The mapping to components/schemas/NotifyMoiAttributeValueChanges.properties.additionalText with value string is correct; because the attribute is optional, it should not be added to required. 3. The related specification context also identifies additionalText as optional and containing further event information in text, supporting the mapping. 4. This section is the schema home, and additionalText is not listed among the inherited fields from NotificationHeader, so this is an own property that belongs in this section. 5. The rule targets one property and is atomic; no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "375",
+      "section_title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "rule_type": "schema_property",
+      "source_name": "sourceIndicator",
+      "rule_text": "The optional sourceIndicator attribute identifies the source of the operation that led to the notification.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiAttributeValueChanges",
+        "openapi_field": "properties.sourceIndicator",
+        "openapi_value": "$ref: '#/components/schemas/SourceIndicator'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "SourceIndicator"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in the section's type-definition table: sourceIndicator is an optional attribute of NotifyMoiAttributeValueChanges with data type SourceIndicator and semantics identifying the source of the operation that generated the notification. The related specification context independently confirms the same optional sourceIndicator parameter and meaning. 2. The section is explicitly the schema home, so a schema_property rule belongs here. 3. sourceIndicator is not listed among the inherited fields from NotificationHeader, so it is correctly represented as an own property rather than being discarded as inherited. 4. The mapping to components/schemas/NotifyMoiAttributeValueChanges.properties.sourceIndicator is correct, and referencing '#/components/schemas/SourceIndicator' appropriately models the declared SourceIndicator data type. 5. The rule has one property target and is atomic; no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "375",
+      "section_title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "rule_type": "schema_property",
+      "source_name": "attributeListValueChanges",
+      "rule_text": "The mandatory attributeListValueChanges attribute is an AttributeValueChangeSet containing the names of changed attributes together with their new values and optionally their old values.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiAttributeValueChanges",
+        "openapi_field": "properties.attributeListValueChanges",
+        "openapi_value": "$ref: '#/components/schemas/AttributeValueChangeSet'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "AttributeValueChangeSet"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in the section's definition table: attributeListValueChanges has data type AttributeValueChangeSet and status M (mandatory), and its description states that it contains changed attribute names with new values and optionally old values. 2. The rule is a schema_property for the schema home NotifyMoiAttributeValueChanges, so it belongs to this type-definition section. 3. The field is not one of the inherited NotificationHeader fields (href, notificationId, notificationType, eventTime, or systemDN), so it should be emitted as an own property. 4. The mapping to properties.attributeListValueChanges with a $ref to AttributeValueChangeSet is correct and appropriately represents the referenced data type. The separate required rule covers mandatoryness and does not make this property rule duplicative. 5. The OpenAPI context confirms that a schema property may reference another Schema Object; no context contradicts this mapping. 6. The property target is singular and atomic, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "375",
+      "section_title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "rule_type": "schema_property",
+      "source_name": "attributeListValueChanges",
+      "rule_text": "attributeListValueChanges is mandatory in NotifyMoiAttributeValueChanges.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiAttributeValueChanges",
+        "openapi_field": "required",
+        "openapi_value": "[attributeListValueChanges]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The source table explicitly marks attributeListValueChanges as mandatory (M), so representing it in the schema's required array is correct. The section is a schema home, and attributeListValueChanges is an own property rather than one of the inherited NotificationHeader fields (href, notificationId, notificationType, eventTime, or systemDN). The OpenAPI mapping components/schemas/NotifyMoiAttributeValueChanges.required with value [attributeListValueChanges] is valid and directly expresses the requirement. The related notification context is consistent with this notification carrying attribute value changes, and it does not contradict the required-field constraint. The rule is atomic because it targets one property and does not need splitting.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "376",
+      "section_title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "rule_type": "schema_property",
+      "source_name": "NotificationHeader",
+      "rule_text": "NotifyMoiChanges includes the inherited NotificationHeader fields through an allOf reference.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiChanges",
+        "openapi_field": "allOf",
+        "openapi_value": "$ref: 'TS28623_ComDefs.yaml#/components/schemas/NotificationHeader'",
+        "references": [
+          {
+            "file": "TS28623_ComDefs.yaml",
+            "schema_name": "NotificationHeader"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is grounded in the schema definition: the table lists NotificationHeader attributes as part of NotifyMoiChanges, while the pre-analysis verdict explicitly identifies NotificationHeader as the embedded base type and marks href, notificationId, notificationType, eventTime, and systemDN as inherited fields. 2. The mapping is correct: components/schemas/NotifyMoiChanges uses an allOf array containing the external Reference Object to NotificationHeader. The external reference syntax is valid OpenAPI, and the retrieved context confirms that allOf supports schema composition and inheritance through $ref. 3. This rule does not incorrectly re-emit any inherited field as properties.<name> or required; it represents the single composition relationship itself. 4. This section is the schema home (is_schema_home=True), so the allOf rule belongs to this section rather than being owned by another section. 5. The rule has one target field, allOf, so no split is needed. It should remain in the final rule set.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "376",
+      "section_title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "rule_type": "schema_property",
+      "source_name": "moiChanges",
+      "rule_text": "The moiChanges attribute contains the MOI changes to be reported and has data type array(MoiChange).",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiChanges",
+        "openapi_field": "properties.moiChanges",
+        "openapi_value": "array",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "1. The rule is explicitly stated in Table 12.1.1.4.1a.8: moiChanges has data type array(MoiChange) and contains the MOI changes to be reported. 2. The mapping to components/schemas/NotifyMoiChanges.properties.moiChanges with value array is correct. The element type MoiChange is represented by the separate sibling items rule, so this rule does not need to duplicate that detail. 3. The OpenAPI context confirms that reusable schema properties are defined under components/schemas and supports array-valued schema properties. 4. This section is explicitly a schema home, and moiChanges is not one of the inherited NotificationHeader fields; therefore the property belongs in this section and is not an inherited-field re-emission. 5. The rule targets one property only, so it is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "376",
+      "section_title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "rule_type": "schema_property",
+      "source_name": "moiChanges",
+      "rule_text": "Each item of moiChanges is a MoiChange.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiChanges",
+        "openapi_field": "items",
+        "openapi_value": "$ref: '#/components/schemas/MoiChange'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "MoiChange"
+          }
+        ]
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The source table explicitly defines moiChanges as an array of MoiChange, so constraining the array items to the referenced MoiChange schema is directly supported. The mapping to components/schemas/NotifyMoiChanges.items with value $ref '#/components/schemas/MoiChange' is valid and appropriately models the array element type. The pre-analysis verdict confirms that this section is the schema home, and the rule does not concern any inherited NotificationHeader field. The retrieved OpenAPI context permits referenced Schema Objects and does not contradict this mapping. The rule has a single target field, items, so it is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "376",
+      "section_title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "rule_type": "schema_property",
+      "source_name": "moiChanges",
+      "rule_text": "The mandatory moiChanges attribute is required in NotifyMoiChanges.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/NotifyMoiChanges",
+        "openapi_field": "required",
+        "openapi_value": "[moiChanges]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "1. The rule is explicitly grounded in the source table: moiChanges has data type array(MoiChange) and status M (mandatory) for NotifyMoiChanges. 2. The rule correctly maps this requirement to the OpenAPI Schema Object's required field with value [moiChanges]. The separate properties.moiChanges and items rules define the property's type and array element type; this rule appropriately captures its mandatory presence. 3. The OpenAPI context confirms that required is the correct mechanism for requiring a schema property. 4. This section is the schema home for NotifyMoiChanges, so the rule belongs here. moiChanges is not listed among the inherited NotificationHeader fields and is therefore an own property, not an inherited required field. 5. The target is a single property, moiChanges, so the rule is atomic and should not be split.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "377",
+      "section_title": "12.1.1.4.1a.9 Type PatchItem",
+      "rule_type": "schema_property",
+      "source_name": "op",
+      "rule_text": "The PatchItem attribute op is mandatory and has data type PatchOperation.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PatchItem",
+        "openapi_field": "properties.op",
+        "openapi_value": "$ref: '#/components/schemas/PatchOperation'",
+        "references": [
+          {
+            "file": "",
+            "schema_name": "PatchOperation"
+          }
+        ]
+      },
+      "reflector_score": 0.96,
+      "reflection_reasoning": "1. The rule is explicitly supported by Table 12.1.1.4.1a.9: the PatchItem attribute 'op' has data type PatchOperation and support qualifier M, meaning it is mandatory. 2. This section is the schema home for PatchItem, so the rule belongs here and is not an inherited-field re-emission. 3. The mapping to components/schemas/PatchItem/properties/op is correct, and the $ref to components/schemas/PatchOperation correctly represents the declared data type. 4. The mandatory aspect is not encoded by the properties.op mapping itself, but it is covered by the separate required rule listing op; therefore this rule should remain as the type/property rule rather than being discarded or merged. 5. The field targets only one property, 'op', so it is atomic and does not require splitting. The OpenAPI context confirms that reusable schemas are defined under components/schemas and may reference other schemas.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "377",
+      "section_title": "12.1.1.4.1a.9 Type PatchItem",
+      "rule_type": "schema_property",
+      "source_name": "from",
+      "rule_text": "The PatchItem attribute from is mandatory and has type string; it is present only for copy and move operations and identifies the source location.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PatchItem",
+        "openapi_field": "properties.from",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.92,
+      "reflection_reasoning": "The rule is explicitly stated in the PatchItem definition: `from` has data type string, is mandatory, and applies only to copy and move operations. This section is the schema home for PatchItem, so a `schema_property` rule for `components/schemas/PatchItem.properties.from` belongs here and is not inherited or owned by another section. The OpenAPI mapping to `properties.from` with value `string` is correct for the property type. The mandatory aspect is separately represented by the section's `required` rule, while the conditional applicability to copy and move operations is semantic information not captured by the supplied property mapping; it may require additional schema logic or validation if the OpenAPI model supports it. The field targets only one property, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "377",
+      "section_title": "12.1.1.4.1a.9 Type PatchItem",
+      "rule_type": "schema_property",
+      "source_name": "path",
+      "rule_text": "The PatchItem attribute path is mandatory and has type string; it specifies the path of the patched value.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PatchItem",
+        "openapi_field": "properties.path",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Table 12.1.1.4.1a.9: the PatchItem attribute `path` has data type `string`, describes the patched value, and is marked mandatory (`M`). 2. The section is the schema home for `PatchItem`, so this is not a rule emitted in the wrong section or owned by another type. No inherited-field indication applies. 3. The mapping `components/schemas/PatchItem.properties.path` with value `string` is correct and directly represents the schema property type. The mandatory aspect is appropriately represented by the separate `required` rule already listed for `op`, `from`, `path`, and `value`; it does not require splitting this atomic property rule. 4. The OpenAPI context confirms that reusable schemas are defined under `components.schemas` and that schema properties can define the property type. Nothing in the retrieved context contradicts this mapping. 5. The rule targets one property only, so no split is needed. It belongs in the final rule set.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "377",
+      "section_title": "12.1.1.4.1a.9 Type PatchItem",
+      "rule_type": "schema_property",
+      "source_name": "required",
+      "rule_text": "The PatchItem attributes op, from, path, and value are mandatory.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PatchItem",
+        "openapi_field": "required",
+        "openapi_value": "[op, from, path, value]",
+        "references": []
+      },
+      "reflector_score": 0.97,
+      "reflection_reasoning": "1. The source table explicitly marks op, from, path, and value as mandatory (M), so the rule is grounded in the section. 2. This section is a schema home, so a schema_property rule for components/schemas/PatchItem belongs here; no inherited-field issue is indicated. 3. Mapping the constraint to the PatchItem schema's required field with the four property names is valid and complete. The OpenAPI context confirms that reusable schemas are defined under components/schemas and does not contradict use of a required constraint. 4. The required rule is complementary to the individual property definitions and is not a cross-section duplicate. 5. The rule's required value contains four distinct property targets, so it should be split into separate required-property rules for op, from, path, and value. The current combined rule nevertheless belongs in this section pending normalization.",
+      "reflection_flagged": false,
+      "split_suggestion": "Split into four schema_property rules: required [op], required [from], required [path], and required [value].",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "377",
+      "section_title": "12.1.1.4.1a.9 Type PatchItem",
+      "rule_type": "schema_property",
+      "source_name": "value",
+      "rule_text": "The PatchItem attribute value is mandatory and accepts any type; it contains the new value for the resource identified by path.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PatchItem",
+        "openapi_field": "properties.value",
+        "openapi_value": "{}",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.1.1.4.1a.9: the value attribute has data type \"any type,\" contains the new value identified by path, and is mandatory. This section is the schema home for PatchItem, so the properties.value rule belongs here and is not inherited or owned by another section. Mapping to components/schemas/PatchItem/properties.value is correct. An empty OpenAPI Schema Object ({}) permits any type, matching the specification. Mandatory status is represented separately by the already validated required rule, so it should not be duplicated in this property mapping. The rule has one atomic target and does not need splitting.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "383",
+      "section_title": "12.1.1.4.4.3 Enumeration CmNotificationTypes",
+      "rule_type": "schema_property",
+      "source_name": "CmNotificationTypes",
+      "rule_text": "Table 12.1.1.4.4.3-1 defines the allowed enumeration values for CmNotificationTypes as notifyMOICreation, notifyMOIDeletion, notifyMOIAttributeValueChanges, and noitifyMOIChanges.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/CmNotificationTypes",
+        "openapi_field": "enum",
+        "openapi_value": "[notifyMOICreation, notifyMOIDeletion, notifyMOIAttributeValueChanges, noitifyMOIChanges]",
+        "references": []
+      },
+      "reflector_score": 0.92,
+      "reflection_reasoning": "1. The rule is explicitly grounded in Section 12.1.1.4.4.3: the table defines four enumeration values for CmNotificationTypes. 2. The mapping is appropriate and complete: CmNotificationTypes is the schema object, enum is the correct OpenAPI field, and all four table values are included. 3. The OpenAPI context confirms that enum is a supported Schema Object field. 4. The pre-analysis verdict identifies this section as a schema home, so this schema_property rule belongs in the final rule set and is not an inherited or cross-section rule. 5. The rule targets one property, enum, whose value is a single enumeration set; it should not be split. 6. The related specification context uses variant spellings such as notifyMOIAttributesValueChange and notifyMOIChanges, while the table explicitly specifies notifyMOIAttributeValueChanges and the apparent typo noitifyMOIChanges. Since the extracted rule faithfully represents the authoritative table, it should be retained, but the spelling discrepancy requires validation.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "384",
+      "section_title": "12.1.1.4.4.4 Enumeration SourceIndicator",
+      "rule_type": "schema_property",
+      "source_name": "SourceIndicator",
+      "rule_text": "The SourceIndicator enumeration shall allow the values RESOURCE_OPERATION, MANAGEMENT_OPERATION, SON_OPERATION, and UNKNOWN.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/SourceIndicator",
+        "openapi_field": "enum",
+        "openapi_value": "[RESOURCE_OPERATION, MANAGEMENT_OPERATION, SON_OPERATION, UNKNOWN]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly stated by Table 12.1.1.4.4.4-1, which lists exactly RESOURCE_OPERATION, MANAGEMENT_OPERATION, SON_OPERATION, and UNKNOWN as the permitted SourceIndicator values. The section is pre-identified as the schema home, so this schema_property rule belongs here and is not inherited, cross-section-owned, or duplicative. The mapping to components/schemas/SourceIndicator.enum is valid: the Components Object permits reusable Schema Objects, and enum is the appropriate OpenAPI constraint for the allowed values. The sibling rule identifies the schema type as string, which is consistent with these string enumeration values. The rule is atomic; the multiple values form one enum constraint and should not be split into separate rules.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "384",
+      "section_title": "12.1.1.4.4.4 Enumeration SourceIndicator",
+      "rule_type": "schema_property",
+      "source_name": "SourceIndicator",
+      "rule_text": "The SourceIndicator schema shall define a SourceIndicator property of type string.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/SourceIndicator",
+        "openapi_field": "properties.SourceIndicator",
+        "openapi_value": "string",
+        "references": []
+      },
+      "reflector_score": 0.95,
+      "reflection_reasoning": "1. The section is explicitly an enumeration schema section and the pre-analysis verdict confirms that it is the schema home, so a schema_property rule belongs here. 2. The enumeration is represented as a string, as also reflected by the already validated sibling rule for the SourceIndicator type. Defining properties.SourceIndicator as a string Schema Object is therefore clearly implied by the enumeration definition. 3. The mapping to components/schemas/SourceIndicator and properties.SourceIndicator is valid: OpenAPI Schema Object properties use Schema Objects, and a string type is supported. 4. This is an own property of the SourceIndicator schema, not an inherited field or a rule owned by another section. It does not duplicate the validated enum-values rule; the type and allowed-values constraints are complementary. 5. The field targets one property only, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "Force-included at max attempts. Failed: Discard — the enumeration defines the SourceIndicator schema itself, not a nested properties.SourceIndicator property. The enum rule already represents the schema constraint.",
+      "validation_passed": false
+    },
+    {
+      "section_id": "385",
+      "section_title": "12.1.1.4.4.5 Enumeration ScopeType",
+      "rule_type": "schema_property",
+      "source_name": "ScopeType",
+      "rule_text": "The ScopeType enumeration shall allow the values BASE_ONLY, BASE_ALL, BASE_NTH_LEVEL, and BASE_SUBTREE. BASE_ONLY selects only the base resource; the scopeLevel parameter shall be absent or ignored if present. BASE_ALL selects the base resource and all of its subordinate resources, including leaf resources; the scopeLevel parameter shall be absent or ignored if present. BASE_NTH_LEVEL selects all resources on the level indicated by the scopeLevel parameter below the base resource, with the base resource at scopeLevel zero. BASE_SUBTREE selects the base resource and all subordinate resources down to and including the resources on the level indicated by the scopeLevel parameter, with the base resource at scopeLevel zero.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/ScopeType",
+        "openapi_field": "enum",
+        "openapi_value": "[BASE_ONLY, BASE_ALL, BASE_NTH_LEVEL, BASE_SUBTREE]",
+        "references": []
+      },
+      "reflector_score": 0.9,
+      "reflection_reasoning": "1. The rule is explicitly grounded in the Enumeration ScopeType table, which lists BASE_ONLY, BASE_ALL, BASE_NTH_LEVEL, and BASE_SUBTREE and provides the stated selection semantics. 2. The section is an enumeration section and the pre-analysis verdict confirms it is the schema home, so a schema_property rule for components/schemas/ScopeType belongs here; it is not an inherited field or a rule owned by another section. 3. Mapping the ScopeType schema's enum field to the four listed values is valid OpenAPI usage and correctly captures the set of possible enumeration values. 4. The related specification context qualifies the allowed values by scopeLevel support/presence: BASE_ONLY and BASE_ALL apply when scopeLevel is absent or unsupported, while BASE_NTH_LEVEL and BASE_SUBTREE apply when scopeLevel is supported and present. An enum alone cannot express this conditional dependency, and the mapping therefore does not capture all of the rule's behavioral semantics. This is a completeness/priority concern, not a reason to discard the enumeration rule itself. 5. The enum field is a single atomic enumeration constraint; listing multiple allowed enum values does not require splitting into separate rules.",
+      "reflection_flagged": true,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "386",
+      "section_title": "12.1.1.4.4.6 Enumeration Operation",
+      "rule_type": "schema_property",
+      "source_name": "Operation",
+      "rule_text": "The Operation enumeration shall allow the values add (Create operation), remove (Delete operation), and replace (Replace operation).",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/Operation",
+        "openapi_field": "enum",
+        "openapi_value": "[add, remove, replace]",
+        "references": []
+      },
+      "reflector_score": 0.98,
+      "reflection_reasoning": "The rule is explicitly grounded in Table 12.1.1.4.4.4.6-1, which defines the Operation enumeration values add, remove, and replace and their meanings. The pre-analysis verdict identifies this section as a schema home, so a schema_property rule for components/schemas/Operation is appropriate and is not an inherited or cross-section rule. Mapping the Operation schema's enum constraint to the values [add, remove, replace] is valid and complete in OpenAPI. The related specification context independently confirms the required semantics of all three values. The rule is atomic: although the enum contains multiple allowed values, it represents one enum constraint on one field and should not be split into separate rules.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "387",
+      "section_title": "12.1.1.4.4.7 Enumeration PatchOperation",
+      "rule_type": "schema_property",
+      "source_name": "PatchOperation",
+      "rule_text": "The PatchOperation enumeration is a string enumeration with the values add, replace, remove, copy, move, and test.",
+      "openapi_mapping": {
+        "openapi_object": "components/schemas/PatchOperation",
+        "openapi_field": "enum",
+        "openapi_value": "[add, replace, remove, copy, move, test]",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "1. The section is explicitly an enumeration definition and the pre-analysis verdict confirms that it is the schema home, so a schema_property rule for PatchOperation belongs in this section. 2. The source table explicitly lists the six values add, replace, remove, copy, move, and test. 3. Mapping components/schemas/PatchOperation with field enum and the corresponding six string values is valid and complete for an OpenAPI schema enumeration. 4. The related operation context mentions add, remove, and replace as valid values for the specific modifyMOIAttributes reporting parameter, but this is a narrower operational use and does not contradict the standalone PatchOperation enumeration. 5. The rule is atomic: the enum constraint should remain one rule and should not be split into separate rules per value.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    },
+    {
+      "section_id": "393",
+      "section_title": "12.1.2.2.1.1 General",
+      "rule_type": "path_operation",
+      "source_name": "notifyMOICreation",
+      "rule_text": "The notifyMOICreation notification is mapped to an HTTP POST operation on the /eventListener resource URI.",
+      "openapi_mapping": {
+        "openapi_object": "paths./eventListener",
+        "openapi_field": "post",
+        "openapi_value": "POST",
+        "references": []
+      },
+      "reflector_score": 1.0,
+      "reflection_reasoning": "The rule is explicitly stated in Table 12.1.2.2.1.1-1: notifyMOICreation uses HTTP POST and the /eventListener resource URI. The mapping to paths./eventListener with field post and value POST is valid and complete for an OpenAPI path operation. This section is a mapping section, not a schema-home section, so the rule is owned here and is not an inherited schema property or duplicate; the sibling POST mappings represent distinct notifications. The retrieved OpenAPI context recognizes path operations and HTTP methods and does not contradict this mapping. The rule has one target method and is atomic, so no split is needed.",
+      "reflection_flagged": false,
+      "split_suggestion": "",
+      "discard_suggestion": false,
+      "validation_notes": "",
+      "validation_passed": true
+    }
+  ]
+}
