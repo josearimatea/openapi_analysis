@@ -15,9 +15,17 @@ versioned and pinned by tests.
 | | Evaluates | Against | How |
 |---|---|---|---|
 | **rulesbank** | the rules bank from `openapi_rulesbank` | rules extracted from the official YAML, in the same rules-bank format | rule by rule: **coverage** (address) and **fidelity** (value) |
-| **openapi** | the YAML from `openapi_generator` | the official YAML itself | document against document, leaves split into contract / metadata / prose |
+| **openapi** | the YAML from `openapi_generator` | the official YAML itself | document against document, leaves split into contract / metadata / prose, broken down per operation and schema; plus **validity**: is each document valid OpenAPI 3.0 (`openapi-spec-validator`)? |
+
+Both measure **agreement** with the official YAML, deterministically. Agreement is
+not correctness: where they diverge, which side is right (or which is an
+improvement) needs reading the OpenAPI reference and the 3GPP spec — the planned
+LLM judge (layer 3), reported apart from these numbers.
 
 What a rule is, and every counting decision, is in [docs/RULES.md](docs/RULES.md).
+What the validity check verifies — and what it does not — is in
+[docs/VALIDATION.md](docs/VALIDATION.md). The history of the decisions is in
+[docs/RASTREIO.md](docs/RASTREIO.md).
 
 ## Usage
 
@@ -25,7 +33,7 @@ What a rule is, and every counting decision, is in [docs/RULES.md](docs/RULES.md
 uv sync
 uv run pytest                                      # 61 tests, results pinned
 
-uv run openapi-analysis all                        # every input → data/outputs/<Service>/
+uv run openapi-analysis all                        # every input → data/outputs/{rulesbank,generator}/<Service>/
 uv run openapi-analysis rulesbank <bank.json> <official.yaml> [--json]
 uv run openapi-analysis openapi   <generated.yaml> <official.yaml> [--json]
 uv run openapi-analysis extract   <official.yaml> [-o official_rules.json]
@@ -55,7 +63,7 @@ src/openapi_analysis/
   cli.py
 data/
   inputs/        official YAMLs, banks, generated YAMLs + manifest.json (versioned)
-  outputs/       reports (git-ignored)
+  outputs/       reports (git-ignored): rulesbank/<Service>/ and generator/<Service>/
 scripts/sync_data.py   copy inputs from the sibling repos, write the manifest
 docs/RULES.md          the rule definition and its decisions
 ```

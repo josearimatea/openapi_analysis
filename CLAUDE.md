@@ -137,19 +137,24 @@ src/openapi_analysis/
   config/        paths, settings (OFFICIAL_REFERENCE por serviço), logging
   rulesbank/     avaliação 1: rule_types.py (A DEFINIÇÃO + rule_key), extraction.py,
                  comparison.py (cobertura + fidelidade regra a regra)
-  openapi/       avaliação 2: comparison.py (folhas contract/metadata/prose)
+  openapi/       avaliação 2: comparison.py (folhas contract/metadata/prose, por operação
+                 e por schema), validation.py (camada 2: o documento é OpenAPI 3.0 válido?)
   schemas/       os relatórios (Pydantic) — contrato com quem chama
   services/      o que irmãos / chatUI / CLI chamam (aceitam dict ou caminho)
   reporting/     texto
   api/           FastAPI opcional — só docstrings, ainda não construído
   cli.py         openapi-analysis rulesbank | openapi | extract | all
-tests/           61 testes; tests/services/test_results.py TRAVA todo número publicado
+tests/           77 testes; tests/services/test_results.py TRAVA todo número publicado
+docs/RULES.md        a definição de regra e cada decisão de contagem/comparação
+docs/VALIDATION.md   o que a camada 2 checa e o que NÃO checa (lido do código da lib)
+docs/RASTREIO.md     caderno de bordo — a história das decisões; acrescente, não reescreva
 ```
 
 O padrão de pastas segue os irmãos (`config/`, `schemas/`, `services/`,
 `api/routes|schemas`, `data/inputs|outputs`) — de propósito, sem `domain/`.
 
-**Resultados travados** (`uv run openapi-analysis all` → `data/outputs/<Serviço>/`):
+**Resultados travados** (`uv run openapi-analysis all` → `data/outputs/rulesbank/<Serviço>/`
+e `data/outputs/generator/<Serviço>/`, um relatório `.json` + `.txt` por insumo):
 banco i20 ProvMnS × v18.2.0 = **81/113 cobertos (71,7%)**, fidelidade **53/72 (73,6%)**,
 39 regras do banco fora de qualquer endereço oficial, 5 casos de §3.23 medidos.
 Query params: 0/5 (todos no path — §3.22, banco anterior à correção do rulesbank).
@@ -160,15 +165,29 @@ uv sync && uv run pytest
 uv run openapi-analysis all
 ```
 
+**As três camadas da avaliação** (decidido em 05/out/2026):
+1. **Concordância** (feito) — determinística: diverge do YAML oficial? Gera a lista de
+   divergências. Concordância NÃO é correção: o oficial também pode errar ou ser
+   pior que o gerado.
+2. **Validade** (feito, avaliação 2) — determinística: o documento é OpenAPI 3.0
+   válido? Só sintaxe (`openapi-spec-validator`; `$ref` externos não são abertos —
+   os arquivos de outras specs 3GPP não estão em `data/inputs`). Gerado e oficial.
+3. **Julgamento** (a fazer) — LLM só sobre as divergências, lendo a referência
+   OpenAPI e a spec 3GPP: `gerado_errado | equivalente | gerado_melhor |
+   oficial_errado | incerto`, com citação; vereditos em cache (reprodutível),
+   calibrados contra revisão humana, e reportados SEPARADOS da concordância.
+   Ex.: 4XX/5XX × default — ambos válidos, decidir exige interpretar.
+
 ## 7. O que FALTA (roteiro)
 
-1. Decisões em aberto de `docs/RULES.md` §5 (referência dos bancos i00, header,
+1. Camada 3 — o juiz com LLM (acima).
+2. Decisões em aberto de `docs/RULES.md` §5 (referência dos bancos i00, header,
    o que do YAML não é regra).
-2. Catálogo de defeitos além do §3.23 já medido: §3.22 explícito (query no path),
+3. Catálogo de defeitos além do §3.23 já medido: §3.22 explícito (query no path),
    §3.27 (endereço compartilhado já listado), §2.1 (`validation_passed=False` já
    contado).
-3. `api/` — rotas FastAPI para o chatUI (`app.include_router`).
-4. Relatório HTML (opcional).
+4. `api/` — rotas FastAPI para o chatUI (`app.include_router`).
+5. Relatório HTML (opcional).
 
 ## 8. Convenções e cuidados
 
