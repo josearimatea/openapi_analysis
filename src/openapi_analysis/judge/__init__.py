@@ -5,5 +5,6 @@ Takes the divergences layers 1 and 2 found, one part at a time, retrieves what t
 it differs, whether it is an error or an improvement, and which version reads better.
 It judges; it never measures — its verdicts are reported apart from the agreement.
 
-spec_index.py  split a spec into sections and index it, once per version
+spec_index.py  split a spec into sections and index it, once per version (no annex)
+parts.py       cut the divergences of the layer 1/2 reports into parts
 """
