@@ -1,14 +1,23 @@
-"""Cut the divergences found by layers 1 and 2 into PARTS for the judge.
+"""Cut the divergences between two documents into PARTS for the judge.
 
 Deterministic, no LLM, no retrieval: it only reads the evaluation reports and the
 documents they were computed from. A part is small enough to aim a retrieval at it
 (docs/JUDGE_PLAN.md §3) — what is equal to the official YAML never becomes a part.
 
-Generator (OpenAPIEvaluation + both documents) — one part per aspect of an owner:
+Generator (both documents) — every difference, contract, metadata and prose alike,
+lands in exactly one part, given to the owner it sits in:
     operation  owner "PATCH /x"   aspects: parameters | request_body | responses |
-                                           callbacks | operation (missing / extra op)
-    path item  owner "PATH /x"    aspects: parameters | unexpected_keys | path
+                                           callback <name> | operation
+    path item  owner "PATH /x"    aspects: parameters | path_item | unexpected_keys | path
     schema     owner "SCHEMA N"   aspects: definition | placement | missing | extra
+    component  owner "COMPONENT parameters.N" (other components sections): definition
+    block      owner "COMPONENTS k" (a key in components that is no section),
+               "DOCUMENT info" / "DOCUMENT x-..." (metadata) and other top-level keys
+The part holds the WHOLE owner on both sides as context — the whole operation (with
+the path item's parameters for a parameters part), the whole callback with the
+identity of the operation that registers it, the whole schema, the whole block —
+and its focus: the exact differences, computed here as layer 1 computes leaves.
+
 Rules bank (RulesBankEvaluation + the bank) — one part per rule:
     different  a bank rule on an official address, with another value
     duplicate  several bank rules on one official address (covers their values too)
@@ -16,7 +25,7 @@ Rules bank (RulesBankEvaluation + the bank) — one part per rule:
     extra      a bank rule on no official address
 
 Layer-2 issues (not valid OpenAPI 3.0) are attached to the part they fall in — the
-most specific one whose location contains them, or whose key they name — so a part
+most specific one whose focus contains them, or whose key they name — so a part
 already invalid can be ruled an error without asking the LLM.
 """
 
@@ -27,10 +36,18 @@ from collections import defaultdict
 from typing import Any
 
 from openapi_analysis.judge.spec_index import clause_of
-from openapi_analysis.openapi.comparison import join
+from openapi_analysis.openapi.comparison import (
+    METADATA_ROOTS,
+    SET_KEYWORDS,
+    Parts,
+    _item_label,
+    element,
+    flatten_parts,
+    join,
+)
 from openapi_analysis.rulesbank.rule_types import HTTP_METHODS, rule_key
-from openapi_analysis.schemas.judge import Part, SearchHints
-from openapi_analysis.schemas.openapi import OpenAPIEvaluation
+from openapi_analysis.schemas.judge import Difference, Part, SearchHints
+from openapi_analysis.schemas.openapi import OpenAPIEvaluation, OperationScore, SchemaScore
 from openapi_analysis.schemas.rulesbank import RulesBankEvaluation
 
 # operation key in the document → aspect name
@@ -91,181 +108,381 @@ def _codes(node: Any) -> list[str]:
 
 # ── generator ────────────────────────────────────────────────────────────────
 
+_MISSING = object()
+Diff = tuple[str, Parts, Any, Any]      # (kind, path, official, generated)
+# components sections whose entries are named, reusable objects (OAS 3.0)
+_COMPONENT_SECTIONS = ("schemas", "responses", "parameters", "examples", "requestBodies",
+                       "headers", "securitySchemes", "links", "callbacks")
+# path item keys that are not operations but are allowed there
+_PATH_ITEM_FIELDS = ("summary", "description", "servers", "$ref")
+
+
 def _keys(element: str) -> list[str]:
     """Split a display path ("callbacks.'$request.body#/x'.post") into its keys,
     keeping a quoted key — one holding dots — whole."""
     return [a or b for a, b in re.findall(r"'([^']*)'|([^.]+)", element)]
 
 
-def _detail_aspect(owner: str, element: str) -> str:
-    head = _keys(element)[0].split("[")[0]
-    if owner.startswith("PATH "):
-        return "parameters" if head == "parameters" else "unexpected_keys"
-    if owner.startswith("SCHEMA "):
-        return "definition"
-    return _OP_ASPECTS.get(head, "operation")
+def _splittable(at: Parts) -> bool:
+    """Above an owner: a subtree present on one side only is split into its children
+    here, so one part never swallows several owners (all of paths, all schemas)."""
+    if at in ((), ("paths",), ("components",)):
+        return True
+    if len(at) == 2 and at[0] == "components" and at[1] in _COMPONENT_SECTIONS:
+        return True
+    return len(at) == 4 and at[0] == "paths" and at[2] in HTTP_METHODS and at[3] == "callbacks"
 
 
-def _counts(details: list) -> str:
-    kinds = defaultdict(int)
-    for d in details:
-        kinds[d.kind] += d.leaves
-    return ", ".join(f"{n} leaves {k}" for k, n in sorted(kinds.items()))
+def _str_keys(node: dict) -> dict[str, Any]:
+    return {str(k): v for k, v in node.items()}
+
+
+def _labelled(at: Parts, items: list) -> dict[str, Any]:
+    return {_item_label(at, i, v): v for i, v in enumerate(items)}
+
+
+def diff_documents(official: Any, generated: Any, at: Parts = ()) -> list[Diff]:
+    """Every place where the two documents differ: (kind, path, official, generated).
+
+    Same leaf identity as layer 1 (comparison.flatten_parts): parameters by (in, name),
+    other list items by position, enum / required as sets, keys as strings. A subtree
+    on one side only is ONE entry (kind absent / extra, carrying that subtree) unless
+    it sits above an owner.
+    """
+    if official is _MISSING or generated is _MISSING:
+        node = generated if official is _MISSING else official
+        if isinstance(node, dict) and node and _splittable(at):
+            out = []
+            for k, v in _str_keys(node).items():
+                out += diff_documents(_MISSING if official is _MISSING else v,
+                                      v if official is _MISSING else _MISSING, (*at, k))
+            return out
+        if not flatten_parts(node):                      # an empty container: no leaf
+            return []
+        if official is _MISSING:
+            return [("extra", at, None, node)]
+        return [("absent", at, node, None)]
+    if at and at[-1] in SET_KEYWORDS and isinstance(official, list) \
+            and isinstance(generated, list):
+        same = sorted(map(str, official)) == sorted(map(str, generated))
+        return [] if same else [("differing", at, official, generated)]
+    pair = None
+    if isinstance(official, dict) and isinstance(generated, dict):
+        pair = _str_keys(official), _str_keys(generated)
+    elif isinstance(official, list) and isinstance(generated, list):
+        pair = _labelled(at, official), _labelled(at, generated)
+    if pair:
+        o, g = pair
+        return [d for k in [*o, *(k for k in g if k not in o)]
+                for d in diff_documents(o.get(k, _MISSING), g.get(k, _MISSING), (*at, k))]
+    return [] if official == generated else [("differing", at, official, generated)]
+
+
+def _unit(p: Parts, official: dict, generated: dict,
+          misplaced: dict[Parts, str]) -> tuple[str, str, Parts]:
+    """(owner, aspect, anchor) of a difference — the anchor is the whole piece the
+    judge gets as context: the operation, the callback, the schema, the block."""
+    def both(*keys: str) -> bool:
+        return isinstance(_get(official, *keys), dict) and isinstance(_get(generated, *keys), dict)
+
+    root = p[0] if p else ""
+    if root == "paths" and len(p) >= 2:
+        path = p[1]
+        if len(p) == 2 or not both("paths", path):
+            return f"PATH {path}", "path", p[:2]
+        key = p[2]
+        if key in HTTP_METHODS:
+            owner, anchor = f"{key.upper()} {path}", p[:3]
+            if len(p) == 3 or not both("paths", path, key):
+                return owner, "operation", anchor
+            if p[3] == "callbacks" and len(p) > 4:
+                return owner, f"callback {p[4]}", (*anchor, "callbacks", p[4])
+            return owner, _OP_ASPECTS.get(p[3], "operation"), anchor
+        aspect = ("parameters" if key == "parameters" else
+                  "path_item" if key in _PATH_ITEM_FIELDS else "unexpected_keys")
+        return f"PATH {path}", aspect, p[:2]
+    if root == "components" and len(p) >= 2:
+        for n in (3, 2):
+            if p[:n] in misplaced:
+                return f"SCHEMA {misplaced[p[:n]]}", "placement", ("components", "schemas",
+                                                                   misplaced[p[:n]])
+        if p[1] == "schemas" and len(p) >= 3:
+            name = p[2]
+            if name in misplaced.values():
+                return f"SCHEMA {name}", "placement", p[:3]
+            off = _get(official, "components", "schemas", name)
+            gen = _get(generated, "components", "schemas", name)
+            aspect = ("missing" if gen is None else "extra" if off is None else "definition")
+            return f"SCHEMA {name}", aspect, p[:3]
+        if p[1] in _COMPONENT_SECTIONS and len(p) >= 3:
+            return f"COMPONENT {p[1]}.{p[2]}", "definition", p[:3]
+        if p[1] not in _COMPONENT_SECTIONS and any(            # a copy of a schema,
+                _get(doc, "components", "schemas", p[1]) is not None   # outside its place
+                for doc in (official, generated)):
+            return f"SCHEMA {p[1]}", "placement", ("components", "schemas", p[1])
+        return f"COMPONENTS {p[1]}", "block", p[:2]
+    if root in METADATA_ROOTS or root.startswith("x-"):
+        return f"DOCUMENT {root}", "metadata", p[:1]
+    return f"DOCUMENT {root or '(root)'}", "block", p[:1]
+
+
+def _path_item_view(item: Any) -> Any:
+    """A path item as context for its own keys: every non-operation key whole, each
+    operation by its identity and parameters (each operation has its own parts)."""
+    if not isinstance(item, dict):
+        return item
+    out: dict[str, Any] = {}
+    for k, v in _str_keys(item).items():
+        if k in HTTP_METHODS and isinstance(v, dict):
+            out[k] = {f: v[f] for f in ("operationId", "summary", "parameters") if f in v}
+        else:
+            out[k] = v
+    return out
+
+
+def _identity(doc: dict, path: str, method: str) -> str:
+    op = _get(doc, "paths", path, method) or {}
+    bits = [f"{method.upper()} {path}"] + [f"{f}: {op[f]}" for f in ("operationId", "summary")
+                                            if isinstance(op, dict) and op.get(f)]
+    return " — ".join(bits)
+
+
+def _context(doc: dict, aspect: str, anchor: Parts, ats: list[Parts]) -> dict[str, Any] | None:
+    """The whole owner on one side, keyed by where it is in the document; None if the
+    side has none of it. `ats`: where this side holds the piece — a schema also
+    defined outside components.schemas is shown at every place."""
+    ctx: dict[str, Any] = {}
+    for at in ats:
+        node = _get(doc, *at)
+        if node is None:
+            continue
+        if anchor[0] == "paths" and len(anchor) == 2 and aspect != "path":
+            ctx[join(at) + " (operations: identity and parameters only — each is judged "
+                "in its own part)"] = _path_item_view(node)
+        else:
+            ctx[join(at)] = node
+    if aspect == "parameters" and len(anchor) == 3:           # an operation's parameters
+        shared = _get(doc, "paths", anchor[1], "parameters")
+        if shared is not None:
+            ctx[join(("paths", anchor[1], "parameters"))] = shared
+    if aspect.startswith("callback ") and ctx:
+        ctx = {"registered by": _identity(doc, anchor[1], anchor[2]), **ctx}
+    return ctx or None
+
+
+def _leaf_count(p: Parts, official: Any, generated: Any) -> int:
+    """How many layer-1 leaves a difference spans: the union of both sides' leaves
+    under it (one side only for absent / extra), keyed as layer 1 keys them."""
+    key = p[-1] if p else ""
+    sides = [flatten_parts({key: v}) for v in (official, generated) if v is not None]
+    return len(set().union(*sides)) or 1
+
+
+def _where(p: Parts, aspect: str, anchor: Parts, misplaced: dict[Parts, str]) -> Parts:
+    """The location a difference is judged at: the aspect's key in an operation or a
+    path item, each field of an operation, the copy of a schema, else the owner."""
+    if p[:len(anchor)] != anchor:                               # placement: elsewhere
+        return next((at for at in misplaced if p[:len(at)] == at), p[:2])
+    if anchor[0] == "paths" and len(anchor) == 3 and aspect == "operation":
+        return p
+    in_item = anchor[0] == "paths" and len(anchor) in (2, 3) and aspect not in (
+        "path", "operation")
+    return p[:len(anchor) + 1] if in_item and len(p) > len(anchor) else anchor
+
+
+def _term(rel: Parts, fallback: str) -> str:
+    """The element a difference is about, named: a code, a parameter, a media type,
+    a property — read through comparison.element."""
+    keys = [k for k in (element(rel) if rel else ()) if not re.fullmatch(r"\[\d+\]", k)]
+    key = keys[-1] if keys else fallback
+    m = re.fullmatch(r"\[in=[^,]*,name=(.*)\]", key)
+    return m.group(1) if m else key
+
+
+def _facts(aspect: str, op: OperationScore | None, schema: SchemaScore | None) -> list[str]:
+    """What layer 1 already says about this aspect, in words."""
+    if op is not None:
+        facts = {
+            "parameters": [op.params_missing and f"parameters missing {op.params_missing}",
+                           op.params_extra and f"parameters extra {op.params_extra}",
+                           op.params_at_path_level and
+                           f"declared on the path item, not on this operation: "
+                           f"{op.params_at_path_level}"],
+            "request_body": [op.media_missing and f"media types missing {op.media_missing}",
+                             op.media_extra and f"media types extra {op.media_extra}"],
+            "responses": [op.responses_missing and f"codes missing {op.responses_missing}",
+                          op.responses_extra and f"codes extra {op.responses_extra}"],
+            "operation": [op.status != "present" and
+                          f"operation {op.status} in the generated document"],
+            "path": [op.status != "present" and
+                     f"path item {op.status} in the generated document"],
+        }.get(aspect, [])
+        return [f for f in facts if f]
+    if schema is not None:
+        return [f for f in [
+            f"schema {schema.status}" + (f" (at {schema.found_at})" if schema.found_at else ""),
+            schema.shape_official != schema.shape_generated and
+            f"shape official {schema.shape_official or '—'} vs generated "
+            f"{schema.shape_generated or '—'}",
+            schema.note] if f]
+    return []
 
 
 def generator_parts(report: OpenAPIEvaluation, generated: dict, official: dict,
                     input_label: str = "") -> list[Part]:
-    """The divergent parts of a generated document, from its evaluation report."""
+    """The divergent parts of a generated document — every difference in exactly one.
+
+    Each difference between the two documents (contract, metadata and prose alike) is
+    given to the owner it sits in; the part carries that whole owner on both sides,
+    and the differences as its focus. Nothing that differs is left out.
+    """
     label = input_label or report.generated.label
-    by_owner_aspect: dict[tuple[str, str], list] = defaultdict(list)
-    for d in report.details:
-        if d.owner != "OTHER":
-            by_owner_aspect[(d.owner, _detail_aspect(d.owner, d.element))].append(d)
+    misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
+                 if s.status == "misplaced"}
+    ops = {o.operation: o for o in report.operations}
+    schemas = {s.name: s for s in report.schemas}
+
+    units: dict[tuple[str, str], tuple[Parts, list[Diff]]] = {}
+    for kind, p, o_val, g_val in diff_documents(official, generated):
+        owner, aspect, anchor = _unit(p, official, generated, misplaced)
+        units.setdefault((owner, aspect), (anchor, []))[1].append((kind, p, o_val, g_val))
 
     parts: list[Part] = []
-    locations: dict[str, list[str]] = {}       # part id → document locations it covers
+    locations: dict[str, list[str]] = {}       # part id → document locations it judges
+    for (owner, aspect), (anchor, diffs) in units.items():
+        g_ats = [anchor]
+        if aspect == "placement":                # where else the generated side defines it
+            g_ats += list(dict.fromkeys(
+                next((at for at in misplaced if p[:len(at)] == at), p[:2])
+                for _, p, _, _ in diffs if p[:len(anchor)] != anchor))
+        focus = list(dict.fromkeys(join(_where(p, aspect, anchor, misplaced))
+                                   for _, p, _, _ in diffs))
 
-    def add(part: Part, locs: list[str]) -> None:
+        differences = [
+            Difference(kind=k, location=join(p), leaves=_leaf_count(p, o_val, g_val),
+                       official=o_val if k == "differing" else None,
+                       generated=g_val if k == "differing" else None)
+            for k, p, o_val, g_val in diffs]
+        terms = list(dict.fromkeys(
+            [_term(p[len(anchor):], anchor[-1]) for _, p, _, _ in diffs] +
+            [str(v) for k, _, o_val, g_val in diffs if k == "differing" for v in (o_val, g_val)
+             if v is not None and not isinstance(v, (dict, list)) and len(str(v)) <= 60]))
+        kinds = defaultdict(int)
+        for d in differences:
+            kinds[d.kind] += 1
+        counts = ", ".join(f"{n} {k}" for k, n in sorted(kinds.items()))
+        op_score = ops.get(owner)
+        schema_score = schemas.get(owner.split(" ", 1)[1]) if owner.startswith("SCHEMA ") \
+            else None
+        facts = _facts(aspect, op_score, schema_score)
+        if aspect == "placement":
+            facts.append("generated defines it at " + ", ".join(
+                join(at) for at in g_ats if _get(generated, *at) is not None))
+        summary = "; ".join(facts + [counts])
+
+        path = anchor[1] if anchor[0] == "paths" else ""
+        method = anchor[2] if anchor[0] == "paths" and len(anchor) > 2 else ""
+        names, external = _ref_hints(*[v for _, _, o_val, g_val in diffs
+                                       for v in (o_val, g_val)])
+        if owner.startswith("SCHEMA "):
+            names = [owner.split(" ", 1)[1], *names]
+        terms_hint = ([aspect.split(" ", 1)[1]] if aspect.startswith("callback ") else
+                      [t for t in (_get(official, "paths", path, method, "operationId"),
+                                   _get(official, "paths", path, method, "summary"))
+                       if isinstance(t, str)] if method else [])
+        part = Part(
+            id=f"generator|{label}|{owner}|{aspect}", evaluation="generator", input=label,
+            owner=owner, aspect=aspect, summary=summary, focus=focus,
+            differences=differences, diff_terms=terms,
+            official=_context(official, aspect, anchor, [anchor]),
+            generated=_context(generated, aspect, anchor, g_ats),
+            hints=SearchHints(path=path, method=method, schemas=list(dict.fromkeys(names)),
+                              external_refs=external, terms=terms_hint))
         parts.append(part)
-        locations[part.id] = locs
-
-    for op in report.operations:
-        verb, path = op.operation.split(" ", 1)
-        p_loc = f"paths.{join((path,))}"
-        o_item, g_item = _get(official, "paths", path), _get(generated, "paths", path)
-
-        if verb == "PATH":
-            if op.status != "present":
-                node_o, node_g = o_item, g_item
-                add(_gen_part(label, op.operation, "path",
-                              f"path item {op.status} in the generated document",
-                              node_o, node_g, path=path), [p_loc])
-                continue
-            details = by_owner_aspect.get((op.operation, "parameters"), [])
-            if op.params_missing or op.params_extra or details:
-                summary = "; ".join(filter(None, [
-                    op.params_missing and f"missing {op.params_missing}",
-                    op.params_extra and f"extra {op.params_extra}",
-                    _counts(details)]))
-                add(_gen_part(label, op.operation, "parameters",
-                              f"path-level parameters: {summary}",
-                              _get(o_item, "parameters"), _get(g_item, "parameters"),
-                              path=path), [f"{p_loc}.parameters"])
-            odd = by_owner_aspect.get((op.operation, "unexpected_keys"), [])
-            if odd:
-                keys = sorted({_keys(d.element)[0] for d in odd})
-                add(_gen_part(label, op.operation, "unexpected_keys",
-                              f"keys in the path item that are not operations: {keys}",
-                              None, {k: _get(g_item, k) for k in keys}, path=path), [p_loc])
-            continue
-
-        method = verb.lower()
-        o_op, g_op = _get(o_item, method), _get(g_item, method)
-        op_loc = f"{p_loc}.{method}"
-        if op.status != "present":
-            add(_gen_part(label, op.operation, "operation",
-                          f"operation {op.status} in the generated document",
-                          o_op, g_op, path=path, method=method), [op_loc])
-            continue
-        # callbacks: one part per notification — each is read in its own clause
-        cb_details: dict[str, list] = defaultdict(list)
-        for d in by_owner_aspect.get((op.operation, "callbacks"), []):
-            keys = _keys(d.element)
-            cb_details[keys[1] if len(keys) > 1 else ""].append(d)
-        for name, details in sorted(cb_details.items()):
-            o_cb, g_cb = _get(o_op, "callbacks", name), _get(g_op, "callbacks", name)
-            state = ("missing in the generated document" if g_cb is None else
-                     "not in the official document" if o_cb is None else "differs")
-            add(_gen_part(label, op.operation, f"callback {name}",
-                          f"callback {name} {state}: {_counts(details)}", o_cb, g_cb,
-                          path=path, method=method, terms=[name]),
-                [f"{op_loc}.callbacks.{join((name,))}"])
-        for key, aspect in _OP_ASPECTS.items():
-            if aspect == "callbacks":
-                continue
-            details = by_owner_aspect.get((op.operation, aspect), [])
-            facts = {
-                "parameters": [op.params_missing and f"missing {op.params_missing}",
-                               op.params_extra and f"extra {op.params_extra}",
-                               op.params_at_path_level and
-                               f"declared on the path item, not on this operation: "
-                               f"{op.params_at_path_level}"],
-                "request_body": [op.media_missing and f"media types missing {op.media_missing}",
-                                 op.media_extra and f"media types extra {op.media_extra}"],
-                "responses": [op.responses_missing and f"codes missing {op.responses_missing}",
-                              op.responses_extra and f"codes extra {op.responses_extra}"],
-            }[aspect]
-            facts = [f for f in facts if f]
-            if not (facts or details):
-                continue
-            if aspect == "parameters":
-                off_side = {"path_level": _get(o_item, "parameters"),
-                            "operation": _get(o_op, "parameters")}
-                gen_side = {"path_level": _get(g_item, "parameters"),
-                            "operation": _get(g_op, "parameters")}
-            else:
-                off_side, gen_side = _get(o_op, key), _get(g_op, key)
-            summary = "; ".join(facts + ([_counts(details)] if details else []))
-            add(_gen_part(label, op.operation, aspect, f"{key}: {summary}",
-                          off_side, gen_side, path=path, method=method,
-                          terms=[t for t in (_get(o_op, "operationId"),
-                                             _get(o_op, "summary")) if t]),
-                [f"{op_loc}.{key}"])
-        other = by_owner_aspect.get((op.operation, "operation"), [])
-        if other:
-            add(_gen_part(label, op.operation, "operation",
-                          f"other operation fields: {_counts(other)}",
-                          {k: v for k, v in (o_op or {}).items() if k not in _OP_ASPECTS},
-                          {k: v for k, v in (g_op or {}).items() if k not in _OP_ASPECTS},
-                          path=path, method=method), [op_loc])
-
-    o_schemas = _get(official, "components", "schemas") or {}
-    g_schemas = _get(generated, "components", "schemas") or {}
-    for s in report.schemas:
-        owner = f"SCHEMA {s.name}"
-        loc = f"components.schemas.{join((s.name,))}"
-        leaves = s.leaves
-        changed = leaves.absent or leaves.differing or leaves.extra \
-            or s.shape_official != s.shape_generated
-        if s.status == "present" and not changed:
-            continue
-        aspect = {"present": "definition", "misplaced": "placement",
-                  "missing": "missing", "extra": "extra"}[s.status]
-        gen_node = g_schemas.get(s.name)
-        locs = [loc]
-        if s.status == "misplaced":
-            gen_node = _node_at(generated, s.found_at)
-            locs.append(s.found_at)
-        summary = "; ".join(filter(None, [
-            f"schema {s.status}" + (f" (at {s.found_at})" if s.found_at else ""),
-            s.shape_official != s.shape_generated and
-            f"shape official {s.shape_official or '—'} vs generated {s.shape_generated or '—'}",
-            s.note,
-            (leaves.absent or leaves.differing or leaves.extra) and
-            f"{leaves.absent} leaves absent, {leaves.differing} differing, {leaves.extra} extra",
-        ]))
-        add(_gen_part(label, owner, aspect, summary, o_schemas.get(s.name), gen_node,
-                      schemas=[s.name]), locs)
+        locations[part.id] = focus
 
     _attach_issues(parts, locations, [f"{i.location}: {i.message}"
                                       for i in report.validity_generated.issues])
     return parts
 
 
-def _node_at(doc: dict, dotted: str) -> Any:
-    return _get(doc, *[k.strip("'") for k in dotted.split(".")])
+def node_at(context: Any, location: str) -> Any:
+    """The node at a display location ("paths./x.get.parameters[in=query,name=s]")
+    inside a part's context ({display location of a whole piece: node}); None if the
+    side does not have it."""
+    if not isinstance(context, dict):
+        return None
+    for key, node in context.items():
+        base = key.split(" (", 1)[0]
+        if location == base:
+            return node
+        if not location.startswith((base + ".", base + "[")):
+            continue
+        rest = location[len(base):].lstrip(".")
+        for step in _keys(rest):
+            name, _, labels = step.partition("[")
+            if name:
+                node = _str_keys(node).get(name) if isinstance(node, dict) else None
+            for label in re.findall(r"\[[^\]]*\]", "[" + labels) if labels else []:
+                node = (_labelled(_parent_key(name), node).get(label)
+                        if isinstance(node, list) else None)
+            if node is None:
+                return None
+        return node
+    return None
 
 
-def _gen_part(label: str, owner: str, aspect: str, summary: str, official: Any,
-              generated: Any, *, path: str = "", method: str = "",
-              schemas: list[str] | None = None, terms: list[str] | None = None) -> Part:
-    names, external = _ref_hints(official, generated)
-    return Part(
-        id=f"generator|{label}|{owner}|{aspect}", evaluation="generator", input=label,
-        owner=owner, aspect=aspect, summary=summary, official=official, generated=generated,
-        hints=SearchHints(path=path, method=method,
-                          schemas=list(dict.fromkeys((schemas or []) + names)),
-                          external_refs=external, terms=terms or []))
+def _parent_key(name: str) -> Parts:
+    return (name,) if name else ()
+
+
+def document_owners(report: OpenAPIEvaluation, generated: dict, official: dict) -> list[str]:
+    """Every owner of either document — operation, path item, schema, component,
+    block — as generator_parts names them; an owner with no part is equal."""
+    misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
+                 if s.status == "misplaced"}
+    owners: dict[str, None] = {}
+    for doc in (official, generated):
+        for p in flatten_parts(doc):
+            owners[_unit(p, official, generated, misplaced)[0]] = None
+    return list(owners)
+
+
+REGIONS = ("operations", "schemas", "other components", "document metadata")
+
+
+def region(owner: str) -> str:
+    """The region of the document an owner sits in."""
+    head = owner.split(" ", 1)[0]
+    if head == "SCHEMA":
+        return "schemas"
+    if head in ("COMPONENT", "COMPONENTS"):
+        return "other components"
+    if head == "DOCUMENT":
+        return "document metadata"
+    return "operations"
+
+
+def leaf_census(report: OpenAPIEvaluation, generated: dict,
+                official: dict) -> dict[str, dict[str, int]]:
+    """{region: {"total": n, "equal": n}} over every leaf of either document — a leaf
+    present in both with the same value is equal; the others are the differences."""
+    misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
+                 if s.status == "misplaced"}
+    o, g = flatten_parts(official), flatten_parts(generated)
+    out = {r: {"total": 0, "equal": 0} for r in REGIONS}
+    for p in {*o, *g}:
+        r = region(_unit(p, official, generated, misplaced)[0])
+        out[r]["total"] += 1
+        out[r]["equal"] += int(p in o and p in g and o[p] == g[p])
+    return out
+
+
+def nature(part: Part) -> str:
+    """missing: all it differs by is absent from the generated side; extra: all of it
+    is added by the generated side; changed: anything else."""
+    kinds = {d.kind for d in part.differences}
+    return "missing" if kinds == {"absent"} else "extra" if kinds == {"extra"} else "changed"
 
 
 def _attach_issues(parts: list[Part], locations: dict[str, list[str]],
