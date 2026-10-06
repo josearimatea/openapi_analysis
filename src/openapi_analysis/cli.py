@@ -4,6 +4,8 @@
     openapi-analysis openapi   <generated.yaml>  <official.yaml> [--json]
     openapi-analysis extract   <official.yaml> [-o official_rules.json]
     openapi-analysis all       # every input in data/inputs → data/outputs/{rulesbank,generator}/<Service>/
+    openapi-analysis judge generator|rulesbank <input> <official.yaml>
+                           [--part "OWNER::ASPECT"]... [--limit N]   # layer 3, needs [judge]
 """
 
 from __future__ import annotations
@@ -45,8 +47,18 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("all", help="evaluate every input in data/inputs, save to data/outputs")
 
+    p = sub.add_parser("judge", help="layer 3: an LLM judges each divergence, reading the "
+                                     "3GPP spec and the OpenAPI reference (needs [judge])")
+    p.add_argument("evaluation", choices=("generator", "rulesbank"))
+    p.add_argument("input", type=Path, help="generated YAML or rules bank JSON")
+    p.add_argument("official", type=Path)
+    p.add_argument("--part", action="append", default=[], metavar="OWNER::ASPECT",
+                   help="judge only this part (repeatable), e.g. "
+                        "'PATCH /{className}={id}::responses'")
+    p.add_argument("--limit", type=int, help="judge at most N parts")
+
     args = ap.parse_args(argv)
-    for name in ("rules_bank", "generated", "official"):
+    for name in ("rules_bank", "generated", "official", "input"):
         path = getattr(args, name, None)
         if path is not None and not path.exists():
             print(f"error: {path} does not exist", file=sys.stderr)
@@ -64,6 +76,14 @@ def main(argv: list[str] | None = None) -> int:
             args.output.write_text(text + "\n", encoding="utf-8")
         else:
             print(text)
+    elif args.command == "judge":
+        from openapi_analysis.reporting.text import render_judge
+        from openapi_analysis.services.judge_service import judge_openapi, judge_rules_bank
+
+        wanted = {tuple(s.split("::", 1)) for s in args.part}
+        select = (lambda part: (part.owner, part.aspect) in wanted) if wanted else None
+        judge = judge_openapi if args.evaluation == "generator" else judge_rules_bank
+        print(render_judge(judge(args.input, args.official, select=select, limit=args.limit)))
     else:
         for r in evaluate_all_rules_banks():
             t = r.totals

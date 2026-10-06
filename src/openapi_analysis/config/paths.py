@@ -32,6 +32,10 @@ SPECS_DIR = INPUTS_DIR / "specs"          # 3GPP spec markdown each bank came fr
 OUTPUTS_DIR = DATA_DIR / "outputs"
 OUTPUTS_RULESBANK_DIR = OUTPUTS_DIR / "rulesbank"
 OUTPUTS_GENERATOR_DIR = OUTPUTS_DIR / "generator"
+OUTPUTS_JUDGE_DIR = OUTPUTS_DIR / "judge"
+# The judge's verdicts, one file per part — versioned (costly to regenerate; a rerun
+# with the same part, evidence, model and prompt reads them back instead of the LLM).
+JUDGEMENTS_DIR = DATA_DIR / "judgements"
 
 # Sibling repos — read ONLY by scripts/sync_data.py, never by the analysis itself.
 SIBLING_RULESBANK = WORKSPACE / "openapi_rulesbank"
