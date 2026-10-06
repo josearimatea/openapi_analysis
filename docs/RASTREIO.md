@@ -18,6 +18,9 @@ Registro de atualizações:
   por schema no generator, timestamps da avaliação.
 - 2026-10-05 — concordância não é correção: as três camadas; a camada 2 (validade
   OpenAPI 3.0) entra no pipeline.
+- 2026-10-06 — camada 3, etapa 1 (infra): o juiz lê a spec por RAG, sem anexo nenhum;
+  o cliente Qdrant fica preso à versão do servidor, com a atualização do servidor
+  pendente.
 
 ---
 
@@ -199,3 +202,41 @@ não são checados. O detalhe está em `docs/VALIDATION.md`.
 A camada 3, o juiz com LLM. Em aberto: o modelo (o mesmo dos irmãos, via LangChain, como
 dependência opcional?), se o juiz recebe contexto por RAG nas coleções do Qdrant que o
 rulesbank já indexa ou só o trecho da spec referenciado, e por qual avaliação começar.
+
+## Camada 3 — o plano e a infraestrutura
+
+As perguntas acima foram fechadas e o plano está em `docs/JUDGE_PLAN.md`. O critério do
+juiz: o que está **igual** ao oficial está ok; o que está **diferente** é julgado —
+por que difere (valor, endereço ou estrutura), se é erro ou melhoria, e qual versão é
+mais entendível — lendo a spec 3GPP e a referência OpenAPI. O modelo é o
+`gpt-5.6-luna`, o mesmo dos irmãos (via OpenRouter). O contexto vem por RAG, e a análise
+é **por partes**: cada regra divergente do banco, cada aspecto divergente de um dono no
+YAML gerado, com busca e chamada próprias — o documento inteiro de uma vez faria a
+busca trazer trechos genéricos, que não falam de parte nenhuma.
+
+Uma regra se impôs na implementação: **nenhum anexo de spec entra**, nem na análise,
+nem como referência, nem no RAG. O anexo A da TS 28.532 é o próprio YAML oficial; lido
+pelo juiz, ele "leria a spec" e acharia o gabarito, e o veredito ficaria circular. Os
+irmãos já tratavam disso — o generator corta todo o texto a partir do primeiro anexo
+(`normative_only`), o rulesbank descarta o anexo do YAML — e a indexação daqui faz o
+mesmo corte, com um teste que trava a regra na spec real. Daí uma decisão de fonte: o
+corpus compartilhado do `qdrant_3gpp_rag` (`3gpp_rel18_*`) indexa as specs inteiras,
+anexos incluídos, sem metadado que permita filtrá-los — então o juiz **não** busca nele;
+as specs de que precisa são indexadas por nós, uma coleção fixa por versão
+(`analysis_spec_28532_i20`, 392 trechos, só texto normativo). Por ora só a versão i20.
+
+Ao preparar o ambiente, dois ajustes de infraestrutura. O `torch` do extra `[judge]` é a
+versão só para CPU: o juiz só gera embeddings de consultas curtas e indexa cada spec uma
+vez, e a versão com CUDA custava vários GB de download. E o cliente Qdrant mais novo
+(1.19) avisou incompatibilidade com o servidor compartilhado (1.16.3) — o recomendado é
+no máximo uma versão menor de diferença.
+
+**Pendência — atualizar o servidor Qdrant.** Por ora o cliente deste repo está preso à
+série do servidor (`qdrant-client>=1.16,<1.17`, no `pyproject.toml`). O certo é
+atualizar o servidor (container `qdrant-local`, dados em `~/qdrant_storage`) e soltar o
+cliente. Como o servidor é compartilhado com os irmãos, a atualização precisa de: backup
+de `~/qdrant_storage` com o container parado; subir **uma versão menor por vez**
+(1.16 → 1.17 → 1.18 → 1.19), porque o Qdrant só garante a migração do armazenamento a
+partir da versão menor anterior; conferir a cada passo que as coleções e o número de
+pontos de cada uma não mudaram; e verificar o `qdrant-client` instalado no chatUI, que
+declara `>=1.15.1`.
