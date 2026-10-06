@@ -46,37 +46,33 @@ EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 EMBEDDING_DIM = 384
 EMBEDDING_DEVICE = "cpu"       # the [judge] extra installs CPU-only torch
 
-# Permanent collections, built by the sibling repos.
-OPENAPI_COLLECTION = "openapi_reference"                    # OpenAPI 3.0.1 reference
-GPP_CORPUS_COLLECTIONS = ("3gpp_rel18_all", "3gpp_rel18_28")  # first one present wins
+# The OpenAPI 3.0.1 reference, a permanent collection built by openapi_rulesbank.
+OPENAPI_COLLECTION = "openapi_reference"
 
-# The main spec of each evaluated input, indexed once per version by
-# scripts/index_specs.py into a collection of its own (fixed, not per run).
+# The main spec is read from the SHARED 3GPP corpus (qdrant_3gpp_rag), one collection
+# per spec — decided 06/out: no collection of our own. That corpus indexes whole specs
+# (annexes included) at one version, with no clause in the metadata; the retrieval cuts
+# the annexes out itself (judge/spec_index.annex_cut) and reads the clause from the
+# chunk's heading. Version: 28532-i00, while the banks judged come from i20.
+SPEC_CORPUS = {"28532": "3gpp_rel18_28_28532"}
+
+# The old per-version collection of our own (scripts/index_specs.py), no longer used.
 SPEC_COLLECTION_PREFIX = "analysis_spec_"
-# Spec versions the judge works on (the i00 banks are left out of it for now).
-JUDGE_SPEC_CODES = ("i20",)
-
-# Which clauses of a spec belong to which management service — stage 2 (IS, 11.x)
-# and stage 3 (REST solution set, 12.x). Read from the spec's own headings
-# ("## 11.1 Generic provisioning management service", "## 12.1 ..."; pinned by
-# tests/judge/test_spec_index.py). Indexed as metadata, so a search for one
-# service's part never reads another service's clauses.
-SPEC_SERVICE_CLAUSES = {
-    "28532": {
-        "ProvMnS": ("11.1", "12.1"),
-        "PerfMnS": ("11.3", "12.3"),
-        "HeartbeatNtf": ("11.4", "12.4"),
-        "StreamingDataMnS": ("11.5", "12.5"),
-        "FileDataReportingMnS": ("11.6", "12.6"),
-    },
-}
 SPEC_CHUNK_SIZE = 3000         # as openapi_rulesbank's spec RAG
 SPEC_CHUNK_OVERLAP = 200
+JUDGE_SPEC_CODES = ("i20",)
 
-# Chunks retrieved per part, per source.
-SPEC_RETRIEVE_CHUNKS = 4
-CORPUS_RETRIEVE_CHUNKS = 3
-OPENAPI_RETRIEVE_CHUNKS = 4
+# A spec usually holds several services side by side; the judge reads only the
+# evaluated service's clauses. That scope is not a table written for one spec: it is
+# read from the bank itself — the two-level blocks ("11.1", "12.1") of the clauses its
+# rules were extracted from (services/judge_service.scope_of_bank).
+
+# Retrieval per part (judge/retrieval.py): 3 queries on the spec and 2 on the OpenAPI
+# reference, each keeping its best PER_QUERY chunks. A spec query takes them, in
+# scope, from the top SEARCH_POOL hits of an unfiltered search — the shared retriever
+# filters on one exact value only, and a scope has several blocks.
+PER_QUERY = 5
+SEARCH_POOL = 50            # more hits dropped (annex, out of scope) in the corpus
 
 
 def spec_collection(spec: str, code: str) -> str:
