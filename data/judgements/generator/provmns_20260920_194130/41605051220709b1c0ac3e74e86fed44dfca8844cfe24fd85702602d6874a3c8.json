@@ -1,0 +1,540 @@
+{
+  "part_id": "generator|provmns_20260920_194130|PUT /{className}={id}|responses",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "PUT /{className}={id}",
+  "aspect": "responses",
+  "summary": "codes extra ['4XX', '5XX']; 5 differing, 2 extra",
+  "answer": {
+    "why_different": "The generated document uses different response-description values for 200, 201, 204, and default; it also changes the default response schema reference from an error schema to Resource and adds explicit 4XX/5XX response entries. These are primarily value changes, with additional response entries representing a structural expansion of the response map.",
+    "verdict": "error",
+    "spec_3gpp": "The PUT operation returns a Resource representation for successful output and defines an error response as ErrorResponse. The generated default response instead describes and returns a Resource, which contradicts the error-response mapping. The detailed official distinctions for 200, 201, and 204 are also partially lost in the generated descriptions.",
+    "openapi": "OpenAPI requires a Responses Object and permits a default response for undeclared status codes. It also explicitly permits uppercase wildcard response ranges such as 4XX and 5XX, so the added ranges are valid response-map entries and can document client and server error responses more specifically.",
+    "clearer": "official",
+    "clearer_why": "The official descriptions preserve the conditions distinguishing replacement, creation, identical updates, and no-content responses, and clearly identify the default response as an error. The generated default description incorrectly presents a Resource success response, making the response behavior misleading despite its shorter wording.",
+    "citations": [
+      {
+        "evidence_id": "S7",
+        "quote": "attributeListOut        response body               n/a                     Resource                O"
+      },
+      {
+        "evidence_id": "S7",
+        "quote": "response body               error                   ErrorResponse           O"
+      },
+      {
+        "evidence_id": "O5",
+        "quote": "To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`. The following range definitions are allowed: `1XX`, `2XX`, `3XX`, `4XX`, and `5XX`."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated description broadly says the resource was replaced or updated but omits the official conditions governing when 200 is returned, including the representation-identity distinction. This loses response semantics; the PUT mapping confirms that status and the Resource response body are part of the operation contract (S7)."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "equivalent",
+        "reason": "Both descriptions state that 201 means the resource was created and that its Resource representation is returned. This matches the PUT output mapping of Resource in the response body (S6, S7)."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "error",
+        "reason": "The generated description preserves identical-representation and no-body information but omits the restriction that 204 may be returned only in that case. That omission loses a condition on the status response; the PUT mapping identifies status codes as part of the operation contract (S7)."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "error",
+        "reason": "The generated default description incorrectly describes a successful createMOI Resource representation rather than an error response. The specification maps the error response body to ErrorResponse (S7, S32)."
+      },
+      {
+        "difference_id": "D5",
+        "verdict": "error",
+        "reason": "The generated default schema points to Resource instead of the ErrorResponseDefault schema, so the default error payload is replaced by a success-resource schema. The specification requires the error response to use ErrorResponse (S7), and identifies ErrorResponse as the error response-body type (S18)."
+      },
+      {
+        "difference_id": "D6",
+        "verdict": "improvement",
+        "reason": "The added 4XX response explicitly documents client-error responses with an ErrorResponse instead of relying only on default coverage. The specification requires status/error handling for the PUT operation (S7), and OpenAPI explicitly permits the 4XX wildcard response range (O5)."
+      },
+      {
+        "difference_id": "D7",
+        "verdict": "improvement",
+        "reason": "The added 5XX response explicitly documents server-error responses with an ErrorResponse instead of relying only on default coverage. OpenAPI permits the 5XX wildcard response range (O5), while the specification maps error responses for the operation (S7)."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "className            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3",
+      "title": "12.1.1.3.2.1.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.1.3 HTTP methods"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.  \nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource  \n**Data type**   **Description**                                                     **S**\n--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "32.158 \\[15\\], clause 5.2.  \nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.  \nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.4",
+      "title": "12.1.1.1.4 Operation modifyMOIAttributes",
+      "text": "##### 12.1.1.1.4 Operation modifyMOIAttributes"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "###### 12.1.1.1.4.1 Mapping to HTTP PUT  \nHTTP PUT is used for a full update of a single resource.  \nTable 12.1.1.1.4.1-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)  \n[Extracted Table: 78 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no meaning when\ntargeting a single resource with the target URI and are not mapped.  \nTable 12.1.1.1.4.1-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                O"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                O\nstatus                  response status codes       n/a                     n/a                     M\nresponse body               error                   ErrorResponse           O  \nFurther details on updating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.3."
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "###### 12.1.1.1.4.2 Mapping to HTTP PATCH  \nHTTP PATCH is used to create, update or delete one or multiple\nresources.  \nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)  \n[Extracted Table: 79 from 28532-i00 (Release Rel-18, Series 28_series)]  \nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:  \n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource  \n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource  \n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource  \n[Extracted Table: 81 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "##### 12.1.1.3.2.1.3.2 HTTP GET  {#http-get .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource  \n[Extracted Table: 82 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.  \nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource  \n**Data type**   **Description**   **S**\n--------------- ----------------- -------\nn/a             n/a               n/a  \nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.2.5",
+      "title": "12.1.1.2.5 Notification notifyMOIChanges",
+      "text": "equivalents (HTTP POST)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nobjectClass             request body                href                    Uri                     M\nobjectInstance\nnotificationId          request body                notificationId          NotificationId          M\nnotificationType        request body                notificationType        NotificationType        M\neventTime               request body                eventTime               DateTime                M\nsystemDN                request body                systemDN                SystemDN                M\nmoiChanges              request body                mOIChanges              array(MoiChange)        M"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.2.2",
+      "title": "12.1.1.2.2 Notification notifyMOICreation",
+      "text": "equivalents (HTTP POST)  \n**IS parameter name**     **SS parameter location**   **SS parameter name**     **SS parameter type**           **S**\n------------------------- --------------------------- ------------------------- ------------------------------- -------\nobjectClass               request body                href                      Uri                             M\nobjectInstance\nnotificationId            request body                notificationId            NotificationId                  M\nnotificationType          request body                notificationType          NotificationType                M\neventTime                 request body                eventTime                 DateTime                        M\nsystemDN                  request body                systemDN                  SystemDN                        M\ncorrelatedNotifications   request body                correlatedNotifications   array(CorrelatedNotification)   O\nadditionalText            request body                additionalText            AdditionalText                  O\nsourceIndicator           request body                sourceIndicator           SourceIndicator                 O"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1",
+      "title": "12.1.1 RESTful HTTP-based solution set",
+      "text": "### 12.1.1 RESTful HTTP-based solution set"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.1",
+      "title": "12.1.1.1 Mapping of operations",
+      "text": "#### 12.1.1.1 Mapping of operations"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "##### 12.1.1.1.1 Introduction  \nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.  \nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents  \n[Extracted Table: 74 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.1.2",
+      "title": "12.1.1.1.2 Operation createMOI",
+      "text": "##### 12.1.1.1.2 Operation createMOI  \nThis operation creates a single resource representing a managed object\ninstance.  \nTable 12.1.1.1.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)  \n[Extracted Table: 75 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nTable 12.1.1.1.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)  \nIS parameter name   SS parameter location   SS parameter name   SS parameter type   S\n------------------- ----------------------- ------------------- ------------------- ---\nattributeListOut    response body           n/a                 Resource            M\nstatus              response status codes   n/a                 n/a                 M\nresponse body           error               ErrorResponse       O"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "This method shall support the URI query parameters specified in table\n12.1.1.3.2.4.3.1-1.  \nTable 12.1.1.3.2.4.3.1-1: URI query parameters supported by the POST\nmethod on this resource  \nName   Data type   Description   S\n------ ----------- ------------- -----\nn/a    n/a         n/a           n/a  \nThis method shall support the request data structures specified in table\n12.1.1.3.2.4.3.1-2 and the response data structures and response codes\nspecified in table 12.1.1.3.2.4.3.1-3.  \nTable 12.1.1.3.2.4.3.1-2: Data structures supported by the POST Request\nBody on this resource  \nData type                     Description                                           S\n----------------------------- ----------------------------------------------------- ---\nNotifyMOICreation             Type for a notifyMOICreation notification             M\nNotifyMOIDeletion             Type for a notifyMOIDeletion notification             M\nNotifyAttributeValueChanges   Type for a notifyAttributeValueChanges notification   M\nNotifyMoiChanges              Type for a notifyMOIChanges notification              M  \nTable 12.1.1.3.2.4.3.1-3: Data structures supported by the POST Response\nBody on this resource"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "Dn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\nAttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\nFilter                      TS 28.623 \\[44\\]   Filter type\nNotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\nNotificationType            TS 28.623 \\[44\\]   Notification type\nNotificationHeader          TS 28.623 \\[44\\]   Notification header\nErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a",
+      "title": "12.1.1.4.1a Structured data types",
+      "text": "##### 12.1.1.4.1a Structured data types"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "###### 12.1.1.4.1a.1 Type Resource  \n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**  \n**Attribute name**   **Data type**        **Description**                                                                                                                **S**"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "--------------------- ---------------------- ------------- ------------------------------------------------\nNotification Target   {notificationTarget}   POST          Send a notification to the notification target"
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "##### 12.1.1.3.2 Resource definitions"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1",
+      "title": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"",
+      "text": "###### 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\""
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.1",
+      "title": "12.1.1.3.2.1.1 Description",
+      "text": "####### 12.1.1.3.2.1.1 Description  \nThis resource represents a managed object instance."
+    },
+    {
+      "id": "S25",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.2",
+      "title": "12.1.1.3.2.1.2 URI",
+      "text": "####### 12.1.1.3.2.1.2 URI  \nResource URI:\n{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}  \nThe resource URI variables are defined in table 12.1.1.3.2.1.2-1.  \nTable 12.1.1.3.2.1.2-1: URI variables  \n**Name**             **Definition**\n-------------------- --------------------------------------\nMnSRoot              See clause 4.4.2 of TS 32.158 \\[15\\]\nMnSVersion           See clause 4.4.2 of TS 32.158 \\[15\\]\nURI-LDN-first-part   See clause 4.4.2 of TS 32.158 \\[15\\]\nclassName            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S26",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table."
+    },
+    {
+      "id": "S27",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.1.6",
+      "title": "12.1.1.1.6 Void",
+      "text": "response body               error                   ErrorResponse           O  \nFurther details on deleting a resource with HTTP DELETE are provided in\nTS 32.158 \\[15\\], clause 5.4."
+    },
+    {
+      "id": "S28",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.1.6",
+      "title": "12.1.1.1.6 Void",
+      "text": "##### 12.1.1.1.6 Void"
+    },
+    {
+      "id": "S29",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.1.7",
+      "title": "12.1.1.1.7 Void",
+      "text": "##### 12.1.1.1.7 Void"
+    },
+    {
+      "id": "S30",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\nErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S31",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "##### 12.1.1.3.2.1.3.3 HTTP PATCH  {#http-patch .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables."
+    },
+    {
+      "id": "S32",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.1.2",
+      "title": "12.1.1.1.2 Operation createMOI",
+      "text": "attributeListOut    response body           n/a                 Resource            M\nstatus              response status codes   n/a                 n/a                 M\nresponse body           error               ErrorResponse       O  \nFurther details on creating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.1.2."
+    },
+    {
+      "id": "S33",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "##### 12.1.1.1.3 Operation getMOIAttributes  \nThis operation retrieves one or multiple resources representing managed\nobject instances.  \nTable 12.1.1.1.3-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP GET)  \n[Extracted Table: 76 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nNote 2: Void.  \nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)  \n[Extracted Table: 77 from 28532-i00 (Release Rel-18, Series 28_series)]  \nFurther details on reading resources with HTTP GET are provided in TS\n32.158 \\[15\\], clause 5.2.  \nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.  \nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S34",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "equivalents (HTTP PATCH)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                M\nstatus                  response status codes       n/a                     n/a                     M\nresponse body               error                   ErrorResponse           O  \nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.  \nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.  \nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.  \nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.  \nNote 1: Void."
+    },
+    {
+      "id": "S35",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.1.5",
+      "title": "12.1.1.1.5 Operation deleteMOI",
+      "text": "##### 12.1.1.1.5 Operation deleteMOI  \nThis operation deletes a single resource representing a managed object\ninstance"
+    },
+    {
+      "id": "S36",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT response status codes 200 201 204 default application/json 4XX 5XX Error case. #/components/schemas/Resource",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "NotifyAttributeValueChanges   Type for a notifyAttributeValueChanges notification   M\nNotifyMoiChanges              Type for a notifyMOIChanges notification              M  \nTable 12.1.1.3.2.4.3.1-3: Data structures supported by the POST Response\nBody on this resource  \nData type       Response codes   Description                                        S\n--------------- ---------------- -------------------------------------------------- ---\nn/a             204 No Content   In case of success no message body is returned     M\nErrorResponse   4xx/5xx          In case of failure the error object is returned.   M"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationRequestBody\"></a>requestBody | [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object) | The request body applicable for this operation.  The `requestBody` is only supported in HTTP methods where the HTTP 1.1 specification [RFC7231](https://tools.ietf.org/html/rfc7231#section-4.3.1) has explicitly defined semantics for request bodies.  In other cases where the HTTP spec is vague, `requestBody` SHALL be ignored by consumers.\n<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object Examples",
+      "text": "<a name=\"responseContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | A map containing descriptions of potential response payloads. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For responses that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"responseLinks\"></a>links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | A map of operations links that can be followed from the response. The key of the map is a short name for the link, following the naming constraints of the names for [Component Objects](#components-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Response Object Examples  \nResponse of an array of a complex type:  \n```json\n{\n\"description\": \"A complex object array response\",\n\"content\": {\n\"application/json\": {\n\"schema\": {"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "The `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"responsesDefault\"></a>default | [Response Object](#response-object) \\| [Reference Object](#reference-object) | The documentation of responses other than the ones declared for specific HTTP response codes. Use this field to cover undeclared responses. A [Reference Object](#reference-object) can link to a response that the [OpenAPI Object's components/responses](#componentsResponses) section defines.  \n##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "---|:---:|---\n<a name=\"responsesCode\"></a>[HTTP Status Code](#http-status-codes) | [Response Object](#response-object) \\| [Reference Object](#reference-object) | Any [HTTP status code](#http-status-codes) can be used as the property name, but only one property per code, to describe the expected response for that HTTP status code.  A [Reference Object](#reference-object) can link to a response that is defined in the [OpenAPI Object's components/responses](#componentsResponses) section. This field MUST be enclosed in quotation marks (for example, \"200\") for compatibility between JSON and YAML. To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`. The following range definitions are allowed: `1XX`, `2XX`, `3XX`, `4XX`, and `5XX`. If a response range is defined using an explicit code, the explicit code definition takes precedence over the range definition for that code."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 201 204 default application/json 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object",
+      "text": "X-Rate-Limit-Limit:\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Responses Object  \nA container for the expected responses of an operation.\nThe container maps a HTTP response code to the expected response.  \nThe documentation is not necessarily expected to cover all possible HTTP response codes because they may not be known in advance.\nHowever, documentation is expected to cover a successful operation response and any known errors.  \nThe `default` MAY be used as a default response object for all HTTP codes\nthat are not covered individually by the specification.  \nThe `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 201 204 default application/json 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "HTTP Status Codes",
+      "text": "application/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation.\nThe available status codes are defined by [RFC7231](https://tools.ietf.org/html/rfc7231#section-6) and registered status codes are listed in the [IANA Status Code Registry](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 201 204 default application/json 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "Request Body Examples",
+      "text": "<a name=\"requestBodyContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | **REQUIRED**. The content of the request body. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For requests that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"requestBodyRequired\"></a>required | `boolean` | Determines if the request body is required in the request. Defaults to `false`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Request Body Examples  \nA request body with a referenced model definition.\n```json\n{\n\"description\": \"user to add to the system\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 201 204 default application/json 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "Callback Object",
+      "text": "description: The number of allowed requests in the current period\nschema:\ntype: integer\nX-Rate-Limit-Remaining:\ndescription: The number of remaining requests in the current period\nschema:\ntype: integer\nX-Rate-Limit-Reset:\ndescription: The number of seconds left in the current period\nschema:\ntype: integer\n```  \nResponse with no return value:  \n```json\n{\n\"description\": \"object created\"\n}\n```  \n```yaml\ndescription: object created\n```  \n#### Callback Object  \nA map of possible out-of band callbacks related to the parent operation.\nEach value in the map is a [Path Item Object](#path-item-object) that describes a set of requests that may be initiated by the API provider and the expected responses.\nThe key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.  \n##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 201 204 default application/json 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Responses Object Example  \nA 200 response for a successful operation and a default response for others (implying an error):  \n```json\n{\n\"200\": {\n\"description\": \"a pet to be returned\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/Pet\"\n}\n}\n}\n},\n\"default\": {\n\"description\": \"Unexpected error\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/ErrorModel\"\n}\n}\n}\n}\n}\n```  \n```yaml\n'200':\ndescription: a pet to be returned\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: Unexpected error\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/ErrorModel'\n```  \n#### Response Object\nDescribes a single response from an API Operation, including design-time, static\n`links` to operations based on the response.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "41605051220709b1c0ac3e74e86fed44dfca8844cfe24fd85702602d6874a3c8",
+  "judged_at": "2026-10-06T19:42:33-03:00"
+}

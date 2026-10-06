@@ -1,0 +1,140 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA MoiChange|placement",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA MoiChange",
+  "aspect": "placement",
+  "summary": "schema misplaced (at components.MoiChange); defined at components.MoiChange, outside components.schemas; at the right place 8/10 of its leaves would match; 10 leaves absent, 0 differing, 0 extra",
+  "answer": {
+    "why_different": "The probable cause is a different address: the schema is placed directly under `components` instead of under `components.schemas`. The generated definition also has value-level differences, including `path` being a plain string rather than the official URI reference and `value` being required, but the reported placement itself is an address error.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification defines `MoiChange` as a type whose `op`, `path`, and `value` follow the 3GPP JSON Patch format. It also shows deletion examples containing `op` and `path` without `value`, so making `value` required loses behavior described by the specification. [S1]",
+    "openapi": "The OpenAPI 3.0 reference says reusable schemas must be held in the `components.schemas` map. A key such as `MoiChange` directly under `components` is not a permitted Components Object field unless it is a specification extension, so the generated document is invalid OpenAPI 3.0. [O1]",
+    "clearer": "official",
+    "clearer_why": "The official placement makes `MoiChange` a valid, discoverable reusable schema under `components.schemas`. The generated placement is invalid OpenAPI 3.0 and therefore is harder for an API reader and tooling to interpret.",
+    "citations": [
+      {
+        "evidence_id": "O1",
+        "quote": "schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object)."
+      },
+      {
+        "evidence_id": "S1",
+        "quote": "The following example reports the deletion of that object."
+      },
+      {
+        "evidence_id": "S1",
+        "quote": "op: remove\n\npath: /ClassA=1"
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange NotificationId CorrelatedNotification SourceIndicator Operation Uri Insert data type",
+      "filters": {
+        "clause": "12.1.1.4.1a.4"
+      },
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "The properties \\\"op\\\", \\\"path\\\" and \\\"value\\\" shall use the 3GPP JSON\nPatch format (TS 32.158 \\[15\\]) for reporting NRM changes. The \\\"merge\\\"\noperation specified by 3GPP JSON Patch is not supported in\n\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.\n\nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before\nreplacing the value with the new value, that is contained in \\\"value\\\".\n\nThe following example notification (where JSON is expressed in YAML\nnotation) reports an object creation\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\n\nvalue:\n\nid: 1,\n\nobjectClass: ClassA,\n\nattributes:\n\nattrA: 123\n\nattrB:\n\nsubAttrB1: ABC\n\nsubAttrB2: 56\n\nThe following example reports the deletion of that object.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\n\nThe following example reports the addition of a new attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1#/attributes/attrC\n\nvalue: xyz\n\nThe following example reports the deletion of the attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1#/attributes/attrC\n\nThe following example reports a value change for the simple attribute\n\\\"attrA\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrA\n\nvalue: 456\n\nWhen the old value is reported as well, the notification looks like.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrA\n\nvalue: 456\n\noldValue: 123\n\nThe following example reports a value change for the complex attribute\n\\\"attrB\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nThe previous two notifications can be combined into a single\nnotification as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrA\n\nvalue: 456\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nNote the operation \\\"replace\\\" has replace semantics and not merge\nsemantics. The following notification reports the value change of the\nattribute field \\\"attrB:subAttrB1\\\" to \\\"def\\\" and the deletion of the\nattribute field \\\"attrB:subAttrB2\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrB\n\nvalue:\n\nsubAttrB1: def\n\nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange NotificationId CorrelatedNotification SourceIndicator Operation Uri Insert data type",
+      "filters": {
+        "clause": "12.1.1.4.1a.4"
+      },
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "To allow the MnS consumer to understand which attributes have been\nupdated, the MnS producer may decide to send the following notification."
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange NotificationId CorrelatedNotification SourceIndicator Operation Uri Insert data type",
+      "filters": {
+        "clause": "12.1.1.4.1a.3"
+      },
+      "clause": "12.1.1.4.1a.3",
+      "title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "text": "12.1.1.4.1a.3 Type CorrelatedNotification\n\nTable 12.1.1.4.1a.3 -1: Definition of type CorrelatedNotification\n\n  ---------------------------------------------------------------------------------\n  Attribute name    Data type               Description                          S\n  ----------------- ----------------------- ----------------------------------- ---\n  source            Dn                      Source of the correlated             M\n                                            notifications                       \n\n  notificationIds   array(NotificationId)   Notification identifiers of          M\n                                            correlated notifications of that    \n                                            source                              \n  ---------------------------------------------------------------------------------"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange NotificationId CorrelatedNotification SourceIndicator Operation Uri Insert data type",
+      "filters": {
+        "clause": "12.1.1.4.4.4"
+      },
+      "clause": "12.1.1.4.4.4",
+      "title": "12.1.1.4.4.4 Enumeration SourceIndicator",
+      "text": "12.1.1.4.4.4 Enumeration SourceIndicator\n\nTable 12.1.1.4.4.4-1: Enumeration SourceIndicator\n\n  -----------------------------------------------------------------------\n  Enumeration value       Description\n  ----------------------- -----------------------------------------------\n  RESOURCE_OPERATION      The notification was generated in response to\n                          an internal operation of the resource.\n\n  MANAGEMENT_OPERATION    The notification was generated in response to a\n                          management operation applied across the managed\n                          object boundary external to the managed object\n\n  SON_OPERATION           The notification was generated as result of a\n                          SON (Self Organising Network) process like\n                          self-configuration, self-optimization,\n                          self-healing etc. .\n\n  UNKNOWN                 It is not possible to determine the source of\n                          the operation.\n  -----------------------------------------------------------------------"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange NotificationId CorrelatedNotification SourceIndicator Operation Uri Insert data type",
+      "filters": {
+        "clause": "12.1.1.4.4.6"
+      },
+      "clause": "12.1.1.4.4.6",
+      "title": "12.1.1.4.4.6 Enumeration Operation",
+      "text": "12.1.1.4.4.6 Enumeration Operation\n\nTable 12.1.1.4.4.4.6-1: Enumeration Operation\n\n  -----------------------------------------------------------------------\n  Enumeration value       Description\n  ----------------------- -----------------------------------------------\n  add                     Create operation\n\n  remove                  Delete operation\n\n  replace                 Replace operation\n  -----------------------------------------------------------------------"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange NotificationId CorrelatedNotification SourceIndicator Operation Uri Insert data type",
+      "filters": {
+        "service": "ProvMnS"
+      },
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "12.1.1.4.1a.5 Type NotifyMoiCreation\n\nTable 12.1.1.4.1a.5 -1: Definition of type NotifyMoiCreation\n\n  ------------------------- ------------------------------- ----------------------------- -------\n     **Attribute name**              **Data type**                 **Description**         **S**\n\n            href                          Uri               URI of the resource where the    M\n                                                               event (alarm) occurred     \n\n       notificationId               NotificationId           Notification identifier as      M\n                                                            defined in ITU-T Rec. X. 733  \n                                                                        \\[4\\]             \n\n      notificationType             NotificationType               Notification type          M\n                                                               (\\\"notifyMOICreation\\\")    \n\n          eventTime                    DateTime                 Event (MOI creation)         M\n                                                                   occurrence time        \n\n          systemDN                     SystemDN                       System DN              M\n\n   correlatedNotifications   array(CorrelatedNotification)   Set of all notifications to     O\n                                                             which this notification is   \n                                                             considered to be correlated  \n                                                             as defined in ITU-T Rec. X.  \n                                                                      733 \\[4\\]           \n\n       additionalText                   string                 Allows a free form text       O\n                                                            description to be reported as \n                                                            defined in ITU-T Rec. X. 733  \n                                                                        \\[4\\]             \n\n       sourceIndicator              SourceIndicator          Indicates the source of the     O\n                                                              operation that led to the   \n                                                                 generation of this       \n                                                                    notification.         \n\n        attributeList          AttributeNameValuePairSet     The attributes (name/value      O\n                                                             pairs) of the created MOI.   \n  ------------------------- ------------------------------- ----------------------------- -------\n\nThe following example shows a notification reporting the creation of an\nobject with two attributes \\\"attrA\\\" and \\\"attrB\\\". Note that the\nnotification includes the name/value pairs representing the attributes\nof the created object only and not the complete object representation."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object schemas reusable objects $ref Reference Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object schemas reusable objects $ref Reference Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object schemas reusable objects $ref Reference Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsParameters\"></a> parameters | Map[`string`, [Parameter Object](#parameter-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Parameter Objects](#parameter-object).\n<a name=\"componentsExamples\"></a> examples | Map[`string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Example Objects](#example-object).\n<a name=\"componentsRequestBodies\"></a> requestBodies | Map[`string`, [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Request Body Objects](#request-body-object).\n<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object)."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v1",
+  "cache_key": "a246e68036695d0df709d4d16419ca193911ddf7c18d9cb76eeb652f4e252be1",
+  "judged_at": "2026-10-06T11:28:56-03:00"
+}

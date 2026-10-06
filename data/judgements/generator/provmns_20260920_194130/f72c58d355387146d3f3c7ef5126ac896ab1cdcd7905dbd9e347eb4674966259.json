@@ -1,0 +1,533 @@
+{
+  "part_id": "generator|provmns_20260920_194130|PUT /{className}={id}|operation",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "PUT /{className}={id}",
+  "aspect": "operation",
+  "summary": "2 differing, 2 extra",
+  "answer": {
+    "why_different": "The differences arise from different prose values for the summary and description, an added operation identifier, and an invalid structural addition: `skipped` is placed as an unsupported field in the Operation Object. The generated description also gives the concrete resource URI, but omits the official statement that PUT replaces or creates a complete resource.",
+    "verdict": "error",
+    "spec_3gpp": "The specification identifies this resource as `.../{className}={id}`, defines its URI, and states that PUT carries a `Resource` representation “to be created or replaced.” The createMOI mapping also identifies the operation as creating a single resource and returning a Resource representation or an ErrorResponse.",
+    "openapi": "OpenAPI permits an operation `summary`, `description`, and optional `operationId`; `operationId` is recommended to be unique and usable by tools. An Operation Object has a defined set of fixed fields, and unsupported fields such as `skipped` are not valid unless expressed as specification extensions beginning with `x-`.",
+    "clearer": "official",
+    "clearer_why": "The official summary and description directly explain the PUT behavior—complete replacement or creation—and identify the target resource. The generated description provides a more concrete URI, but its operation semantics are less complete, and the invalid `skipped` field makes the generated operation structurally misleading.",
+    "citations": [
+      {
+        "evidence_id": "S3",
+        "quote": "Resource        Resource representation of the resource to be created or replaced   M"
+      },
+      {
+        "evidence_id": "S25",
+        "quote": "Resource URI: {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}"
+      },
+      {
+        "evidence_id": "S16",
+        "quote": "This operation creates a single resource representing a managed object instance."
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "operationId | `string` | Unique string used to identify the operation."
+      },
+      {
+        "evidence_id": "O9",
+        "quote": "Operation Object ... Fixed Fields"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated summary is related to the same operation, but it omits the key behavior that the resource is completely replaced or created if absent. This loses information carried by the official summary; the specification describes the resource as being “created or replaced” (S3)."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "The generated description gives the concrete URI, which is supported by S25, but it omits the complete replace-or-create behavior stated by the official description and supported by S3. Because the prose loses material operation semantics, it is an error rather than an equivalent rewording."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "improvement",
+        "reason": "Adding `operationId: createMOI` is permitted by OpenAPI and is recommended for tool and library identification (O1). It also corresponds to the createMOI operation described by the specification (S16), provided it is unique in the document."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "error",
+        "reason": "`skipped` is an unsupported structural field under the PUT Operation Object, and the supplied validation result explicitly reports that the generated document is not valid OpenAPI 3.0. The Operation Object is defined through its fixed fields (O9); such metadata would need to be represented as a specification extension rather than as `skipped`."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "className            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3",
+      "title": "12.1.1.3.2.1.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.1.3 HTTP methods"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.  \nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource  \n**Data type**   **Description**                                                     **S**\n--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "32.158 \\[15\\], clause 5.2.  \nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.  \nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.4",
+      "title": "12.1.1.1.4 Operation modifyMOIAttributes",
+      "text": "##### 12.1.1.1.4 Operation modifyMOIAttributes"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "###### 12.1.1.1.4.1 Mapping to HTTP PUT  \nHTTP PUT is used for a full update of a single resource.  \nTable 12.1.1.1.4.1-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)  \n[Extracted Table: 78 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no meaning when\ntargeting a single resource with the target URI and are not mapped.  \nTable 12.1.1.1.4.1-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                O"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                O\nstatus                  response status codes       n/a                     n/a                     M\nresponse body               error                   ErrorResponse           O  \nFurther details on updating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.3."
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "###### 12.1.1.1.4.2 Mapping to HTTP PATCH  \nHTTP PATCH is used to create, update or delete one or multiple\nresources.  \nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)  \n[Extracted Table: 79 from 28532-i00 (Release Rel-18, Series 28_series)]  \nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:  \n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource  \n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource  \n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource  \n[Extracted Table: 81 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "##### 12.1.1.3.2.1.3.2 HTTP GET  {#http-get .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource  \n[Extracted Table: 82 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.  \nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource  \n**Data type**   **Description**   **S**\n--------------- ----------------- -------\nn/a             n/a               n/a  \nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT",
+      "filters": {},
+      "clause": "12.1.1.2.5",
+      "title": "12.1.1.2.5 Notification notifyMOIChanges",
+      "text": "equivalents (HTTP POST)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nobjectClass             request body                href                    Uri                     M\nobjectInstance\nnotificationId          request body                notificationId          NotificationId          M\nnotificationType        request body                notificationType        NotificationType        M\neventTime               request body                eventTime               DateTime                M\nsystemDN                request body                systemDN                SystemDN                M\nmoiChanges              request body                mOIChanges              array(MoiChange)        M"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.2.2",
+      "title": "12.1.1.2.2 Notification notifyMOICreation",
+      "text": "equivalents (HTTP POST)  \n**IS parameter name**     **SS parameter location**   **SS parameter name**     **SS parameter type**           **S**\n------------------------- --------------------------- ------------------------- ------------------------------- -------\nobjectClass               request body                href                      Uri                             M\nobjectInstance\nnotificationId            request body                notificationId            NotificationId                  M\nnotificationType          request body                notificationType          NotificationType                M\neventTime                 request body                eventTime                 DateTime                        M\nsystemDN                  request body                systemDN                  SystemDN                        M\ncorrelatedNotifications   request body                correlatedNotifications   array(CorrelatedNotification)   O\nadditionalText            request body                additionalText            AdditionalText                  O\nsourceIndicator           request body                sourceIndicator           SourceIndicator                 O"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1",
+      "title": "12.1.1 RESTful HTTP-based solution set",
+      "text": "### 12.1.1 RESTful HTTP-based solution set"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.1",
+      "title": "12.1.1.1 Mapping of operations",
+      "text": "#### 12.1.1.1 Mapping of operations"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "##### 12.1.1.1.1 Introduction  \nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.  \nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents  \n[Extracted Table: 74 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.1.2",
+      "title": "12.1.1.1.2 Operation createMOI",
+      "text": "##### 12.1.1.1.2 Operation createMOI  \nThis operation creates a single resource representing a managed object\ninstance.  \nTable 12.1.1.1.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)  \n[Extracted Table: 75 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nTable 12.1.1.1.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)  \nIS parameter name   SS parameter location   SS parameter name   SS parameter type   S\n------------------- ----------------------- ------------------- ------------------- ---\nattributeListOut    response body           n/a                 Resource            M\nstatus              response status codes   n/a                 n/a                 M\nresponse body           error               ErrorResponse       O"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "This method shall support the URI query parameters specified in table\n12.1.1.3.2.4.3.1-1.  \nTable 12.1.1.3.2.4.3.1-1: URI query parameters supported by the POST\nmethod on this resource  \nName   Data type   Description   S\n------ ----------- ------------- -----\nn/a    n/a         n/a           n/a  \nThis method shall support the request data structures specified in table\n12.1.1.3.2.4.3.1-2 and the response data structures and response codes\nspecified in table 12.1.1.3.2.4.3.1-3.  \nTable 12.1.1.3.2.4.3.1-2: Data structures supported by the POST Request\nBody on this resource  \nData type                     Description                                           S\n----------------------------- ----------------------------------------------------- ---\nNotifyMOICreation             Type for a notifyMOICreation notification             M\nNotifyMOIDeletion             Type for a notifyMOIDeletion notification             M\nNotifyAttributeValueChanges   Type for a notifyAttributeValueChanges notification   M\nNotifyMoiChanges              Type for a notifyMOIChanges notification              M  \nTable 12.1.1.3.2.4.3.1-3: Data structures supported by the POST Response\nBody on this resource"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "Dn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\nAttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\nFilter                      TS 28.623 \\[44\\]   Filter type\nNotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\nNotificationType            TS 28.623 \\[44\\]   Notification type\nNotificationHeader          TS 28.623 \\[44\\]   Notification header\nErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a",
+      "title": "12.1.1.4.1a Structured data types",
+      "text": "##### 12.1.1.4.1a Structured data types"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "###### 12.1.1.4.1a.1 Type Resource  \n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**  \n**Attribute name**   **Data type**        **Description**                                                                                                                **S**"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "--------------------- ---------------------- ------------- ------------------------------------------------\nNotification Target   {notificationTarget}   POST          Send a notification to the notification target"
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "##### 12.1.1.3.2 Resource definitions"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1",
+      "title": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"",
+      "text": "###### 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\""
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.1",
+      "title": "12.1.1.3.2.1.1 Description",
+      "text": "####### 12.1.1.3.2.1.1 Description  \nThis resource represents a managed object instance."
+    },
+    {
+      "id": "S25",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.2",
+      "title": "12.1.1.3.2.1.2 URI",
+      "text": "####### 12.1.1.3.2.1.2 URI  \nResource URI:\n{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}  \nThe resource URI variables are defined in table 12.1.1.3.2.1.2-1.  \nTable 12.1.1.3.2.1.2-1: URI variables  \n**Name**             **Definition**\n-------------------- --------------------------------------\nMnSRoot              See clause 4.4.2 of TS 32.158 \\[15\\]\nMnSVersion           See clause 4.4.2 of TS 32.158 \\[15\\]\nURI-LDN-first-part   See clause 4.4.2 of TS 32.158 \\[15\\]\nclassName            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S26",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table."
+    },
+    {
+      "id": "S27",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.1.2",
+      "title": "12.1.1.1.2 Operation createMOI",
+      "text": "attributeListOut    response body           n/a                 Resource            M\nstatus              response status codes   n/a                 n/a                 M\nresponse body           error               ErrorResponse       O  \nFurther details on creating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.1.2."
+    },
+    {
+      "id": "S28",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "##### 12.1.1.1.3 Operation getMOIAttributes  \nThis operation retrieves one or multiple resources representing managed\nobject instances.  \nTable 12.1.1.1.3-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP GET)  \n[Extracted Table: 76 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nNote 2: Void.  \nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)  \n[Extracted Table: 77 from 28532-i00 (Release Rel-18, Series 28_series)]  \nFurther details on reading resources with HTTP GET are provided in TS\n32.158 \\[15\\], clause 5.2.  \nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.  \nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S29",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\nErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S30",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "##### 12.1.1.3.2.1.3.3 HTTP PATCH  {#http-patch .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables."
+    },
+    {
+      "id": "S31",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "--------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------\narray(Uri)      200 OK               Status code returned, when query parameters are present in the request and one or multiple resources are deleted. The URIs of the deleted resources are returned in the response message body.   M\nn/a             204 No Content       Status code returned, when no query parameters are present in the request and only one resource is deleted. The message body is empty.                                                           M\nErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                     M"
+    },
+    {
+      "id": "S32",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.3.2.2",
+      "title": "12.1.1.3.2.2 Void",
+      "text": "###### 12.1.1.3.2.2 Void"
+    },
+    {
+      "id": "S33",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.3.2.3",
+      "title": "12.1.1.3.2.3 Void",
+      "text": "###### 12.1.1.3.2.3 Void"
+    },
+    {
+      "id": "S34",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.3.2.4",
+      "title": "12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\"",
+      "text": "###### 12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\""
+    },
+    {
+      "id": "S35",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.1",
+      "title": "12.1.1.3.2.4.1 Description",
+      "text": "####### 12.1.1.3.2.4.1 Description  \nThis resource represents a notification target on the MnS consumer."
+    },
+    {
+      "id": "S36",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PUT operation summary description operationId skipped",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.2",
+      "title": "12.1.1.3.2.4.2 URI",
+      "text": "####### 12.1.1.3.2.4.2 URI"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"operationExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this operation.\n<a name=\"operationId\"></a>operationId | `string` | Unique string used to identify the operation. The id MUST be unique among all operations described in the API. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "##### Fixed Fields  \nField Name  |  Type  | Description\n---|:---:|---\n<a name=\"linkOperationRef\"></a>operationRef | `string` | A relative or absolute reference to an OAS operation. This field is mutually exclusive of the `operationId` field, and MUST point to an [Operation Object](#operation-object). Relative `operationRef` values MAY be used to locate an existing [Operation Object](#operation-object) in the OpenAPI definition.\n<a name=\"linkOperationId\"></a>operationId  | `string` | The name of an _existing_, resolvable OAS operation, as defined with a unique `operationId`.  This field is mutually exclusive of the `operationRef` field."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path.\n<a name=\"pathItemHead\"></a>head | [Operation Object](#operation-object) | A definition of a HEAD operation on this path.\n<a name=\"pathItemPatch\"></a>patch | [Operation Object](#operation-object) | A definition of a PATCH operation on this path.\n<a name=\"pathItemTrace\"></a>trace | [Operation Object](#operation-object) | A definition of a TRACE operation on this path.\n<a name=\"pathItemServers\"></a>servers | [[Server Object](#server-object)] | An alternative `server` array to service all operations in this path."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path.\n<a name=\"pathItemDescription\"></a>description | `string` | An optional, string description, intended to apply to all operations in this path. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"pathItemGet\"></a>get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path.\n<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId skipped",
+      "filters": {},
+      "clause": "",
+      "title": "get the `uuid` field from the `uuid` field in the response body",
+      "text": "When a runtime expression fails to evaluate, no parameter value is passed to the target operation.  \nValues from the response body can be used to drive a linked operation.  \n```yaml\nlinks:\naddress:\noperationId: getUserAddressByUUID\nparameters:\n# get the `uuid` field from the `uuid` field in the response body\nuserUuid: $response.body#/uuid\n```  \nClients follow all links at their discretion.\nNeither permissions, nor the capability to make a successful call to that link, is guaranteed\nsolely by the existence of a relationship.  \n##### OperationRef Examples  \nAs references to `operationId` MAY NOT be possible (the `operationId` is an optional\nvalue), references MAY also be made through a relative `operationRef`:  \n```yaml\nlinks:\nUserRepositories:\n# returns array of '#/components/schemas/repository'\noperationRef: '#/paths/~12.0~1repositories~1{username}/get'\nparameters:\nusername: $response.body#/username\n```  \nor an absolute `operationRef`:  \n```yaml\nlinks:\nUserRepositories:"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId skipped",
+      "filters": {},
+      "clause": "",
+      "title": "Examples",
+      "text": "<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"linkServer\"></a>server       | [Server Object](#server-object) | A server object to be used by the target operation.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \nA linked operation MUST be identified using either an `operationRef` or `operationId`.\nIn the case of an `operationId`, it MUST be unique and resolved in the scope of the OAS document.\nBecause of the potential for name clashes, the `operationRef` syntax is preferred\nfor specifications with external references.  \n##### Examples  \nComputing a link from a request operation where the `$request.path.id` is used to pass a request parameter to the linked operation.  \n```yaml\npaths:\n/users/{id}:\nparameters:\n- name: id\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId skipped",
+      "filters": {},
+      "clause": "",
+      "title": "the target link operationId",
+      "text": "```yaml\npaths:\n/users/{id}:\nparameters:\n- name: id\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string\nget:\nresponses:\n'200':\ndescription: the user being returned\ncontent:\napplication/json:\nschema:\ntype: object\nproperties:\nuuid: # the unique user id\ntype: string\nformat: uuid\nlinks:\naddress:\n# the target link operationId\noperationId: getUserAddress\nparameters:\n# get the `id` field from the request path parameter named `id`\nuserId: $request.path.id\n# the path item of the linked operation\n/users/{userid}/address:\nparameters:\n- name: userid\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string\n# linked operation\nget:\noperationId: getUserAddress\nresponses:\n'200':\ndescription: the user's address\n```  \nWhen a runtime expression fails to evaluate, no parameter value is passed to the target operation.  \nValues from the response body can be used to drive a linked operation.  \n```yaml\nlinks:\naddress:"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId skipped",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object",
+      "text": "'*/*' :\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: error payload\ncontent:\n'text/html':\nschema:\n$ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id\nin: path\ndescription: ID of pet to use\nrequired: true\nschema:\ntype: array\nstyle: simple\nitems:\ntype: string\n```  \n#### Operation Object  \nDescribes a single API operation on a path.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"operationTags\"></a>tags | [`string`] | A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.\n<a name=\"operationSummary\"></a>summary | `string` | A short summary of what the operation does.\n<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId skipped",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"linkParameters\"></a>parameters   | Map[`string`, Any \\| [{expression}](#runtime-expressions)] | A map representing parameters to pass to an operation as specified with `operationId` or identified via `operationRef`. The key is the parameter name to be used, whereas the value can be a constant or an expression to be evaluated and passed to the linked operation.  The parameter name can be qualified using the [parameter location](#parameterIn) `[{in}.]{name}` for operations that use the same parameter name in different locations (e.g. path.id).\n<a name=\"linkRequestBody\"></a>requestBody | Any \\| [{expression}](#runtime-expressions) | A literal value or [{expression}](#runtime-expressions) to use as a request body when calling the target operation.\n<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "f72c58d355387146d3f3c7ef5126ac896ab1cdcd7905dbd9e347eb4674966259",
+  "judged_at": "2026-10-06T19:42:09-03:00"
+}

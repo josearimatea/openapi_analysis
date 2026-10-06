@@ -1,0 +1,322 @@
+{
+  "part_id": "generator|provmns_20260920_194130|COMPONENTS AttributeValueChangeSet|block",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "COMPONENTS AttributeValueChangeSet",
+  "aspect": "block",
+  "summary": "1 extra",
+  "answer": {
+    "why_different": "The generated side appears to define the reusable schema at the wrong address: it places `AttributeValueChangeSet` directly under `components` rather than under `components.schemas`. This is a different address, and it also makes the document structurally invalid because `AttributeValueChangeSet` is not an allowed fixed field of the Components Object.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification identifies `AttributeValueChangeSet` as the mandatory data type for `attributeListValueChanges`, describing it as a list of changed attributes with their new and optionally old values. However, the supplied specification evidence does not define the OpenAPI components location or validate the generated array constraints.",
+    "openapi": "OpenAPI 3.0 defines `schemas` as the Components Object field that holds reusable Schema Objects. `AttributeValueChangeSet` is instead introduced directly as a field of `components`, which is not a valid Components Object field; the stated layer-2 validation failure therefore makes the generated document invalid.",
+    "clearer": "generated",
+    "clearer_why": "The generated side at least exposes the intended data shape—an array of objects—whereas the official side has no definition in the supplied context. However, this clarity is limited because the generated definition is placed at an invalid OpenAPI location.",
+    "citations": [
+      {
+        "evidence_id": "O3",
+        "quote": "schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects]."
+      },
+      {
+        "evidence_id": "S17",
+        "quote": "attributeListValueChanges   request body                attributeListValueChange   AttributeValueChangeSet         M"
+      },
+      {
+        "evidence_id": "O10",
+        "quote": "All the fixed fields declared above are objects that MUST use keys that match the regular expression: `^[a-zA-Z0-9\\.\\-_]+$`."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "attribute value is included in the \\\"value\\\" property that did not\nchange value. A MnS producer may consider this compact format hence also\nfor the case that not all attributes of an object have been updated.  \n[Extracted Table: 87 from 28532-i00 (Release Rel-18, Series 28_series)]  \nTo allow the MnS consumer to understand which attributes have been\nupdated, the MnS producer may decide to send the following notification.  \n[Extracted Table: 88 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "###### 12.1.1.4.1a.5 Type NotifyMoiCreation  \nTable 12.1.1.4.1a.5 -1: Definition of type NotifyMoiCreation  \n------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n**Attribute name**        **Data type**                   **Description**                                                                                                            **S**\nhref                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "correlatedNotifications     array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\nadditionalText              string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\nsourceIndicator             SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\nattributeListValueChanges   AttributeValueChangeSet         List with names of changed attributes, together with new value and optionally old value                                    M\n--------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------  \nThe following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\".  \n[Extracted Table: 93 from 28532-i00 (Release Rel-18, Series 28_series)]  \nIn addition to the new values, the old values may be included in the"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "The following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\".  \n[Extracted Table: 93 from 28532-i00 (Release Rel-18, Series 28_series)]  \nIn addition to the new values, the old values may be included in the\nnotification.  \n[Extracted Table: 94 from 28532-i00 (Release Rel-18, Series 28_series)]  \nIn the example above the attribute values are of simple type. For\nattributes of structured type, the question is if all attribute fields\nof an attribute, where at least one attribute field changed its value,\nneed to be reported or only those attribute fields that changed value.\nAssume an attribute field that did not change value is not included in\nthe notification. In this case the MnS consumer receiving the\nnotification cannot tell if the attribute field was deleted or if the\nattribute field did not change value. It is not possible to distinguish\nthese two cases based on the information in the notification. For that\nreason, always all attribute fields of an attribute need to be included\nin the notification. For structured attributes with many attribute\nfields this may not be very efficient."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "value:  \nsubAttrB1: def  \nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA/subAttrB1  \nvalue: def  \nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 1  \n\\- 2  \n\\- 3  \nIts deletion is reported by the following notification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: remove  \npath: /ClassA=1\\#/attributes/attrD  \nThe complete replacement of the array is reported by the following\nnotification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 11  \n\\- 21  \n\\- 31  \nThe following example reports the second item in the array changed to\n\\\"22\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "these two cases based on the information in the notification. For that\nreason, always all attribute fields of an attribute need to be included\nin the notification. For structured attributes with many attribute\nfields this may not be very efficient.  \nIn the next example \\\"attrA\\\" is a structured attribute with the\nattribute fields \\\"attrFieldAA\\\" and \\\"attrFieldAB\\\". The attribute\nfield \\\"attrFieldAA\\\" changed value, the attribute field \\\"attrFieldAB\\\"\ndid not change value. The attribute value change notification reporting\nthis change may look as follows.  \n[Extracted Table: 95 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote also that for multi-valued attributes all attribute elements of the\nnew value need to be reported. It is not possible to report only added,\ndeleted, or modified attribute elements. Furthermore, the notification\ndoes not allow reporting of deleted attributes. When this is required\nthe MnS producer needs to include always all attributes of the object in\nthe notification. It is outside the present document how the MnS\nproducer signals to the MnS consumer if all attributes or only the\nchanged ones are included in the attribute value change notification."
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.2.4",
+      "title": "12.1.2.4 Data type definitions",
+      "text": "#### 12.1.2.4 Data type definitions  \nSee clause 12.1.1.4."
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\nNotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\nNotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\nPatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document  \nTable 12.1.1.4.1-2: Data types imported  \nData type                   Reference          Description\n--------------------------- ------------------ ---------------------------------------------------------------------\nDateTime                    TS 28.623 \\[44\\]   Date and time\nDn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "The following example demonstrates the deletion of an object. The\nmessage body includes the name/value pairs representing the attributes\nof the deleted object.  \n[Extracted Table: 91 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThe message body may include the name/value pairs representing the\nattributes of the deleted object.  \n[Extracted Table: 92 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges  \nTable 12.1.1.4.1a.7 -1: Definition of type\nNotifyMoiAttributeValueChanges  \n--------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n**Attribute name**          **Data type**                   **Description**                                                                                                            **S**\nhref                        Uri                             URI of the resource where the event (alarm) occurred                                                                       M"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "NotifyAttributeValueChanges   Type for a notifyAttributeValueChanges notification   M\nNotifyMoiChanges              Type for a notifyMOIChanges notification              M  \nTable 12.1.1.3.2.4.3.1-3: Data structures supported by the POST Response\nBody on this resource  \nData type       Response codes   Description                                        S\n--------------- ---------------- -------------------------------------------------- ---\nn/a             204 No Content   In case of success no message body is returned     M\nErrorResponse   4xx/5xx          In case of failure the error object is returned.   M"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "differently.  \n\\- value: the leaf/leaf-list/container/list representing the new\nattribute field values encoded according to RFC7951. In case of a\nlist/container representing the attribute field, value shall contain\nonly the child data nodes, but not the container/list-entry itself.  \n\\- insert: In case the field has multiplicity upper bound greater than 1\nand has the property isOrdered=True, the subparameter is used similarly\nas in case 6.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports adding a value to the \\\" hysteresis \\\" attribute subpart:  \nnotificationId: 123456009  \npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1/hysteresis  \noperation: add  \nvalue: \\'10\\'  \nCase 10: Deleting a field (subpart) of an attribute is reported as\nfollows. (only used for structured attributes represented by a list or\ncontainer in YANG):  \n\\- operation: remove.  \n\\- path: Same as case 9.  \n\\- value: Not present.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the \\\"hysteresis\\\" attribute field:  \nnotificationId: 123456010  \npath:"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet attributes AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "attribute before the outPackets element.:  \nnotificationId: 123456006  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics/performanceMetrics=outPackets\\\"  \noperation: add  \ninsert: before  \nvalue: outOctets  \nCase 7: Deleting a single element/value from a multivalue attribute is\nreported as follows. (This does not imply any change to any other\nelements):  \n\\- operation: remove.  \n\\- path: Same as case 6.  \n\\- value: not present.  \nCase 8: Replacement of a single value for a multivalue attribute is\nreported as follows. This implies removing the old value; in case of a\nstructured attribute removal all its subparts. This does not imply any\nchange to any other values:  \n\\- operation: replace.  \n\\- path: Same as case 6.  \n\\- value: Same as case 6.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports replacing an element/value of the \\\"thresholdInfoList\\\"\nstructured attribute:  \nnotificationId: 123456008  \npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1  \noperation: replace  \nvalue:"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet attributes AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "attribute is represented by a list or leaf-list, then for this last data\nnode the equal sign, the key value(s) or leaf-list value is omitted,\nonly the list/leaf-list name shall be present.  \n\\- value: the content of the leaf/leaf-list entry(s)/container/list\nentry(s) representing the created attribute encoded according to RFC7951\n\\[50\\]. In case of attribute represented by a container/list the child\ndata nodes are encoded only,the container/list itself is not.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports setting the values of the performanceMetrics simple, multivalue\nattribute:  \nhref: node1.spandau.de  \n...  \nnotificationId: 123456003  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"  \noperation: add  \nvalue:  \n\\- inOctets  \n\\- inPackets  \n\\- outPackets  \nCase 4: Deleting all values of a complete attribute is reported with  \n\\- operation: remove.  \n\\- path: Same as in case 3.  \n\\- value: not present.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the performanceMetrics attribute:  \nhref: node1.pankow.de  \n..."
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet attributes AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "href: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: abc  \nsubAttrB2: 78  \nThe previous two notifications can be combined into a single\nnotification as follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA  \nvalue: 456  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: abc  \nsubAttrB2: 78  \nNote the operation \\\"replace\\\" has replace semantics and not merge\nsemantics. The following notification reports the value change of the\nattribute field \\\"attrB:subAttrB1\\\" to \\\"def\\\" and the deletion of the\nattribute field \\\"attrB:subAttrB2\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: def  \nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA/subAttrB1  \nvalue: def"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet attributes AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.  \nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before\nreplacing the value with the new value, that is contained in \\\"value\\\".  \nThe following example notification (where JSON is expressed in YAML\nnotation) reports an object creation  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1  \nvalue:  \nid: 1,  \nobjectClass: ClassA,  \nattributes:  \nattrA: 123  \nattrB:  \nsubAttrB1: ABC  \nsubAttrB2: 56  \nThe following example reports the deletion of that object.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: remove  \npath: /ClassA=1  \nThe following example reports the addition of a new attribute \\\"attrC\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrC  \nvalue: xyz  \nThe following example reports the deletion of the attribute \\\"attrC\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet attributes AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.2.4",
+      "title": "12.1.1.2.4 Notification notifyMOIAttributeValueChanges",
+      "text": "eventTime                   request body                eventTime                  DateTime                        M\nsystemDN                    request body                systemDN                   SystemDN                        M\ncorrelatedNotifications     request body                correlatedNotifications    array(CorrelatedNotification)   O\nadditionalText              request body                additionalText             AdditionalText                  O\nsourceIndicator             request body                sourceIndicator            SourceIndicator                 O\nattributeListValueChanges   request body                attributeListValueChange   AttributeValueChangeSet         M"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "AttributeValueChangeSet attributes AttributeValueChangeSet",
+      "filters": {},
+      "clause": "12.1.1.2.5",
+      "title": "12.1.1.2.5 Notification notifyMOIChanges",
+      "text": "##### 12.1.1.2.5 Notification notifyMOIChanges  \nThe IS notification parameters are mapped to SS equivalents according to\ntable 12.1.1.2.5-1.  \nTable 12.1.1.2.5-1: Mapping of IS notification input parameters to SS\nequivalents (HTTP POST)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsParameters\"></a> parameters | Map[`string`, [Parameter Object](#parameter-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Parameter Objects](#parameter-object).\n<a name=\"componentsExamples\"></a> examples | Map[`string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Example Objects](#example-object).\n<a name=\"componentsRequestBodies\"></a> requestBodies | Map[`string`, [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Request Body Objects](#request-body-object).\n<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object)."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "{\n\"type\": \"object\",\n\"properties\": {\n\"huntingSkill\": {\n\"type\": \"string\",\n\"description\": \"The measured skill for hunting\",\n\"default\": \"lazy\",\n\"enum\": [\n\"clueless\",\n\"lazy\",\n\"adventurous\",\n\"aggressive\"\n]\n}\n},\n\"required\": [\n\"huntingSkill\"\n]\n}\n]\n},\n\"Dog\": {\n\"description\": \"A representation of a dog. Note that `Dog` will be used as the discriminator value.\",\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/Pet\"\n},\n{\n\"type\": \"object\",\n\"properties\": {\n\"packSize\": {\n\"type\": \"integer\",\n\"format\": \"int32\",\n\"description\": \"the size of the pack the dog is from\",\n\"default\": 0,\n\"minimum\": 0\n}\n},\n\"required\": [\n\"packSize\"\n]\n}\n]\n}\n}\n}\n}\n```  \n```yaml\ncomponents:\nschemas:\nPet:\ntype: object\ndiscriminator:\npropertyName: petType\nproperties:\nname:\ntype: string\npetType:\ntype: string\nrequired:\n- name\n- petType\nCat:  ## \"Cat\" will be used as the discriminator value\ndescription: A representation of a cat\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\nhuntingSkill:\ntype: string"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "fixed fields of the components object, reusable objects AttributeValueChangeSet",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Dog`",
+      "text": "- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`\nproperties:\nlovesRocks:\ntype: boolean\n```  \na payload like this:  \n```\n{\n\"pet_type\": \"Cat\",\n\"name\": \"misty\"\n}\n```  \nwill indicate that the `Cat` schema be used.  Likewise this schema:  \n```\n{\n\"pet_type\": \"cachorro\",\n\"bark\": \"soft\"\n}\n```  \nwill map to `Dog` because of the definition in the `mappings` element.  \n#### XML Object  \nA metadata object that allows for more fine-tuned XML model definitions.  \nWhen using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information.\nSee examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "fixed fields of the components object, reusable objects AttributeValueChangeSet",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "See examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"xmlName\"></a>name | `string` | Replaces the name of the element/attribute used for the described schema property. When defined within `items`, it will affect the name of the individual XML elements within the list. When defined alongside `type` being `array` (outside the `items`), it will affect the wrapping element and only if `wrapped` is `true`. If `wrapped` is `false`, it will be ignored.\n<a name=\"xmlNamespace\"></a>namespace | `string` | The URI of the namespace definition. Value MUST be in the form of an absolute URI.\n<a name=\"xmlPrefix\"></a>prefix | `string` | The prefix to be used for the [name](#xmlName).\n<a name=\"xmlAttribute\"></a>attribute | `boolean` | Declares whether the property definition translates to an attribute instead of an element. Default value is `false`."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "fixed fields of the components object, reusable objects AttributeValueChangeSet",
+      "filters": {},
+      "clause": "",
+      "title": "Tag Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Tag Object Example  \n```json\n{\n\"name\": \"pet\",\n\"description\": \"Pets operations\"\n}\n```  \n```yaml\nname: pet\ndescription: Pets operations\n```  \n#### Reference Object  \nA simple object to allow referencing other components in the specification, internally and externally.  \nThe Reference Object is defined by [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) and follows the same structure, behavior and rules.  \nFor this specification, reference resolution is accomplished as defined by the JSON Reference specification and not by the JSON Schema specification.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"referenceRef\"></a>$ref | `string` | **REQUIRED**. The reference string.  \nThis object cannot be extended with additional properties and any properties added SHALL be ignored.  \n##### Reference Object Example  \n```json\n{"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "fixed fields of the components object, reusable objects AttributeValueChangeSet",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"parameterExamples\"></a>examples | Map[ `string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | Examples of the media type.  Each example SHOULD contain a value in the correct format as specified in the parameter encoding.  The `examples` field is mutually exclusive of the `example` field.  Furthermore, if referencing a `schema` which contains an example, the `examples` value SHALL _override_ the example provided by the schema.  \nFor more complex scenarios, the [`content`](#parameterContent) property can define the media type and schema of the parameter.\nA parameter MUST contain either a `schema` property, or a `content` property, but not both.\nWhen `example` or `examples` are provided in conjunction with the `schema` object, the example MUST follow the prescribed serialization strategy for the parameter.  \nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "fixed fields of the components object, reusable objects AttributeValueChangeSet",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \nAll the fixed fields declared above are objects that MUST use keys that match the regular expression: `^[a-zA-Z0-9\\.\\-_]+$`.  \nField Name Examples:  \n```\nUser\nUser_1\nUser_Name\nuser-name\nmy.org.User\n```  \n##### Components Object Example  \n```json\n\"components\": {\n\"schemas\": {\n\"Category\": {\n\"type\": \"object\",\n\"properties\": {\n\"id\": {\n\"type\": \"integer\",\n\"format\": \"int64\"\n},\n\"name\": {\n\"type\": \"string\"\n}\n}\n},\n\"Tag\": {\n\"type\": \"object\",\n\"properties\": {\n\"id\": {\n\"type\": \"integer\",\n\"format\": \"int64\"\n},\n\"name\": {\n\"type\": \"string\"\n}\n}\n}\n},\n\"parameters\": {\n\"skipParam\": {\n\"name\": \"skip\",\n\"in\": \"query\",\n\"description\": \"number of items to skip\",\n\"required\": true,\n\"schema\": {\n\"type\": \"integer\",\n\"format\": \"int32\"\n}\n},\n\"limitParam\": {\n\"name\": \"limit\",\n\"in\": \"query\",\n\"description\": \"max records to return\",\n\"required\": true,\n\"schema\" : {\n\"type\": \"integer\",\n\"format\": \"int32\"\n}\n}\n},\n\"responses\": {\n\"NotFound\": {"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v2",
+  "cache_key": "c4633813211d3fbeb08ea68fea79a79bfc683086a5d4493218b7bae74f4bde5d",
+  "judged_at": "2026-10-06T18:16:27-03:00"
+}

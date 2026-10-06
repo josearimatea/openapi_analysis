@@ -1,0 +1,288 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA MoiChange|placement",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA MoiChange",
+  "aspect": "placement",
+  "summary": "schema misplaced (at components.MoiChange); defined at components.MoiChange, outside components.schemas; at the right place 8/10 of its leaves would match; generated defines it at components.MoiChange; 1 absent, 1 extra",
+  "answer": {
+    "why_different": "The generated side uses a different address: MoiChange is declared directly under `components` instead of under `components.schemas`. This is a placement error, not a structural change to the schema itself.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification defines MoiChange as a data type used for MOI changes and describes its JSON Patch-related properties, but it does not specify the OpenAPI components path for declaring the schema.",
+    "openapi": "The OpenAPI 3.0 reference requires reusable Schema Objects to be declared in the `components.schemas` map. A direct `components.MoiChange` entry is not a valid fixed field and is not a valid schema location.",
+    "clearer": "official",
+    "clearer_why": "The official version places the schema in the standard `components.schemas` namespace, making it valid and immediately recognizable as a reusable schema. The generated placement is invalid OpenAPI 3.0 and makes the schema’s role ambiguous.",
+    "citations": [
+      {
+        "evidence_id": "O3",
+        "quote": "schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects]."
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "Table 12.1.1.4.1a.4 -1: Definition of type MoiChange"
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.9",
+      "title": "12.1.1.4.1a.9 Type PatchItem",
+      "text": "systemDN             SystemDN           System DN                                                                                                                                                                                 M\nmoiChanges           array(MoiChange)   MOI changes to be reported                                                                                                                                                                M\n-------------------- ------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------  \n###### 12.1.1.4.1a.9 Type PatchItem  \nTable 12.1.1.4.1a.9 -1: Definition of type PatchItem  \n---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---\nAttribute name   Data type        Description                                                                                                                        S"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.3",
+      "title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "text": "###### 12.1.1.4.1a.3 Type CorrelatedNotification  \nTable 12.1.1.4.1a.3 -1: Definition of type CorrelatedNotification  \nAttribute name    Data type               Description                                                           S\n----------------- ----------------------- --------------------------------------------------------------------- ---\nsource            Dn                      Source of the correlated notifications                                M\nnotificationIds   array(NotificationId)   Notification identifiers of correlated notifications of that source   M  \n###### 12.1.1.4.1a.4 Type MoiChange  \nTable 12.1.1.4.1a.4 -1: Definition of type MoiChange  \n[Extracted Table: 85 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThe properties \\\"op\\\", \\\"path\\\" and \\\"value\\\" shall use the 3GPP JSON\nPatch format (TS 32.158 \\[15\\]) for reporting NRM changes. The \\\"merge\\\"\noperation specified by 3GPP JSON Patch is not supported in\n\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.  \nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "**Spec 28532-i00, Release Rel-18, Series 28_series**\nTable 50\n\n+----------------+---+--------------------+--------------------+\n| Parameter Name | S | Information type   | Comment            |\n+================+===+====================+====================+\n| producerId     | M | The identity of    | DN of the MnS      |\n|                |   | the producer       | producer. If the   |\n|                |   | requesting the     | MnS producer is    |\n|                |   | connection         | not modeled as     |\n|                |   | establishment.     | 3GPP NRM MOI, an   |\n|                |   |                    | alternative        |\n|                |   |                    | identifer other    |\n|                |   |                    | than DN may be     |\n|                |   |                    | used.              |\n+----------------+---+--------------------+--------------------+\n| streamInfoList | M | List of StreamInfo | This parameter     |\n|                |   |                    | contains the list  |\n|                |   |                    | of meta-data about |\n|                |   |                    | each reporting     |\n|                |   |                    | stream.            |\n|                |   |                    |                    |\n|                |   |                    | For streaming      |\n|                |   |                    | trace reporting    |\n|                |   |                    | each StreamInfo    |\n|                |   |                    | includes:          |\n|                |   |                    |                    |\n|                |   |                    | > \\- StreamType    |\n|                |   |                    | > carrying the     |\n|                |   |                    | > value \\\"TRACE\\\"; |\n|                |   |                    | >                  |\n|                |   |                    | > \\-               |\n|                |   |                    | > S                |\n|                |   |                    | erializationFormat |\n|                |   |                    | > carrying the     |\n|                |   |                    | > value \\\"GPB\\\" or |\n|                |   |                    | > \\\"ASN1\\\";        |\n|                |   |                    | >                  |\n|                |   |                    | > \\- Trace         |\n|                |   |                    | > Reference (see   |\n|                |   |                    | > clause 5.6 of TS |\n|                |   |                    | > 32.422 \\[38\\])   |\n|                |   |                    | > as stream        |\n|                |   |                    | > identifier;      |\n|                |   |                    | >                  |\n|                |   |                    | > \\- TraceJob (see |\n|                |   |                    | > clause 4.3.30 of |\n|                |   |                    | > TS 28.622        |\n|                |   |                    | > \\[11\\])          |\n|                |   |                    | > providing the    |\n|                |   |                    | > details about    |\n|                |   |                    | > the              |\n|                |   |                    | > configuration of |\n|                |   |                    | > the trace job    |\n|                |   |                    | > for which the    |\n|                |   |                    | > data is being    |\n|                |   |                    | > reported.        |\n|                |   |                    |                    |\n|                |   |                    | For streaming      |\n|                |   |                    | performance data   |\n|                |   |                    | reporting each     |\n|                |   |                    | StreamInfo         |\n|                |   |                    | includes:          |\n|                |   |                    |                    |\n|                |   |                    | > \\- StreamType    |\n|                |   |                    | > carrying the     |\n|                |   |                    | > value            |\n|                |   |                    | > \\\"PERFORMANCE\\\"; |\n|                |   |                    | >                  |\n|                |   |                    | > \\-               |\n|                |   |                    | > S                |\n|                |   |                    | erializationFormat |\n|                |   |                    | > carrying the     |\n|                |   |                    | > value \\\"GPB\\\" or |\n|                |   |                    | > \\\"ASN1\\\";        |\n|                |   |                    | >                  |\n|                |   |                    | > \\- streamId      |\n|                |   |                    | > globally unique  |\n|                |   |                    | > stream           |\n|                |   |                    | > identifier;      |\n|                |   |                    | >                  |\n|                |   |                    | > \\- measObjDn:    |\n|                |   |                    | > the DN of the    |\n|                |   |                    | > measured object  |\n|                |   |                    | > instance;        |\n|                |   |                    | >                  |\n|                |   |                    | > \\-               |\n|                |   |                    | > p                |\n|                |   |                    | erformanceMetrics: |\n|                |   |                    | > a list of        |\n|                |   |                    | > performance      |\n|                |   |                    | > metric names     |\n|                |   |                    | > whose values are |\n|                |   |                    | > to be reported   |\n|                |   |                    | > by the           |\n|                |   |                    | > Performance Data |\n|                |   |                    | > Stream Units     |\n|                |   |                    | > (see Annex C of  |\n|                |   |                    | > TS 28.550        |\n|                |   |                    | > \\[42\\]) via this |\n|                |   |                    | > stream.          |\n|                |   |                    | > Performance      |\n|                |   |                    | > metrics include  |\n|                |   |                    | > measurement and  |\n|                |   |                    | > KPI;             |\n|                |   |                    | >                  |\n|                |   |                    | > \\- either:       |\n|                |   |                    | >                  |\n|                |   |                    | > \\- jobId defined |\n|                |   |                    | > in the           |\n|                |   |                    | > PerfMetricJob    |\n|                |   |                    | > MOI (see clause  |\n|                |   |                    | > 4.3.31 of TS     |\n|                |   |                    | > 28.622 \\[11\\])   |\n|                |   |                    | > for which the    |\n|                |   |                    | > data is being    |\n|                |   |                    | > reported;        |\n|                |   |                    | >                  |\n|                |   |                    | > \\- or:           |\n|                |   |                    | >                  |\n|                |   |                    | > \\- jobId         |\n|                |   |                    | > globally unique  |\n|                |   |                    | > identifier of a  |\n|                |   |                    | > measurement job  |\n|                |   |                    | > (see TS 28.550   |\n|                |   |                    | > \\[42\\]).         |\n|                |   |                    |                    |\n|                |   |                    | For streaming      |\n|                |   |                    | analytics          |\n|                |   |                    | reporting each     |\n|                |   |                    | StreamInfo         |\n|                |   |                    | includes:          |\n|                |   |                    |                    |\n|                |   |                    | > \\- StreamType    |\n|                |   |                    | > carrying the     |\n|                |   |                    | > value            |\n|                |   |                    | > \\\"ANALYTICS\\\";   |\n|                |   |                    | >                  |\n|                |   |                    | > \\-               |\n|                |   |                    | > S                |\n|                |   |                    | erializationFormat |\n|                |   |                    | > carrying the     |\n|                |   |                    | > value \\\"GPB\\\" or |\n|                |   |                    | > \\\"ASN1\\\";        |\n|                |   |                    | >                  |\n|                |   |                    | > \\- streamId      |\n|                |   |                    | > globally unique  |\n|                |   |                    | > stream           |\n|                |   |                    | > identifier;      |\n|                |   |                    | >                  |\n|                |   |                    | > \\- AnalyticsInfo |\n|                |   |                    | > providing the    |\n|                |   |                    | > details about    |\n|                |   |                    | > the analytics    |\n|                |   |                    | > activity for     |\n|                |   |                    | > which the data   |\n|                |   |                    | > is being         |\n|                |   |                    | > reported.        |\n|                |   |                    |                    |\n|                |   |                    | For proprietary    |\n|                |   |                    | data streaming     |\n|                |   |                    | reporting each     |\n|                |   |                    | StreamInfo         |\n|                |   |                    | includes:          |\n|                |   |                    |                    |\n|                |   |                    | > \\- StreamType    |\n|                |   |                    | > carrying the     |\n|                |   |                    | > value            |\n|                |   |                    | > \\\"PROPRIETARY\\\"; |\n|                |   |                    | >                  |\n|                |   |                    | > \\- streamId      |\n|                |   |                    | > globally unique  |\n|                |   |                    | > stream           |\n|                |   |                    | > identifier;      |\n|                |   |                    | >                  |\n|                |   |                    | > \\-               |\n|                |   |                    | > VsDataContainer  |\n|                |   |                    | > (see clause      |\n|                |   |                    | > 4.3.9 of TS      |\n|                |   |                    | > 28.622 \\[11\\])   |\n|                |   |                    | > providing the    |\n|                |   |                    | > details about    |\n|                |   |                    | > the data being   |\n|                |   |                    | > reported.        |\n+----------------+---+--------------------+--------------------+"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "**Spec 28532-i00, Release Rel-18, Series 28_series**\nTable 2\n\n+----------------------------------------------------------------------+\n|                                                                      |\n+======================================================================+\n| > ***3GPP***                                                         |\n| >                                                                    |\n| > Postal address                                                     |\n| >                                                                    |\n| > 3GPP support office address                                        |\n| >                                                                    |\n| > 650 Route des Lucioles - Sophia Antipolis                          |\n| >                                                                    |\n| > Valbonne - FRANCE                                                  |\n| >                                                                    |\n| > Tel.: +33 4 92 94 42 00 Fax: +33 4 93 65 47 16                     |\n| >                                                                    |\n| > Internet                                                           |\n| >                                                                    |\n| > https://www.3gpp.org                                               |\n+----------------------------------------------------------------------+\n| ***Copyright Notification***                                         |\n|                                                                      |\n| No part may be reproduced except as authorized by written            |\n| permission.\\                                                         |\n| The copyright and the foregoing restriction extend to reproduction   |\n| in all media.                                                        |\n|                                                                      |\n| © 2023, 3GPP Organizational Partners (ARIB, ATIS, CCSA, ETSI, TSDSI, |\n| TTA, TTC).                                                           |\n|                                                                      |\n| All rights reserved.                                                 |\n|                                                                      |\n| UMTS™ is a Trade Mark of ETSI registered for the benefit of its      |\n| members                                                              |\n|                                                                      |\n| 3GPP™ is a Trade Mark of ETSI registered for the benefit of its      |\n| Members and of the 3GPP Organizational Partners\\                     |\n| LTE™ is a Trade Mark of ETSI registered for the benefit of its       |\n| Members and of the 3GPP Organizational Partners                      |\n|                                                                      |\n| GSM® and the GSM logo are registered and owned by the GSM            |\n| Association                                                          |\n+----------------------------------------------------------------------+"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "send notifications that the MnS consumer did not subscribe to.  \nThe notification header includes a notificationId. This identifier shall\nnot be used in the parameter correlatedNotifications potentially carried\nin other notifications. The notificationId in mOIChanges shall be used\ninstead. This is because the latter notification id is associated to a\nsingle MOI only, whereas the former notification id can be associated to\nchanges of multiple MOIs. The correlatedNotifications associates to a\nsingle MOI one or more notification ids identifying notifications\nreporting events for that MOI.  \nIn this clause the following definitions apply.  \ndata type: Constraint on an attribute value.  \nsimple type: Data type constraining an attribute value to a scalar.  \ncomplex type: Data type of a structured and/or multi-valued attribute.  \nattribute: Information element of an object composed of an attribute\nname and an attribute value.  \nattribute name: Name of an attribute.  \nattribute value: Value of an attribute. The value is defined by a simple\ntype or a complex type.  \nattribute field: Attribute contained in an attribute. Attribute fields\ncan contain attribute fields."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\nNotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\nNotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\nPatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document  \nTable 12.1.1.4.1-2: Data types imported  \nData type                   Reference          Description\n--------------------------- ------------------ ---------------------------------------------------------------------\nDateTime                    TS 28.623 \\[44\\]   Date and time\nDn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "scope                         config              M   BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\nfilter                        config              M   Multiple MOIs can be specified in the same operation, emulating filtering.\nmodificationList              config              M   The \"attributes container\" and leaf, leaf-list or list entries representing the attributes.  \nTable 12.1.3.1.4-2: Mapping of IS modifyMOIAttributes output parameters\nto SS equivalents  \n[Extracted Table: 98 from 28532-i00 (Release Rel-18, Series 28_series)]  \n> Note 1: Successful Netconf \\<edit-config\\> operations only return an\n> \\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\n> separate \\<get-config\\> operation.  \n##### 12.1.3.1.5 Operation deleteMOI  \nThis IS operation deletes one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "is mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating\nthe MOI(s) to be deleted.  \nThe Netconf operation attribute on the list representing the\nbaseObjectInstance should be set to delete or remove.  \nThe default-operation parameter should be set to none.  \nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.5-1 and table 12.1.3.1.5-2.  \nTable 12.1.3.1.5-1: Mapping of IS deleteMOI input parameters to SS\nequivalents  \n**IS operation parameter name**   **SS parameter name**   **S**   **Remark**\n--------------------------------- ----------------------- ------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "NotifyNewSecAlarm                     Type for a notifyNewAlarm notification (security alarm)                  M\nNotifyAckStateChanged                 Type for a notifyAckStateChanged notification                            M\nNotifyClearedAlarm                    Type for a notifyClearedAlarm notification                               M\nNotifyAlarmListRebuilt                Type for a notifyAlarmListRebuilt notification                           M\nNotifyChangedAlarm                    Type for a notifyChangedAlarm notification                               M\nNotifyComments                        Type for a notifyComments notification                                   M\nNotifyPotentialFaultyAlarmList        Type for a notifyPotentialFaultyAlarmList notification                   M\nNotifyCorrelatedNotificationChanged   Type for a notifyCorrelatedNotificationChanged notification              M\nNotifyChangedAlarmGeneral             Type for a notifyChangedAlarmGeneral notification (non-security alarm)   M\nNotifyChangedSecAlarmGeneral          Type for a notifyChangedAlarmGeneral notification (security alarm)       M"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "container in YANG):  \n\\- operation: remove.  \n\\- path: Same as case 9.  \n\\- value: Not present.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the \\\"hysteresis\\\" attribute field:  \nnotificationId: 123456010  \npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1/hysteresis  \noperation: remove  \nCase 11: Replacement of a field (subpart) of an attribute is reported as\nfollows. This implies removing previous value(s). (only used for\nstructured attributes represented by a list or container in YANG):  \n\\- operation: replace.  \n\\- path: Same as case 9.  \n\\- value: Same as case 9."
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "value:  \nsubAttrB1: def  \nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA/subAttrB1  \nvalue: def  \nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 1  \n\\- 2  \n\\- 3  \nIts deletion is reported by the following notification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: remove  \npath: /ClassA=1\\#/attributes/attrD  \nThe complete replacement of the array is reported by the following\nnotification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 11  \n\\- 21  \n\\- 31  \nThe following example reports the second item in the array changed to\n\\\"22\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 11  \n\\- 21  \n\\- 31  \nThe following example reports the second item in the array changed to\n\\\"22\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrD/1  \nvalue: 22  \nNote the array index of the second item is \\\"1\\\".  \nAssume now \\\"attrE\\\" is a JSON array with complex array items, for\nexample.  \n\\[{subItemE1: 11, subItemD2: abc}, {subItemE1: 21, subItemE2: def},\n{subItemE1: 31, subItemE2\\\": ghi}.  \nA value change to  \n\\[{subItemE1: 11, subItemE2: abc}, {subItemE1: 21, subItemE2: xyz},\n{subItemE1: 31, subItemE2\\\": ghi}.  \nis reported by  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrE/1/subItemE2  \nvalue: xyz  \nWhen \\\"subItemE2\\\" is defined as array item key at stage 2, then\n\\\"attrE\\\" should contain a JSON map.  \nattrE:  \n11:  \nsubItemE2: abc  \n21:  \nsubItemE2: def  \n31:  \nsubItemE2: ghi  \nThe same change as above is now reported by the notification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "href: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrC  \nvalue: xyz  \nThe following example reports the deletion of the attribute \\\"attrC\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: remove  \npath: /ClassA=1\\#/attributes/attrC  \nThe following example reports a value change for the simple attribute\n\\\"attrA\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA  \nvalue: 456  \nWhen the old value is reported as well, the notification looks like.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA  \nvalue: 456  \noldValue: 123  \nThe following example reports a value change for the complex attribute\n\\\"attrB\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: abc  \nsubAttrB2: 78  \nThe previous two notifications can be combined into a single\nnotification as follows.  \nhref: https://example.com/3gpp"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "href: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: abc  \nsubAttrB2: 78  \nThe previous two notifications can be combined into a single\nnotification as follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA  \nvalue: 456  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: abc  \nsubAttrB2: 78  \nNote the operation \\\"replace\\\" has replace semantics and not merge\nsemantics. The following notification reports the value change of the\nattribute field \\\"attrB:subAttrB1\\\" to \\\"def\\\" and the deletion of the\nattribute field \\\"attrB:subAttrB2\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: def  \nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA/subAttrB1  \nvalue: def"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "the object creation request, shall be included in the object creation\nreport with their default values.  \n\\- Attributes with default values, that are deleted and consequently set\nto their default value, shall be included in attribute replacement\nreports.  \nNote all following use-cases use JSON expressed in YAML notation.  \nCase 1: Creation of an MOI is reported with:  \n\\- operation: add  \n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI  \n\\- value: a complete MOI representation, represented by the \\\"id\\\" node\nand the \\\"attributes\\\" container but exluding the list entry itself\nencoded according to RFC7951 \\[50\\].  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object creation:  \nhref: node1.lichtenberg.de  \n...  \nnotificationId: 123456001  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"  \noperation: add  \nvalue:  \nid: job1  \n3gpp-common-measurements:PerfMetricJob:attributes:  \njobId: 9865  \nfileReportingPeriod: 30  \nCase 2: Deletion of an MOI is reported with:  \n\\- operation: remove  \n\\- path: YANG resource identifier pointing to the list entry"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsParameters\"></a> parameters | Map[`string`, [Parameter Object](#parameter-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Parameter Objects](#parameter-object).\n<a name=\"componentsExamples\"></a> examples | Map[`string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Example Objects](#example-object).\n<a name=\"componentsRequestBodies\"></a> requestBodies | Map[`string`, [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Request Body Objects](#request-body-object).\n<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object)."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "{\n\"type\": \"object\",\n\"properties\": {\n\"huntingSkill\": {\n\"type\": \"string\",\n\"description\": \"The measured skill for hunting\",\n\"default\": \"lazy\",\n\"enum\": [\n\"clueless\",\n\"lazy\",\n\"adventurous\",\n\"aggressive\"\n]\n}\n},\n\"required\": [\n\"huntingSkill\"\n]\n}\n]\n},\n\"Dog\": {\n\"description\": \"A representation of a dog. Note that `Dog` will be used as the discriminator value.\",\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/Pet\"\n},\n{\n\"type\": \"object\",\n\"properties\": {\n\"packSize\": {\n\"type\": \"integer\",\n\"format\": \"int32\",\n\"description\": \"the size of the pack the dog is from\",\n\"default\": 0,\n\"minimum\": 0\n}\n},\n\"required\": [\n\"packSize\"\n]\n}\n]\n}\n}\n}\n}\n```  \n```yaml\ncomponents:\nschemas:\nPet:\ntype: object\ndiscriminator:\npropertyName: petType\nproperties:\nname:\ntype: string\npetType:\ntype: string\nrequired:\n- name\n- petType\nCat:  ## \"Cat\" will be used as the discriminator value\ndescription: A representation of a cat\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\nhuntingSkill:\ntype: string"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\ndiscriminator:\npropertyName: pet_type\n```  \nThe expectation now is that a property with name `pet_type` _MUST_ be present in the response payload, and the value will correspond to the name of a schema defined in the OAS document.  Thus the response payload:  \n```\n{\n\"id\": 12345,\n\"pet_type\": \"Cat\"\n}\n```  \nWill indicate that the `Cat` schema be used in conjunction with this payload.  \nIn scenarios where the value of the discriminator field does not match the schema name or implicit mapping is not possible, an optional `mapping` definition MAY be used:  \n```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\n- $ref: 'https://gigantic-server.com/schemas/Monster/schema.json'\ndiscriminator:\npropertyName: pet_type\nmapping:\ndog: '#/components/schemas/Dog'"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Dog`",
+      "text": "- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`\nproperties:\nlovesRocks:\ntype: boolean\n```  \na payload like this:  \n```\n{\n\"pet_type\": \"Cat\",\n\"name\": \"misty\"\n}\n```  \nwill indicate that the `Cat` schema be used.  Likewise this schema:  \n```\n{\n\"pet_type\": \"cachorro\",\n\"bark\": \"soft\"\n}\n```  \nwill map to `Dog` because of the definition in the `mappings` element.  \n#### XML Object  \nA metadata object that allows for more fine-tuned XML model definitions.  \nWhen using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information.\nSee examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "Tag Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Tag Object Example  \n```json\n{\n\"name\": \"pet\",\n\"description\": \"Pets operations\"\n}\n```  \n```yaml\nname: pet\ndescription: Pets operations\n```  \n#### Reference Object  \nA simple object to allow referencing other components in the specification, internally and externally.  \nThe Reference Object is defined by [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) and follows the same structure, behavior and rules.  \nFor this specification, reference resolution is accomplished as defined by the JSON Reference specification and not by the JSON Schema specification.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"referenceRef\"></a>$ref | `string` | **REQUIRED**. The reference string.  \nThis object cannot be extended with additional properties and any properties added SHALL be ignored.  \n##### Reference Object Example  \n```json\n{"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in XML\",\n\"externalValue\": \"http://foo.bar/examples/user-example.xml\"\n}\n}\n},\n\"text/plain\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in Plain text\",\n\"externalValue\": \"http://foo.bar/examples/user-example.txt\"\n}\n}\n},\n\"*/*\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in other format\",\n\"externalValue\": \"http://foo.bar/examples/user-example.whatever\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: user to add to the system\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example\nexternalValue: 'http://foo.bar/examples/user-example.json'\n'application/xml':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example in XML"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v2",
+  "cache_key": "47cbd36f8000a5ba18d7373c3a24e975fedd25d5466604a4c4b3fb5b421e8de1",
+  "judged_at": "2026-10-06T17:00:25-03:00"
+}

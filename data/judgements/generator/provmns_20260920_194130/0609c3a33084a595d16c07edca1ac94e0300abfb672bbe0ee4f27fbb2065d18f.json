@@ -1,0 +1,506 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA Resource|definition",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA Resource",
+  "aspect": "definition",
+  "summary": "schema present; shape official oneOf[2] vs generated type=object; 1 absent, 1 extra",
+  "answer": {
+    "why_different": "The generated schema has flattened the official polymorphic composition into a generic object: it replaces the `oneOf` structure and its resource variants with only `type: object`. This is a different structure, not merely a different value or address.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP definition requires the common Resource fields and a map of contained objects. It also states that representations with specific attributes and name-contained objects are defined in the NRM definitions and should be used in implementations. The generated schema does not preserve those NRM alternatives or require the common `id` field.",
+    "openapi": "OpenAPI 3.0 supports `oneOf` for explicitly listing alternative schemas, and states that all possible schemas must be listed explicitly. A bare `type: object` is valid OpenAPI syntax, but it does not express the alternatives or constraints represented by the official schema.",
+    "clearer": "official",
+    "clearer_why": "The official version makes the common Resource shape and the supported NRM-specific alternatives visible. The generated version is shorter but overly broad and does not tell a reader which resource schemas are valid.",
+    "citations": [
+      {
+        "evidence_id": "S14",
+        "quote": "id                   string               Identifier of the resource object                                                                                              M"
+      },
+      {
+        "evidence_id": "S15",
+        "quote": "Resource representations with specific attributes and name contained objects are contained in the NRM definitions. These definitions should be used in implementations of the Provisioning MnS instead of this generic definition."
+      },
+      {
+        "evidence_id": "O6",
+        "quote": "In both the `oneOf` and `anyOf` use cases, all possible schemas MUST be listed explicitly."
+      },
+      {
+        "evidence_id": "O9",
+        "quote": "In OAS 3.0, a response payload MAY be described to be exactly one of any number of types"
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.2.3",
+      "title": "12.1.2.3 Resources",
+      "text": "#### 12.1.2.3 Resources"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.2.3.1",
+      "title": "12.1.2.3.1 Resource structure",
+      "text": "##### 12.1.2.3.1 Resource structure  \nFigure 12.1.2.3.1-1 shows the resource structure of the provisioning MnS\nin the context of its integration with VES Event Listener 7.1.1 \\[45\\].  \n![A screen shot of a computer program Description automatically\ngenerated with low\nconfidence](media/image10.png){width=\"3.8430555555555554in\"\nheight=\"1.6270833333333334in\"}  \nFigure 12.1.2.3.1-1: Resource URI structure of the provisioning MnS for\nintegration with ONAP VES Event Listener 7.1.1 (Resource structure\nsection) \\[45\\]  \nTable 12.1.2.3.1-1 provides an overview of the resources and applicable\nHTTP methods.  \nTable 12.1.2.3.1-**1**: Resources and methods overview  \nResource name   Resource URI     HTTP method   Description\n--------------- ---------------- ------------- --------------------\neventListener   /eventListener   POST          Send notifications"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.2.3.2",
+      "title": "12.1.2.3.2 Resource definitions",
+      "text": "##### 12.1.2.3.2 Resource definitions  \nSee Resource structure section in \\[45\\]."
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.3",
+      "title": "12.1.1.3 Resources",
+      "text": "#### 12.1.1.3 Resources"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.3.1",
+      "title": "12.1.1.3.1 Resource structure",
+      "text": "##### 12.1.1.3.1 Resource structure"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "##### 12.1.1.3.1.1 Resource structure on the MnS producer {#resource-structure-on-the-mns-producer .H6}  \nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.  \n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}  \nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer  \nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.  \nTable 12.1.1.3.1-**1**: Resources and methods overview  \nResource name   Resource URI           HTTP method   Description\n--------------- ---------------------- ------------- --------------------------------------------------------------------------\nMOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\nMOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\nMOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\nMOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\nMOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.3.1.2",
+      "title": "12.1.1.3.1.2 Resource structure on the MnS consumer",
+      "text": "###### 12.1.1.3.1.2 Resource structure on the MnS consumer  \nFigure 12.1.1.3.1.2-1 shows the resource structure of the Provisioning\nMnS on the MnS consumer.  \n![](media/image9.emf){width=\"1.4256944444444444in\"\nheight=\"0.32083333333333336in\"}  \nFigure 12.1.1.3.1.2-1: Resource URI structure of the Provisioning MnS on\nthe MnS consumer  \nTable 12.1.1.3.1.2-1 provides an overview of the resources and\napplicable HTTP methods.  \nTable 12.1.1.3.1.2-**1**: Resources and methods overview  \nResource name         Resource URI           HTTP method   Description\n--------------------- ---------------------- ------------- ------------------------------------------------\nNotification Target   {notificationTarget}   POST          Send a notification to the notification target"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "##### 12.1.1.3.2 Resource definitions"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\nErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "##### 12.1.1.3.2.1.3.3 HTTP PATCH  {#http-patch .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.1.2",
+      "title": "12.1.1.1.2 Operation createMOI",
+      "text": "attributeListOut    response body           n/a                 Resource            M\nstatus              response status codes   n/a                 n/a                 M\nresponse body           error               ErrorResponse       O  \nFurther details on creating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.1.2."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "##### 12.1.1.1.3 Operation getMOIAttributes  \nThis operation retrieves one or multiple resources representing managed\nobject instances.  \nTable 12.1.1.1.3-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP GET)  \n[Extracted Table: 76 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nNote 2: Void.  \nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)  \n[Extracted Table: 77 from 28532-i00 (Release Rel-18, Series 28_series)]  \nFurther details on reading resources with HTTP GET are provided in TS\n32.158 \\[15\\], clause 5.2.  \nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.  \nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Resource",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "###### 12.1.1.4.1a.1 Type Resource  \n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**  \n**Attribute name**   **Data type**        **Description**                                                                                                                **S**\n-------------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------ -------\nid                   string               Identifier of the resource object                                                                                              M\nobjectClass          string               Object class of the resource object                                                                                            O\nobjectInstance       Dn                   Object instance of the resource object                                                                                         O\nattributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Resource",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "attributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M\nn/a                  map(array(object))   Name contained objects                                                                                                         M  \nThis definition of \\\"Resource\\\" does not specify any attributes or name\ncontained objects. Resource representations with specific attributes and\nname contained objects are contained in the NRM definitions. These\ndefinitions should be used in implementations of the Provisioning MnS\ninstead of this generic definition."
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Resource",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "###### 12.1.1.4.1a.2 Type Scope  \nTable 12.1.1.4.1a.2-1: Definition of type Scope  \nAttribute name   Data type   Description                                                                                                                                                                                                     S"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Resource",
+      "filters": {},
+      "clause": "12.1.2.4",
+      "title": "12.1.2.4 Data type definitions",
+      "text": "#### 12.1.2.4 Data type definitions  \nSee clause 12.1.1.4."
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Resource",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "ScopeType                        12.1.1.4.4.5    Scope type of a scope\nOperation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\nInsert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\nPatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\nResource                         12.1.1.4.1a.1   Used for resource representations\nScope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\nCorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\nMoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\nNotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Resource",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource  \n[Extracted Table: 81 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Resource",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "##### 12.1.1.3.2.1.3.2 HTTP GET  {#http-get .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource  \n[Extracted Table: 82 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.  \nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource  \n**Data type**   **Description**   **S**\n--------------- ----------------- -------\nn/a             n/a               n/a  \nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "className            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3",
+      "title": "12.1.1.3.2.1.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.1.3 HTTP methods"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.  \nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource  \n**Data type**   **Description**                                                     **S**\n--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.2",
+      "title": "12.1.1.3.2.2 Void",
+      "text": "###### 12.1.1.3.2.2 Void"
+    },
+    {
+      "id": "S25",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.3",
+      "title": "12.1.1.3.2.3 Void",
+      "text": "###### 12.1.1.3.2.3 Void"
+    },
+    {
+      "id": "S26",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.4",
+      "title": "12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\"",
+      "text": "###### 12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\""
+    },
+    {
+      "id": "S27",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.1",
+      "title": "12.1.1.3.2.4.1 Description",
+      "text": "####### 12.1.1.3.2.4.1 Description  \nThis resource represents a notification target on the MnS consumer."
+    },
+    {
+      "id": "S28",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.2",
+      "title": "12.1.1.3.2.4.2 URI",
+      "text": "####### 12.1.1.3.2.4.2 URI  \nResource URI: {notificationTarget}  \nThe resource URI variables are defined in table 12.1.1.3.2.4.2-1.  \nTable 12.1.1.3.2.4.2-1: URI variables  \nName                 Definition\n-------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nnotificationTarget   URI of the notification target on the MnS consumer, contained in the notification subscription, see notificationRecipientAddress defined in clause 4.3.22.2 in TS 28.622 \\[11\\]."
+    },
+    {
+      "id": "S29",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3",
+      "title": "12.1.1.3.2.4.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.4.3 HTTP methods"
+    },
+    {
+      "id": "S30",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "##### 12.1.1.3.2.4.3.1 POST {#post .H6}  \nThis method shall support the URI query parameters specified in table\n12.1.1.3.2.4.3.1-1.  \nTable 12.1.1.3.2.4.3.1-1: URI query parameters supported by the POST\nmethod on this resource  \nName   Data type   Description   S\n------ ----------- ------------- -----"
+    },
+    {
+      "id": "S31",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "body on this resource  \n**Data type**   **Description**   **S**\n--------------- ----------------- -------\nn/a             n/a               n/a  \nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource  \n**Data type**   **Response codes**   **Description**                                                                                                                                                                                                                                                                                      **S**\n--------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------"
+    },
+    {
+      "id": "S32",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1",
+      "title": "12.1.1 RESTful HTTP-based solution set",
+      "text": "### 12.1.1 RESTful HTTP-based solution set"
+    },
+    {
+      "id": "S33",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.1",
+      "title": "12.1.1.1 Mapping of operations",
+      "text": "#### 12.1.1.1 Mapping of operations"
+    },
+    {
+      "id": "S34",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "##### 12.1.1.1.1 Introduction  \nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.  \nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents  \n[Extracted Table: 74 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S35",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.1.1.2",
+      "title": "12.1.1.1.2 Operation createMOI",
+      "text": "##### 12.1.1.1.2 Operation createMOI  \nThis operation creates a single resource representing a managed object\ninstance.  \nTable 12.1.1.1.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)  \n[Extracted Table: 75 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nTable 12.1.1.1.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)  \nIS parameter name   SS parameter location   SS parameter name   SS parameter type   S\n------------------- ----------------------- ------------------- ------------------- ---\nattributeListOut    response body           n/a                 Resource            M\nstatus              response status codes   n/a                 n/a                 M\nresponse body           error               ErrorResponse       O"
+    },
+    {
+      "id": "S36",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Resource attributes oneOf type",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "attribute is represented by a list or leaf-list, then for this last data\nnode the equal sign, the key value(s) or leaf-list value is omitted,\nonly the list/leaf-list name shall be present.  \n\\- value: the content of the leaf/leaf-list entry(s)/container/list\nentry(s) representing the created attribute encoded according to RFC7951\n\\[50\\]. In case of attribute represented by a container/list the child\ndata nodes are encoded only,the container/list itself is not.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports setting the values of the performanceMetrics simple, multivalue\nattribute:  \nhref: node1.spandau.de  \n...  \nnotificationId: 123456003  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"  \noperation: add  \nvalue:  \n\\- inOctets  \n\\- inPackets  \n\\- outPackets  \nCase 4: Deleting all values of a complete attribute is reported with  \n\\- operation: remove.  \n\\- path: Same as in case 3.  \n\\- value: not present.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the performanceMetrics attribute:  \nhref: node1.pankow.de  \n..."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "<a name=\"schemaXml\"></a>xml | [XML Object](#xml-object) | This MAY be used only on properties schemas. It has no effect on root schemas. Adds additional metadata to describe the XML representation of this property.\n<a name=\"schemaExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this schema.\n<a name=\"schemaExample\"></a>example | Any | A free-form property to include an example of an instance for this schema. To represent examples that cannot be naturally represented in JSON or YAML, a string value can be used to contain the example with escaping where necessary.\n<a name=\"schemaDeprecated\"></a> deprecated | `boolean` | Specifies that a schema is deprecated and SHOULD be transitioned out of usage. Default value is `false`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- type - Value MUST be a string. Multiple types via an array are not supported.\n- allOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- oneOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- anyOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- not - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- items - Value MUST be an object and not an array. Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema. `items` MUST be present if the `type` is `array`.\n- properties - Property definitions MUST be a [Schema Object](#schema-object) and not a standard JSON Schema (inline or referenced)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "text/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"mediaTypeSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the request body.\n<a name=\"mediaTypeExample\"></a>example | Any | Example of the media type.  The example object SHOULD be in the correct format as specified by the media type.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required oneOf type",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Cat`",
+      "text": "When used in conjunction with the `anyOf` construct, the use of the discriminator can avoid ambiguity where multiple schemas may satisfy a single payload.  \nIn both the `oneOf` and `anyOf` use cases, all possible schemas MUST be listed explicitly.  To avoid redundancy, the discriminator MAY be added to a parent schema definition, and all schemas comprising the parent schema in an `allOf` construct may be used as an alternate schema.  \nFor example:  \n```\ncomponents:\nschemas:\nPet:\ntype: object\nrequired:\n- pet_type\nproperties:\npet_type:\ntype: string\ndiscriminator:\npropertyName: pet_type\nmapping:\ncachorro: Dog\nCat:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Cat`\nproperties:\nname:\ntype: string\nDog:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required oneOf type",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)  \nThe OpenAPI Specification allows combining and extending model definitions using the `allOf` property of JSON Schema, in effect offering model composition.\n`allOf` takes an array of object definitions that are validated *independently* but together compose a single object.  \nWhile composition offers model extensibility, it does not imply a hierarchy between the models.\nTo support polymorphism, the OpenAPI Specification adds the `discriminator` field.\nWhen used, the `discriminator` will be the name of the property that decides which schema definition validates the structure of the model.\nAs such, the `discriminator` field MUST be a required field.\nThere are two ways to define the value of a discriminator for an inheriting instance.\n- Use the schema name."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required oneOf type",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Dog`",
+      "text": "- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`\nproperties:\nlovesRocks:\ntype: boolean\n```  \na payload like this:  \n```\n{\n\"pet_type\": \"Cat\",\n\"name\": \"misty\"\n}\n```  \nwill indicate that the `Cat` schema be used.  Likewise this schema:  \n```\n{\n\"pet_type\": \"cachorro\",\n\"bark\": \"soft\"\n}\n```  \nwill map to `Dog` because of the definition in the `mappings` element.  \n#### XML Object  \nA metadata object that allows for more fine-tuned XML model definitions.  \nWhen using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information.\nSee examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required oneOf type",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"discriminatorMapping\"></a> mapping | Map[`string`, `string`] | An object to hold mappings between payload values and schema names or references.  \nThe discriminator attribute is legal only when using one of the composite keywords `oneOf`, `anyOf`, `allOf`.  \nIn OAS 3.0, a response payload MAY be described to be exactly one of any number of types:  \n```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\n```  \nwhich means the payload _MUST_, by validation, match exactly one of the schemas described by `Cat`, `Dog`, or `Lizard`.  In this case, a discriminator MAY act as a \"hint\" to shortcut validation and selection of the matching schema which may be a costly operation, depending on the complexity of the schema. We can then describe exactly which field tells us which schema to use:  \n```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required oneOf type",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"parameterExamples\"></a>examples | Map[ `string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | Examples of the media type.  Each example SHOULD contain a value in the correct format as specified in the parameter encoding.  The `examples` field is mutually exclusive of the `example` field.  Furthermore, if referencing a `schema` which contains an example, the `examples` value SHALL _override_ the example provided by the schema.  \nFor more complex scenarios, the [`content`](#parameterContent) property can define the media type and schema of the parameter.\nA parameter MUST contain either a `schema` property, or a `content` property, but not both.\nWhen `example` or `examples` are provided in conjunction with the `schema` object, the example MUST follow the prescribed serialization strategy for the parameter.  \nField Name | Type | Description\n---|:---:|---"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v2",
+  "cache_key": "0609c3a33084a595d16c07edca1ac94e0300abfb672bbe0ee4f27fbb2065d18f",
+  "judged_at": "2026-10-06T18:13:48-03:00"
+}

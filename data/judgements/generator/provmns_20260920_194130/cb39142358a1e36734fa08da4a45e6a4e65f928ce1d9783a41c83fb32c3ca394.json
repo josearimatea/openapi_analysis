@@ -1,0 +1,276 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA NotifyEvent|definition",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA NotifyEvent",
+  "aspect": "definition",
+  "summary": "schema present; shape official allOf[2] vs generated —; 1 absent",
+  "answer": {
+    "why_different": "The generated schema has a different structure: it removes the official allOf composition entirely and replaces it with an empty schema object. This is not merely a different value or address; it discards the composed base schema and the additional object definition, including the required and documented properties shown in the official context.",
+    "verdict": "error",
+    "spec_3gpp": "The supplied 3GPP evidence does not directly define the NotifyEvent type or explicitly confirm the exact NotificationHeader and specificProblem composition. However, it does document notification data types with mandatory and optional attributes, including additionalText and attribute-related content, indicating that notification schemas carry defined information rather than an unconstrained empty object.",
+    "openapi": "The OpenAPI reference supports the official structure: allOf is specifically intended to combine independently validated object definitions into one composed schema. Replacing that composition with {} loses the constraints and properties represented by the composed schemas, even though an empty schema object is syntactically a schema.",
+    "clearer": "official",
+    "clearer_why": "The official schema exposes the inherited notification header and the additional object properties, including the required specificProblem field. The generated empty schema does not tell an API reader what a NotifyEvent contains or which property is required.",
+    "citations": [
+      {
+        "evidence_id": "O7",
+        "quote": "The OpenAPI Specification allows combining and extending model definitions using the `allOf` property of JSON Schema, in effect offering model composition."
+      },
+      {
+        "evidence_id": "O7",
+        "quote": "`allOf` takes an array of object definitions that are validated independently but together compose a single object."
+      },
+      {
+        "evidence_id": "S13",
+        "quote": "additionalText              string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 [4]   O"
+      },
+      {
+        "evidence_id": "S13",
+        "quote": "attributeListValueChanges   AttributeValueChangeSet   List with names of changed attributes, together with new value and optionally old value                                    M"
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "href                        Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId              NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType            NotificationType                Notification type (\\\"notifyMOIAttributeValueChanges\\\")                                                                     M\neventTime                   DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                    SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications     array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType          NotificationType                Notification type (\\\"notifyMOICreation\\\")                                                                                  M\neventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                  SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType          NotificationType                Notification type (\\\"notifyMOIDeletion\\\")                                                                                  M\neventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                  SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.4.4",
+      "title": "12.1.1.4.4.4 Enumeration SourceIndicator",
+      "text": "notifyMOIDeletion                Notification type is notifyMOIDeletion\nnotifyMOIAttributeValueChanges   Notification type is notifyMOIAttributeValueChange\nnoitifyMOIChanges                Notification type is notifyMOIChanges  \n##### 12.1.1.4.4.4 Enumeration SourceIndicator {#enumeration-sourceindicator .H6}  \nTable 12.1.1.4.4.4-1: Enumeration SourceIndicator  \nEnumeration value       Description\n----------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------\nRESOURCE\\_OPERATION     The notification was generated in response to an internal operation of the resource.\nMANAGEMENT\\_OPERATION   The notification was generated in response to a management operation applied across the managed object boundary external to the managed object\nSON\\_OPERATION          The notification was generated as result of a SON (Self Organising Network) process like self-configuration, self-optimization, self-healing etc. .\nUNKNOWN                 It is not possible to determine the source of the operation.  \n##### 12.1.1.4.4.5 Enumeration ScopeType {#enumeration-scopetype .H6}"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "href                 Uri                URI of a common ancestor resource (object) of the resources for which changes are reported. A MnS producer may set this attribute always to the parent of the root resource in the MIB.   M\nnotificationId       NotificationId     Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\].                                                                                                                            M\nnotificationType     NotificationType   Notification type (notifyMOIChanges)                                                                                                                                                      M\neventTime            DateTime           Event (NRM updates) occurrence time                                                                                                                                                       M\nsystemDN             SystemDN           System DN                                                                                                                                                                                 M"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type NotifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\nNotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\nNotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\nPatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document  \nTable 12.1.1.4.1-2: Data types imported  \nData type                   Reference          Description\n--------------------------- ------------------ ---------------------------------------------------------------------\nDateTime                    TS 28.623 \\[44\\]   Date and time\nDn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type NotifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "The following example shows a notification reporting the creation of an\nobject with two attributes \\\"attrA\\\" and \\\"attrB\\\". Note that the\nnotification includes the name/value pairs representing the attributes\nof the created object only and not the complete object representation.  \n[Extracted Table: 89 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThe creation of an empty object not containing any attribute values is\nreported as follows.  \n[Extracted Table: 90 from 28532-i00 (Release Rel-18, Series 28_series)]  \n###### 12.1.1.4.1a.6 Type NotifyMoiDeletion  \nTable 12.1.1.4.1a.6 -1: Definition of type NotifyMoiDeletion  \n------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n**Attribute name**        **Data type**                   **Description**                                                                                                            **S**\nhref                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type NotifyEvent",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "NotifyAttributeValueChanges   Type for a notifyAttributeValueChanges notification   M\nNotifyMoiChanges              Type for a notifyMOIChanges notification              M  \nTable 12.1.1.3.2.4.3.1-3: Data structures supported by the POST Response\nBody on this resource  \nData type       Response codes   Description                                        S\n--------------- ---------------- -------------------------------------------------- ---\nn/a             204 No Content   In case of success no message body is returned     M\nErrorResponse   4xx/5xx          In case of failure the error object is returned.   M"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent attributes allOf",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "these two cases based on the information in the notification. For that\nreason, always all attribute fields of an attribute need to be included\nin the notification. For structured attributes with many attribute\nfields this may not be very efficient.  \nIn the next example \\\"attrA\\\" is a structured attribute with the\nattribute fields \\\"attrFieldAA\\\" and \\\"attrFieldAB\\\". The attribute\nfield \\\"attrFieldAA\\\" changed value, the attribute field \\\"attrFieldAB\\\"\ndid not change value. The attribute value change notification reporting\nthis change may look as follows.  \n[Extracted Table: 95 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote also that for multi-valued attributes all attribute elements of the\nnew value need to be reported. It is not possible to report only added,\ndeleted, or modified attribute elements. Furthermore, the notification\ndoes not allow reporting of deleted attributes. When this is required\nthe MnS producer needs to include always all attributes of the object in\nthe notification. It is outside the present document how the MnS\nproducer signals to the MnS consumer if all attributes or only the\nchanged ones are included in the attribute value change notification."
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent attributes allOf",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "the MnS producer needs to include always all attributes of the object in\nthe notification. It is outside the present document how the MnS\nproducer signals to the MnS consumer if all attributes or only the\nchanged ones are included in the attribute value change notification.\nThe notification itself does not include this information.  \n###### 12.1.1.4.1a.8 Type NotifyMoiChanges  \n**Table 12.1.1.4.1a.8 -1: Definition of type NotifyMoiChanges**  \n-------------------- ------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n**Attribute name**   **Data type**      **Description**                                                                                                                                                                           **S**\nhref                 Uri                URI of a common ancestor resource (object) of the resources for which changes are reported. A MnS producer may set this attribute always to the parent of the root resource in the MIB.   M"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent attributes allOf",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "The following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\".  \n[Extracted Table: 93 from 28532-i00 (Release Rel-18, Series 28_series)]  \nIn addition to the new values, the old values may be included in the\nnotification.  \n[Extracted Table: 94 from 28532-i00 (Release Rel-18, Series 28_series)]  \nIn the example above the attribute values are of simple type. For\nattributes of structured type, the question is if all attribute fields\nof an attribute, where at least one attribute field changed its value,\nneed to be reported or only those attribute fields that changed value.\nAssume an attribute field that did not change value is not included in\nthe notification. In this case the MnS consumer receiving the\nnotification cannot tell if the attribute field was deleted or if the\nattribute field did not change value. It is not possible to distinguish\nthese two cases based on the information in the notification. For that\nreason, always all attribute fields of an attribute need to be included\nin the notification. For structured attributes with many attribute\nfields this may not be very efficient."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent attributes allOf",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "attribute value is included in the \\\"value\\\" property that did not\nchange value. A MnS producer may consider this compact format hence also\nfor the case that not all attributes of an object have been updated.  \n[Extracted Table: 87 from 28532-i00 (Release Rel-18, Series 28_series)]  \nTo allow the MnS consumer to understand which attributes have been\nupdated, the MnS producer may decide to send the following notification.  \n[Extracted Table: 88 from 28532-i00 (Release Rel-18, Series 28_series)]  \n###### 12.1.1.4.1a.5 Type NotifyMoiCreation  \nTable 12.1.1.4.1a.5 -1: Definition of type NotifyMoiCreation  \n------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n**Attribute name**        **Data type**                   **Description**                                                                                                            **S**\nhref                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "NotifyEvent attributes allOf",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "correlatedNotifications     array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\nadditionalText              string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\nsourceIndicator             SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\nattributeListValueChanges   AttributeValueChangeSet         List with names of changed attributes, together with new value and optionally old value                                    M\n--------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------  \nThe following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\".  \n[Extracted Table: 93 from 28532-i00 (Release Rel-18, Series 28_series)]  \nIn addition to the new values, the old values may be included in the"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "<a name=\"schemaXml\"></a>xml | [XML Object](#xml-object) | This MAY be used only on properties schemas. It has no effect on root schemas. Adds additional metadata to describe the XML representation of this property.\n<a name=\"schemaExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this schema.\n<a name=\"schemaExample\"></a>example | Any | A free-form property to include an example of an instance for this schema. To represent examples that cannot be naturally represented in JSON or YAML, a string value can be used to contain the example with escaping where necessary.\n<a name=\"schemaDeprecated\"></a> deprecated | `boolean` | Specifies that a schema is deprecated and SHOULD be transitioned out of usage. Default value is `false`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- type - Value MUST be a string. Multiple types via an array are not supported.\n- allOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- oneOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- anyOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- not - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- items - Value MUST be an object and not an array. Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema. `items` MUST be present if the `type` is `array`.\n- properties - Property definitions MUST be a [Schema Object](#schema-object) and not a standard JSON Schema (inline or referenced)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "text/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"mediaTypeSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the request body.\n<a name=\"mediaTypeExample\"></a>example | Any | Example of the media type.  The example object SHOULD be in the correct format as specified by the media type.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required allOf",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Cat`",
+      "text": "When used in conjunction with the `anyOf` construct, the use of the discriminator can avoid ambiguity where multiple schemas may satisfy a single payload.  \nIn both the `oneOf` and `anyOf` use cases, all possible schemas MUST be listed explicitly.  To avoid redundancy, the discriminator MAY be added to a parent schema definition, and all schemas comprising the parent schema in an `allOf` construct may be used as an alternate schema.  \nFor example:  \n```\ncomponents:\nschemas:\nPet:\ntype: object\nrequired:\n- pet_type\nproperties:\npet_type:\ntype: string\ndiscriminator:\npropertyName: pet_type\nmapping:\ncachorro: Dog\nCat:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Cat`\nproperties:\nname:\ntype: string\nDog:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required allOf",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)  \nThe OpenAPI Specification allows combining and extending model definitions using the `allOf` property of JSON Schema, in effect offering model composition.\n`allOf` takes an array of object definitions that are validated *independently* but together compose a single object.  \nWhile composition offers model extensibility, it does not imply a hierarchy between the models.\nTo support polymorphism, the OpenAPI Specification adds the `discriminator` field.\nWhen used, the `discriminator` will be the name of the property that decides which schema definition validates the structure of the model.\nAs such, the `discriminator` field MUST be a required field.\nThere are two ways to define the value of a discriminator for an inheriting instance.\n- Use the schema name."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required allOf",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Dog`",
+      "text": "- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`\nproperties:\nlovesRocks:\ntype: boolean\n```  \na payload like this:  \n```\n{\n\"pet_type\": \"Cat\",\n\"name\": \"misty\"\n}\n```  \nwill indicate that the `Cat` schema be used.  Likewise this schema:  \n```\n{\n\"pet_type\": \"cachorro\",\n\"bark\": \"soft\"\n}\n```  \nwill map to `Dog` because of the definition in the `mappings` element.  \n#### XML Object  \nA metadata object that allows for more fine-tuned XML model definitions.  \nWhen using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information.\nSee examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required allOf",
+      "filters": {},
+      "clause": "",
+      "title": "Reference Object Example",
+      "text": "This object cannot be extended with additional properties and any properties added SHALL be ignored.  \n##### Reference Object Example  \n```json\n{\n\"$ref\": \"#/components/schemas/Pet\"\n}\n```  \n```yaml\n$ref: '#/components/schemas/Pet'\n```  \n##### Relative Schema Document Example\n```json\n{\n\"$ref\": \"Pet.json\"\n}\n```  \n```yaml\n$ref: Pet.yaml\n```  \n##### Relative Documents With Embedded Schema Example\n```json\n{\n\"$ref\": \"definitions.json#/Pet\"\n}\n```  \n```yaml\n$ref: definitions.yaml#/Pet\n```  \n#### Schema Object  \nThe Schema Object allows the definition of input and output data types.\nThese types can be objects, but also primitives and arrays.\nThis object is an extended subset of the [JSON Schema Specification Wright Draft 00](http://json-schema.org/).  \nFor more information about the properties, see [JSON Schema Core](https://tools.ietf.org/html/draft-wright-json-schema-00) and [JSON Schema Validation](https://tools.ietf.org/html/draft-wright-json-schema-validation-00)."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required allOf",
+      "filters": {},
+      "clause": "",
+      "title": "Discriminator Object",
+      "text": "- petType\nCat:  ## \"Cat\" will be used as the discriminator value\ndescription: A representation of a cat\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\nhuntingSkill:\ntype: string\ndescription: The measured skill for hunting\nenum:\n- clueless\n- lazy\n- adventurous\n- aggressive\nrequired:\n- huntingSkill\nDog:  ## \"Dog\" will be used as the discriminator value\ndescription: A representation of a dog\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\npackSize:\ntype: integer\nformat: int32\ndescription: the size of the pack the dog is from\ndefault: 0\nminimum: 0\nrequired:\n- packSize\n```  \n#### Discriminator Object"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v2",
+  "cache_key": "cb39142358a1e36734fa08da4a45e6a4e65f928ce1d9783a41c83fb32c3ca394",
+  "judged_at": "2026-10-06T17:03:31-03:00"
+}

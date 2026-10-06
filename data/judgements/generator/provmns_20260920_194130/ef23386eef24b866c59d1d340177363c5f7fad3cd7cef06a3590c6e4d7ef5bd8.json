@@ -1,0 +1,386 @@
+{
+  "part_id": "generator|provmns_20260920_194130|PUT /{className}={id}|callback notifyMOIChanges",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "PUT /{className}={id}",
+  "aspect": "callback notifyMOIChanges",
+  "summary": "1 absent, 2 extra",
+  "answer": {
+    "why_different": "The generated side combines two different representations of the callback target: a literal `{notificationTarget}` path key and a runtime-expression key `$request.body#/notificationTarget`. This is both an address/value change from `request.body#/notificationRecipientAddress` and an extra callback structure. The literal `{notificationTarget}` is not itself an OpenAPI runtime expression, while the generated `$request.body#/notificationTarget` is syntactically a valid runtime expression but the supplied evidence does not establish that `notificationTarget` is a property of the PUT request body.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP mapping identifies the notification target resource as `{notificationTarget}` and says notifications are sent with POST to that target. This supports the target concept and name, but does not establish that the request body contains a `notificationTarget` property or that two callback keys should be declared.",
+    "openapi": "OpenAPI requires callback map keys to be runtime expressions identifying the callback URL. `$request.body#/notificationTarget` follows the documented runtime-expression form, whereas `{notificationTarget}` alone does not. The generated side nevertheless adds the invalid/non-expression key and therefore has an erroneous callback structure.",
+    "clearer": "official",
+    "clearer_why": "The official side declares one callback entry, whereas the generated side declares two apparently alternative targets, one of which is not a valid runtime-expression key. Although the generated `$request.body#/notificationTarget` is more recognizable as an OpenAPI runtime expression, the duplicate and invalid entry makes the generated callback harder to understand as a whole.",
+    "citations": [
+      {
+        "evidence_id": "S18",
+        "quote": "Notification Target   {notificationTarget}   POST          Send a notification to the notification target"
+      },
+      {
+        "evidence_id": "O3",
+        "quote": "{expression} | [Path Item Object](#path-item-object) | A Path Item Object used to define a callback request and expected responses."
+      },
+      {
+        "evidence_id": "O3",
+        "quote": "The key that identifies the [Path Item Object] is a [runtime expression]"
+      },
+      {
+        "evidence_id": "O7",
+        "quote": "Request body property      | `$request.body#/user/uuid`   | In operations which accept payloads, references may be made to portions of the `requestBody` or the entire body."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.4.3",
+      "title": "12.1.1.4.4.3 Enumeration CmNotificationTypes",
+      "text": "notifyMOIDeletion                Notification type is notifyMOIDeletion\nnotifyMOIAttributeValueChanges   Notification type is notifyMOIAttributeValueChange\nnoitifyMOIChanges                Notification type is notifyMOIChanges"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.4.4",
+      "title": "12.1.1.4.4.4 Enumeration SourceIndicator",
+      "text": "##### 12.1.1.4.4.4 Enumeration SourceIndicator {#enumeration-sourceindicator .H6}  \nTable 12.1.1.4.4.4-1: Enumeration SourceIndicator  \nEnumeration value       Description\n----------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------\nRESOURCE\\_OPERATION     The notification was generated in response to an internal operation of the resource.\nMANAGEMENT\\_OPERATION   The notification was generated in response to a management operation applied across the managed object boundary external to the managed object\nSON\\_OPERATION          The notification was generated as result of a SON (Self Organising Network) process like self-configuration, self-optimization, self-healing etc. .\nUNKNOWN                 It is not possible to determine the source of the operation."
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.4.5",
+      "title": "12.1.1.4.4.5 Enumeration ScopeType",
+      "text": "##### 12.1.1.4.4.5 Enumeration ScopeType {#enumeration-scopetype .H6}"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "the MnS producer needs to include always all attributes of the object in\nthe notification. It is outside the present document how the MnS\nproducer signals to the MnS consumer if all attributes or only the\nchanged ones are included in the attribute value change notification.\nThe notification itself does not include this information."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "###### 12.1.1.4.1a.8 Type NotifyMoiChanges  \n**Table 12.1.1.4.1a.8 -1: Definition of type NotifyMoiChanges**  \n-------------------- ------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n**Attribute name**   **Data type**      **Description**                                                                                                                                                                           **S**\nhref                 Uri                URI of a common ancestor resource (object) of the resources for which changes are reported. A MnS producer may set this attribute always to the parent of the root resource in the MIB.   M"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.2",
+      "title": "12.1.1.2 Mapping of notifications",
+      "text": "#### 12.1.1.2 Mapping of notifications"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.2.1",
+      "title": "12.1.1.2.1 Introduction",
+      "text": "##### 12.1.1.2.1 Introduction  \nThe IS notifications are mapped to SS equivalents according to table\n12.1.1.2.1-1.  \n**Table 12.1.1.2.1-1: Mapping of IS notifications to SS equivalents**  \n**IS notification**              **HTTP Method**   **Resource URI**       **S**\n-------------------------------- ----------------- ---------------------- -------\nnotifyMOICreation                POST              {notificationTarget}   M\nnotifyMOIDeletion                POST              {notificationTarget}   M\nnotifyMOIAttributeValueChanges   POST              {notificationTarget}   M\nnotifyMOIChanges                 POST              {notificationTarget}   M"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.2.2",
+      "title": "12.1.1.2.2 Notification notifyMOICreation",
+      "text": "##### 12.1.1.2.2 Notification notifyMOICreation  \nThe IS notification parameters are mapped to SS equivalents according to\ntable 12.1.1.2.2-1.  \nTable 12.1.1.2.2-1: Mapping of IS notification input parameters to SS\nequivalents (HTTP POST)  \n**IS parameter name**     **SS parameter location**   **SS parameter name**     **SS parameter type**           **S**\n------------------------- --------------------------- ------------------------- ------------------------------- -------"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "href                        Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId              NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType            NotificationType                Notification type (\\\"notifyMOIAttributeValueChanges\\\")                                                                     M\neventTime                   DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                    SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications     array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "NotifyAttributeValueChanges   Type for a notifyAttributeValueChanges notification   M\nNotifyMoiChanges              Type for a notifyMOIChanges notification              M  \nTable 12.1.1.3.2.4.3.1-3: Data structures supported by the POST Response\nBody on this resource  \nData type       Response codes   Description                                        S\n--------------- ---------------- -------------------------------------------------- ---\nn/a             204 No Content   In case of success no message body is returned     M\nErrorResponse   4xx/5xx          In case of failure the error object is returned.   M"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Notification notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType          NotificationType                Notification type (\\\"notifyMOICreation\\\")                                                                                  M\neventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                  SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Notification notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType          NotificationType                Notification type (\\\"notifyMOIDeletion\\\")                                                                                  M\neventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                  SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Notification notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.2.3",
+      "title": "12.1.1.2.3 Notification notifyMOIDeletion",
+      "text": "objectInstance\nnotificationId            request body                notificationId            NotificationId                  M\nnotificationType          request body                notificationType          NotificationType                M\neventTime                 request body                eventTime                 DateTime                        M\nsystemDN                  request body                systemDN                  SystemDN                        M\ncorrelatedNotifications   request body                correlatedNotifications   array(CorrelatedNotification)   O\nadditionalText            request body                additionalText            AdditionalText                  O\nsourceIndicator           request body                sourceIndicator           SourceIndicator                 O\nattributeList             request body                attributeList             AttributeNameValuePairSet       O"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Notification notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.2.4",
+      "title": "12.1.1.2.4 Notification notifyMOIAttributeValueChanges",
+      "text": "##### 12.1.1.2.4 Notification notifyMOIAttributeValueChanges  \nThe IS notification parameters are mapped to SS equivalents according to\ntable 12.1.1.2.4-1.  \nTable 12.1.1.2.4-1: Mapping of IS notification input parameters to SS\nequivalents (HTTP POST)"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Notification notifyMOIChanges",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "href                 Uri                URI of a common ancestor resource (object) of the resources for which changes are reported. A MnS producer may set this attribute always to the parent of the root resource in the MIB.   M\nnotificationId       NotificationId     Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\].                                                                                                                            M\nnotificationType     NotificationType   Notification type (notifyMOIChanges)                                                                                                                                                      M\neventTime            DateTime           Event (NRM updates) occurrence time                                                                                                                                                       M\nsystemDN             SystemDN           System DN                                                                                                                                                                                 M"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.2.2",
+      "title": "12.1.1.2.2 Notification notifyMOICreation",
+      "text": "additionalText            request body                additionalText            AdditionalText                  O\nsourceIndicator           request body                sourceIndicator           SourceIndicator                 O\nattributeList             request body                attributeList             AttributeNameValuePairSet       O"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.2.3",
+      "title": "12.1.1.2.3 Notification notifyMOIDeletion",
+      "text": "##### 12.1.1.2.3 Notification notifyMOIDeletion  \nThe IS notification parameters are mapped to SS equivalents according to\ntable 12.1.1.2.3-1.  \nTable 12.1.1.2.3-1: Mapping of IS notification input parameters to SS\nequivalents (HTTP POST)  \n**IS parameter name**     **SS parameter location**   **SS parameter name**     **SS parameter type**           **S**\n------------------------- --------------------------- ------------------------- ------------------------------- -------\nobjectClass               request body                href                      Uri                             M\nobjectInstance\nnotificationId            request body                notificationId            NotificationId                  M\nnotificationType          request body                notificationType          NotificationType                M"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "--------------------- ---------------------- ------------- ------------------------------------------------\nNotification Target   {notificationTarget}   POST          Send a notification to the notification target"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "##### 12.1.1.3.2 Resource definitions"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.3.2.1",
+      "title": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"",
+      "text": "###### 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\""
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.1",
+      "title": "12.1.1.3.2.1.1 Description",
+      "text": "####### 12.1.1.3.2.1.1 Description  \nThis resource represents a managed object instance."
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.2",
+      "title": "12.1.1.3.2.1.2 URI",
+      "text": "####### 12.1.1.3.2.1.2 URI  \nResource URI:\n{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}  \nThe resource URI variables are defined in table 12.1.1.3.2.1.2-1.  \nTable 12.1.1.3.2.1.2-1: URI variables  \n**Name**             **Definition**\n-------------------- --------------------------------------\nMnSRoot              See clause 4.4.2 of TS 32.158 \\[15\\]\nMnSVersion           See clause 4.4.2 of TS 32.158 \\[15\\]\nURI-LDN-first-part   See clause 4.4.2 of TS 32.158 \\[15\\]\nclassName            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3",
+      "title": "12.1.1.3.2.1.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.1.3 HTTP methods"
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyMOIChanges notification {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "Patterned Fields",
+      "text": "##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---\n<a name=\"callbackExpression\"></a>{expression} | [Path Item Object](#path-item-object) | A Path Item Object used to define a callback request and expected responses.  A [complete example](../examples/v3.0/callback-example.yaml) is available.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Key Expression  \nThe key that identifies the [Path Item Object](#path-item-object) is a [runtime expression](#runtime-expressions) that can be evaluated in the context of a runtime HTTP request/response to identify the URL to be used for the callback request.\nA simple example might be `$request.body#/url`.\nHowever, using a [runtime expression](#runtime-expressions) the complete HTTP message can be accessed.\nThis includes accessing any part of a body that a JSON Pointer [RFC6901](https://tools.ietf.org/html/rfc6901) can reference.  \nFor example, given the following HTTP request:"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "Callback Object Example",
+      "text": "201 Created\nLocation: http://example.org/subscription/1\n```  \nThe following examples show how the various expressions evaluate, assuming the callback operation has a path parameter named `eventType` and a query parameter named `queryUrl`.  \nExpression | Value\n---|:---\n$url | http://example.org/subscribe/myevent?queryUrl=http://clientdomain.com/stillrunning\n$method | POST\n$request.path.eventType | myevent\n$request.query.queryUrl | http://clientdomain.com/stillrunning\n$request.header.content-Type | application/json\n$request.body#/failedUrl | http://clientdomain.com/stillrunning\n$request.body#/successUrls/2 | http://clientdomain.com/medium\n$response.header.Location | http://example.org/subscription/1  \n##### Callback Object Example  \nThe following example shows a callback to the URL specified by the `id` and `email` property in the request body.  \n```yaml\nmyWebhook:\n'http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}':\npost:\nrequestBody:"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "",
+      "title": "Example Object",
+      "text": "```yaml\nmyWebhook:\n'http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}':\npost:\nrequestBody:\ndescription: Callback payload\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/SomePayload'\nresponses:\n'200':\ndescription: webhook successfully processed and no retries will be performed\n```  \n#### Example Object  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"exampleSummary\"></a>summary | `string` | Short description for the example.\n<a name=\"exampleDescription\"></a>description | `string` | Long description for the example. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"exampleValue\"></a>value | Any | Embedded literal example. The `value` field and `externalValue` field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON or YAML, use a string value to contain the example, escaping where necessary."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "---|:---|:---|\nHTTP Method            | `$method`         | The allowable values for the `$method` will be those for the HTTP operation.\nRequested media type | `$request.header.accept`        |\nRequest parameter      | `$request.path.id`        | Request parameters MUST be declared in the `parameters` section of the parent operation or they cannot be evaluated. This includes request headers.\nRequest body property   | `$request.body#/user/uuid`   | In operations which accept payloads, references may be made to portions of the `requestBody` or the entire body.\nRequest URL            | `$url`            |\nResponse value         | `$response.body#/status`       |  In operations which return payloads, references may be made to portions of the response body or the entire body.\nResponse header        | `$response.header.Server` |  Single header values only are available  \nRuntime expressions preserve the type of the referenced value."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationRequestBody\"></a>requestBody | [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object) | The request body applicable for this operation.  The `requestBody` is only supported in HTTP methods where the HTTP 1.1 specification [RFC7231](https://tools.ietf.org/html/rfc7231#section-4.3.1) has explicitly defined semantics for request bodies.  In other cases where the HTTP spec is vague, `requestBody` SHALL be ignored by consumers.\n<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "This includes accessing any part of a body that a JSON Pointer [RFC6901](https://tools.ietf.org/html/rfc6901) can reference.  \nFor example, given the following HTTP request:  \n```http\nPOST /subscribe/myevent?queryUrl=http://clientdomain.com/stillrunning HTTP/1.1\nHost: example.org\nContent-Type: application/json\nContent-Length: 187"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body {request.body#/notificationRecipientAddress} {notificationTarget} $request.body#/notificationTarget",
+      "filters": {},
+      "clause": "",
+      "title": "returns array of '#/components/schemas/repository'",
+      "text": "operationRef: '#/paths/~12.0~1repositories~1{username}/get'\nparameters:\nusername: $response.body#/username\n```  \nor an absolute `operationRef`:  \n```yaml\nlinks:\nUserRepositories:\n# returns array of '#/components/schemas/repository'\noperationRef: 'https://na2.gigantic-server.com/#/paths/~12.0~1repositories~1{username}/get'\nparameters:\nusername: $response.body#/username\n```  \nNote that in the use of `operationRef`, the _escaped forward-slash_ is necessary when\nusing JSON references.  \n##### Runtime Expressions  \nRuntime expressions allow defining values based on information that will only be available within the HTTP message in an actual API call.\nThis mechanism is used by [Link Objects](#link-object) and [Callback Objects](#callback-object).  \nThe runtime expression is defined by the following [ABNF](https://tools.ietf.org/html/rfc5234) syntax  \n```\nexpression = ( \"$url\" | \"$method\" | \"$statusCode\" | \"$request.\" source | \"$response.\" source )"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v2",
+  "cache_key": "ef23386eef24b866c59d1d340177363c5f7fad3cd7cef06a3590c6e4d7ef5bd8",
+  "judged_at": "2026-10-06T18:10:42-03:00"
+}

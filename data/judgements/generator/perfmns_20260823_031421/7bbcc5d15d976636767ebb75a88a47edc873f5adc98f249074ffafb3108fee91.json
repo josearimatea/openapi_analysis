@@ -1,0 +1,444 @@
+{
+  "part_id": "generator|perfmns_20260823_031421|POST /notificationSink|operation",
+  "evaluation": "generator",
+  "input": "perfmns_20260823_031421",
+  "owner": "POST /notificationSink",
+  "aspect": "operation",
+  "summary": "2 differing, 1 extra",
+  "answer": {
+    "why_different": "D1 and D2 are different prose values, with the generated text being broader and less specific about performance threshold crossings and the notifyThresholdCrossing notification. D3 is a structural difference: the generated operation adds an optional operation-level operationId key.",
+    "verdict": "error",
+    "spec_3gpp": "The specification identifies this as a performance threshold monitoring service and maps notifyThresholdCrossing to POST /notificationSink. It describes the resource as sending notifications, but the official wording more specifically identifies the notifyThresholdCrossing notification.",
+    "openapi": "OpenAPI 3.0 allows an operationId and says it can be used by tools and libraries, but it must be unique among operations. Operation descriptions and summaries are free-form strings describing operation behavior.",
+    "clearer": "official",
+    "clearer_why": "The official summary and description identify both the performance-threshold context and the specific notifyThresholdCrossing notification. The generated wording is understandable, but its description is more generic and does not state which notification type is sent.",
+    "citations": [
+      {
+        "evidence_id": "S19",
+        "quote": "12.3.1.2 Performance threshold monitoring service"
+      },
+      {
+        "evidence_id": "S22",
+        "quote": "notifyThresholdCrossing   POST              /notificationSink   M"
+      },
+      {
+        "evidence_id": "S14",
+        "quote": "Used in the request body of HTTP POST for the notification type notifyThresholdCrossing"
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "operationId | `string` | Unique string used to identify the operation. The id MUST be unique among all operations described in the API. Tools and libraries MAY use the operationId to uniquely identify an operation"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated summary omits the official qualifier “performance,” making the operation broader and less precise. The specification identifies the service as performance threshold monitoring (S19), while the endpoint is specifically associated with notifyThresholdCrossing (S22)."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "The generated description accurately mentions the resource and POST method, but it loses the official description’s identification of the notifyThresholdCrossing notification. The specification explicitly defines the POST body for that notification type (S14)."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "improvement",
+        "reason": "The added operationId is an allowed OpenAPI operation field and can help tools and libraries identify the operation. It is an improvement provided it remains unique as required by OpenAPI (O1)."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1",
+      "title": "12.3.1 RESTful HTTP-based solution set",
+      "text": "### 12.3.1 RESTful HTTP-based solution set"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.1",
+      "title": "12.3.1.1 Void",
+      "text": "#### 12.3.1.1 Void"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.2.2",
+      "title": "12.3.1.2.2.2 Notification notifyThresholdCrossing",
+      "text": "observedPerfMetricDirection   request body                observedPerfMetricDirection   PerfMetricDirection     M\nthresholdValue                request body                thresholdValue                PerfMetricValue         M\nhysteresis                    request body                hysteresis                    PerfMetricValue)        M\nmonitorGranularityPeriod      request body                monitorGranularityPeriod      integer                 M\nadditionalText                request body                additionalText                string                  O"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3",
+      "title": "12.3.1.2.3 Resources",
+      "text": "##### 12.3.1.2.3 Resources"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.1",
+      "title": "12.3.1.2.3.1 Resource structure",
+      "text": "###### 12.3.1.2.3.1 Resource structure  \nTable 12.3.1.2.3.1-1 provides an overview of the resources and\napplicable HTTP methods.  \nTable 12.3.1.2.3.1-**1**: Resources and methods overview  \nResource name      Resource URI        HTTP method   Description\n------------------ ------------------- ------------- --------------------\nnotificationSink   /notificationSink   POST          Send notifications"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2",
+      "title": "12.3.1.2.3.2 Resource definitions",
+      "text": "###### 12.3.1.2.3.2 Resource definitions"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1",
+      "title": "12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\"",
+      "text": "####### 12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\""
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.1",
+      "title": "12.3.1.2.3.2.1.1 Description",
+      "text": "##### 12.3.1.2.3.2.1.1 Description {#description-10 .H6}"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.1",
+      "title": "12.3.1.2.3.2.1.1 Description",
+      "text": "notificationSink   /notificationSink   POST          Send notifications"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.1",
+      "title": "12.3.1.2.3.2.1.1 Description",
+      "text": "##### 12.3.1.2.3.2.1.1 Description {#description-10 .H6}  \nThis resource represents a resource on a MnS consumer to which\nnotifications are sent to."
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.2",
+      "title": "12.3.1.2.3.2.1.2 URI",
+      "text": "##### 12.3.1.2.3.2.1.2 URI {#uri-10 .H6}  \nThe resource URI is provided by the notification subscription."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.3",
+      "title": "12.3.1.2.3.2.1.3 HTTP methods",
+      "text": "##### 12.3.1.2.3.2.1.3 HTTP methods {#http-methods-10 .H6}"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.3.1",
+      "title": "12.3.1.2.3.2.1.3.1 POST",
+      "text": "##### 12.3.1.2.3.2.1.3.1 POST {#post-4 .H6}  \nThis method shall support the URI query parameters specified in table\n12.3.1.2.3.2.1.3.1-1.  \nTable 12.3.1.2.3.2.1.3.1-1: URI query parameters supported by the POST\nmethod on this resource  \nName   Data type   Description   S\n------ ----------- ------------- -----\nn/a    n/a         n/a           n/a  \nThis method shall support the request data structures specified in table\n12.3.1.2.3.2.1.3.1-2 and the response data structures and response codes\nspecified in table 12.3.1.2.3.2.1.3.1-3.  \nTable 12.3.1.2.3.2.1.3.1-2: Data structures supported by the POST\nRequest Body on this resource"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.4.1",
+      "title": "12.3.1.2.4.1 General",
+      "text": "------------------------- ---------------- -----------------------------------------------------------------------------------------\nNotifyThresholdCrossing   12.3.1.2.4.2.1   Used in the request body of HTTP POST for the notification type notifyThresholdCrossing\nPerfNotificationTypes     12.3.1.2.4.6.4   Performance notification types (notifyThresholdCrossing)  \nTable 12.3.1.1.4.1-2: Data types imported  \n**Data type**        **Reference**      **Description**\n-------------------- ------------------ ---------------------------------------------------------------------\nDateTime             TS 28.623 \\[44\\]   Date and time\nFloat                TS 28.623 \\[44\\]   Float type\nUri                  TS 28.623 \\[44\\]   URI type\nSystemDN             TS 28.623 \\[44\\]   systemDN type\nNotificationId       TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\nNotificationHeader   TS 28.623 \\[44\\]   Notification header\nErrorResponse        TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.4.2",
+      "title": "12.3.1.2.4.2 Structured data types",
+      "text": "###### 12.3.1.2.4.2 Structured data types"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.4.2.1",
+      "title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "text": "####### 12.3.1.2.4.2.1 Type NotifyThresholdCrossing"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.4.2.1",
+      "title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "text": "NotificationHeader   TS 28.623 \\[44\\]   Notification header\nErrorResponse        TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.4.2.1",
+      "title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "text": "####### 12.3.1.2.4.2.1 Type NotifyThresholdCrossing  \nTable 12.3.1.2.4.2.1-1: Definition of type NotifyThresholdCrossing  \n**Attribute name**            **Data type**         **Description**                                                                                             **S**\n----------------------------- --------------------- ----------------------------------------------------------------------------------------------------------- -------\nhref                          Uri                   URI of the resource where the event (threshold crossing) occurred                                           M\nnotificationId                NotificationId        Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                               M\nnotificationType              NotificationType      Notification type (notifyThresholdCrossing)                                                                 M"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2",
+      "title": "12.3.1.2 Performance threshold monitoring service",
+      "text": "#### 12.3.1.2 Performance threshold monitoring service"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.1",
+      "title": "12.3.1.2.1 Mapping of operations",
+      "text": "##### 12.3.1.2.1 Mapping of operations  \nNone."
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.2",
+      "title": "12.3.1.2.2 Mapping of notifications",
+      "text": "##### 12.3.1.2.2 Mapping of notifications"
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.2.1",
+      "title": "12.3.1.2.2.1 Introduction",
+      "text": "###### 12.3.1.2.2.1 Introduction  \nThe IS notifications are mapped to SS equivalents according to table\n12.3.1.2.2.1-1.  \n**Table 12.3.1.2.2.1-1: Mapping of IS notifications to SS equivalents**  \n**IS notifications**      **HTTP Method**   **Resource URI**    **S**\n------------------------- ----------------- ------------------- -------\nnotifyThresholdCrossing   POST              /notificationSink   M"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.2.2",
+      "title": "12.3.1.2.2.2 Notification notifyThresholdCrossing",
+      "text": "###### 12.3.1.2.2.2 Notification notifyThresholdCrossing  \nThe IS notification parameters are mapped to SS equivalents according to\ntable 12.3.1.2.2.2-1.  \nTable 12.3.1.2.2.2-1: Mapping of IS notification input parameters to SS\nequivalents (HTTP POST)  \n**IS parameter name**         **SS parameter location**   **SS parameter name**         **SS parameter type**   **S**\n----------------------------- --------------------------- ----------------------------- ----------------------- -------\nobjectClass                   request body                href                          Uri                     M\nobjectInstance"
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST operation summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "12.3.1.2.4.2.1",
+      "title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "text": "notificationType              NotificationType      Notification type (notifyThresholdCrossing)                                                                 M\neventTime                     DateTime              Event (threshold crossing) occurrence time                                                                  M\nsystemDN                      SystemDN              System DN                                                                                                   M\nobservedPerfMetricName        string                Name of the performance metric that has crossed the threshold                                               M\nobservedPerfMetricValue       PerfMetricValue       Value of the performance metric, that has crossed the threshold, when the threshold crossing was observed   M\nobservedPerfMetricDirection   PerfMetricDirection   Direction (\\\"UP\\\" or \\\"DOWN\\\") of the performance metric, when the threshold crossing was observed          M\nthresholdValue                PerfMetricValue       Threshold value of the triggered threshold                                                                  M"
+    },
+    {
+      "id": "S25",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST operation summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.3.1",
+      "title": "12.3.1.2.3.2.1.3.1 POST",
+      "text": "This method shall support the request data structures specified in table\n12.3.1.2.3.2.1.3.1-2 and the response data structures and response codes\nspecified in table 12.3.1.2.3.2.1.3.1-3.  \nTable 12.3.1.2.3.2.1.3.1-2: Data structures supported by the POST\nRequest Body on this resource  \nData type                 Description                                                   S\n------------------------- ------------------------------------------------------------- ---\nNotifyThresholdCrossing   Type in case a notifyThresholdCrossing notification is sent   M  \nTable 12.3.1.2.3.2.1.3.1-3: Data structures supported by the POST\nResponse Body on this resource  \n[Extracted Table: 105 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S26",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST operation summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "12.3.1.2.4",
+      "title": "12.3.1.2.4 Data type definitions",
+      "text": "##### 12.3.1.2.4 Data type definitions"
+    },
+    {
+      "id": "S27",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST operation summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "12.3.1.2.4.1",
+      "title": "12.3.1.2.4.1 General",
+      "text": "###### 12.3.1.2.4.1 General  \nTable 12.3.1.2.4.1-1: Data types defined in this specification  \n**Data type**             **Reference**    **Description**\n------------------------- ---------------- -----------------------------------------------------------------------------------------\nNotifyThresholdCrossing   12.3.1.2.4.2.1   Used in the request body of HTTP POST for the notification type notifyThresholdCrossing"
+    },
+    {
+      "id": "S28",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST operation summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "12.3.1.2.2.2",
+      "title": "12.3.1.2.2.2 Notification notifyThresholdCrossing",
+      "text": "----------------------------- --------------------------- ----------------------------- ----------------------- -------\nobjectClass                   request body                href                          Uri                     M\nobjectInstance\nnotificationId                request body                notificationId                NotificationId          M\nnotificationType              request body                notificationType              NotificationType        M\neventTime                     request body                eventTime                     DateTime                M\nsystemDN                      request body                systemDN                      SystemDN                M\nobservedPerfMetricName        request body                observedPerfMetricName        string                  M\nobservedPerfMetricValue       request body                observedPerfMetricValue       PerfMetricValue         M\nobservedPerfMetricDirection   request body                observedPerfMetricDirection   PerfMetricDirection     M\nthresholdValue                request body                thresholdValue                PerfMetricValue         M"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"operationExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this operation.\n<a name=\"operationId\"></a>operationId | `string` | Unique string used to identify the operation. The id MUST be unique among all operations described in the API. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "##### Fixed Fields  \nField Name  |  Type  | Description\n---|:---:|---\n<a name=\"linkOperationRef\"></a>operationRef | `string` | A relative or absolute reference to an OAS operation. This field is mutually exclusive of the `operationId` field, and MUST point to an [Operation Object](#operation-object). Relative `operationRef` values MAY be used to locate an existing [Operation Object](#operation-object) in the OpenAPI definition.\n<a name=\"linkOperationId\"></a>operationId  | `string` | The name of an _existing_, resolvable OAS operation, as defined with a unique `operationId`.  This field is mutually exclusive of the `operationRef` field."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path.\n<a name=\"pathItemHead\"></a>head | [Operation Object](#operation-object) | A definition of a HEAD operation on this path.\n<a name=\"pathItemPatch\"></a>patch | [Operation Object](#operation-object) | A definition of a PATCH operation on this path.\n<a name=\"pathItemTrace\"></a>trace | [Operation Object](#operation-object) | A definition of a TRACE operation on this path.\n<a name=\"pathItemServers\"></a>servers | [[Server Object](#server-object)] | An alternative `server` array to service all operations in this path."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path.\n<a name=\"pathItemDescription\"></a>description | `string` | An optional, string description, intended to apply to all operations in this path. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"pathItemGet\"></a>get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path.\n<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "",
+      "title": "get the `uuid` field from the `uuid` field in the response body",
+      "text": "When a runtime expression fails to evaluate, no parameter value is passed to the target operation.  \nValues from the response body can be used to drive a linked operation.  \n```yaml\nlinks:\naddress:\noperationId: getUserAddressByUUID\nparameters:\n# get the `uuid` field from the `uuid` field in the response body\nuserUuid: $response.body#/uuid\n```  \nClients follow all links at their discretion.\nNeither permissions, nor the capability to make a successful call to that link, is guaranteed\nsolely by the existence of a relationship.  \n##### OperationRef Examples  \nAs references to `operationId` MAY NOT be possible (the `operationId` is an optional\nvalue), references MAY also be made through a relative `operationRef`:  \n```yaml\nlinks:\nUserRepositories:\n# returns array of '#/components/schemas/repository'\noperationRef: '#/paths/~12.0~1repositories~1{username}/get'\nparameters:\nusername: $response.body#/username\n```  \nor an absolute `operationRef`:  \n```yaml\nlinks:\nUserRepositories:"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "",
+      "title": "Examples",
+      "text": "<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"linkServer\"></a>server       | [Server Object](#server-object) | A server object to be used by the target operation.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \nA linked operation MUST be identified using either an `operationRef` or `operationId`.\nIn the case of an `operationId`, it MUST be unique and resolved in the scope of the OAS document.\nBecause of the potential for name clashes, the `operationRef` syntax is preferred\nfor specifications with external references.  \n##### Examples  \nComputing a link from a request operation where the `$request.path.id` is used to pass a request parameter to the linked operation.  \n```yaml\npaths:\n/users/{id}:\nparameters:\n- name: id\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"linkParameters\"></a>parameters   | Map[`string`, Any \\| [{expression}](#runtime-expressions)] | A map representing parameters to pass to an operation as specified with `operationId` or identified via `operationRef`. The key is the parameter name to be used, whereas the value can be a constant or an expression to be evaluated and passed to the linked operation.  The parameter name can be qualified using the [parameter location](#parameterIn) `[{in}.]{name}` for operations that use the same parameter name in different locations (e.g. path.id).\n<a name=\"linkRequestBody\"></a>requestBody | Any \\| [{expression}](#runtime-expressions) | A literal value or [{expression}](#runtime-expressions) to use as a request body when calling the target operation.\n<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`.\n<a name=\"operationSecurity\"></a>security | [[Security Requirement Object](#security-requirement-object)] | A declaration of which security mechanisms can be used for this operation. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. This definition overrides any declared top-level [`security`](#oasSecurity). To remove a top-level security declaration, an empty array can be used.\n<a name=\"operationServers\"></a>servers | [[Server Object](#server-object)] | An alternative `server` array to service this operation. If an alternative `server` object is specified at the Path Item Object or Root level, it will be overridden by this value."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Send notifications about performance threshold crossing Send threshold crossing notifications To send a notifyThresholdCrossing notification",
+      "filters": {},
+      "clause": "",
+      "title": "Callback Object",
+      "text": "description: The number of allowed requests in the current period\nschema:\ntype: integer\nX-Rate-Limit-Remaining:\ndescription: The number of remaining requests in the current period\nschema:\ntype: integer\nX-Rate-Limit-Reset:\ndescription: The number of seconds left in the current period\nschema:\ntype: integer\n```  \nResponse with no return value:  \n```json\n{\n\"description\": \"object created\"\n}\n```  \n```yaml\ndescription: object created\n```  \n#### Callback Object  \nA map of possible out-of band callbacks related to the parent operation.\nEach value in the map is a [Path Item Object](#path-item-object) that describes a set of requests that may be initiated by the API provider and the expected responses.\nThe key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.  \n##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "7bbcc5d15d976636767ebb75a88a47edc873f5adc98f249074ffafb3108fee91",
+  "judged_at": "2026-10-06T19:51:31-03:00"
+}

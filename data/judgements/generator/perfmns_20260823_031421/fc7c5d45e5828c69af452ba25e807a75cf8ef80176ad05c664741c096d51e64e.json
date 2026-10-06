@@ -1,0 +1,340 @@
+{
+  "part_id": "generator|perfmns_20260823_031421|DOCUMENT servers|metadata",
+  "evaluation": "generator",
+  "input": "perfmns_20260823_031421",
+  "owner": "DOCUMENT servers",
+  "aspect": "metadata",
+  "summary": "1 absent, 1 differing, 2 extra",
+  "answer": {
+    "why_different": "The generated side uses a different server-address strategy and changes the structure: it replaces the `{root}` server variable and its default URL with an empty URL, while adding explanatory metadata and a generator extension. The likely cause is the generator's interpretation that the notification endpoint is consumer-provided rather than a producer-hosted server.",
+    "verdict": "error",
+    "spec_3gpp": "The specification supports the generator's reasoning that this resource is consumer-side and that its URI is supplied by the notification subscription: the resource is “on a MnS consumer” and “The resource URI is provided by the notification subscription.” However, the supplied excerpts do not establish that the OpenAPI server URL should be empty, nor do they require removing the server variable.",
+    "openapi": "The added `description` is permitted and the `x-openapi-gen-note` is a permitted specification extension. However, a Server Object requires `url`, and that URL is defined as a URL to the target host. An empty URL does not provide the target-host connectivity represented by the official `{root}` URL and loses the variable/default needed for substitution.",
+    "clearer": "official",
+    "clearer_why": "The generated explanation makes the consumer-side uncertainty explicit, but the official version is clearer as an API server declaration because it supplies a server-variable description and a concrete default URL. The generated version leaves the server address empty and therefore does not tell an API reader where the server is located.",
+    "citations": [
+      {
+        "evidence_id": "S16",
+        "quote": "This resource represents a resource on a MnS consumer to which notifications are sent to."
+      },
+      {
+        "evidence_id": "S17",
+        "quote": "The resource URI is provided by the notification subscription."
+      },
+      {
+        "evidence_id": "O8",
+        "quote": "variables | Map[`string`, [Server Variable Object](#server-variable-object)] | A map between a variable name and its value. The value is used for substitution in the server's URL template."
+      },
+      {
+        "evidence_id": "O10",
+        "quote": "url | `string` | **REQUIRED**. A URL to the target host."
+      },
+      {
+        "evidence_id": "O6",
+        "quote": "The extensions properties are implemented as patterned fields that are always prefixed by `\"x-\"`."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers",
+      "filters": {},
+      "clause": "12.3.1.2",
+      "title": "12.3.1.2 Performance threshold monitoring service",
+      "text": "#### 12.3.1.2 Performance threshold monitoring service"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers",
+      "filters": {},
+      "clause": "12.3.1.2.1",
+      "title": "12.3.1.2.1 Mapping of operations",
+      "text": "##### 12.3.1.2.1 Mapping of operations  \nNone."
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers",
+      "filters": {},
+      "clause": "12.3.1.2.2",
+      "title": "12.3.1.2.2 Mapping of notifications",
+      "text": "##### 12.3.1.2.2 Mapping of notifications"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers",
+      "filters": {},
+      "clause": "12.3.1.2.2.1",
+      "title": "12.3.1.2.2.1 Introduction",
+      "text": "###### 12.3.1.2.2.1 Introduction  \nThe IS notifications are mapped to SS equivalents according to table\n12.3.1.2.2.1-1.  \n**Table 12.3.1.2.2.1-1: Mapping of IS notifications to SS equivalents**  \n**IS notifications**      **HTTP Method**   **Resource URI**    **S**\n------------------------- ----------------- ------------------- -------\nnotifyThresholdCrossing   POST              /notificationSink   M"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers",
+      "filters": {},
+      "clause": "12.3.1.2.2.2",
+      "title": "12.3.1.2.2.2 Notification notifyThresholdCrossing",
+      "text": "###### 12.3.1.2.2.2 Notification notifyThresholdCrossing  \nThe IS notification parameters are mapped to SS equivalents according to\ntable 12.3.1.2.2.2-1.  \nTable 12.3.1.2.2.2-1: Mapping of IS notification input parameters to SS\nequivalents (HTTP POST)  \n**IS parameter name**         **SS parameter location**   **SS parameter name**         **SS parameter type**   **S**\n----------------------------- --------------------------- ----------------------------- ----------------------- -------\nobjectClass                   request body                href                          Uri                     M\nobjectInstance"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type servers",
+      "filters": {},
+      "clause": "12.3.1.2.4.6.2",
+      "title": "12.3.1.2.4.6.2 Simple data types",
+      "text": "This clause defines simple data types and enumerations that are used by\nthe data structures defined in the previous clauses."
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type servers",
+      "filters": {},
+      "clause": "12.3.1.2.4.6.2",
+      "title": "12.3.1.2.4.6.2 Simple data types",
+      "text": "####### 12.3.1.2.4.6.2 Simple data types  \nTable 12.3.1.2.4.6.2-1: Simple data types  \nType name         Type definition         Description\n----------------- ----------------------- -------------------------------------------------------------\nPerfMetricValue   Union(integer, Float)   The type of a performance metric is either integer or Float"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type servers",
+      "filters": {},
+      "clause": "12.3.1.2.4.6.3",
+      "title": "12.3.1.2.4.6.3 Enumeration PerfNotificationTypes",
+      "text": "####### 12.3.1.2.4.6.3 Enumeration PerfNotificationTypes  \nTable 12.3.1.2.4.6.3-1: Enumeration PerfNotificationTypes  \nEnumeration value         Description\n------------------------- ----------------------------------------------\nnotifyThresholdCrossing   Notification type is notifyThresholdCrossing"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type servers",
+      "filters": {},
+      "clause": "12.3.1.2.4.6.4",
+      "title": "12.3.1.2.4.6.4 Enumeration PerfMetricDirection",
+      "text": "####### 12.3.1.2.4.6.4 Enumeration PerfMetricDirection  \nTable 12.3.1.2.4.6.4-1: Enumeration PerfMetricDirection  \nEnumeration value   Description\n------------------- ------------------------------------------\nUP                  Performance metric values are going up\nDOWN                Performance metric values are going down"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type servers",
+      "filters": {},
+      "clause": "12.3.1.2.4.2.1",
+      "title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "text": "NotificationHeader   TS 28.623 \\[44\\]   Notification header\nErrorResponse        TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type servers",
+      "filters": {},
+      "clause": "12.3.1.2.4.2",
+      "title": "12.3.1.2.4.2 Structured data types",
+      "text": "###### 12.3.1.2.4.2 Structured data types"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type servers",
+      "filters": {},
+      "clause": "12.3.1.2.4.2.1",
+      "title": "12.3.1.2.4.2.1 Type NotifyThresholdCrossing",
+      "text": "####### 12.3.1.2.4.2.1 Type NotifyThresholdCrossing  \nTable 12.3.1.2.4.2.1-1: Definition of type NotifyThresholdCrossing  \n**Attribute name**            **Data type**         **Description**                                                                                             **S**\n----------------------------- --------------------- ----------------------------------------------------------------------------------------------------------- -------\nhref                          Uri                   URI of the resource where the event (threshold crossing) occurred                                           M\nnotificationId                NotificationId        Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                               M\nnotificationType              NotificationType      Notification type (notifyThresholdCrossing)                                                                 M"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers  url variables description x-openapi-gen-note {root} ",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.1",
+      "title": "12.3.1.2.3.2.1.1 Description",
+      "text": "notificationSink   /notificationSink   POST          Send notifications"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers  url variables description x-openapi-gen-note {root} ",
+      "filters": {},
+      "clause": "12.3.1.2.3.2",
+      "title": "12.3.1.2.3.2 Resource definitions",
+      "text": "###### 12.3.1.2.3.2 Resource definitions"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers  url variables description x-openapi-gen-note {root} ",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1",
+      "title": "12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\"",
+      "text": "####### 12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\""
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers  url variables description x-openapi-gen-note {root} ",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.1",
+      "title": "12.3.1.2.3.2.1.1 Description",
+      "text": "##### 12.3.1.2.3.2.1.1 Description {#description-10 .H6}  \nThis resource represents a resource on a MnS consumer to which\nnotifications are sent to."
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers  url variables description x-openapi-gen-note {root} ",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.2",
+      "title": "12.3.1.2.3.2.1.2 URI",
+      "text": "##### 12.3.1.2.3.2.1.2 URI {#uri-10 .H6}  \nThe resource URI is provided by the notification subscription."
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers  url variables description x-openapi-gen-note {root} ",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.3",
+      "title": "12.3.1.2.3.2.1.3 HTTP methods",
+      "text": "##### 12.3.1.2.3.2.1.3 HTTP methods {#http-methods-10 .H6}"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "servers  url variables description x-openapi-gen-note {root} ",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.3.1",
+      "title": "12.3.1.2.3.2.1.3.1 POST",
+      "text": "##### 12.3.1.2.3.2.1.3.1 POST {#post-4 .H6}  \nThis method shall support the URI query parameters specified in table\n12.3.1.2.3.2.1.3.1-1.  \nTable 12.3.1.2.3.2.1.3.1-1: URI query parameters supported by the POST\nmethod on this resource  \nName   Data type   Description   S\n------ ----------- ------------- -----\nn/a    n/a         n/a           n/a  \nThis method shall support the request data structures specified in table\n12.3.1.2.3.2.1.3.1-2 and the response data structures and response codes\nspecified in table 12.3.1.2.3.2.1.3.1-3.  \nTable 12.3.1.2.3.2.1.3.1-2: Data structures supported by the POST\nRequest Body on this resource"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"oasInfo\"></a>info | [Info Object](#info-object) | **REQUIRED**. Provides metadata about the API. The metadata MAY be used by tooling as required.\n<a name=\"oasServers\"></a>servers | [[Server Object](#server-object)] | An array of Server Objects, which provide connectivity information to a target server. If the `servers` property is not provided, or is an empty array, the default value would be a [Server Object](#server-object) with a [url](#serverUrl) value of `/`.\n<a name=\"oasPaths\"></a>paths | [Paths Object](#paths-object) | **REQUIRED**. The available paths and operations for the API.\n<a name=\"oasComponents\"></a>components | [Components Object](#components-object) | An element to hold various schemas for the specification."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"oasComponents\"></a>components | [Components Object](#components-object) | An element to hold various schemas for the specification.\n<a name=\"oasSecurity\"></a>security | [[Security Requirement Object](#security-requirement-object)] | A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition.\n<a name=\"oasTags\"></a>tags | [[Tag Object](#tag-object)] | A list of tags used by the specification with additional metadata. The order of the tags can be used to reflect on their order by the parsing tools. Not all tags that are used by the [Operation Object](#operation-object) must be declared. The tags that are not declared MAY be organized randomly or based on the tools' logic. Each tag name in the list MUST be unique."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "Info Object Example:",
+      "text": "<a name=\"infoTermsOfService\"></a>termsOfService | `string` | A URL to the Terms of Service for the API. MUST be in the format of a URL.\n<a name=\"infoContact\"></a>contact | [Contact Object](#contact-object) | The contact information for the exposed API.\n<a name=\"infoLicense\"></a>license | [License Object](#license-object) | The license information for the exposed API.\n<a name=\"infoVersion\"></a>version | `string` | **REQUIRED**. The version of the OpenAPI document (which is distinct from the [OpenAPI Specification version](#oasVersion) or the API implementation version).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Info Object Example:  \n```json\n{\n\"title\": \"Sample Pet Store App\",\n\"description\": \"This is a sample server for a pet store.\",\n\"termsOfService\": \"http://example.com/terms/\",\n\"contact\": {\n\"name\": \"API Support\",\n\"url\": \"http://www.example.com/support\",\n\"email\": \"support@example.com\"\n},\n\"license\": {\n\"name\": \"Apache 2.0\","
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "Info Object",
+      "text": "<a name=\"oasExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Info Object  \nThe object provides metadata about the API.\nThe metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"infoTitle\"></a>title | `string` | **REQUIRED**. The title of the application.\n<a name=\"infoDescription\"></a>description | `string` | A short description of the application. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"infoTermsOfService\"></a>termsOfService | `string` | A URL to the Terms of Service for the API. MUST be in the format of a URL."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "Tag Object",
+      "text": "\"schema\": {\n\"type\": \"integer\"\n}\n}\n```  \n```yaml\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Tag Object  \nAdds metadata to a single tag that is used by the [Operation Object](#operation-object).\nIt is not mandatory to have a Tag Object per tag defined in the Operation Object instances.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"tagName\"></a>name | `string` | **REQUIRED**. The name of the tag.\n<a name=\"tagDescription\"></a>description | `string` | A short description for the tag. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"tagExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this tag.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Tag Object Example  \n```json\n{\n\"name\": \"pet\",\n\"description\": \"Pets operations\"\n}"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- url variables description x-openapi-gen-note {root}",
+      "filters": {},
+      "clause": "",
+      "title": "Specification Extensions",
+      "text": "### Specification Extensions  \nWhile the OpenAPI Specification tries to accommodate most use cases, additional data can be added to extend the specification at certain points.  \nThe extensions properties are implemented as patterned fields that are always prefixed by `\"x-\"`.  \nField Pattern | Type | Description\n---|:---:|---\n<a name=\"infoExtensions\"></a>^x- | Any | Allows extensions to the OpenAPI Schema. The field name MUST begin with `x-`, for example, `x-internal-id`. The value can be `null`, a primitive, an array or an object. Can have any valid JSON format value.  \nThe extensions may or may not be supported by the available tooling, but those may be extended as well to add requested support (if tools are internal or open-sourced)."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- url variables description x-openapi-gen-note {root}",
+      "filters": {},
+      "clause": "",
+      "title": "Table of Contents",
+      "text": "## Table of Contents\n<!-- TOC depthFrom:1 depthTo:3 withLinks:1 updateOnSave:1 orderedList:0 -->  \n- [Definitions](#definitions)\n- [OpenAPI Document](#openapi-document)\n- [Path Templating](#path-templating)\n- [Media Types](#media-types)\n- [HTTP Status Codes](#http-status-codes)\n- [Specification](#specification)\n- [Versions](#versions)\n- [Format](#format)\n- [Document Structure](#document-structure)\n- [Data Types](#data-types)\n- [Rich Text Formatting](#rich-text-formatting)\n- [Relative References In URLs](#relative-references-in-urls)\n- [Schema](#schema)\n- [OpenAPI Object](#openapi-object)\n- [Info Object](#info-object)\n- [Contact Object](#contact-object)\n- [License Object](#license-object)\n- [Server Object](#server-object)\n- [Server Variable Object](#server-variable-object)\n- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- url variables description x-openapi-gen-note {root}",
+      "filters": {},
+      "clause": "",
+      "title": "Server Object Example",
+      "text": "<a name=\"serverDescription\"></a>description | `string` | An optional string describing the host designated by the URL. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"serverVariables\"></a>variables | Map[`string`, [Server Variable Object](#server-variable-object)] | A map between a variable name and its value.  The value is used for substitution in the server's URL template.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Server Object Example  \nA single server would be described as:  \n```json\n{\n\"url\": \"https://development.gigantic-server.com/v1\",\n\"description\": \"Development server\"\n}\n```  \n```yaml\nurl: https://development.gigantic-server.com/v1\ndescription: Development server\n```  \nThe following shows how multiple servers can be described, for example, at the OpenAPI Object's [`servers`](#oasServers):  \n```json\n{\n\"servers\": [\n{\n\"url\": \"https://development.gigantic-server.com/v1\","
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- url variables description x-openapi-gen-note {root}",
+      "filters": {},
+      "clause": "",
+      "title": "Schema",
+      "text": "### Schema  \nIn the following description, if a field is not explicitly **REQUIRED** or described with a MUST or SHALL, it can be considered OPTIONAL.  \n#### OpenAPI Object  \nThis is the root document object of the [OpenAPI document](#openapi-document).  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"oasVersion\"></a>openapi | `string` | **REQUIRED**. This string MUST be the [semantic version number](https://semver.org/spec/v2.0.0.html) of the [OpenAPI Specification version](#versions) that the OpenAPI document uses. The `openapi` field SHOULD be used by tooling specifications and clients to interpret the OpenAPI document. This is *not* related to the API [`info.version`](#infoVersion) string.\n<a name=\"oasInfo\"></a>info | [Info Object](#info-object) | **REQUIRED**. Provides metadata about the API. The metadata MAY be used by tooling as required."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- url variables description x-openapi-gen-note {root}",
+      "filters": {},
+      "clause": "",
+      "title": "License Object Example:",
+      "text": "<a name=\"licenseUrl\"></a>url | `string` | A URL to the license used for the API. MUST be in the format of a URL.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### License Object Example:  \n```json\n{\n\"name\": \"Apache 2.0\",\n\"url\": \"https://www.apache.org/licenses/LICENSE-2.0.html\"\n}\n```  \n```yaml\nname: Apache 2.0\nurl: https://www.apache.org/licenses/LICENSE-2.0.html\n```  \n#### Server Object  \nAn object representing a Server.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"serverUrl\"></a>url | `string` | **REQUIRED**. A URL to the target host.  This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenAPI document is being served. Variable substitutions will be made when a variable is named in `{`brackets`}`."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v2",
+  "cache_key": "fc7c5d45e5828c69af452ba25e807a75cf8ef80176ad05c664741c096d51e64e",
+  "judged_at": "2026-10-06T18:17:28-03:00"
+}

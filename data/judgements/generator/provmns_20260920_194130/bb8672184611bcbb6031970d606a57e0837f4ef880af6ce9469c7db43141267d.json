@@ -1,0 +1,365 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA MoiChange|placement",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA MoiChange",
+  "aspect": "placement",
+  "summary": "schema misplaced (at components.MoiChange); defined at components.MoiChange, outside components.schemas; at the right place 8/10 of its leaves would match; generated defines it at components.MoiChange; 1 absent, 1 extra",
+  "answer": {
+    "why_different": "The generated side places the MoiChange schema at a different address, under components.MoiChange instead of the allowed reusable-schema map components.schemas.MoiChange. This is a structural/address difference, not merely a different schema value; the misplaced components key also makes the generated document invalid OpenAPI 3.0.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification defines MoiChange as a data type used for MOI-change notifications. Its properties are intended to represent JSON Patch-style changes, including op, path, value, and optional oldValue, but the supplied 3GPP passages do not specify OpenAPI component placement.",
+    "openapi": "OpenAPI 3.0 defines components.schemas as the map for reusable Schema Objects. An arbitrary MoiChange key directly under components is not a permitted fixed field and is not a valid specification extension, so the generated document is invalid and references to components.schemas.MoiChange cannot resolve to the generated definition.",
+    "clearer": "official",
+    "clearer_why": "The official version places the schema at the standard, immediately discoverable components.schemas.MoiChange address and remains valid OpenAPI. The generated version places it at an unsupported components-level key, so tooling and readers cannot treat it as a reusable schema.",
+    "citations": [
+      {
+        "evidence_id": "O3",
+        "quote": "schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object)."
+      },
+      {
+        "evidence_id": "O3",
+        "quote": "This object MAY be extended with [Specification Extensions](#specification-extensions)."
+      },
+      {
+        "evidence_id": "S4",
+        "quote": "The properties \\\"op\\\", \\\"path\\\" and \\\"value\\\" shall use the 3GPP JSON Patch format"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated document omits the schema at components.schemas.MoiChange, even though OpenAPI requires reusable schemas to be defined under the components.schemas map; this loses the valid, referenceable schema address (O3)."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "components.MoiChange is an unsupported direct child of components and is not a valid OpenAPI 3.0 component category; the supplied validation result confirms that this key breaks format validity (O3)."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "systemDN             SystemDN           System DN                                                                                                                                                                                 M\nmoiChanges           array(MoiChange)   MOI changes to be reported                                                                                                                                                                M\n-------------------- ------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.9",
+      "title": "12.1.1.4.1a.9 Type PatchItem",
+      "text": "###### 12.1.1.4.1a.9 Type PatchItem  \nTable 12.1.1.4.1a.9 -1: Definition of type PatchItem  \n---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---\nAttribute name   Data type        Description                                                                                                                        S"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.3",
+      "title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "text": "###### 12.1.1.4.1a.3 Type CorrelatedNotification  \nTable 12.1.1.4.1a.3 -1: Definition of type CorrelatedNotification  \nAttribute name    Data type               Description                                                           S\n----------------- ----------------------- --------------------------------------------------------------------- ---\nsource            Dn                      Source of the correlated notifications                                M\nnotificationIds   array(NotificationId)   Notification identifiers of correlated notifications of that source   M"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "###### 12.1.1.4.1a.4 Type MoiChange  \nTable 12.1.1.4.1a.4 -1: Definition of type MoiChange  \n[Extracted Table: 85 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThe properties \\\"op\\\", \\\"path\\\" and \\\"value\\\" shall use the 3GPP JSON\nPatch format (TS 32.158 \\[15\\]) for reporting NRM changes. The \\\"merge\\\"\noperation specified by 3GPP JSON Patch is not supported in\n\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.  \nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "operation: add  \nvalue:  \nid: job1  \n3gpp-common-measurements:PerfMetricJob:attributes:  \njobId: 9865  \nfileReportingPeriod: 30  \nCase 2: Deletion of an MOI is reported with:  \n\\- operation: remove  \n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI  \n\\- value: not present  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object deletion:  \nhref: node1.charlottenburg.de  \n...  \nnotificationId: 123456002  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"  \noperation: remove  \nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):  \n\\- operation: add.  \n\\- path: YANG resource identifier pointing to the\nleaf/leaf-list/container/list representing the attribute. If the\nattribute is represented by a list or leaf-list, then for this last data\nnode the equal sign, the key value(s) or leaf-list value is omitted,\nonly the list/leaf-list name shall be present.  \n\\- value: the content of the leaf/leaf-list entry(s)/container/list"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\nMOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\nMOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.3.1.2",
+      "title": "12.1.1.3.1.2 Resource structure on the MnS consumer",
+      "text": "###### 12.1.1.3.1.2 Resource structure on the MnS consumer  \nFigure 12.1.1.3.1.2-1 shows the resource structure of the Provisioning\nMnS on the MnS consumer.  \n![](media/image9.emf){width=\"1.4256944444444444in\"\nheight=\"0.32083333333333336in\"}  \nFigure 12.1.1.3.1.2-1: Resource URI structure of the Provisioning MnS on\nthe MnS consumer  \nTable 12.1.1.3.1.2-1 provides an overview of the resources and\napplicable HTTP methods.  \nTable 12.1.1.3.1.2-**1**: Resources and methods overview  \nResource name         Resource URI           HTTP method   Description\n--------------------- ---------------------- ------------- ------------------------------------------------\nNotification Target   {notificationTarget}   POST          Send a notification to the notification target"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "##### 12.1.1.3.2 Resource definitions"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "href: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrC  \nvalue: xyz  \nThe following example reports the deletion of the attribute \\\"attrC\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: remove  \npath: /ClassA=1\\#/attributes/attrC  \nThe following example reports a value change for the simple attribute\n\\\"attrA\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA  \nvalue: 456  \nWhen the old value is reported as well, the notification looks like.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA  \nvalue: 456  \noldValue: 123  \nThe following example reports a value change for the complex attribute\n\\\"attrB\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: abc  \nsubAttrB2: 78  \nThe previous two notifications can be combined into a single\nnotification as follows.  \nhref: https://example.com/3gpp"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\nNotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\nNotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\nPatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document  \nTable 12.1.1.4.1-2: Data types imported  \nData type                   Reference          Description\n--------------------------- ------------------ ---------------------------------------------------------------------\nDateTime                    TS 28.623 \\[44\\]   Date and time\nDn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "scope                         config              M   BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\nfilter                        config              M   Multiple MOIs can be specified in the same operation, emulating filtering.\nmodificationList              config              M   The \"attributes container\" and leaf, leaf-list or list entries representing the attributes.  \nTable 12.1.3.1.4-2: Mapping of IS modifyMOIAttributes output parameters\nto SS equivalents  \n[Extracted Table: 98 from 28532-i00 (Release Rel-18, Series 28_series)]  \n> Note 1: Successful Netconf \\<edit-config\\> operations only return an\n> \\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\n> separate \\<get-config\\> operation."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "##### 12.1.3.1.5 Operation deleteMOI  \nThis IS operation deletes one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "is mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating\nthe MOI(s) to be deleted.  \nThe Netconf operation attribute on the list representing the\nbaseObjectInstance should be set to delete or remove.  \nThe default-operation parameter should be set to none.  \nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.5-1 and table 12.1.3.1.5-2.  \nTable 12.1.3.1.5-1: Mapping of IS deleteMOI input parameters to SS\nequivalents  \n**IS operation parameter name**   **SS parameter name**   **S**   **Remark**\n--------------------------------- ----------------------- ------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "container in YANG):  \n\\- operation: remove.  \n\\- path: Same as case 9.  \n\\- value: Not present.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the \\\"hysteresis\\\" attribute field:  \nnotificationId: 123456010  \npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1/hysteresis  \noperation: remove  \nCase 11: Replacement of a field (subpart) of an attribute is reported as\nfollows. This implies removing previous value(s). (only used for\nstructured attributes represented by a list or container in YANG):  \n\\- operation: replace.  \n\\- path: Same as case 9.  \n\\- value: Same as case 9."
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "\\<get\\>  \n\\<source\\>  \n\\<running/\\>  \n\\</source\\>  \n\\<filter type=\\\"xpath\\\"  \nselect=\\\"/me3gpp:ManagedElement\\[id=\\'me1\\'\\]/\\*/\\*/attributes\\\"/\\>  \n\\</get\\>  \n\\</rpc\\>"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "##### 12.1.3.1.4 Operation modifyMOIAttributes  \nThis IS operation modifies one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. The NETCONF\n\\<edit-config\\> operation can modify attributes in a given MOI or set of\nMOIs but only indirectly supports scope or filtered sets of MOIs that\nare part of the modifyMOIAttributes 3GPP operation specification.\n\\<edit-config\\> needs a config block, containing the explicit config\nchanges to be made for each MOI.  \nThe default-operation parameter should be set to none.  \nThe Netconf operation attribute on the list representing modified MOI(s)\nshould be set to create, replace or delete according to the ENUM in the\nmodificationList.  \nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.4-1 and table 12.1.3.1.4-2.  \nTable 12.1.3.1.4-1: Mapping of IS modifyMOIAttributes input parameters\nto SS equivalents  \nIS operation parameter name   SS parameter name   S   Remark"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "value:  \nsubAttrB1: def  \nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA/subAttrB1  \nvalue: def  \nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 1  \n\\- 2  \n\\- 3  \nIts deletion is reported by the following notification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: remove  \npath: /ClassA=1\\#/attributes/attrD  \nThe complete replacement of the array is reported by the following\nnotification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 11  \n\\- 21  \n\\- 31  \nThe following example reports the second item in the array changed to\n\\\"22\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 11  \n\\- 21  \n\\- 31  \nThe following example reports the second item in the array changed to\n\\\"22\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrD/1  \nvalue: 22  \nNote the array index of the second item is \\\"1\\\".  \nAssume now \\\"attrE\\\" is a JSON array with complex array items, for\nexample.  \n\\[{subItemE1: 11, subItemD2: abc}, {subItemE1: 21, subItemE2: def},\n{subItemE1: 31, subItemE2\\\": ghi}.  \nA value change to  \n\\[{subItemE1: 11, subItemE2: abc}, {subItemE1: 21, subItemE2: xyz},\n{subItemE1: 31, subItemE2\\\": ghi}.  \nis reported by  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrE/1/subItemE2  \nvalue: xyz  \nWhen \\\"subItemE2\\\" is defined as array item key at stage 2, then\n\\\"attrE\\\" should contain a JSON map.  \nattrE:  \n11:  \nsubItemE2: abc  \n21:  \nsubItemE2: def  \n31:  \nsubItemE2: ghi  \nThe same change as above is now reported by the notification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "href: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: abc  \nsubAttrB2: 78  \nThe previous two notifications can be combined into a single\nnotification as follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA  \nvalue: 456  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: abc  \nsubAttrB2: 78  \nNote the operation \\\"replace\\\" has replace semantics and not merge\nsemantics. The following notification reports the value change of the\nattribute field \\\"attrB:subAttrB1\\\" to \\\"def\\\" and the deletion of the\nattribute field \\\"attrB:subAttrB2\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrB  \nvalue:  \nsubAttrB1: def  \nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA/subAttrB1  \nvalue: def"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "the object creation request, shall be included in the object creation\nreport with their default values.  \n\\- Attributes with default values, that are deleted and consequently set\nto their default value, shall be included in attribute replacement\nreports.  \nNote all following use-cases use JSON expressed in YAML notation.  \nCase 1: Creation of an MOI is reported with:  \n\\- operation: add  \n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI  \n\\- value: a complete MOI representation, represented by the \\\"id\\\" node\nand the \\\"attributes\\\" container but exluding the list entry itself\nencoded according to RFC7951 \\[50\\].  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object creation:  \nhref: node1.lichtenberg.de  \n...  \nnotificationId: 123456001  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"  \noperation: add  \nvalue:  \nid: job1  \n3gpp-common-measurements:PerfMetricJob:attributes:  \njobId: 9865  \nfileReportingPeriod: 30  \nCase 2: Deletion of an MOI is reported with:  \n\\- operation: remove  \n\\- path: YANG resource identifier pointing to the list entry"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "\\- operation: remove.  \n\\- path: Same as in case 3.  \n\\- value: not present.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the performanceMetrics attribute:  \nhref: node1.pankow.de  \n...  \nnotificationId: 123456004  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"  \noperation: remove  \nCase 5: Replacing a (complete) attribute is reported as follows.\n(Removing all previous values of the attribute and setting new\nvalue(s)):  \n\\- operation: replace.  \n\\- path: Same as in case 3.  \n\\- value: Same as in case 3.  \nCase 6: Adding a new value to a multivalue attribute (an attribute with\nmultiplicity upper bound greater than 1) is reported as follows. (This\ndoes not imply any change to exisiting values):  \n\\- operation: add/  \n\\- path: YANG resource identifier pointing to a leaf-list/list entry\nrepresenting an attribute element(value). In case of adding a new\nelement to an attribute with the property isOrdered=True the new\nelement/value is inserted before the pointed element(value), unless the\n\\\"insert\\\" subparameter specifies differently."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsParameters\"></a> parameters | Map[`string`, [Parameter Object](#parameter-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Parameter Objects](#parameter-object).\n<a name=\"componentsExamples\"></a> examples | Map[`string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Example Objects](#example-object).\n<a name=\"componentsRequestBodies\"></a> requestBodies | Map[`string`, [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Request Body Objects](#request-body-object).\n<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object)."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "{\n\"type\": \"object\",\n\"properties\": {\n\"huntingSkill\": {\n\"type\": \"string\",\n\"description\": \"The measured skill for hunting\",\n\"default\": \"lazy\",\n\"enum\": [\n\"clueless\",\n\"lazy\",\n\"adventurous\",\n\"aggressive\"\n]\n}\n},\n\"required\": [\n\"huntingSkill\"\n]\n}\n]\n},\n\"Dog\": {\n\"description\": \"A representation of a dog. Note that `Dog` will be used as the discriminator value.\",\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/Pet\"\n},\n{\n\"type\": \"object\",\n\"properties\": {\n\"packSize\": {\n\"type\": \"integer\",\n\"format\": \"int32\",\n\"description\": \"the size of the pack the dog is from\",\n\"default\": 0,\n\"minimum\": 0\n}\n},\n\"required\": [\n\"packSize\"\n]\n}\n]\n}\n}\n}\n}\n```  \n```yaml\ncomponents:\nschemas:\nPet:\ntype: object\ndiscriminator:\npropertyName: petType\nproperties:\nname:\ntype: string\npetType:\ntype: string\nrequired:\n- name\n- petType\nCat:  ## \"Cat\" will be used as the discriminator value\ndescription: A representation of a cat\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\nhuntingSkill:\ntype: string"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\ndiscriminator:\npropertyName: pet_type\n```  \nThe expectation now is that a property with name `pet_type` _MUST_ be present in the response payload, and the value will correspond to the name of a schema defined in the OAS document.  Thus the response payload:  \n```\n{\n\"id\": 12345,\n\"pet_type\": \"Cat\"\n}\n```  \nWill indicate that the `Cat` schema be used in conjunction with this payload.  \nIn scenarios where the value of the discriminator field does not match the schema name or implicit mapping is not possible, an optional `mapping` definition MAY be used:  \n```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\n- $ref: 'https://gigantic-server.com/schemas/Monster/schema.json'\ndiscriminator:\npropertyName: pet_type\nmapping:\ndog: '#/components/schemas/Dog'"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Dog`",
+      "text": "- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`\nproperties:\nlovesRocks:\ntype: boolean\n```  \na payload like this:  \n```\n{\n\"pet_type\": \"Cat\",\n\"name\": \"misty\"\n}\n```  \nwill indicate that the `Cat` schema be used.  Likewise this schema:  \n```\n{\n\"pet_type\": \"cachorro\",\n\"bark\": \"soft\"\n}\n```  \nwill map to `Dog` because of the definition in the `mappings` element.  \n#### XML Object  \nA metadata object that allows for more fine-tuned XML model definitions.  \nWhen using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information.\nSee examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "Tag Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Tag Object Example  \n```json\n{\n\"name\": \"pet\",\n\"description\": \"Pets operations\"\n}\n```  \n```yaml\nname: pet\ndescription: Pets operations\n```  \n#### Reference Object  \nA simple object to allow referencing other components in the specification, internally and externally.  \nThe Reference Object is defined by [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) and follows the same structure, behavior and rules.  \nFor this specification, reference resolution is accomplished as defined by the JSON Reference specification and not by the JSON Schema specification.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"referenceRef\"></a>$ref | `string` | **REQUIRED**. The reference string.  \nThis object cannot be extended with additional properties and any properties added SHALL be ignored.  \n##### Reference Object Example  \n```json\n{"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in XML\",\n\"externalValue\": \"http://foo.bar/examples/user-example.xml\"\n}\n}\n},\n\"text/plain\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in Plain text\",\n\"externalValue\": \"http://foo.bar/examples/user-example.txt\"\n}\n}\n},\n\"*/*\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in other format\",\n\"externalValue\": \"http://foo.bar/examples/user-example.whatever\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: user to add to the system\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example\nexternalValue: 'http://foo.bar/examples/user-example.json'\n'application/xml':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example in XML"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "bb8672184611bcbb6031970d606a57e0837f4ef880af6ce9469c7db43141267d",
+  "judged_at": "2026-10-06T19:47:57-03:00"
+}

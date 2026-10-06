@@ -1,0 +1,288 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA MoiChange|placement",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA MoiChange",
+  "aspect": "placement",
+  "summary": "schema misplaced (at components.MoiChange); defined at components.MoiChange, outside components.schemas; at the right place 8/10 of its leaves would match; generated defines it at components.MoiChange; 1 absent, 1 extra",
+  "answer": {
+    "why_different": "The generated side places the MoiChange schema at a different address: `components.MoiChange` instead of the reusable-schema map at `components.schemas.MoiChange`. This is a placement/address error, not a different schema structure.",
+    "verdict": "error",
+    "spec_3gpp": "The provided 3GPP evidence identifies MoiChange as a defined type, but does not specify its OpenAPI YAML placement.",
+    "openapi": "The OpenAPI 3.0 reference defines `components.schemas` as the map that holds reusable Schema Objects. `components.MoiChange` is not a permitted fixed field, and the generated document is explicitly reported as invalid because that component name does not match an allowed field or the `x-` extension pattern.",
+    "clearer": "official",
+    "clearer_why": "The official location clearly places the reusable type under `components.schemas`, the standard OpenAPI location for schemas. The generated location is both nonstandard and invalid OpenAPI 3.0, making it harder to find and use as a reusable schema.",
+    "citations": [
+      {
+        "evidence_id": "O3",
+        "quote": "schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object)."
+      },
+      {
+        "evidence_id": "O3",
+        "quote": "This object MAY be extended with [Specification Extensions](#specification-extensions)."
+      },
+      {
+        "evidence_id": "S1",
+        "quote": "12.1.1.4.1a.4 Type MoiChange"
+      }
+    ]
+  },
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4.1a.4 Type MoiChange\n\nTable 12.1.1.4.1a.4 -1: Definition of type MoiChange"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "12.1.3.1.4 Operation modifyMOIAttributes\n\nThis IS operation modifies one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. The NETCONF\n\\<edit-config\\> operation can modify attributes in a given MOI or set of\nMOIs but only indirectly supports scope or filtered sets of MOIs that\nare part of the modifyMOIAttributes 3GPP operation specification.\n\\<edit-config\\> needs a config block, containing the explicit config\nchanges to be made for each MOI.\n\nThe default-operation parameter should be set to none.\n\nThe Netconf operation attribute on the list representing modified MOI(s)\nshould be set to create, replace or delete according to the ENUM in the\nmodificationList.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.4-1 and table 12.1.3.1.4-2.\n\nTable 12.1.3.1.4-1: Mapping of IS modifyMOIAttributes input parameters\nto SS equivalents\n\n  --------------------------------------------------------------------------\n  IS operation         SS parameter   S  Remark\n  parameter name       name              \n  -------------------- ------------- --- -----------------------------------\n  baseObjectInstance   config         M  A sequence of embedded XML elements\n                                         inside the \\<config\\> element. XML\n                                         elements for all containing MOIs\n                                         and their ids(keys) shall be\n                                         included together with the XML\n                                         elements representing the to be\n                                         modified MOI and its key.\n\n  scope                config         M  BASE_ONLY supported as default.\n                                         Multiple MOIs can be specified in\n                                         the same operation, emulating other\n                                         scopes.\n\n  filter               config         M  Multiple MOIs can be specified in\n                                         the same operation, emulating\n                                         filtering.\n\n  modificationList     config         M  The \"attributes container\" and\n                                         leaf, leaf-list or list entries\n                                         representing the attributes.\n  --------------------------------------------------------------------------\n\nTable 12.1.3.1.4-2: Mapping of IS modifyMOIAttributes output parameters\nto SS equivalents"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.2",
+      "title": "12.1.3.1.2 Operation createMOI",
+      "text": "12.1.3.1.2 Operation createMOI\n\nThe operation is mapped to a NETCONF \\<edit-config\\> operation, with XML\nelements representing the DN path to the MOI, the MOI itself, its id/key\nand its attributes.\n\nThe NETCONF operation attribute on the list representing the newly\ncreated MOI should be set to 'create'.\n\nThe default-operation parameter of the \\<edit-config\\> operation should\nbe set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.2-1 and table 12.1.3.1.2-2.\n\nTable 12.1.3.1.2-1: Mapping from IS createMOI input parameters to SS\nequivalents\n\n  -----------------------------------------------------------------------------\n  IS operation parameter  SS parameter   S  Remark\n  name                    name              \n  ----------------------- ------------- --- -----------------------------------\n  managedObjectClass      config         M  XML element's name inside the\n                                            \\<config\\> element.\n\n  managedObjectInstance   config         M  A sequence of embedded XML elements\n                                            inside the \\<config\\> element. XML\n                                            elements for all containing MOIs\n                                            and their ids(keys) shall be\n                                            included together wilt the XML\n                                            elements representing the to be\n                                            created MOI and its key.\n\n  attributeListIn         config         M  The key leaf, the \"attributes\n                                            container\" and leaf, leaf-list or\n                                            list entries of YANG models\n                                            representing the attributes.\n  -----------------------------------------------------------------------------\n\nTable 12.1.3.1.2-2: Mapping from IS createMOI output parameters to SS\nequivalents"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "href: node1.lichtenberg.de\n\n...\n\nnotificationId: 123456001\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: add\n\nvalue:\n\nid: job1\n\n3gpp-common-measurements:PerfMetricJob:attributes:\n\njobId: 9865\n\nfileReportingPeriod: 30\n\nCase 2: Deletion of an MOI is reported with:\n\n\\- operation: remove\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: not present\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object deletion:\n\nhref: node1.charlottenburg.de\n\n...\n\nnotificationId: 123456002\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: remove\n\nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):\n\n\\- operation: add.\n\n\\- path: YANG resource identifier pointing to the\nleaf/leaf-list/container/list representing the attribute. If the\nattribute is represented by a list or leaf-list, then for this last data\nnode the equal sign, the key value(s) or leaf-list value is omitted,\nonly the list/leaf-list name shall be present.\n\n\\- value: the content of the leaf/leaf-list entry(s)/container/list\nentry(s) representing the created attribute encoded according to RFC7951\n\\[50\\]. In case of attribute represented by a container/list the child\ndata nodes are encoded only,the container/list itself is not.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports setting the values of the performanceMetrics simple, multivalue\nattribute:\n\nhref: node1.spandau.de\n\n...\n\nnotificationId: 123456003\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"\n\noperation: add\n\nvalue:\n\n\\- inOctets\n\n\\- inPackets\n\n\\- outPackets\n\nCase 4: Deleting all values of a complete attribute is reported with\n\n\\- operation: remove.\n\n\\- path: Same as in case 3.\n\n\\- value: not present.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the performanceMetrics attribute:\n\nhref: node1.pankow.de\n\n...\n\nnotificationId: 123456004\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"\n\noperation: remove\n\nCase 5: Replacing a (complete) attribute is reported as follows.\n(Removing all previous values of the attribute and setting new\nvalue(s)):\n\n\\- operation: replace.\n\n\\- path: Same as in case 3.\n\n\\- value: Same as in case 3.\n\nCase 6: Adding a new value to a multivalue attribute (an attribute with\nmultiplicity upper bound greater than 1) is reported as follows. (This\ndoes not imply any change to exisiting values):\n\n\\- operation: add/"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "\\- operation: add/\n\n\\- path: YANG resource identifier pointing to a leaf-list/list entry\nrepresenting an attribute element(value). In case of adding a new\nelement to an attribute with the property isOrdered=True the new\nelement/value is inserted before the pointed element(value), unless the\n\\\"insert\\\" subparameter specifies differently.\n\n\\- value: the leaf-list/list entry representing the new attribute value\nencoded according to RFC7951 \\[50\\]. In case of a list the child data\nnodes are encoded the list-entry itself is not.\n\n\\- insert: an additional input subparameter is added to the moiChange\ninput parameter. This indicates whether the new element/value was added\nbefore or after the element/value specified in path. The subparameter is\nonly valid in case of attributes with the property isOrdered=True. It\ncan take the values \\\"before\\\", \\\"after\\\". If missing it defaults to\n\\\"before\\\".\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports adding a new element/value to the \\\"performanceMetrics\\\"\nattribute before the outPackets element.:\n\nnotificationId: 123456006\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics/performanceMetrics=outPackets\\\"\n\noperation: add\n\ninsert: before\n\nvalue: outOctets\n\nCase 7: Deleting a single element/value from a multivalue attribute is\nreported as follows. (This does not imply any change to any other\nelements):\n\n\\- operation: remove.\n\n\\- path: Same as case 6.\n\n\\- value: not present.\n\nCase 8: Replacement of a single value for a multivalue attribute is\nreported as follows. This implies removing the old value; in case of a\nstructured attribute removal all its subparts. This does not imply any\nchange to any other values:\n\n\\- operation: replace.\n\n\\- path: Same as case 6.\n\n\\- value: Same as case 6.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports replacing an element/value of the \\\"thresholdInfoList\\\"\nstructured attribute:\n\nnotificationId: 123456008\n\npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1\n\noperation: replace\n\nvalue:\n\n\\- idx: thr1\n\nthresholdDirection: UP\n\nthresholdValue: \\'4.5\\'\n\nCase 9: Adding afield (subpart) of an attribute value is reported as\nfollows (only used for structured attributes represented by a list or\ncontainer in YANG):\n\n\\- operation: add.\n\n\\- path: YANG Resource Identifier pointing to the\nleaf/leaf-list/container/list representing the attribute field. If the\nattribute field is represented by a list or leaf-list, the field has\nmultiplicity upper bound greater than 1, with the property\nisOrdered=True the new element/value is inserted before the pointed\nelement(value), unless the \\\"insert\\\" subparameter specifies\ndifferently."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.4a",
+      "title": "12.1.3.1.4a Operation changeMOIs",
+      "text": "12.1.3.1.4a Operation changeMOIs\n\nThe operation is mapped to a NETCONF \\<edit-config\\> operation, with XML\nelements representing the DN path to the MOI and any attributes or\nattribute fields.\n\nThe default-operation parameter of the \\<edit-config\\> operation should\nbe set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.4a-1 and table 12.1.3.1.4a-2.\n\nThe detailed semantics is specified by the Netconf protocol and the\nrelated YANG models.\n\nTable 12.1.3.1.4a-1: Mapping from IS changeMOIs input parameters to SS\nequivalents\n\n+--------------------+------------+---+-----------------------------------+\n| IS operation       | SS         | S | Remark                            |\n| parameter name     | parameter  |   |                                   |\n|                    | name       |   |                                   |\n+====================+============+:=:+===================================+\n| baseObjectInstance | config     | M | A sequence of embedded XML        |\n|                    |            |   | elements inside the \\<config\\>    |\n|                    |            |   | element. XML elements for all     |\n|                    |            |   | containing MOIs and their         |\n|                    |            |   | ids(keys) shall be included       |\n|                    |            |   | together wilt the XML elements    |\n|                    |            |   | representing the to be created    |\n|                    |            |   | MOI and its key.                  |\n+--------------------+------------+---+-----------------------------------+\n| modificationsIn    | config     | M | Path and nodeValue are            |\n|                    |            |   | represented by XML elements       |\n|                    |            |   | inside the \\<config\\> element.    |\n|                    |            |   |                                   |\n|                    |            |   | modifyOperator is represented by  |\n|                    |            |   | the Netconf operation parameter.  |\n+--------------------+------------+---+-----------------------------------+\n\nTable 12.1.3.1.4a-2: Mapping from IS changeMOIs output parameters to SS\nequivalents"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "12.1.3.1.5 Operation deleteMOI\n\nThis IS operation deletes one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating\nthe MOI(s) to be deleted.\n\nThe Netconf operation attribute on the list representing the\nbaseObjectInstance should be set to delete or remove.\n\nThe default-operation parameter should be set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.5-1 and table 12.1.3.1.5-2.\n\nTable 12.1.3.1.5-1: Mapping of IS deleteMOI input parameters to SS\nequivalents\n\n  ------------------------------------------------------------------------------\n  **IS operation       **SS           **S**  **Remark**\n  parameter name**     parameter             \n                       name**                \n  -------------------- ------------- ------- -----------------------------------\n  baseObjectInstance   config           M    A sequence of embedded XML elements\n                                             inside the \\<config\\> element. XML\n                                             elements for all containing MOIs\n                                             and their ids(keys) shall be\n                                             included together wilt the XML\n                                             elements representing the to be\n                                             deleted MOI and its key.\n\n  scope                config           M    BASE_ONLY supported as default.\n                                             Multiple MOIs can be specified in\n                                             the same operation, emulating other\n                                             scopes.\n\n  filter               config           M    Multiple MOIs can be specified in\n                                             the same operation, emulating\n                                             filtering.\n  ------------------------------------------------------------------------------\n\nTable 12.1.3.1.5-2: Mapping of IS deleteMOI output parameters to SS\nequivalents"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "NotifyMOIAttributeValueChanges   12.1.1.4.1a.7    Used in the request body of HTTP\n                                                    POST for the notification type\n                                                    notifyMOIAttributeValueChanges\n\n  NotifyMOIChanges                 12.1.1.4.1a.8    Used in the request body of HTTP\n                                                    POST for the notification type\n                                                    notifyMOIChanges\n\n  NotifyEvent                      12.1.1.4.1a.10   Used in the request body of HTTP\n                                                    POST for the notification type\n                                                    notifyEvent\n\n  PatchItem                        12.1.1.4.1a.9    Specifies a patch item of a patch\n                                                    document\n  ------------------------------------------------------------------------------------\n\nTable 12.1.1.4.1-2: Data types imported\n\n  ---------------------------------------------------------------------------------\n  Data type                   Reference   Description\n  --------------------------- ----------- -----------------------------------------\n  DateTime                    TS 28.623   Date and time\n                              \\[44\\]      \n\n  Dn                          TS 28.623   DN type\n                              \\[44\\]      \n\n  SystemDN                    TS 28.623   systemDN type\n                              \\[44\\]      \n\n  Uri                         TS 28.623   URI type\n                              \\[44\\]      \n\n  AttributeNameValuePairSet   TS 28.623   Set of attribute name/value pairs\n                              \\[44\\]      \n\n  AttributeValueChangeSet     TS 28.623   Set of attribute names with their old and\n                              \\[44\\]      new values\n\n  Filter                      TS 28.623   Filter type\n                              \\[44\\]      \n\n  NotificationId              TS 28.623   Notification identifier as defined in\n                              \\[44\\]      ITU-T Rec. X. 733 \\[4\\]\n\n  NotificationType            TS 28.623   Notification type\n                              \\[44\\]      \n\n  NotificationHeader          TS 28.623   Notification header\n                              \\[44\\]      \n\n  ErrorResponse               TS 28.623   Used in the response body of multiple\n                              \\[44\\]      HTTP methods in case of error\n  ---------------------------------------------------------------------------------"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.2.4",
+      "title": "12.1.2.4 Data type definitions",
+      "text": "12.1.2.4 Data type definitions\n\nSee clause 12.1.1.4."
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "Definition of type MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges\n\nTable 12.1.1.4.1a.7 -1: Definition of type\nNotifyMoiAttributeValueChanges\n\n  --------------------------- ------------------------------- -------------------------------------- -------\n      **Attribute name**               **Data type**                     **Description**              **S**\n\n             href                           Uri                URI of the resource where the event      M\n                                                                         (alarm) occurred            \n\n        notificationId                NotificationId          Notification identifier as defined in     M\n                                                                     ITU-T Rec. X. 733 \\[4\\]         \n\n       notificationType              NotificationType                   Notification type               M\n                                                               (\\\"notifyMOIAttributeValueChanges\\\")  \n\n           eventTime                     DateTime              Event (MOI attribute value changes)      M\n                                                                         occurrence time             \n\n           systemDN                      SystemDN                           System DN                   M\n\n    correlatedNotifications    array(CorrelatedNotification)  Set of all notifications to which this    O\n                                                                 notification is considered to be    \n                                                              correlated as defined in ITU-T Rec. X. \n                                                                            733 \\[4\\]                \n\n        additionalText                    string              Allows a free form text description to    O\n                                                               be reported as defined in ITU-T Rec.  \n                                                                           X. 733 \\[4\\]              \n\n        sourceIndicator               SourceIndicator         Indicates the source of the operation     O\n                                                                that led to the generation of this   \n                                                                          notification.              \n\n   attributeListValueChanges      AttributeValueChangeSet     List with names of changed attributes,    M\n                                                              together with new value and optionally \n                                                                            old value                \n  --------------------------- ------------------------------- -------------------------------------- -------\n\nThe following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\"."
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "path: /ClassA=1#/attributes/attrB\n\nvalue:\n\nsubAttrB1: def\n\nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrA/subAttrB1\n\nvalue: def\n\nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1#/attributes/attrD\n\nvalue:\n\n\\- 1\n\n\\- 2\n\n\\- 3\n\nIts deletion is reported by the following notification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1#/attributes/attrD\n\nThe complete replacement of the array is reported by the following\nnotification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1#/attributes/attrD\n\nvalue:\n\n\\- 11\n\n\\- 21\n\n\\- 31\n\nThe following example reports the second item in the array changed to\n\\\"22\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrD/1\n\nvalue: 22\n\nNote the array index of the second item is \\\"1\\\".\n\nAssume now \\\"attrE\\\" is a JSON array with complex array items, for\nexample.\n\n\\[{subItemE1: 11, subItemD2: abc}, {subItemE1: 21, subItemE2: def},\n{subItemE1: 31, subItemE2\\\": ghi}.\n\nA value change to\n\n\\[{subItemE1: 11, subItemE2: abc}, {subItemE1: 21, subItemE2: xyz},\n{subItemE1: 31, subItemE2\\\": ghi}.\n\nis reported by\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrE/1/subItemE2\n\nvalue: xyz\n\nWhen \\\"subItemE2\\\" is defined as array item key at stage 2, then\n\\\"attrE\\\" should contain a JSON map.\n\nattrE:\n\n11:\n\nsubItemE2: abc\n\n21:\n\nsubItemE2: def\n\n31:\n\nsubItemE2: ghi\n\nThe same change as above is now reported by the notification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1#/attributes/attrE/21/subItemD2\n\nvalue: xyz\n\nWhen all attributes of an object have been updated with a new value, the\nMnS producer may use a compact format reporting that the \\\"attributes\\\"\ncontainer was updated completely."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.4.8",
+      "title": "12.1.1.4.4.8 Enumeration Insert",
+      "text": "12.1.1.4.4.8 Enumeration Insert\n\nTable 12.1.1.4.4.4.8-1: Enumeration Insert\n\n  -----------------------------------------------------------------------\n  Enumeration value       Description\n  ----------------------- -----------------------------------------------\n  before                  Specifies the new attribute element is inserted\n                          before the attribute element identified by the\n                          \\\"path\\\" attribute of \\\"MoiChange\\\".\n\n  after                   Specifies the new attribute element is inserted\n                          after the attribute element identified by the\n                          \\\"path\\\" attribute of \\\"MoiChange\\\".\n  -----------------------------------------------------------------------"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "\\- value: the leaf/leaf-list/container/list representing the new\nattribute field values encoded according to RFC7951. In case of a\nlist/container representing the attribute field, value shall contain\nonly the child data nodes, but not the container/list-entry itself.\n\n\\- insert: In case the field has multiplicity upper bound greater than 1\nand has the property isOrdered=True, the subparameter is used similarly\nas in case 6.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports adding a value to the \\\" hysteresis \\\" attribute subpart:\n\nnotificationId: 123456009\n\npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1/hysteresis\n\noperation: add\n\nvalue: \\'10\\'\n\nCase 10: Deleting a field (subpart) of an attribute is reported as\nfollows. (only used for structured attributes represented by a list or\ncontainer in YANG):\n\n\\- operation: remove.\n\n\\- path: Same as case 9.\n\n\\- value: Not present.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the \\\"hysteresis\\\" attribute field:\n\nnotificationId: 123456010\n\npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1/hysteresis\n\noperation: remove\n\nCase 11: Replacement of a field (subpart) of an attribute is reported as\nfollows. This implies removing previous value(s). (only used for\nstructured attributes represented by a list or container in YANG):\n\n\\- operation: replace.\n\n\\- path: Same as case 9.\n\n\\- value: Same as case 9.\n\n12.1.3.2.6 Notification notifyEvent\n\nThe NETCONF/YANG solution set uses the same mapping as the RESTful\nHTTP-based solution set. See clause 12.1.1.2.6."
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.3.1.3",
+      "title": "12.1.3.1.3 Operation getMOIAttributes",
+      "text": "+--------------------+------------+---+-----------------------------------+\n| IS operation       | SS         | S | Remark                            |\n| parameter name     | parameter  |   |                                   |\n|                    | name       |   |                                   |\n+====================+============+:=:+===================================+\n| baseObjectInstance | filter     | M | Initial part of the filter        |\n|                    |            |   | element.                          |\n|                    |            |   |                                   |\n|                    |            |   | For subtree filter this is a set  |\n|                    |            |   | of XML element representing lists |\n|                    |            |   | containing MOIs together with the |\n|                    |            |   | leafs representing key values for |\n|                    |            |   | these MOIs from the root MOI      |\n|                    |            |   | (e.g. ManagedElement) to the      |\n|                    |            |   | baseObjectInstance.               |\n|                    |            |   |                                   |\n|                    |            |   | For Xpath filter it is the        |\n|                    |            |   | initial parts of the Xpath        |\n|                    |            |   | expression representing the same  |\n|                    |            |   | information.                      |\n+--------------------+------------+---+-----------------------------------+\n| scope              | filter     | M | BASE_ONLY and BASE_ALL realized   |\n|                    |            |   | by the initial XML elements of    |\n|                    |            |   | the \\<get\\> operation.            |\n|                    |            |   | BASE_SUBTREE and BASE_NTH_LEVEL   |\n|                    |            |   | is encoded in the Xpath filter.   |\n+--------------------+------------+---+-----------------------------------+\n| level              | filter     | M | Included in the Xpath filter, see |\n|                    |            |   | examples. (If level is used Xpath |\n|                    |            |   | filtering must be used.           |\n|                    |            |   |                                   |\n|                    |            |   | For BASE_SUBTREE the levels       |\n|                    |            |   | number is transformed into a      |\n|                    |            |   | number of filter sub-expressions  |\n|                    |            |   | joined by the OR operator.        |\n|                    |            |   |                                   |\n|                    |            |   | For BASE_NTH_LEVEL included in    |\n|                    |            |   | the Xpath expression as a         |\n|                    |            |   | sequence of '\\*' parts            |"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "analysis_spec_28532_i20",
+      "query": "MoiChange attributes MoiChange",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "Note that clause 4.3 of IETF RFC 6902 \\[13\\] does not consider it as an\nerror if an attribute value is replaced with exactly the same value. For\nthat reason, it would not be an error if in the example above an\nattribute value is included in the \\\"value\\\" property that did not\nchange value. A MnS producer may consider this compact format hence also\nfor the case that not all attributes of an object have been updated."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsParameters\"></a> parameters | Map[`string`, [Parameter Object](#parameter-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Parameter Objects](#parameter-object).\n<a name=\"componentsExamples\"></a> examples | Map[`string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Example Objects](#example-object).\n<a name=\"componentsRequestBodies\"></a> requestBodies | Map[`string`, [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Request Body Objects](#request-body-object).\n<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object)."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "{\n\"type\": \"object\",\n\"properties\": {\n\"huntingSkill\": {\n\"type\": \"string\",\n\"description\": \"The measured skill for hunting\",\n\"default\": \"lazy\",\n\"enum\": [\n\"clueless\",\n\"lazy\",\n\"adventurous\",\n\"aggressive\"\n]\n}\n},\n\"required\": [\n\"huntingSkill\"\n]\n}\n]\n},\n\"Dog\": {\n\"description\": \"A representation of a dog. Note that `Dog` will be used as the discriminator value.\",\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/Pet\"\n},\n{\n\"type\": \"object\",\n\"properties\": {\n\"packSize\": {\n\"type\": \"integer\",\n\"format\": \"int32\",\n\"description\": \"the size of the pack the dog is from\",\n\"default\": 0,\n\"minimum\": 0\n}\n},\n\"required\": [\n\"packSize\"\n]\n}\n]\n}\n}\n}\n}\n```  \n```yaml\ncomponents:\nschemas:\nPet:\ntype: object\ndiscriminator:\npropertyName: petType\nproperties:\nname:\ntype: string\npetType:\ntype: string\nrequired:\n- name\n- petType\nCat:  ## \"Cat\" will be used as the discriminator value\ndescription: A representation of a cat\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\nhuntingSkill:\ntype: string"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\ndiscriminator:\npropertyName: pet_type\n```  \nThe expectation now is that a property with name `pet_type` _MUST_ be present in the response payload, and the value will correspond to the name of a schema defined in the OAS document.  Thus the response payload:  \n```\n{\n\"id\": 12345,\n\"pet_type\": \"Cat\"\n}\n```  \nWill indicate that the `Cat` schema be used in conjunction with this payload.  \nIn scenarios where the value of the discriminator field does not match the schema name or implicit mapping is not possible, an optional `mapping` definition MAY be used:  \n```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\n- $ref: 'https://gigantic-server.com/schemas/Monster/schema.json'\ndiscriminator:\npropertyName: pet_type\nmapping:\ndog: '#/components/schemas/Dog'"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Dog`",
+      "text": "- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`\nproperties:\nlovesRocks:\ntype: boolean\n```  \na payload like this:  \n```\n{\n\"pet_type\": \"Cat\",\n\"name\": \"misty\"\n}\n```  \nwill indicate that the `Cat` schema be used.  Likewise this schema:  \n```\n{\n\"pet_type\": \"cachorro\",\n\"bark\": \"soft\"\n}\n```  \nwill map to `Dog` because of the definition in the `mappings` element.  \n#### XML Object  \nA metadata object that allows for more fine-tuned XML model definitions.  \nWhen using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information.\nSee examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "Tag Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Tag Object Example  \n```json\n{\n\"name\": \"pet\",\n\"description\": \"Pets operations\"\n}\n```  \n```yaml\nname: pet\ndescription: Pets operations\n```  \n#### Reference Object  \nA simple object to allow referencing other components in the specification, internally and externally.  \nThe Reference Object is defined by [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) and follows the same structure, behavior and rules.  \nFor this specification, reference resolution is accomplished as defined by the JSON Reference specification and not by the JSON Schema specification.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"referenceRef\"></a>$ref | `string` | **REQUIRED**. The reference string.  \nThis object cannot be extended with additional properties and any properties added SHALL be ignored.  \n##### Reference Object Example  \n```json\n{"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref MoiChange",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in XML\",\n\"externalValue\": \"http://foo.bar/examples/user-example.xml\"\n}\n}\n},\n\"text/plain\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in Plain text\",\n\"externalValue\": \"http://foo.bar/examples/user-example.txt\"\n}\n}\n},\n\"*/*\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in other format\",\n\"externalValue\": \"http://foo.bar/examples/user-example.whatever\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: user to add to the system\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example\nexternalValue: 'http://foo.bar/examples/user-example.json'\n'application/xml':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example in XML"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v2",
+  "cache_key": "76ae5e098ce15186aac9969e1153d92e95654bca3b7923cdc16ceea1a2b900ef",
+  "judged_at": "2026-10-06T15:56:39-03:00"
+}

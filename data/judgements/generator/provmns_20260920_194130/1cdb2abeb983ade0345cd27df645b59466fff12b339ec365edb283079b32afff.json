@@ -1,0 +1,372 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA Insert|definition",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA Insert",
+  "aspect": "definition",
+  "summary": "schema present; 1 extra",
+  "answer": {
+    "why_different": "The difference is a different value: the generated schema adds documentation for the existing enum, while the type and enum values remain unchanged. The probable cause is that the generator incorporated the enumeration descriptions from the 3GPP specification, which the official schema omitted.",
+    "verdict": "improvement",
+    "spec_3gpp": "The 3GPP specification explicitly provides descriptions for both enum values: `before` means insertion before the element identified by MoiChange's path, and `after` means insertion after it.",
+    "openapi": "The OpenAPI reference permits schema documentation fields and does not indicate that adding such documentation to a Schema Object is invalid. The generated description therefore preserves the schema's validity while making its enum semantics explicit.",
+    "clearer": "generated",
+    "clearer_why": "The generated schema explains what `before` and `after` mean in the context of MoiChange, whereas the official schema exposes only the two values without their operational meaning.",
+    "citations": [
+      {
+        "evidence_id": "S2",
+        "quote": "before              Specifies the new attribute element is inserted before the attribute element identified by the \\\"path\\\" attribute of \\\"MoiChange\\\"."
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "after               Specifies the new attribute element is inserted after the attribute element identified by the \\\"path\\\" attribute of \\\"MoiChange\\\"."
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "the following fields MAY be used for further schema documentation"
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert",
+      "filters": {},
+      "clause": "12.1.1.4.4.8",
+      "title": "12.1.1.4.4.8 Enumeration Insert",
+      "text": "remove              Remove operation\ncopy                Copy operation\nmove                Move operation\ntest                Test operation"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert",
+      "filters": {},
+      "clause": "12.1.1.4.4.8",
+      "title": "12.1.1.4.4.8 Enumeration Insert",
+      "text": "##### 12.1.1.4.4.8 Enumeration Insert {#enumeration-insert .H6}  \nTable 12.1.1.4.4.4.8-1: Enumeration Insert  \nEnumeration value   Description\n------------------- -------------------------------------------------------------------------------------------------------------------------------------\nbefore              Specifies the new attribute element is inserted before the attribute element identified by the \\\"path\\\" attribute of \\\"MoiChange\\\".\nafter               Specifies the new attribute element is inserted after the attribute element identified by the \\\"path\\\" attribute of \\\"MoiChange\\\"."
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "representing an attribute element(value). In case of adding a new\nelement to an attribute with the property isOrdered=True the new\nelement/value is inserted before the pointed element(value), unless the\n\\\"insert\\\" subparameter specifies differently.  \n\\- value: the leaf-list/list entry representing the new attribute value\nencoded according to RFC7951 \\[50\\]. In case of a list the child data\nnodes are encoded the list-entry itself is not.  \n\\- insert: an additional input subparameter is added to the moiChange\ninput parameter. This indicates whether the new element/value was added\nbefore or after the element/value specified in path. The subparameter is\nonly valid in case of attributes with the property isOrdered=True. It\ncan take the values \\\"before\\\", \\\"after\\\". If missing it defaults to\n\\\"before\\\".  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports adding a new element/value to the \\\"performanceMetrics\\\"\nattribute before the outPackets element.:  \nnotificationId: 123456006  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics/performanceMetrics=outPackets\\\"  \noperation: add"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert",
+      "filters": {},
+      "clause": "12.1.1.4",
+      "title": "12.1.1.4 Data type definitions",
+      "text": "#### 12.1.1.4 Data type definitions"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "##### 12.1.1.4.1 General  \nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.  \nTable 12.1.1.4.1-1: Data types defined in this specification  \nData type                        Reference       Description\n-------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nCmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\nSourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\nScopeType                        12.1.1.4.4.5    Scope type of a scope\nOperation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\nInsert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\""
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "--------------------------------- ----------------------- ------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nbaseObjectInstance                config                  M       A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be deleted MOI and its key.\nscope                             config                  M       BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\nfilter                            config                  M       Multiple MOIs can be specified in the same operation, emulating filtering.  \nTable 12.1.3.1.5-2: Mapping of IS deleteMOI output parameters to SS\nequivalents  \n[Extracted Table: 99 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the deletionList can be retrieved via a"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert",
+      "filters": {},
+      "clause": "12.1.3.1.2",
+      "title": "12.1.3.1.2 Operation createMOI",
+      "text": "be set to none.  \nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.2-1 and table 12.1.3.1.2-2.  \nTable 12.1.3.1.2-1: Mapping from IS createMOI input parameters to SS\nequivalents  \nIS operation parameter name   SS parameter name   S   Remark\n----------------------------- ------------------- --- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nmanagedObjectClass            config              M   XML element's name inside the \\<config\\> element.\nmanagedObjectInstance         config              M   A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be created MOI and its key.\nattributeListIn               config              M   The key leaf, the \"attributes container\" and leaf, leaf-list or list entries of YANG models representing the attributes.  \nTable 12.1.3.1.2-2: Mapping from IS createMOI output parameters to SS\nequivalents"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.2.4",
+      "title": "12.1.2.4 Data type definitions",
+      "text": "#### 12.1.2.4 Data type definitions  \nSee clause 12.1.1.4."
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.2",
+      "title": "12.1.1.4.2 Void",
+      "text": "##### 12.1.1.4.2 Void"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.3",
+      "title": "12.1.1.4.3 Void",
+      "text": "##### 12.1.1.4.3 Void"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.4",
+      "title": "12.1.1.4.4 Simple data types and enumerations",
+      "text": "##### 12.1.1.4.4 Simple data types and enumerations"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.4.1",
+      "title": "12.1.1.4.4.1 General",
+      "text": "##### 12.1.1.4.4.1 General {#general-1 .H6}  \nThis clause defines simple data types and enumerations that are used by\nthe data structures defined in the previous clauses."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.4.2",
+      "title": "12.1.1.4.4.2 Simple data types",
+      "text": "##### 12.1.1.4.4.2 Simple data types {#simple-data-types .H6}  \nTable 12.1.1.4.3.2-1: Simple data types  \n----------- ----------------- -------------\nType name   Type definition   Description\nn/a         n/a               n/a\n----------- ----------------- -------------"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.4.3",
+      "title": "12.1.1.4.4.3 Enumeration CmNotificationTypes",
+      "text": "##### 12.1.1.4.4.3 Enumeration CmNotificationTypes {#enumeration-cmnotificationtypes .H6}  \nTable 12.1.1.4.4.3-1: Enumeration CmNotificationTypes  \nEnumeration value                Description\n-------------------------------- ----------------------------------------------------\nnotifyMOICreation                Notification type is notifyMOICreation\nnotifyMOIDeletion                Notification type is notifyMOIDeletion\nnotifyMOIAttributeValueChanges   Notification type is notifyMOIAttributeValueChange\nnoitifyMOIChanges                Notification type is notifyMOIChanges"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\nNotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\nNotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\nPatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document  \nTable 12.1.1.4.1-2: Data types imported  \nData type                   Reference          Description\n--------------------------- ------------------ ---------------------------------------------------------------------\nDateTime                    TS 28.623 \\[44\\]   Date and time\nDn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "Table 12.1.1.4.1a.2-1: Definition of type Scope  \nAttribute name   Data type   Description                                                                                                                                                                                                     S\n---------------- ----------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---\nscopeType        ScopeType   Used in the query component of HTTP GET and HTTP DELETE together with scopeLevel to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI   M\nscopeLevel       integer     Used in the query component of HTTP GET and HTTP DELETE together with scopeType to extend the set of targeted resources beyond the base resource identified with the path component of the URI                  M"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.1a.3",
+      "title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "text": "###### 12.1.1.4.1a.3 Type CorrelatedNotification  \nTable 12.1.1.4.1a.3 -1: Definition of type CorrelatedNotification"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Insert",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "###### 12.1.1.4.1a.1 Type Resource  \n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**  \n**Attribute name**   **Data type**        **Description**                                                                                                                **S**\n-------------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------ -------\nid                   string               Identifier of the resource object                                                                                              M\nobjectClass          string               Object class of the resource object                                                                                            O\nobjectInstance       Dn                   Object instance of the resource object                                                                                         O\nattributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert attributes description",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "the object creation request, shall be included in the object creation\nreport with their default values.  \n\\- Attributes with default values, that are deleted and consequently set\nto their default value, shall be included in attribute replacement\nreports.  \nNote all following use-cases use JSON expressed in YAML notation.  \nCase 1: Creation of an MOI is reported with:  \n\\- operation: add  \n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI  \n\\- value: a complete MOI representation, represented by the \\\"id\\\" node\nand the \\\"attributes\\\" container but exluding the list entry itself\nencoded according to RFC7951 \\[50\\].  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object creation:  \nhref: node1.lichtenberg.de  \n...  \nnotificationId: 123456001  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"  \noperation: add  \nvalue:  \nid: job1  \n3gpp-common-measurements:PerfMetricJob:attributes:  \njobId: 9865  \nfileReportingPeriod: 30  \nCase 2: Deletion of an MOI is reported with:  \n\\- operation: remove  \n\\- path: YANG resource identifier pointing to the list entry"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert attributes description",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "correlatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\nadditionalText            string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\nsourceIndicator           SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\nattributeList             AttributeNameValuePairSet       The attributes (name/value pairs) of the created MOI.                                                                      O\n------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------  \nThe following example shows a notification reporting the creation of an\nobject with two attributes \\\"attrA\\\" and \\\"attrB\\\". Note that the\nnotification includes the name/value pairs representing the attributes"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert attributes description",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "correlatedNotifications     array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\nadditionalText              string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\nsourceIndicator             SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\nattributeListValueChanges   AttributeValueChangeSet         List with names of changed attributes, together with new value and optionally old value                                    M\n--------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------  \nThe following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\".  \n[Extracted Table: 93 from 28532-i00 (Release Rel-18, Series 28_series)]  \nIn addition to the new values, the old values may be included in the"
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert attributes description",
+      "filters": {},
+      "clause": "12.1.3.1.2",
+      "title": "12.1.3.1.2 Operation createMOI",
+      "text": "attributeListIn               config              M   The key leaf, the \"attributes container\" and leaf, leaf-list or list entries of YANG models representing the attributes.  \nTable 12.1.3.1.2-2: Mapping from IS createMOI output parameters to SS\nequivalents  \n[Extracted Table: 96 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\nseparate \\<get-config\\> operation.  \n**Examples**  \nCreate ManagedElement=myNode, GNBDUFunction=1  \n\\<rpc message-id=\\\"101\\\"\\>  \n\\<edit-config\\>  \n\\<target\\>  \n\\<running/\\>  \n\\</target\\>  \n\\<default-operation\\>none\\</default-operation\\>  \n\\<config\\>  \n\\< ManagedElement\\>  \n\\<id\\>myNode\\</id\\>  \n\\<GNBDUFunction operation=\"create\"\\>  \n\\<id\\>1\\</id\\>  \n\\<attributes\\>  \n\\<gNBIdLength\\>25\\</gNBIdLength\\>  \n\\<gNBId\\>357\\</gNBId\\>  \n\\<priorityLabel\\>1\\</priorityLabel\\>  \n\\<gNBDUName\\>du-south-1\\</gNBDUName\\>  \n\\<!\\-- other attributes \\-\\--\\>  \n\\</attributes\\>  \n\\</GNBDUFunction\\>  \n\\</ManagedElement\\>  \n\\</config\\>  \n\\</edit-config\\>  \n\\</rpc\\>  \n\\<!\\-- createMO Response \\--\\>  \n\\<rpc-reply message-id=\\\"101\\\""
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Insert attributes description",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "correlatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\nadditionalText            string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\nsourceIndicator           SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\nattributeList             AttributeNameValuePairSet       Attributes (name/value pairs) of the deleted MOI.                                                                          O\n------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------  \nThe following example demonstrates the deletion of an object. The\nmessage body includes the name/value pairs representing the attributes\nof the deleted object.  \n[Extracted Table: 91 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "<a name=\"schemaXml\"></a>xml | [XML Object](#xml-object) | This MAY be used only on properties schemas. It has no effect on root schemas. Adds additional metadata to describe the XML representation of this property.\n<a name=\"schemaExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this schema.\n<a name=\"schemaExample\"></a>example | Any | A free-form property to include an example of an instance for this schema. To represent examples that cannot be naturally represented in JSON or YAML, a string value can be used to contain the example with escaping where necessary.\n<a name=\"schemaDeprecated\"></a> deprecated | `boolean` | Specifies that a schema is deprecated and SHOULD be transitioned out of usage. Default value is `false`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- type - Value MUST be a string. Multiple types via an array are not supported.\n- allOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- oneOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- anyOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- not - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- items - Value MUST be an object and not an array. Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema. `items` MUST be present if the `type` is `array`.\n- properties - Property definitions MUST be a [Schema Object](#schema-object) and not a standard JSON Schema (inline or referenced)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "text/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"mediaTypeSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the request body.\n<a name=\"mediaTypeExample\"></a>example | Any | Example of the media type.  The example object SHOULD be in the correct format as specified by the media type.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required description",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Cat`",
+      "text": "When used in conjunction with the `anyOf` construct, the use of the discriminator can avoid ambiguity where multiple schemas may satisfy a single payload.  \nIn both the `oneOf` and `anyOf` use cases, all possible schemas MUST be listed explicitly.  To avoid redundancy, the discriminator MAY be added to a parent schema definition, and all schemas comprising the parent schema in an `allOf` construct may be used as an alternate schema.  \nFor example:  \n```\ncomponents:\nschemas:\nPet:\ntype: object\nrequired:\n- pet_type\nproperties:\npet_type:\ntype: string\ndiscriminator:\npropertyName: pet_type\nmapping:\ncachorro: Dog\nCat:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Cat`\nproperties:\nname:\ntype: string\nDog:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required description",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)  \nThe OpenAPI Specification allows combining and extending model definitions using the `allOf` property of JSON Schema, in effect offering model composition.\n`allOf` takes an array of object definitions that are validated *independently* but together compose a single object.  \nWhile composition offers model extensibility, it does not imply a hierarchy between the models.\nTo support polymorphism, the OpenAPI Specification adds the `discriminator` field.\nWhen used, the `discriminator` will be the name of the property that decides which schema definition validates the structure of the model.\nAs such, the `discriminator` field MUST be a required field.\nThere are two ways to define the value of a discriminator for an inheriting instance.\n- Use the schema name."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required description",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Dog`",
+      "text": "- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`\nproperties:\nlovesRocks:\ntype: boolean\n```  \na payload like this:  \n```\n{\n\"pet_type\": \"Cat\",\n\"name\": \"misty\"\n}\n```  \nwill indicate that the `Cat` schema be used.  Likewise this schema:  \n```\n{\n\"pet_type\": \"cachorro\",\n\"bark\": \"soft\"\n}\n```  \nwill map to `Dog` because of the definition in the `mappings` element.  \n#### XML Object  \nA metadata object that allows for more fine-tuned XML model definitions.  \nWhen using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information.\nSee examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required description",
+      "filters": {},
+      "clause": "",
+      "title": "Discriminator Object",
+      "text": "- petType\nCat:  ## \"Cat\" will be used as the discriminator value\ndescription: A representation of a cat\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\nhuntingSkill:\ntype: string\ndescription: The measured skill for hunting\nenum:\n- clueless\n- lazy\n- adventurous\n- aggressive\nrequired:\n- huntingSkill\nDog:  ## \"Dog\" will be used as the discriminator value\ndescription: A representation of a dog\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\npackSize:\ntype: integer\nformat: int32\ndescription: the size of the pack the dog is from\ndefault: 0\nminimum: 0\nrequired:\n- packSize\n```  \n#### Discriminator Object"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required description",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"discriminatorMapping\"></a> mapping | Map[`string`, `string`] | An object to hold mappings between payload values and schema names or references.  \nThe discriminator attribute is legal only when using one of the composite keywords `oneOf`, `anyOf`, `allOf`.  \nIn OAS 3.0, a response payload MAY be described to be exactly one of any number of types:  \n```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\n```  \nwhich means the payload _MUST_, by validation, match exactly one of the schemas described by `Cat`, `Dog`, or `Lizard`.  In this case, a discriminator MAY act as a \"hint\" to shortcut validation and selection of the matching schema which may be a costly operation, depending on the complexity of the schema. We can then describe exactly which field tells us which schema to use:  \n```\nMyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v2",
+  "cache_key": "1cdb2abeb983ade0345cd27df645b59466fff12b339ec365edb283079b32afff",
+  "judged_at": "2026-10-06T18:13:32-03:00"
+}
