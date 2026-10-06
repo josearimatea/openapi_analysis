@@ -55,6 +55,21 @@ GPP_CORPUS_COLLECTIONS = ("3gpp_rel18_all", "3gpp_rel18_28")  # first one presen
 SPEC_COLLECTION_PREFIX = "analysis_spec_"
 # Spec versions the judge works on (the i00 banks are left out of it for now).
 JUDGE_SPEC_CODES = ("i20",)
+
+# Which clauses of a spec belong to which management service — stage 2 (IS, 11.x)
+# and stage 3 (REST solution set, 12.x). Read from the spec's own headings
+# ("## 11.1 Generic provisioning management service", "## 12.1 ..."; pinned by
+# tests/judge/test_spec_index.py). Indexed as metadata, so a search for one
+# service's part never reads another service's clauses.
+SPEC_SERVICE_CLAUSES = {
+    "28532": {
+        "ProvMnS": ("11.1", "12.1"),
+        "PerfMnS": ("11.3", "12.3"),
+        "HeartbeatNtf": ("11.4", "12.4"),
+        "StreamingDataMnS": ("11.5", "12.5"),
+        "FileDataReportingMnS": ("11.6", "12.6"),
+    },
+}
 SPEC_CHUNK_SIZE = 3000         # as openapi_rulesbank's spec RAG
 SPEC_CHUNK_OVERLAP = 200
 

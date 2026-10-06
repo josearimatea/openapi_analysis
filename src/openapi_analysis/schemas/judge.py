@@ -23,6 +23,17 @@ class SearchHints(BaseModel):
     terms: list[str] = Field(default_factory=list)          # extra words (operation, field)
 
 
+class Evidence(BaseModel):
+    """One retrieved chunk the judge reads — recorded so a verdict can be audited."""
+    source: Literal["spec", "openapi"]
+    collection: str
+    query: str
+    filters: dict[str, str] = Field(default_factory=dict)
+    clause: str = ""                 # spec chunks: the clause it comes from
+    title: str = ""
+    text: str
+
+
 class Part(BaseModel):
     """One divergence to be judged, with both sides as they are in their documents."""
     id: str                          # stable — the verdict cache is keyed on it

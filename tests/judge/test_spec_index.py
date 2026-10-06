@@ -57,6 +57,7 @@ def test_sections_carry_their_clause_and_a_clean_title():
 
 @pytest.mark.parametrize("title, clause", [
     ("12.1.1.1.1 Introduction", "12.1.1.1.1"),
+    ("12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges", "12.1.1.4.1a.7"),
     ("4 Overview", "4"),
     ("A.1.1 OpenAPI document", "A.1.1"),
     ("Annex A (normative): OpenAPI specification", "A"),
@@ -64,6 +65,20 @@ def test_sections_carry_their_clause_and_a_clean_title():
 ])
 def test_clause_of(title, clause):
     assert clause_of(title) == clause
+
+
+@pytest.mark.parametrize("service, words", [
+    ("ProvMnS", "provisioning"), ("PerfMnS", "performance"), ("HeartbeatNtf", "heartbeat"),
+    ("StreamingDataMnS", "streaming"), ("FileDataReportingMnS", "file data reporting"),
+])
+def test_the_service_clauses_match_the_spec_headings(service, words):
+    """judge_settings.SPEC_SERVICE_CLAUSES, checked against TS 28.532 i20's own headings."""
+    from openapi_analysis.config.judge_settings import SPEC_SERVICE_CLAUSES
+    from openapi_analysis.judge.spec_index import outline
+
+    titles = {c: t for c, t, _ in outline(SPECS_DIR / "28532-i20.md")}
+    for clause in SPEC_SERVICE_CLAUSES["28532"][service]:
+        assert words in titles[clause].lower(), f"{clause}: {titles[clause]}"
 
 
 def test_no_annex_reaches_the_index_of_the_real_spec():

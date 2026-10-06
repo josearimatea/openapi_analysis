@@ -27,12 +27,16 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 # Setext level-2 heading: a text line followed by a line of dashes (as rulesbank).
 _SETEXT_H2 = re.compile(r"^(?P<title>[^\n]+)\n-{2,}[ \t]*$", re.MULTILINE)
 _ATX = re.compile(r"^#{1,9}[ \t]+(?P<title>.+?)[ \t#]*$", re.MULTILINE)
-_CLAUSE = re.compile(r"^(?:Annex\s+)?(?P<clause>[A-Z]?\d+(?:\.\d+)*|[A-Z](?:\.\d+)+|[A-Z]\b)")
+# a clause number, segments possibly suffixed by a letter ("12.1.1.4.1a.7"), or an
+# annex letter ("A.1.1", "A")
+_CLAUSE = re.compile(
+    r"^(?:Annex\s+)?(?P<clause>\d+[a-z]?(?:\.\d+[a-z]?)*|[A-Z](?:\.\d+[a-z]?)+|[A-Z]\b)")
 _OPENAPI_LINE = re.compile(r"^\s*(?:```\w*\s*)?openapi:\s*\d", re.MULTILINE)
 _TOC_LINK = re.compile(r"\]\(#")
 _ANCHOR = re.compile(r"\s*\{#[^}]*\}\s*$")
@@ -79,25 +83,55 @@ def _is_toc(content: str) -> bool:
     return len(lines) >= 5 and sum(bool(_TOC_LINK.search(ln)) for ln in lines) > len(lines) / 2
 
 
-def split_sections(md_text: str) -> list[Section]:
-    """Cut a spec's NORMATIVE text into sections (no contents listing, no annex)."""
+def _all_sections(md_text: str) -> list[Section]:
+    """Every heading of the normative text, with its own text (possibly empty)."""
     text = _SETEXT_H2.sub(lambda m: f"## {m.group('title').strip()}", normative_only(md_text))
     heads = list(_ATX.finditer(text))
     sections = []
     for i, head in enumerate(heads):
         end = heads[i + 1].start() if i + 1 < len(heads) else len(text)
         title = _ANCHOR.sub("", head.group("title")).strip()   # drop pandoc "{#id}"
-        content = text[head.end():end].strip()
-        if not content or _is_openapi_annex(title, content) or _is_toc(content):
-            continue
-        sections.append(Section(clause=clause_of(title), title=title, content=content))
+        sections.append(Section(clause=clause_of(title), title=title,
+                                content=text[head.end():end].strip()))
     return sections
+
+
+def _indexable(s: Section) -> bool:
+    return bool(s.content) and not _is_openapi_annex(s.title, s.content) \
+        and not _is_toc(s.content)
+
+
+def split_sections(md_text: str) -> list[Section]:
+    """Cut a spec's NORMATIVE text into sections (no contents listing, no annex)."""
+    return [s for s in _all_sections(md_text) if _indexable(s)]
+
+
+@lru_cache(maxsize=8)
+def outline(path: Path) -> tuple[tuple[str, str, bool], ...]:
+    """(clause, title, indexed) of every heading of a spec's normative text.
+
+    Headings without text of their own are kept (indexed=False): a title naming the
+    subject ("11.1.1.10 Notification notifyEvent") often has its text in children
+    ("11.1.1.10.1 Definition") whose titles do not repeat the name.
+    """
+    return tuple((s.clause, s.title, _indexable(s))
+                 for s in _all_sections(path.read_text(encoding="utf-8")))
+
+
+def service_of(spec: str, clause: str) -> str:
+    """The management service a clause belongs to ('' for clauses common to all)."""
+    from openapi_analysis.config.judge_settings import SPEC_SERVICE_CLAUSES
+
+    for service, prefixes in SPEC_SERVICE_CLAUSES.get(spec, {}).items():
+        if any(clause == p or clause.startswith(p + ".") for p in prefixes):
+            return service
+    return ""
 
 
 def segments(path: Path, spec: str, code: str) -> list[dict]:
     """The sections of one spec file as qdrant_3gpp_rag segments (text + metadata)."""
     return [{"text": f"{s.title}\n\n{s.content}", "spec": spec, "code": code,
-             "clause": s.clause, "title": s.title}
+             "clause": s.clause, "title": s.title, "service": service_of(spec, s.clause)}
             for s in split_sections(path.read_text(encoding="utf-8"))]
 
 

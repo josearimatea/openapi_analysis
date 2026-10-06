@@ -7,4 +7,5 @@ It judges; it never measures — its verdicts are reported apart from the agreem
 
 spec_index.py  split a spec into sections and index it, once per version (no annex)
 parts.py       cut the divergences of the layer 1/2 reports into parts
+retrieval.py   aim the spec and OpenAPI-reference search at one part
 """
