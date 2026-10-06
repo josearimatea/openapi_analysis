@@ -102,20 +102,26 @@ que a análise não lê os irmãos.
   (`28532-i20.md`); YAML gerado: `x-ai-generation.rules-bank.source-document`. A versão
   (`i20`, `i00`) escolhe a coleção.
 - **spec de um `$ref` externo:** do nome do arquivo — `TS28623_ComDefs.yaml#/...` →
-  spec `28623` → a coleção daquela spec (indexada por nós, sem anexo).
+  spec `28623`. **Em aberto (§11):** a TS 28.623 define esses tipos só no anexo C.
 
-### 4.4 A consulta de cada parte
+### 4.4 A consulta de cada parte (implementado em `judge/retrieval.py`)
 
-Montada a partir **daquela** parte, nunca genérica:
+Montada a partir **daquela** parte, nunca genérica. Na spec, três passadas, cada uma
+acrescentando só o que as anteriores não trouxeram, **todas restritas às cláusulas do
+serviço avaliado** (metadado `service`; a TS 28.532 tem seis serviços lado a lado —
+`11.1`/`12.1` ProvMnS, `11.3`/`12.3` PerfMnS…):
 
-- **rulesbank:** filtro pela cláusula da regra (`section_id`) + similaridade com o
-  `rule_text`/endereço; para `missing` (sem cláusula), similaridade com o endereço
-  (operação/schema/campo).
-- **generator:** termos do dono e do aspecto — URI, método, nome da operação IS quando
-  conhecido, nome do schema, o que difere (ex.: "modifyMOIAttributes PATCH response
-  error codes").
-- **referência OpenAPI:** tipo de objeto + aspecto (ex.: "Responses Object default
-  response 4XX range").
+1. **por título** — as seções que **definem** o assunto da parte, no formato de título
+   3GPP `Type X` / `Enumeration X` / `Notification X` / `Operation X`, buscadas pela
+   cláusula. O assunto vem primeiro (a notificação, o schema dono, o nome da operação
+   IS/atributo da regra), depois os schemas referenciados. Um título sem texto próprio
+   (`11.1.1.10 Notification notifyEvent`) leva às subcláusulas indexadas;
+2. **pela cláusula da regra** (rulesbank) — a seção de onde a regra foi extraída;
+3. **por similaridade** — nomes da parte + palavras do aspecto (+ `rule_text`).
+
+Na **referência OpenAPI**: os Objects do aspecto (respostas → "Responses Object …
+default … 4XX 5XX"; parâmetros → "Parameter Object … path level operation level"…).
+Uma cláusula de anexo nunca vira evidência (o índice não tem nenhuma; conferido de novo).
 
 Cada veredito guarda **os trechos recuperados** (coleção, filtro, ids/títulos), para que
 se possa auditar o que o juiz leu.
@@ -205,5 +211,16 @@ montagem de consultas/filtros, o cache e a regra "sem citação → incerto".
 
 - Qual versão da TS 28.532 está no corpus permanente — a coleção fixa por versão
   resolve a spec principal, mas os `$ref` externos dependem do corpus.
+- **`$ref` externos (`TS28623_ComDefs.yaml#/...`)**: a parte normativa da TS 28.623 é
+  quase vazia (escopo, referências, "4 Solution Set definitions" remetendo aos anexos);
+  os tipos importados (`Uri`, `NotificationHeader`, `ErrorResponse`…) só existem no
+  **anexo C**, que é o `TS28623_ComDefs.yaml`. Com a regra de nenhum anexo, não há
+  texto de spec sobre eles. Opções: não buscar nada para eles (o juiz julga só com a
+  referência OpenAPI e a spec principal); ou abrir uma exceção explícita para o anexo de
+  OUTRA spec que define tipos importados (não é o gabarito do documento julgado).
+  Decisão do usuário. Por ora: sem busca para eles.
+- **Convenções já registradas nos irmãos:** o `openapi_generator/docs/PROBLEMS.md`
+  ("Não são defeitos") registra `4XX`/`5XX` no lugar de `default` como convenção
+  adotada. O juiz deve recebê-las como contexto, julgá-las de novo, ou ignorá-las?
 - Custo por execução completa (estimar no piloto).
 - Tamanho da amostra de calibração.

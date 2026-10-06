@@ -21,6 +21,8 @@ Registro de atualizações:
 - 2026-10-06 — camada 3, etapa 1 (infra): o juiz lê a spec por RAG, sem anexo nenhum;
   o cliente Qdrant fica preso à versão do servidor, com a atualização do servidor
   pendente.
+- 2026-10-06 — camada 3, etapas 2 e 3: as partes, e a busca dirigida por parte (título
+  que define o assunto, cláusula da regra, similaridade — tudo dentro do serviço).
 
 ---
 
@@ -240,3 +242,34 @@ de `~/qdrant_storage` com o container parado; subir **uma versão menor por vez*
 partir da versão menor anterior; conferir a cada passo que as coleções e o número de
 pontos de cada uma não mudaram; e verificar o `qdrant-client` instalado no chatUI, que
 declara `>=1.15.1`.
+
+## Camada 3 — as partes e a busca por parte
+
+As **partes** saem dos relatórios das camadas 1 e 2, sem LLM. No generator, uma por
+aspecto de cada dono (as respostas de uma operação, os parâmetros, cada notificação de
+callback, a definição ou o lugar de um schema); no rulesbank, uma por regra divergente.
+O documento mais novo do ProvMnS rende 37 partes — 13 já inválidas pela camada 2, que
+viram erro sem chamar a LLM — e o banco i20 rende 91. Montá-las expôs mais da corrupção
+daquele documento: dentro dos callbacks do PUT há `applied`, `removed` e `components`,
+e no PUT há `skipped` — o relatório que o Patcher faz do próprio trabalho, vazado para
+o YAML, e os schemas que ele não conseguiu devolver na raiz da correção. Registrado no
+`openapi_generator/docs/PROBLEMS.md` como P10; a execução avaliada (`…194130`) é
+posterior à de referência de lá (`…184338`) e reabre defeitos dados como resolvidos.
+
+A **busca** precisou de três ajustes, todos achados conferindo os resultados à mão. A
+similaridade pura trazia cláusulas de outros serviços (o `HTTP GET` do Streaming para
+uma parte do ProvMnS): cada trecho passou a carregar o serviço, lido dos títulos da
+própria spec, e a busca filtra por ele. Ela também perdia o assunto quando o nome era
+parecido com outros (`NotifyEvent` trazia os demais `Notify*`): uma passada anterior
+busca as seções cujo título **define** o assunto — o formato 3GPP `Type X`,
+`Notification X`, `Operation X` — e, quando esse título não tem texto próprio, as
+subcláusulas. E casar o nome por palavra solta confundia o schema `Resource` com
+"Resource structure on the MnS producer": só o título que define conta.
+
+Dois achados que não são do instrumento. A própria spec é inconsistente num ponto: a
+cláusula 12.1.1.4.1a.10 tem título "Type NotifyMoiEvent" sobre a tabela "Definition of
+type NotifyEvent" — e nem é marcada como título no markdown; nenhuma busca por título
+acha esse tipo. E os `$ref` externos ficaram sem fonte: a TS 28.623 define os tipos que
+o ProvMnS importa (`Uri`, `NotificationHeader`, `ErrorResponse`…) só no anexo C, que é o
+próprio `TS28623_ComDefs.yaml`; com a regra de nenhum anexo, não há texto de spec sobre
+eles — decisão em aberto no plano.
