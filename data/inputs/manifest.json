@@ -1,5 +1,5 @@
 {
-  "synced_at": "2026-09-29T18:12:06+00:00",
+  "synced_at": "2026-10-06T03:40:37+00:00",
   "reference": [
     {
       "service": "FaultMnS",
@@ -93,6 +93,7 @@
       "sha256": "08e55e572b5a183ad6d20b98f4a8eb69fac583f9e8640b369ef0a6b37e8e8afa",
       "spec": "i20",
       "spec_version": "18.2.0",
+      "spec_document": "data/inputs/specs/28532-i20.md",
       "generated_at": "2026-09-15T22:54:58.508129-03:00",
       "model": "openai/gpt-5.6-luna",
       "total_rules": 122
@@ -104,6 +105,7 @@
       "sha256": "cd3f603f00e26442c8b6400d54cb9d776b8a90ed6dd2a8ea889889f3ad106ac7",
       "spec": "i00",
       "spec_version": "18.0.0",
+      "spec_document": "data/inputs/specs/28532-i00.md",
       "generated_at": "2026-08-28T21:58:10.818347-03:00",
       "model": "gpt-5.6-luna",
       "total_rules": 97
@@ -115,6 +117,7 @@
       "sha256": "975378f1ab0c81c3804abd54e206bc97ed6dc050642378fef0026eb2a0c8d8ed",
       "spec": "i20",
       "spec_version": "18.2.0",
+      "spec_document": "data/inputs/specs/28532-i20.md",
       "generated_at": "2026-09-15T23:30:55.453641-03:00",
       "model": "openai/gpt-5.6-luna",
       "total_rules": 18
@@ -126,6 +129,7 @@
       "sha256": "9c9ee4fa1c762e262d2fbe0437834f9c767182c32ef28e2b03eef82728b73034",
       "spec": "i00",
       "spec_version": "18.0.0",
+      "spec_document": "data/inputs/specs/28532-i00.md",
       "generated_at": "2026-09-26T18:38:25.217072-03:00",
       "model": "openai/gpt-5.6-luna",
       "total_rules": 22
@@ -137,6 +141,7 @@
       "sha256": "038d11aa7e0a1fd5d04ccb00bff0d5cd267ef119f2ef484eeea2a1b6f5e783d2",
       "spec": "i00",
       "spec_version": "18.0.0",
+      "spec_document": "data/inputs/specs/28532-i00.md",
       "generated_at": "2026-08-18T21:53:57.987870-03:00",
       "model": "gpt-5.6-luna",
       "total_rules": 17
@@ -169,6 +174,24 @@
       "generated_at": "2026-08-23T03:14:23.553537-03:00",
       "model": "gpt-5.6-luna",
       "rules_bank": "data/inputs/rulesbank/PerfMnS/rules_bank_28532-i00_full_20260818_214526.json"
+    }
+  ],
+  "specs": [
+    {
+      "spec": "28532",
+      "code": "i00",
+      "spec_version": "18.0.0",
+      "path": "data/inputs/specs/28532-i00.md",
+      "source": "../Dataset/TSpec-LLM/3GPP-clean/Rel-18/28_series/28532-i00.md",
+      "sha256": "aa327fcee8ae6ab6a1026fb67f0bfede07b9042d4ddc8e9c155967bdfa2c42b4"
+    },
+    {
+      "spec": "28532",
+      "code": "i20",
+      "spec_version": "18.2.0",
+      "path": "data/inputs/specs/28532-i20.md",
+      "source": "openapi_rulesbank/data/inputs/3gpp/md/28532-i20.md",
+      "sha256": "dc1f91536dbff04c4bb2b23bcf95c8e02279925baf841e03d576bb50e8cae491"
     }
   ]
 }

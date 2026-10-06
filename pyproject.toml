@@ -19,6 +19,31 @@ openapi-analysis = "openapi_analysis.cli:main"
 api = [
     "fastapi>=0.110",
 ]
+# Layer 3, the semantic judge (docs/JUDGE_PLAN.md): an LLM reading the 3GPP spec and
+# the OpenAPI reference through RAG. Optional — it pulls torch and LangChain, which the
+# deterministic layers do not need.
+judge = [
+    "qdrant-3gpp-rag",            # the shared RAG package (sibling repo), as openapi_rulesbank uses it
+    "langchain-core>=1.2",
+    "langchain-openai>=1.1",
+    "python-dotenv>=1.0",
+    # Same minor version as the shared Qdrant server (1.16.3): the client warns past
+    # one minor of difference. Raise both together — see docs/RASTREIO.md.
+    "qdrant-client>=1.16,<1.17",
+    # Listed directly only to pin it to the CPU build below: the judge embeds short
+    # queries and indexes each spec once — the CUDA build (several GB) buys nothing.
+    "torch>=2.0",
+]
+
+[tool.uv.sources]
+qdrant-3gpp-rag = { path = "../qdrant_3gpp_rag", editable = true }
+torch = { index = "pytorch-cpu" }
+
+# CPU-only PyTorch wheels, used for torch alone (explicit = true).
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [dependency-groups]
 dev = [

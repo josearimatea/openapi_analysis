@@ -16,6 +16,10 @@ be traced to the exact bytes it was measured on.
               plus every bank a copied generated document was built from.
   generated/  the curated documents in GENERATED below; each one's source bank is
               read from its own x-ai-generation header, never guessed from names.
+  specs/      the 3GPP spec (markdown) each copied bank was extracted from, read
+              from the bank's own metadata.source_document — what the judge (layer
+              3) reads through RAG. A generated document reaches its spec through
+              the bank it was built from.
 
 To track a new run: add it to RULES_BANKS / GENERATED and re-run.
 """
@@ -25,6 +29,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import sys
@@ -41,6 +46,7 @@ from openapi_analysis.config.paths import (
     RULESBANK_DIR,
     SIBLING_GENERATOR,
     SIBLING_RULESBANK,
+    SPECS_DIR,
     WORKSPACE,
     reference_yaml,
 )
@@ -89,7 +95,9 @@ def rel(path: Path) -> str:
             return str(path.resolve().relative_to(base))
         except ValueError:
             continue
-    return str(path)
+    # outside the workspace (e.g. the TSpec-LLM dataset): relative to it, never the
+    # absolute path — the manifest is committed and must not carry a home directory
+    return os.path.relpath(path.resolve(), WORKSPACE)
 
 
 def service_of(filename: str) -> str:
@@ -135,6 +143,12 @@ def collect_references() -> list[dict]:
     return sorted(by_target.values(), key=lambda e: (e["service"], e["version"]))
 
 
+def _source_document(meta: dict) -> Path:
+    """The spec markdown a bank was extracted from (absolute, or relative to the workspace)."""
+    raw = Path(meta.get("source_document") or "")
+    return raw if raw.is_absolute() else WORKSPACE / raw
+
+
 def collect_banks() -> list[dict]:
     out = []
     for svc, srcs in RULES_BANKS.items():
@@ -145,10 +159,28 @@ def collect_banks() -> list[dict]:
                 "service": svc, "path": rel(RULESBANK_DIR / svc / src.name),
                 "source": rel(src), "sha256": sha256(src),
                 "spec": code, "spec_version": SPEC_VERSIONS.get(code),
+                "spec_document": rel(SPECS_DIR / _source_document(meta).name),
                 "generated_at": meta.get("generated_at"), "model": meta.get("model"),
                 "total_rules": meta.get("total_rules"), "_src": src,
             })
     return out
+
+
+def collect_specs() -> list[dict]:
+    """The spec markdown of every copied bank, once per file."""
+    out: dict[str, dict] = {}
+    for srcs in RULES_BANKS.values():
+        for src in srcs:
+            doc = _source_document(json.loads(src.read_text(encoding="utf-8")).get("metadata", {}))
+            if not doc.is_file():
+                raise SystemExit(f"{src.name}: its source document {doc} does not exist")
+            path = rel(SPECS_DIR / doc.name)
+            if path not in out:
+                spec, _, code = doc.stem.partition("-")       # "28532-i20" → 28532, i20
+                out[path] = {"spec": spec, "code": code, "spec_version": SPEC_VERSIONS.get(code),
+                             "path": path, "source": rel(doc), "sha256": sha256(doc),
+                             "_src": doc}
+    return sorted(out.values(), key=lambda e: e["path"])
 
 
 def collect_generated(banks: list[dict]) -> list[dict]:
@@ -182,9 +214,10 @@ def main(argv=None) -> int:
     refs = collect_references()
     banks = collect_banks()
     gens = collect_generated(banks)
+    specs = collect_specs()
 
     changed = 0
-    for entry in refs + banks + gens:
+    for entry in refs + banks + gens + specs:
         dst = ROOT / entry["path"]
         if dst.exists() and sha256(dst) == entry["sha256"]:
             continue
@@ -196,16 +229,17 @@ def main(argv=None) -> int:
 
     manifest = {
         "synced_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-        "reference": refs, "rulesbank": banks, "generated": gens,
+        "reference": refs, "rulesbank": banks, "generated": gens, "specs": specs,
     }
-    for section in ("reference", "rulesbank", "generated"):
+    for section in ("reference", "rulesbank", "generated", "specs"):
         for entry in manifest[section]:
             entry.pop("_src", None)
     if not args.check:
         MANIFEST_PATH.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
                                  encoding="utf-8")
     print(f"{changed} file(s) {'to copy' if args.check else 'copied'}; "
-          f"{len(refs)} reference, {len(banks)} banks, {len(gens)} generated")
+          f"{len(refs)} reference, {len(banks)} banks, {len(gens)} generated, "
+          f"{len(specs)} specs")
     return 0
 
 

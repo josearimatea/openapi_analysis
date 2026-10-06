@@ -23,3 +23,8 @@ htmlcov/
 # reports produced by this repo (regenerable); inputs under data/inputs are versioned
 data/outputs/*
 !data/outputs/.gitkeep
+
+# secrets (API keys) — never committed
+.env
+.env.*
+!.env.example

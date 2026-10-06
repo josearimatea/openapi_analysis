@@ -28,6 +28,7 @@ MANIFEST_PATH = INPUTS_DIR / "manifest.json"
 REFERENCE_DIR = INPUTS_DIR / "reference"
 RULESBANK_DIR = INPUTS_DIR / "rulesbank"
 GENERATED_DIR = INPUTS_DIR / "generated"
+SPECS_DIR = INPUTS_DIR / "specs"          # 3GPP spec markdown each bank came from
 OUTPUTS_DIR = DATA_DIR / "outputs"
 OUTPUTS_RULESBANK_DIR = OUTPUTS_DIR / "rulesbank"
 OUTPUTS_GENERATOR_DIR = OUTPUTS_DIR / "generator"
