@@ -53,8 +53,11 @@ própria**.
 | schema extra | `status == "extra"`, `note` | Uri copiado (externo no oficial) |
 | valores divergentes | `details` com `kind == "differing"` agrupados por dono | `$ref` de erro interno × externo |
 
-Partes que a camada 2 já reprovou como **inválidas** (fora do formato OpenAPI 3.0)
-entram como `erro` sem chamar a LLM.
+**Tudo é julgado com base no retrieval (decidido em 06/out).** Toda parte recebe
+evidência da **spec** e da **referência OpenAPI**; sem as duas, a LLM não é chamada e a
+parte fica `uncertain` ("sem evidência"). Partes que a camada 2 reprovou como
+**inválidas** também passam pelo juiz com retrieval — o problema de formato vai como
+fato — com um piso determinístico: inválido nunca sai `improvement` nem `equivalent`.
 
 ## 4. Contexto por RAG, por parte
 
@@ -78,7 +81,7 @@ Consequências:
   ele indexa as specs inteiras, anexos incluídos, e seus chunks não têm metadado que
   permita filtrar o anexo. As specs referenciadas por `$ref` externo são indexadas por
   nós, com a mesma regra;
-- uma citação de cláusula de anexo (`A.x`) é rejeitada → veredito `incerto`;
+- uma citação de cláusula de anexo (`A.x`) é rejeitada → veredito `uncertain`;
 - um teste trava: nenhum trecho indexado vem de anexo.
 
 ### 4.2 Fontes
@@ -137,15 +140,15 @@ se possa auditar o que o juiz leu.
   part           : identificador estável da parte (avaliação, insumo, dono, aspecto)
   official       : o trecho oficial            generated : o trecho gerado / do banco
   why_different  : a causa provável da diferença
-  verdict        : erro | melhoria | equivalente | incerto
+  verdict        : error | improvement | equivalent | uncertain
   spec_3gpp      : o que a cláusula diz        + citação (spec, cláusula)
   openapi        : o que a referência diz      + citação (seção)
-  clearer        : oficial | gerado | igual    + por quê
+  clearer        : official | generated | same    + por quê
   ```
 
-  `equivalente` = diferente na forma, mesmo significado e mesma clareza.
+  `equivalent` = diferente na forma, mesmo significado e mesma clareza.
 - **Regras do prompt:** julgar só com base nos trechos recuperados; **sem citação, o
-  veredito é `incerto`**; não inferir o que a spec não diz; separar "o oficial está
+  veredito é `uncertain`**; não inferir o que a spec não diz; separar "o oficial está
   errado" de "o gerado está errado".
 - **Risco reconhecido:** o mesmo modelo gerou o que julga (viés de autopreferência).
   Mitigação: citação obrigatória e calibração humana (§7).
@@ -211,16 +214,10 @@ montagem de consultas/filtros, o cache e a regra "sem citação → incerto".
 
 - Qual versão da TS 28.532 está no corpus permanente — a coleção fixa por versão
   resolve a spec principal, mas os `$ref` externos dependem do corpus.
-- **`$ref` externos (`TS28623_ComDefs.yaml#/...`)**: a parte normativa da TS 28.623 é
-  quase vazia (escopo, referências, "4 Solution Set definitions" remetendo aos anexos);
-  os tipos importados (`Uri`, `NotificationHeader`, `ErrorResponse`…) só existem no
-  **anexo C**, que é o `TS28623_ComDefs.yaml`. Com a regra de nenhum anexo, não há
-  texto de spec sobre eles. Opções: não buscar nada para eles (o juiz julga só com a
-  referência OpenAPI e a spec principal); ou abrir uma exceção explícita para o anexo de
-  OUTRA spec que define tipos importados (não é o gabarito do documento julgado).
-  Decisão do usuário. Por ora: sem busca para eles.
-- **Convenções já registradas nos irmãos:** o `openapi_generator/docs/PROBLEMS.md`
-  ("Não são defeitos") registra `4XX`/`5XX` no lugar de `default` como convenção
-  adotada. O juiz deve recebê-las como contexto, julgá-las de novo, ou ignorá-las?
+- ~~`$ref` externos~~ — **decidido (06/out):** sem exceção para anexo. Uma parte com
+  `$ref` externo é julgada, como todas, com a spec principal e a referência OpenAPI.
+- ~~Convenções já registradas nos irmãos~~ — **decidido (06/out):** não entram como
+  contexto. A convenção `4XX`/`5XX` no lugar de `default` veio da spec; o teste é ver
+  se o juiz chega a ela pelo que a busca traz.
 - Custo por execução completa (estimar no piloto).
 - Tamanho da amostra de calibração.
