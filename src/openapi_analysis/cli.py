@@ -3,7 +3,7 @@
     openapi-analysis rulesbank <rules_bank.json> <official.yaml> [--json]
     openapi-analysis openapi   <generated.yaml>  <official.yaml> [--json]
     openapi-analysis extract   <official.yaml> [-o official_rules.json]
-    openapi-analysis all       # every input in data/inputs → data/outputs/<Service>/
+    openapi-analysis all       # every input in data/inputs → data/outputs/{rulesbank,generator}/<Service>/
 """
 
 from __future__ import annotations
@@ -71,9 +71,10 @@ def main(argv: list[str] | None = None) -> int:
                   f"fidelity {t.value_equal:3}/{t.value_equal + t.value_different:<3} "
                   f"extra {t.bank_extra}")
         for r in evaluate_all_generated():
-            c = r.contract
+            c, v = r.contract, r.validity_generated
+            valid = "valid" if v.valid else f"INVALID ({len(v.issues)})"
             print(f"openapi    {r.generated.label:72} contract {c.exact:4}/{c.total:<4} "
-                  f"absent {len(c.absent)} differing {len(c.differing)}")
+                  f"absent {len(c.absent)} differing {len(c.differing)}  {valid}")
     return 0
 
 

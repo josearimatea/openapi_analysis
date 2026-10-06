@@ -88,7 +88,17 @@ def test_duplicates_on_one_address_are_all_kept():
                       rule("schema_property", S, "properties.p", "integer")]}
     ev = compare_rules(official, bank)
     assert ev.totals.covered == 1 and ev.totals.bank_rules == 2
+    assert ev.totals.bank_duplicates == 1
     assert [b.index for b in ev.shared_addresses[0].bank] == [0, 1]
+
+
+def test_bank_rules_are_covering_plus_duplicates_plus_extra():
+    official = [rule("path_operation", "paths./x", "get", "GET")]
+    bank = {"rules": [rule("path_operation", "paths./x", "get", "GET"),
+                      rule("path_operation", "paths./x", "get", "GET"),
+                      rule("path_operation", "paths./y", "get", "GET")]}
+    t = compare_rules(official, bank).totals
+    assert t.bank_rules == t.covered + t.bank_duplicates + t.bank_extra == 3
 
 
 def test_missing_and_extra():

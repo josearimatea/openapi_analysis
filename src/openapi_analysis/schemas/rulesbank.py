@@ -7,11 +7,17 @@ Two questions, answered apart because one does not imply the other (§3.19b):
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field, computed_field
 
 from openapi_analysis.config.settings import REPORT_SCHEMA_VERSION
+
+
+def now() -> str:
+    """The moment a report is produced, local time with offset, to the second."""
+    return datetime.now().astimezone().isoformat(timespec="seconds")
 
 ValueStatus = Literal["equal", "different", "not_comparable"]
 
@@ -48,7 +54,8 @@ class Counts(BaseModel):
     value_equal: int = 0
     value_different: int = 0
     value_not_comparable: int = 0
-    bank_rules: int = 0          # rules in the bank
+    bank_rules: int = 0          # rules in the bank = covered + bank_duplicates + bank_extra
+    bank_duplicates: int = 0     # … on an official address another bank rule already holds
     bank_extra: int = 0          # … on no official address
 
     @computed_field
@@ -80,6 +87,7 @@ class SourceInfo(BaseModel):
 class RulesBankEvaluation(BaseModel):
     schema_version: int = REPORT_SCHEMA_VERSION
     kind: Literal["rulesbank"] = "rulesbank"
+    evaluated_at: str = Field(default_factory=now)   # when THIS report was produced
     official: SourceInfo
     bank: SourceInfo
     bank_invalid_rules: int = 0               # validation_passed == False (§2.1)

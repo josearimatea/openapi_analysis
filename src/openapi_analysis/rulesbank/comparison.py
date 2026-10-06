@@ -162,6 +162,7 @@ def compare_rules(official_rules: list[dict], bank: dict, *,
             missing.append(rule)
             continue
         c.covered += 1
+        c.bank_duplicates += len(hits) - 1
         status, note = compare_value(rule, bank_rules[hits[0]])
         setattr(c, f"value_{status}", getattr(c, f"value_{status}") + 1)
         matches.append(RuleMatch(expected=rule, bank=[_bank_ref(i, bank_rules[i]) for i in hits],

@@ -87,6 +87,39 @@ def test_rules_bank_i20_provmns_by_rule_type(bank_reports):
     }
 
 
+def test_bank_rules_add_up_for_every_bank(bank_reports):
+    for r in bank_reports.values():
+        t = r.totals
+        assert t.bank_rules == t.covered + t.bank_duplicates + t.bank_extra
+
+
+def test_generated_provmns_defects_are_located(openapi_reports):
+    """The latest generated ProvMnS: what the per-owner breakdown must point at."""
+    r = openapi_reports["provmns_20260920_194130"]
+    status = {s.name: (s.status, s.found_at) for s in r.schemas}
+    assert status["MoiChange"] == ("misplaced", "components.MoiChange")
+    assert status["NotifyMoiAttributeValueChanges"] == (
+        "misplaced", "components.NotifyMoiAttributeValueChanges")
+    ops = {o.operation: o for o in r.operations}
+    assert len(ops["GET /{className}={id}"].params_at_path_level) == 5     # §3.22
+    checks = [i.check for i in r.validity_generated.issues]
+    assert (checks.count("schema"), checks.count("local_ref")) == (11, 7)
+    assert any(i.location == "paths" and "'components'" in i.message
+               for i in r.validity_generated.issues)          # a path called "components"
+
+
+def test_validity_of_every_generated_document(openapi_reports):
+    """Layer 2: which generated documents are valid OpenAPI 3.0 (the official always are)."""
+    got = {name: (r.validity_generated.valid, len(r.validity_generated.issues),
+                  r.validity_official.valid)
+           for name, r in openapi_reports.items()}
+    assert got == {
+        "provmns_20260920_194130": (False, 18, True),
+        "provmns_20260828_232853": (True, 0, True),
+        "perfmns_20260823_031421": (True, 0, True),
+    }
+
+
 def test_external_ref_turned_internal_is_measured_323(bank_reports):
     r = bank_reports["rules_bank_28532-i20_full_20260915_214107"]
     lost = [m for m in r.matches if m.note.startswith("§3.23")]

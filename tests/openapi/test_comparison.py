@@ -110,6 +110,55 @@ def test_enum_and_required_are_sets():
     assert [d.path for d in typo.contract.differing] == ["components.schemas.E.enum"]
 
 
+def test_keys_with_dots_stay_one_segment():
+    """A media type holds dots; it must not be split into fake path segments."""
+    media = "application/vnd.3gpp.object-tree-flat+json"
+    official = _doc(paths={"/x": {"get": {"responses": {"200": {"content": {
+        media: {"schema": {"type": "array"}}}}}}}})
+    result = compare_documents(_doc(paths={"/x": {"get": {"responses": {"200": {}}}}}),
+                               official)
+    detail = [d for d in result.details if d.kind == "absent"]
+    assert [(d.owner, d.element) for d in detail] == [
+        ("GET /x", f"responses.200.content.'{media}'")]
+
+
+def test_both_documents_are_validated():
+    ok = {"/x": {"post": {"responses": {"204": {"description": "done"}}}}}
+    generated = _doc(paths={**ok, "/y": {"notifyX": {"post": {}}}})
+    result = compare_documents(generated, _doc(paths=ok))
+    assert not result.validity_generated.valid
+    assert result.validity_official.valid
+
+
+def test_schema_outside_components_schemas_is_misplaced():
+    official = _doc({"A": {"type": "object", "properties": {"p": {"type": "string"}}}})
+    generated = _doc()
+    generated["components"]["A"] = {"type": "object", "properties": {"p": {"type": "string"}}}
+    s = next(s for s in compare_documents(generated, official).schemas if s.name == "A")
+    assert s.status == "misplaced" and s.found_at == "components.A"
+    assert "2/2" in s.note
+
+
+def test_operation_parameter_declared_on_the_path_is_flagged_322():
+    param = {"name": "q", "in": "query", "schema": {"type": "string"}}
+    official = _doc(paths={"/x": {"get": {"parameters": [param], "responses": {}},
+                                  "put": {"responses": {}}}})
+    generated = _doc(paths={"/x": {"parameters": [param], "get": {"responses": {}},
+                                   "put": {"responses": {}}}})
+    ops = {o.operation: o for o in compare_documents(generated, official).operations}
+    assert ops["GET /x"].params_at_path_level == ["query q"]
+    assert ops["GET /x"].params_missing == []           # still offered, via the path item
+    assert ops["PUT /x"].params_extra == ["query q"]    # … and to every other method
+
+
+def test_details_collapse_the_leaves_of_one_parameter():
+    param = {"name": "q", "in": "query", "required": False, "schema": {"type": "string"}}
+    official = _doc(paths={"/x": {"get": {"parameters": [param], "responses": {}}}})
+    generated = _doc(paths={"/x": {"get": {"responses": {}}}})
+    detail = [d for d in compare_documents(generated, official).details if d.kind == "absent"]
+    assert [(d.element, d.leaves) for d in detail] == [("parameters[in=query,name=q]", 4)]
+
+
 def test_operations_missing_and_extra():
     official = _doc(paths={"/x": {"get": {"responses": {}}, "put": {"responses": {}}}})
     generated = _doc(paths={"/x": {"get": {"responses": {}}}, "/y": {"post": {"responses": {}}}})
