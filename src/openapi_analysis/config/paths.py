@@ -7,6 +7,8 @@ data/
     rulesbank/<Service>/     rules banks produced by openapi_rulesbank
     generated/<Service>/     OpenAPI documents produced by openapi_generator
   outputs/                   reports written by this repo (git-ignored, regenerable)
+    rulesbank/<Service>/     evaluation 1 — one report per rules bank
+    generator/<Service>/     evaluation 2 — one report per generated OpenAPI document
 
 Inputs are COPIED here (scripts/sync_data.py) rather than read from the sibling
 repos, so a measurement is reproducible from this repo alone and a pinned count
@@ -27,6 +29,8 @@ REFERENCE_DIR = INPUTS_DIR / "reference"
 RULESBANK_DIR = INPUTS_DIR / "rulesbank"
 GENERATED_DIR = INPUTS_DIR / "generated"
 OUTPUTS_DIR = DATA_DIR / "outputs"
+OUTPUTS_RULESBANK_DIR = OUTPUTS_DIR / "rulesbank"
+OUTPUTS_GENERATOR_DIR = OUTPUTS_DIR / "generator"
 
 # Sibling repos — read ONLY by scripts/sync_data.py, never by the analysis itself.
 SIBLING_RULESBANK = WORKSPACE / "openapi_rulesbank"

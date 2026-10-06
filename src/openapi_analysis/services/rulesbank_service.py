@@ -11,7 +11,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from openapi_analysis.config.paths import ROOT, reference_yaml
+from openapi_analysis.config.paths import OUTPUTS_RULESBANK_DIR, ROOT, reference_yaml
 from openapi_analysis.config.settings import OFFICIAL_REFERENCE, SPEC_VERSIONS
 from openapi_analysis.reporting.text import render_rulesbank
 from openapi_analysis.rulesbank.comparison import compare_rules
@@ -54,7 +54,7 @@ def evaluate_rules_bank(rules_bank: Source, official_yaml: Source, *,
     """Evaluate a generated rules bank against the official YAML, rule by rule.
 
     rules_bank / official_yaml: a parsed dict or a path. save_as=(service, name)
-    also writes the report to data/outputs/<service>/<name>.json|.txt.
+    also writes the report to data/outputs/rulesbank/<service>/<name>.json|.txt.
     """
     bank, bank_label = load(rules_bank)
     doc, doc_label = load(official_yaml)
@@ -62,7 +62,8 @@ def evaluate_rules_bank(rules_bank: Source, official_yaml: Source, *,
                            official=_official_info(doc, doc_label),
                            bank_info=_bank_info(bank, bank_label))
     if save_as:
-        save_report(report, *save_as, text=render_rulesbank(report, max_items=10_000))
+        save_report(report, OUTPUTS_RULESBANK_DIR, *save_as,
+                    text=render_rulesbank(report, max_items=10_000))
     return report
 
 
@@ -74,7 +75,7 @@ def evaluate_all_rules_banks(save: bool = True) -> list[RulesBankEvaluation]:
         if service not in OFFICIAL_REFERENCE:
             continue
         official = reference_yaml(service, OFFICIAL_REFERENCE[service])
-        name = f"rulesbank__{Path(entry['path']).stem}"
+        name = Path(entry["path"]).stem
         reports.append(evaluate_rules_bank(ROOT / entry["path"], official,
                                            save_as=(service, name) if save else None))
     return reports

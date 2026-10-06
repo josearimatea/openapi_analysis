@@ -14,7 +14,7 @@ from typing import Any
 
 import yaml
 
-from openapi_analysis.config.paths import MANIFEST_PATH, OUTPUTS_DIR, ROOT
+from openapi_analysis.config.paths import MANIFEST_PATH, ROOT
 
 Source = Mapping[str, Any] | str | Path
 
@@ -38,9 +38,13 @@ def manifest() -> dict[str, Any]:
     return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
 
-def save_report(report: Any, service: str, name: str, text: str) -> Path:
-    """Write a report as <name>.json and <name>.txt under data/outputs/<service>/."""
-    out_dir = OUTPUTS_DIR / service
+def save_report(report: Any, base_dir: Path, service: str, name: str, text: str) -> Path:
+    """Write a report as <name>.json and <name>.txt under <base_dir>/<service>/.
+
+    base_dir is the evaluation's own folder (config.paths.OUTPUTS_RULESBANK_DIR or
+    OUTPUTS_GENERATOR_DIR), so the two evaluations never share a directory.
+    """
+    out_dir = base_dir / service
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / f"{name}.json").write_text(report.model_dump_json(indent=2) + "\n",
                                           encoding="utf-8")

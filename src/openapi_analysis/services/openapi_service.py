@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from openapi_analysis.config.paths import ROOT, reference_yaml
+from openapi_analysis.config.paths import OUTPUTS_GENERATOR_DIR, ROOT, reference_yaml
 from openapi_analysis.config.settings import OFFICIAL_REFERENCE
 from openapi_analysis.openapi.comparison import compare_documents
 from openapi_analysis.reporting.text import render_openapi
@@ -30,7 +30,7 @@ def evaluate_openapi(generated_yaml: Source, official_yaml: Source, *,
     """Evaluate a generated OpenAPI document against the official YAML.
 
     generated_yaml / official_yaml: a parsed dict or a path. save_as=(service, name)
-    also writes the report to data/outputs/<service>/<name>.json|.txt.
+    also writes the report to data/outputs/generator/<service>/<name>.json|.txt.
     """
     gen, gen_label = load(generated_yaml)
     off, off_label = load(official_yaml)
@@ -39,7 +39,8 @@ def evaluate_openapi(generated_yaml: Source, official_yaml: Source, *,
         official_info=SourceInfo(label=off_label,
                                  version=str((off.get("info") or {}).get("version", ""))))
     if save_as:
-        save_report(report, *save_as, text=render_openapi(report, max_items=10_000))
+        save_report(report, OUTPUTS_GENERATOR_DIR, *save_as,
+                    text=render_openapi(report, max_items=10_000))
     return report
 
 
@@ -52,7 +53,7 @@ def evaluate_all_generated(save: bool = True) -> list[OpenAPIEvaluation]:
         if service not in OFFICIAL_REFERENCE:
             continue
         official = reference_yaml(service, OFFICIAL_REFERENCE[service])
-        name = f"openapi__{Path(entry['path']).stem}"
+        name = Path(entry["path"]).stem
         reports.append(evaluate_openapi(ROOT / entry["path"], official,
                                         save_as=(service, name) if save else None))
     return reports
