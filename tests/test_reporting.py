@@ -18,7 +18,7 @@ def test_the_final_analysis_renders_and_adds_up():
     import yaml
 
     from openapi_analysis.judge.parts import document_owners, generator_parts, leaf_census
-    from openapi_analysis.reporting.markdown import render_judge_final
+    from openapi_analysis.reporting.final import census, render_final
     from openapi_analysis.schemas.judge import JudgeAnswer, JudgeReport, Verdict
 
     gen = yaml.safe_load((ROOT / "data/inputs/generated/ProvMnS/"
@@ -36,11 +36,17 @@ def test_the_final_analysis_renders_and_adds_up():
                      model="m", prompt_version="v", evaluated_at="2026-10-06T00:00:00-03:00",
                      verdicts=verdicts, parts_total=len(parts),
                      owners_total=len(document_owners(report, gen, off)),
-                     leaves=leaf_census(report, gen, off))
-    md = render_judge_final(jr)
-    # the API only: 582 lines in both documents, 29 of them the header (not scored)
-    assert "| **total (API)** | 553 | 38 | 0 | 0 | 515 | 0 | 0 | **6.9%** |" in md
-    assert "29 lines: equal 6, error 23." in md
-    import re
-
-    assert len(re.findall(r"^### \d+\. ", md, re.MULTILINE)) == len(parts)
+                     leaves=leaf_census(report, gen, off),
+                     validity_generated=report.validity_generated,
+                     validity_official=report.validity_official)
+    rows, total = census(jr)
+    # the API only — the header (29 values) apart; every value counted once
+    assert (total["total"], total["equal"], total["error"], total["not judged"]) == (553, 38, 515, 0)
+    assert total["total"] == (total["equal"] + total["changed"] + total["only_official"]
+                              + total["only_generated"])
+    assert rows["document header"]["total"] == 29
+    text = render_final(jr)
+    for step in ("RESULT\n", "Valid OpenAPI 3.0 (result 1): NO — 18 issue(s)",
+                 "RESULT 1 — OPENAPI VALIDATION", "RESULT 2 — VALUE BY VALUE",
+                 "IMPROVEMENTS", "DETAIL, PART BY PART"):
+        assert step in text

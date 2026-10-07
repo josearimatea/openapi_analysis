@@ -253,100 +253,13 @@ def _analysed(v) -> list[str]:
     return lines
 
 
-def _share(n: int, total: int) -> str:
-    return f"{100 * n / total:5.1f}%" if total else "    —"
-
-
-CENSUS_COLUMNS = ("equal", "equivalent", "improvement", "error", "uncertain", "not judged")
-
-
-# The document's header — info, servers, externalDocs, openapi, tags, security, x-* —
-# describes the document, not the API: reported, never scored.
-HEADER = "document metadata"
-
-
-def judge_census(report) -> tuple[dict[str, dict[str, int]], dict[str, int]]:
-    """(rows by region, total of the API) in LINES of YAML (leaf values) over both
-    documents: each line is equal to the official, or takes the verdict of its own
-    difference; "not judged" is what a partial run left out. The total — the score —
-    covers the API only (operations, schemas, components); the header row is apart."""
-    from openapi_analysis.judge.parts import REGIONS, region
-
-    cols = CENSUS_COLUMNS
-    rows: dict[str, dict[str, int]] = {}
-    for r in REGIONS:
-        census = report.leaves.get(r, {"total": 0, "equal": 0})
-        rows[r] = {c: 0 for c in cols} | {"total": census["total"], "equal": census["equal"]}
-    for v in report.verdicts:
-        per = v.difference_verdicts or [v.answer.verdict] * len(v.differences)
-        for d, verdict in zip(v.differences, per, strict=True):
-            rows[region(v.owner)][verdict] += d.leaves
-    for row in rows.values():
-        judged = sum(row[c] for c in cols[1:5])
-        row["not judged"] = row["total"] - row["equal"] - judged
-    total = {c: sum(row[c] for r, row in rows.items() if r != HEADER)
-             for c in (*cols, "total")}
-    return {r: row for r, row in rows.items() if row["total"]}, total
-
-
 def _judge_summary(report) -> list[str]:
-    """The API at a glance, in one unit: the LINE of YAML (a leaf value).
-    Correct = equal + equivalent + improvement. The header is reported apart."""
-    cols = CENSUS_COLUMNS
-    rows, total = judge_census(report)
-    header = rows.pop(HEADER, None)
+    """The result first (reporting/final.py): validity, every value of the API by
+    verdict, the score, then the same by region."""
+    from openapi_analysis.reporting.final import _result, _result2, census, differences
 
-    def line(name: str, row: dict[str, int]) -> str:
-        correct = row["equal"] + row["equivalent"] + row["improvement"]
-        return (f"  {name:20}{row['total']:>7}" + "".join(f"{row[c]:>12}" for c in cols)
-                + f"{_share(correct, row['total']):>10}")
-
-    t = total["total"]
-    correct = total["equal"] + total["equivalent"] + total["improvement"]
-    different = t - total["equal"]
-    lines = [
-        "RESULT — the API of the generated document against the official one",
-        "  Unit: one line of YAML (a leaf value), counted over both documents. Each line",
-        "  is either EQUAL to the official, or DIFFERENT — and then it takes the verdict",
-        "  the judge gave to its own difference. CORRECT = equal + equivalent +",
-        "  improvement. Scored: the API (paths and components). The document header",
-        "  (info, servers, tags, x-...) is reported below, apart, and not scored.",
-        "",
-        f"  {'region':20}{'lines':>7}" + "".join(f"{c:>12}" for c in cols)
-        + f"{'correct':>10}",
-        *(line(r, row) for r, row in rows.items()),
-        "  " + "-" * 110,
-        line("TOTAL (API)", total),
-        "",
-        "  In words:",
-        f"    {t} lines of API in all.",
-        f"    {total['equal']} ({_share(total['equal'], t).strip()}) are equal to the official.",
-        f"    {different} ({_share(different, t).strip()}) are different; of these:",
-        f"      {total['equivalent']:>5}  correct though different (equivalent)",
-        f"      {total['improvement']:>5}  better than the official (improvement)",
-        f"      {total['error']:>5}  wrong (error)",
-        f"      {total['uncertain']:>5}  undecided — the evidence did not settle them (uncertain)",
-    ]
-    if total["not judged"]:
-        lines.append(f"      {total['not judged']:>5}  not judged in this run (partial run)")
-    undecided = total["uncertain"] + total["not judged"]
-    lines += [(f"    CORRECT: {correct} of {t} lines = {_share(correct, t).strip()}"
-               f"   (wrong {_share(total['error'], t).strip()}, "
-               f"undecided {_share(undecided, t).strip()})"), ""]
-    if header:
-        lines += ["  DOCUMENT HEADER (info, servers, externalDocs, tags, x-...) — not scored:",
-                  f"    {header['total']} lines: " + ", ".join(
-                      f"{c} {header[c]}" for c in cols if header[c]), ""]
-
-    judged = len(report.verdicts)
-    lines.append(f"  The differences were judged in {judged} part(s)"
-                 + (f" of {report.parts_total}" if report.parts_total > judged else "")
-                 + " — one per aspect of an operation, schema or block; verdicts: "
-                 + ", ".join(f"{k} {n}" for k, n in sorted(report.counts.items())) + ".")
-    if report.owners_equal:
-        lines.append(f"  Owners entirely equal ({len(report.owners_equal)} of "
-                     f"{report.owners_total}): " + ", ".join(report.owners_equal))
-    return lines
+    rows, total = census(report)
+    return [*_result(report, total, differences(report)), "", *_result2(rows, total)]
 
 
 def render_judge(report, max_text: int = 400) -> str:
