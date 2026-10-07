@@ -448,33 +448,49 @@ def document_owners(report: OpenAPIEvaluation, generated: dict, official: dict) 
     return list(owners)
 
 
-REGIONS = ("operations", "schemas", "other components", "document metadata")
+REGIONS = ("endpoints", "data types", "other components", "document header")
 
 
 def region(owner: str) -> str:
-    """The region of the document an owner sits in."""
+    """The region of the document an owner sits in:
+      endpoints         paths — each operation (method + path) and its parameters,
+                        request body, responses and callbacks
+      data types        components.schemas — the data models the endpoints use
+      other components  the rest of components, and blocks outside their place
+      document header   info, servers, externalDocs, openapi, tags, security, x-*
+                        — about the document, not the API (never scored)"""
     head = owner.split(" ", 1)[0]
     if head == "SCHEMA":
-        return "schemas"
+        return "data types"
     if head in ("COMPONENT", "COMPONENTS"):
         return "other components"
     if head == "DOCUMENT":
-        return "document metadata"
-    return "operations"
+        return "document header"
+    return "endpoints"
 
 
 def leaf_census(report: OpenAPIEvaluation, generated: dict,
                 official: dict) -> dict[str, dict[str, int]]:
-    """{region: {"total": n, "equal": n}} over every leaf of either document — a leaf
-    present in both with the same value is equal; the others are the differences."""
+    """{region: counts} over the VALUES of both documents — a value is one leaf, a field
+    holding a final value (info.title, ...responses.200.description), as layer 1 counts
+    them. Per region: official / generated (values in each), total (distinct values in
+    either), equal, changed (both have it, other value), only_official, only_generated.
+    total = equal + changed + only_official + only_generated."""
     misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
                  if s.status == "misplaced"}
     o, g = flatten_parts(official), flatten_parts(generated)
-    out = {r: {"total": 0, "equal": 0} for r in REGIONS}
+    keys = ("official", "generated", "total", "equal", "changed", "only_official",
+            "only_generated")
+    out = {r: dict.fromkeys(keys, 0) for r in REGIONS}
     for p in {*o, *g}:
-        r = region(_unit(p, official, generated, misplaced)[0])
-        out[r]["total"] += 1
-        out[r]["equal"] += int(p in o and p in g and o[p] == g[p])
+        c = out[region(_unit(p, official, generated, misplaced)[0])]
+        c["total"] += 1
+        c["official"] += p in o
+        c["generated"] += p in g
+        if p in o and p in g:
+            c["equal" if o[p] == g[p] else "changed"] += 1
+        else:
+            c["only_official" if p in o else "only_generated"] += 1
     return out
 
 

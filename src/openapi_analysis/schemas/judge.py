@@ -16,6 +16,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field, computed_field
 
+from openapi_analysis.schemas.openapi import ValidityReport
+
 VerdictLabel = Literal["error", "improvement", "equivalent", "uncertain"]
 Clearer = Literal["official", "generated", "same"]
 
@@ -164,8 +166,10 @@ class JudgeReport(BaseModel):
     owners_total: int = 0            # owners of either document (generator)
     owners_equal: list[str] = Field(default_factory=list)  # owners with no part: equal
     parts_total: int = 0             # parts found — more than the verdicts if a run is partial
-    leaves: dict[str, dict[str, int]] = Field(default_factory=dict)  # generator: every
-                                     # leaf of either document by region: total, equal
+    leaves: dict[str, dict[str, int]] = Field(default_factory=dict)  # generator: the
+                                     # values of both documents by region (parts.leaf_census)
+    validity_generated: ValidityReport | None = None   # layer 2 (generator)
+    validity_official: ValidityReport | None = None
 
     @computed_field
     @property
