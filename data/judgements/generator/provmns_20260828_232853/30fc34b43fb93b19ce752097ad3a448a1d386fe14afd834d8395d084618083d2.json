@@ -1,0 +1,499 @@
+{
+  "part_id": "generator|provmns_20260828_232853|PATCH /{className}={id}|request_body",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "PATCH /{className}={id}",
+  "aspect": "request_body",
+  "summary": "media types missing ['application/3gpp-json-patch+json', 'application/3gpp-merge-patch+json', 'application/json-patch+json']; 4 absent",
+  "answer": {
+    "why_different": "The generated document has a different structure: it omits the request-body description and three media-type entries, including their nested schemas. This is not merely a value or address difference; it removes supported PATCH representations from the request body.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP evidence specifies four PATCH request media types: merge patch with request-body type Resource, 3GPP merge patch with Resource, JSON Patch with array(PatchItem), and 3GPP JSON Patch with array(PatchItem). It also states that HTTP PATCH is used to create, update, or delete resources.",
+    "openapi": "OpenAPI 3.0 requires the requestBody content map to describe the available request media types, and each Media Type Object may define the schema for that media type. The requestBody description is a permitted field for explaining the request body.",
+    "clearer": "official",
+    "clearer_why": "The official version explains the purpose of the patch body and lists all supported patch formats, while the generated version exposes only one of them and provides no explanatory description.",
+    "citations": [
+      {
+        "evidence_id": "S4",
+        "quote": "Four patch media types are available for the request message body."
+      },
+      {
+        "evidence_id": "S21",
+        "quote": "\"application/json-patch+json\" (RFC 6902 [36]), request body type: array(PatchItem)"
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "content | Map[string, Media Type Object] | REQUIRED. The content of the request body."
+      },
+      {
+        "evidence_id": "O8",
+        "quote": "description | string | A brief description of the request body."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated side removes the explanation of the PATCH request body and the list of supported patch formats. This loses API documentation present in the official side; OpenAPI supports a requestBody description (O8), and the specification identifies four available media types (S4)."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "The generated side omits the 3GPP merge-patch representation and its Resource schema. The specification identifies a 3GPP merge-patch request type as Resource (S21), while OpenAPI requires request content to describe available media types (O1)."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "error",
+        "reason": "The generated side omits the standard JSON Patch media type and its array(PatchItem) schema. The specification explicitly assigns JSON Patch the request body type array(PatchItem) (S21)."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "error",
+        "reason": "The generated side omits the 3GPP JSON Patch media type and its array(PatchItem) schema. The specification lists the corresponding 3GPP JSON Patch request body as array(PatchItem) (S21), and OpenAPI Media Type Objects carry the schema for each media type (O2)."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "equivalents (HTTP PATCH)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                M\nstatus                  response status codes       n/a                     n/a                     M\nresponse body               error                   ErrorResponse           O  \nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.  \nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.  \nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.  \nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.  \nNote 1: Void."
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.5",
+      "title": "12.1.1.1.5 Operation deleteMOI",
+      "text": "##### 12.1.1.1.5 Operation deleteMOI  \nThis operation deletes a single resource representing a managed object\ninstance"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                O\nstatus                  response status codes       n/a                     n/a                     M\nresponse body               error                   ErrorResponse           O  \nFurther details on updating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.3."
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "###### 12.1.1.1.4.2 Mapping to HTTP PATCH  \nHTTP PATCH is used to create, update or delete one or multiple\nresources.  \nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)  \n[Extracted Table: 79 from 28532-i00 (Release Rel-18, Series 28_series)]  \nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:  \n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource  \n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource  \n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.  \nTable 12.1.1.3.2.1.3.3-2: Data structures supported by the PATCH request\nbody on this resource  \n[Extracted Table: 83 from 28532-i00 (Release Rel-18, Series 28_series)]  \nTable 12.1.1.2.1.1.3.3-3: Data structures supported by the PATCH\nresponse body on this resource  \n**Data type**   **Response codes**   **Description**                **S**\n--------------- -------------------- ------------------------------ -------\nErrorResponse   4xx/5xx              Returned in case of an error   M"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "##### 12.1.1.3.2.1.3.4 HTTP DELETE  {#http-delete .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource  \n[Extracted Table: 84 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThis method shall support the request data structures, the response data"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\nNotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\nNotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\nPatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document  \nTable 12.1.1.4.1-2: Data types imported  \nData type                   Reference          Description\n--------------------------- ------------------ ---------------------------------------------------------------------\nDateTime                    TS 28.623 \\[44\\]   Date and time\nDn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.5",
+      "title": "12.1.1.1.5 Operation deleteMOI",
+      "text": "Further details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.  \nNote 1: Void."
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.5",
+      "title": "12.1.1.1.5 Operation deleteMOI",
+      "text": "##### 12.1.1.1.5 Operation deleteMOI  \nThis operation deletes a single resource representing a managed object\ninstance  \nTable 12.1.1.1.5-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP DELETE)  \n[Extracted Table: 80 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nNote 2: Void.  \nTable 12.1.1.1.5-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP DELETE)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\ndeletionlist            n/a                         n/a                     n/a                     n/a\nstatus                  response status codes       n/a                     n/a                     M\nresponse body               error                   ErrorResponse           O  \nFurther details on deleting a resource with HTTP DELETE are provided in\nTS 32.158 \\[15\\], clause 5.4."
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.6",
+      "title": "12.1.1.1.6 Void",
+      "text": "##### 12.1.1.1.6 Void"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\nErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "##### 12.1.1.3.2.1.3.3 HTTP PATCH  {#http-patch .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "Dn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\nAttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\nFilter                      TS 28.623 \\[44\\]   Filter type\nNotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\nNotificationType            TS 28.623 \\[44\\]   Notification type\nNotificationHeader          TS 28.623 \\[44\\]   Notification header\nErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a",
+      "title": "12.1.1.4.1a Structured data types",
+      "text": "##### 12.1.1.4.1a Structured data types"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "###### 12.1.1.4.1a.1 Type Resource  \n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**  \n**Attribute name**   **Data type**        **Description**                                                                                                                **S**"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "className            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3",
+      "title": "12.1.1.3.2.1.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.1.3 HTTP methods"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.  \nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource  \n**Data type**   **Description**                                                     **S**\n--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.  \nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before\nreplacing the value with the new value, that is contained in \\\"value\\\".  \nThe following example notification (where JSON is expressed in YAML\nnotation) reports an object creation  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1  \nvalue:  \nid: 1,  \nobjectClass: ClassA,  \nattributes:  \nattrA: 123  \nattrB:  \nsubAttrB1: ABC  \nsubAttrB2: 56  \nThe following example reports the deletion of that object.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: remove  \npath: /ClassA=1  \nThe following example reports the addition of a new attribute \\\"attrC\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrC  \nvalue: xyz  \nThe following example reports the deletion of the attribute \\\"attrC\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.2.5",
+      "title": "12.1.1.2.5 Notification notifyMOIChanges",
+      "text": "equivalents (HTTP POST)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nobjectClass             request body                href                    Uri                     M\nobjectInstance\nnotificationId          request body                notificationId          NotificationId          M\nnotificationType        request body                notificationType        NotificationType        M\neventTime               request body                eventTime               DateTime                M\nsystemDN                request body                systemDN                SystemDN                M\nmoiChanges              request body                mOIChanges              array(MoiChange)        M"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource  \n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource  \n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)  \n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)  \nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.  \nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.  \nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.  \nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------"
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource  \n[Extracted Table: 81 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "##### 12.1.1.3.2.1.3.2 HTTP GET  {#http-get .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource  \n[Extracted Table: 82 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.  \nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource  \n**Data type**   **Description**   **S**\n--------------- ----------------- -------\nn/a             n/a               n/a  \nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.2.2",
+      "title": "12.1.2.2 Mapping of notifications",
+      "text": "#### 12.1.2.2 Mapping of notifications"
+    },
+    {
+      "id": "S25",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.2.2.1",
+      "title": "12.1.2.2.1 Introduction",
+      "text": "##### 12.1.2.2.1 Introduction"
+    },
+    {
+      "id": "S26",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.2.2.1.1",
+      "title": "12.1.2.2.1.1 General",
+      "text": "###### 12.1.2.2.1.1 General  \nThe 3GPP IS notifications are mapped to SS euivalents according to table\n12.1.2.2.1.1-1.  \nTable 12.1.2.2.1.1-1: Mapping of 3GPP IS notifications to SS equivalents  \n**3GPP IS notifications**        **HTTP Method**   **Resource URI**   **S**\n-------------------------------- ----------------- ------------------ -------\nnotifyMOICreation                POST              /eventListener     M\nnotifyMOIDeletion                POST              /eventListener     M\nnotifyMOIAttributeValueChanges   POST              /eventListener     M\nnotifyMOIChanges                 POST              /eventListener     M"
+    },
+    {
+      "id": "S27",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.2.2.1.2",
+      "title": "12.1.2.2.1.2 Void",
+      "text": "###### 12.1.2.2.1.2 Void"
+    },
+    {
+      "id": "S28",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.2.2.2",
+      "title": "12.1.2.2.2 Notification notifyMOICreation",
+      "text": "##### 12.1.2.2.2 Notification notifyMOICreation  \nSee clause 12.1.1.2.2.."
+    },
+    {
+      "id": "S29",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.2.2.3",
+      "title": "12.1.2.2.3 Notification notifyMOIDeletion",
+      "text": "##### 12.1.2.2.3 Notification notifyMOIDeletion  \nSee clause 12.1.1.2.3."
+    },
+    {
+      "id": "S30",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.2.2.4",
+      "title": "12.1.2.2.4 Notification notifyMOIAttributeValueChange",
+      "text": "##### 12.1.2.2.4 Notification notifyMOIAttributeValueChange  \nSee clause 12.1.1.2.4."
+    },
+    {
+      "id": "S31",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.2.2.5",
+      "title": "12.1.2.2.5 Notification notifyMOIChanges",
+      "text": "##### 12.1.2.2.5 Notification notifyMOIChanges  \nSee clause 12.1.1.2.5."
+    },
+    {
+      "id": "S32",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.1.6",
+      "title": "12.1.1.1.6 Void",
+      "text": "response body               error                   ErrorResponse           O  \nFurther details on deleting a resource with HTTP DELETE are provided in\nTS 32.158 \\[15\\], clause 5.4."
+    },
+    {
+      "id": "S33",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.1.7",
+      "title": "12.1.1.1.7 Void",
+      "text": "##### 12.1.1.1.7 Void"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "Request Body Examples",
+      "text": "<a name=\"requestBodyContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | **REQUIRED**. The content of the request body. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For requests that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"requestBodyRequired\"></a>required | `boolean` | Determines if the request body is required in the request. Defaults to `false`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Request Body Examples  \nA request body with a referenced model definition.\n```json\n{\n\"description\": \"user to add to the system\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {"
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "text/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"mediaTypeSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the request body.\n<a name=\"mediaTypeExample\"></a>example | Any | Example of the media type.  The example object SHOULD be in the correct format as specified by the media type.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Examples",
+      "text": "<a name=\"mediaTypeExamples\"></a>examples | Map[ `string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | Examples of the media type.  Each example object SHOULD  match the media type and specified schema if present.  The `examples` field is mutually exclusive of the `example` field.  Furthermore, if referencing a `schema` which contains an example, the `examples` value SHALL _override_ the example provided by the schema.\n<a name=\"mediaTypeEncoding\"></a>encoding | Map[`string`, [Encoding Object](#encoding-object)] | A map between a property name and its encoding information. The key, being the property name, MUST exist in the schema as a property. The encoding object SHALL only apply to `requestBody` objects when the media type is `multipart` or `application/x-www-form-urlencoded`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Media Type Examples  \n```js\n{\n\"application/json\": {\n\"schema\": {"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"encodingHeaders\"></a>headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | A map allowing additional information to be provided as headers, for example `Content-Disposition`.  `Content-Type` is described separately and SHALL be ignored in this section. This property SHALL be ignored if the request body media type is not a `multipart`.\n<a name=\"encodingStyle\"></a>style | `string` | Describes how a specific property value will be serialized depending on its type.  See [Parameter Object](#parameter-object) for details on the [`style`](#parameterStyle) property. The behavior follows the same values as `query` parameters, including default values. This property SHALL be ignored if the request body media type is not `application/x-www-form-urlencoded`."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationRequestBody\"></a>requestBody | [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object) | The request body applicable for this operation.  The `requestBody` is only supported in HTTP methods where the HTTP 1.1 specification [RFC7231](https://tools.ietf.org/html/rfc7231#section-4.3.1) has explicitly defined semantics for request bodies.  In other cases where the HTTP spec is vague, `requestBody` SHALL be ignored by consumers.\n<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "This includes accessing any part of a body that a JSON Pointer [RFC6901](https://tools.ietf.org/html/rfc6901) can reference.  \nFor example, given the following HTTP request:  \n```http\nPOST /subscribe/myevent?queryUrl=http://clientdomain.com/stillrunning HTTP/1.1\nHost: example.org\nContent-Type: application/json\nContent-Length: 187"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "default Content-Type for objects is `application/json`",
+      "text": "* If the property is a `type: string` with `format: binary` or `format: base64` (aka a file object), the default Content-Type is `application/octet-stream`  \nExamples:  \n```yaml\nrequestBody:\ncontent:\nmultipart/form-data:\nschema:\ntype: object\nproperties:\nid:\ntype: string\nformat: uuid\naddress:\n# default Content-Type for objects is `application/json`\ntype: object\nproperties: {}\nprofileImage:\n# default Content-Type for string/binary is `application/octet-stream`\ntype: string\nformat: binary\nchildren:\n# default Content-Type for arrays is based on the `inner` type (text/plain here)\ntype: array\nitems:\ntype: string\naddresses:\n# default Content-Type for arrays is based on the `inner` type (object shown, so `application/json` in this example)\ntype: array\nitems:\ntype: '#/components/schemas/Address'\n```"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "Request Body Object",
+      "text": "\"content\": {\n\"application/json\": {\n\"schema\": {\n\"type\": \"object\",\n\"required\": [\n\"lat\",\n\"long\"\n],\n\"properties\": {\n\"lat\": {\n\"type\": \"number\"\n},\n\"long\": {\n\"type\": \"number\"\n}\n}\n}\n}\n}\n}\n```  \n```yaml\nin: query\nname: coordinates\ncontent:\napplication/json:\nschema:\ntype: object\nrequired:\n- lat\n- long\nproperties:\nlat:\ntype: number\nlong:\ntype: number\n```  \n#### Request Body Object  \nDescribes a single request body.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"requestBodyDescription\"></a>description | `string` | A brief description of the request body. This could contain examples of use.  [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "any media type is accepted, functionally equivalent to `*/*`",
+      "text": "```yaml\nrequestBody:\ncontent:\napplication/octet-stream:\n# any media type is accepted, functionally equivalent to `*/*`\nschema:\n# a binary file of any type\ntype: string\nformat: binary\n```  \nIn addition, specific media types MAY be specified:  \n```yaml\n# multiple, specific media types may be specified:\nrequestBody:\ncontent:\n# a binary file of type png or jpeg\n'image/jpeg':\nschema:\ntype: string\nformat: binary\n'image/png':\nschema:\ntype: string\nformat: binary\n```  \nTo upload multiple files, a `multipart` media type MUST be used:  \n```yaml\nrequestBody:\ncontent:\nmultipart/form-data:\nschema:\nproperties:\n# The property name 'file' will be used for all files.\nfile:\ntype: array\nitems:\ntype: string\nformat: binary"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "Encoding Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Encoding Object Example  \n```yaml\nrequestBody:\ncontent:\nmultipart/mixed:\nschema:\ntype: object\nproperties:\nid:\n# default is text/plain\ntype: string\nformat: uuid\naddress:\n# default is application/json\ntype: object\nproperties: {}\nhistoryMetadata:\n# need to declare XML format!\ndescription: metadata in XML format\ntype: object\nproperties: {}\nprofileImage:\n# default is application/octet-stream, need to declare an image type only!\ntype: string\nformat: binary\nencoding:\nhistoryMetadata:\n# require XML Content-Type in utf-8 encoding\ncontentType: application/xml; charset=utf-8\nprofileImage:\n# only accept png/jpeg\ncontentType: image/png, image/jpeg\nheaders:\nX-Rate-Limit-Limit:\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Responses Object  \nA container for the expected responses of an operation."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "30fc34b43fb93b19ce752097ad3a448a1d386fe14afd834d8395d084618083d2",
+  "judged_at": "2026-10-06T23:59:04-03:00"
+}

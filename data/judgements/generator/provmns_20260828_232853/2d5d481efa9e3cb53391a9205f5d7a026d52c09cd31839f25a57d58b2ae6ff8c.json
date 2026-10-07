@@ -1,0 +1,468 @@
+{
+  "part_id": "generator|provmns_20260828_232853|PATH /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}|path",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "PATH /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+  "aspect": "path",
+  "summary": "1 extra",
+  "answer": {
+    "why_different": "The generated document adds the entire path as a structural difference: the official side has no corresponding path, while the generated side defines the 3GPP resource URI and its operations. This is probably an omission or outdated structure on the official side, not a different path value.",
+    "verdict": "improvement",
+    "spec_3gpp": "The 3GPP specification explicitly defines this resource URI as `{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}`. It identifies PUT as creating a managed object instance and DELETE as deleting managed object instances on this URI.",
+    "openapi": "The OpenAPI reference permits a Paths Object entry whose field begins with `/`, and the Path Item Object supports PUT and DELETE operations. Therefore, the generated path is a valid and appropriate OpenAPI structure.",
+    "clearer": "generated",
+    "clearer_why": "Only the generated version exposes the managed-object-instance endpoint; the official side is absent, so it cannot communicate the resource or its available operations to an API reader.",
+    "citations": [
+      {
+        "evidence_id": "S6",
+        "quote": "Resource URI: {MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}"
+      },
+      {
+        "evidence_id": "S11",
+        "quote": "MOI             .../{className}={id}   PUT           Create a resource representing a managed object instance"
+      },
+      {
+        "evidence_id": "S12",
+        "quote": "MOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+      },
+      {
+        "evidence_id": "O6",
+        "quote": "A relative path to an individual endpoint. The field name MUST begin with a slash."
+      },
+      {
+        "evidence_id": "O3",
+        "quote": "put | [Operation Object](#operation-object) | A definition of a PUT operation on this path."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "improvement",
+        "reason": "The added path is directly specified by 3GPP as the MOI resource URI, with PUT and DELETE applicable to it (S6, S11, S12). Its slash-prefixed path-item form is allowed by OpenAPI 3.0 (O6), so the generated side restores required API information absent from the official side."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "href                 Uri                URI of a common ancestor resource (object) of the resources for which changes are reported. A MnS producer may set this attribute always to the parent of the root resource in the MIB.   M\nnotificationId       NotificationId     Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\].                                                                                                                            M\nnotificationType     NotificationType   Notification type (notifyMOIChanges)                                                                                                                                                      M\neventTime            DateTime           Event (NRM updates) occurrence time                                                                                                                                                       M\nsystemDN             SystemDN           System DN                                                                                                                                                                                 M"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "--------------------- ---------------------- ------------- ------------------------------------------------\nNotification Target   {notificationTarget}   POST          Send a notification to the notification target"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2",
+      "title": "12.1.1.3.2 Resource definitions",
+      "text": "##### 12.1.1.3.2 Resource definitions"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1",
+      "title": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"",
+      "text": "###### 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\""
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.1",
+      "title": "12.1.1.3.2.1.1 Description",
+      "text": "####### 12.1.1.3.2.1.1 Description  \nThis resource represents a managed object instance."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.2",
+      "title": "12.1.1.3.2.1.2 URI",
+      "text": "####### 12.1.1.3.2.1.2 URI  \nResource URI:\n{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}  \nThe resource URI variables are defined in table 12.1.1.3.2.1.2-1.  \nTable 12.1.1.3.2.1.2-1: URI variables  \n**Name**             **Definition**\n-------------------- --------------------------------------\nMnSRoot              See clause 4.4.2 of TS 32.158 \\[15\\]\nMnSVersion           See clause 4.4.2 of TS 32.158 \\[15\\]\nURI-LDN-first-part   See clause 4.4.2 of TS 32.158 \\[15\\]\nclassName            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3",
+      "title": "12.1.1.3.2.1.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.1.3 HTTP methods"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table."
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3",
+      "title": "12.1.1.3 Resources",
+      "text": "#### 12.1.1.3 Resources"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.1",
+      "title": "12.1.1.3.1 Resource structure",
+      "text": "##### 12.1.1.3.1 Resource structure"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "##### 12.1.1.3.1.1 Resource structure on the MnS producer {#resource-structure-on-the-mns-producer .H6}  \nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.  \n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}  \nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer  \nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.  \nTable 12.1.1.3.1-**1**: Resources and methods overview  \nResource name   Resource URI           HTTP method   Description\n--------------- ---------------------- ------------- --------------------------------------------------------------------------\nMOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\nMOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\nMOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\nMOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\nMOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.2",
+      "title": "12.1.1.3.1.2 Resource structure on the MnS consumer",
+      "text": "###### 12.1.1.3.1.2 Resource structure on the MnS consumer  \nFigure 12.1.1.3.1.2-1 shows the resource structure of the Provisioning\nMnS on the MnS consumer.  \n![](media/image9.emf){width=\"1.4256944444444444in\"\nheight=\"0.32083333333333336in\"}  \nFigure 12.1.1.3.1.2-1: Resource URI structure of the Provisioning MnS on\nthe MnS consumer  \nTable 12.1.1.3.1.2-1 provides an overview of the resources and\napplicable HTTP methods.  \nTable 12.1.1.3.1.2-**1**: Resources and methods overview  \nResource name         Resource URI           HTTP method   Description\n--------------------- ---------------------- ------------- ------------------------------------------------\nNotification Target   {notificationTarget}   POST          Send a notification to the notification target"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.4",
+      "title": "12.1.1.4 Data type definitions",
+      "text": "#### 12.1.1.4 Data type definitions"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "##### 12.1.1.4.1 General  \nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.  \nTable 12.1.1.4.1-1: Data types defined in this specification  \nData type                        Reference       Description\n-------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nCmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\nSourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\nScopeType                        12.1.1.4.4.5    Scope type of a scope\nOperation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\nInsert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\""
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.2.3",
+      "title": "12.1.2.3 Resources",
+      "text": "#### 12.1.2.3 Resources"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.2.3.1",
+      "title": "12.1.2.3.1 Resource structure",
+      "text": "##### 12.1.2.3.1 Resource structure  \nFigure 12.1.2.3.1-1 shows the resource structure of the provisioning MnS\nin the context of its integration with VES Event Listener 7.1.1 \\[45\\].  \n![A screen shot of a computer program Description automatically\ngenerated with low\nconfidence](media/image10.png){width=\"3.8430555555555554in\"\nheight=\"1.6270833333333334in\"}  \nFigure 12.1.2.3.1-1: Resource URI structure of the provisioning MnS for\nintegration with ONAP VES Event Listener 7.1.1 (Resource structure\nsection) \\[45\\]  \nTable 12.1.2.3.1-1 provides an overview of the resources and applicable\nHTTP methods.  \nTable 12.1.2.3.1-**1**: Resources and methods overview  \nResource name   Resource URI     HTTP method   Description\n--------------- ---------------- ------------- --------------------\neventListener   /eventListener   POST          Send notifications"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.2.3.2",
+      "title": "12.1.2.3.2 Resource definitions",
+      "text": "##### 12.1.2.3.2 Resource definitions  \nSee Resource structure section in \\[45\\]."
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource  \n[Extracted Table: 81 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "##### 12.1.1.3.2.1.3.2 HTTP GET  {#http-get .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource  \n[Extracted Table: 82 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.  \nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource  \n**Data type**   **Description**   **S**\n--------------- ----------------- -------\nn/a             n/a               n/a  \nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.2",
+      "title": "12.1.1.3.2.2 Void",
+      "text": "###### 12.1.1.3.2.2 Void"
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.3",
+      "title": "12.1.1.3.2.3 Void",
+      "text": "###### 12.1.1.3.2.3 Void"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.4",
+      "title": "12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\"",
+      "text": "###### 12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\""
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.1",
+      "title": "12.1.1.3.2.4.1 Description",
+      "text": "####### 12.1.1.3.2.4.1 Description  \nThis resource represents a notification target on the MnS consumer."
+    },
+    {
+      "id": "S25",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.2",
+      "title": "12.1.1.3.2.4.2 URI",
+      "text": "####### 12.1.1.3.2.4.2 URI  \nResource URI: {notificationTarget}  \nThe resource URI variables are defined in table 12.1.1.3.2.4.2-1.  \nTable 12.1.1.3.2.4.2-1: URI variables  \nName                 Definition\n-------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nnotificationTarget   URI of the notification target on the MnS consumer, contained in the notification subscription, see notificationRecipientAddress defined in clause 4.3.22.2 in TS 28.622 \\[11\\]."
+    },
+    {
+      "id": "S26",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3",
+      "title": "12.1.1.3.2.4.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.4.3 HTTP methods"
+    },
+    {
+      "id": "S27",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "##### 12.1.1.3.2.4.3.1 POST {#post .H6}  \nThis method shall support the URI query parameters specified in table\n12.1.1.3.2.4.3.1-1.  \nTable 12.1.1.3.2.4.3.1-1: URI query parameters supported by the POST\nmethod on this resource  \nName   Data type   Description   S\n------ ----------- ------------- -----"
+    },
+    {
+      "id": "S28",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\nErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S29",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "##### 12.1.1.3.2.1.3.3 HTTP PATCH  {#http-patch .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables."
+    },
+    {
+      "id": "S30",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "className            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S31",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.  \nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource  \n**Data type**   **Description**                                                     **S**\n--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "2. The [Path Item Object](#path-item-object) MAY be empty. In this case, the viewer will be aware that the path exists, but will not be able to see any of its operations or parameters. This is different than hiding the path itself from the [Paths Object](#paths-object), so the user will not be aware of its existence. This allows the documentation provider to finely control what the viewer can see."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "Path Item Object",
+      "text": "description: A list of pets.\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/pet'\n```  \n#### Path Item Object  \nDescribes the operations available on a single path.\nA Path Item MAY be empty, due to [ACL constraints](#security-filtering).\nThe path itself is still exposed to the documentation viewer but they will not know which operations and parameters are available.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"pathItemRef\"></a>$ref | `string` | Allows for an external definition of this path item. The referenced structure MUST be in the format of a [Path Item Object](#path-item-object). If there are conflicts between the referenced definition and this Path Item's definition, the behavior is *undefined*.\n<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path.\n<a name=\"pathItemDescription\"></a>description | `string` | An optional, string description, intended to apply to all operations in this path. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"pathItemGet\"></a>get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path.\n<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path.\n<a name=\"pathItemHead\"></a>head | [Operation Object](#operation-object) | A definition of a HEAD operation on this path.\n<a name=\"pathItemPatch\"></a>patch | [Operation Object](#operation-object) | A definition of a PATCH operation on this path.\n<a name=\"pathItemTrace\"></a>trace | [Operation Object](#operation-object) | A definition of a TRACE operation on this path.\n<a name=\"pathItemServers\"></a>servers | [[Server Object](#server-object)] | An alternative `server` array to service all operations in this path."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "Path Templating Matching",
+      "text": "##### Path Templating Matching  \nAssuming the following paths, the concrete definition, `/pets/mine`, will be matched first if used:  \n```\n/pets/{petId}\n/pets/mine\n```  \nThe following paths are considered identical and invalid:  \n```\n/pets/{petId}\n/pets/{name}\n```  \nThe following may lead to ambiguous resolution:  \n```\n/{entity}/me\n/books/{id}\n```  \n##### Paths Object Example  \n```json\n{\n\"/pets\": {\n\"get\": {\n\"description\": \"Returns all pets from the system that the user has access to\",\n\"responses\": {\n\"200\": {\n\"description\": \"A list of pets.\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/pet\"\n}\n}\n}\n}\n}\n}\n}\n}\n}\n```  \n```yaml\n/pets:\nget:\ndescription: Returns all pets from the system that the user has access to\nresponses:\n'200':\ndescription: A list of pets.\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/pet'\n```  \n#### Path Item Object  \nDescribes the operations available on a single path."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "Patterned Fields",
+      "text": "##### Patterned Fields  \nField Pattern | Type | Description\n---|:---:|---\n<a name=\"pathsPath\"></a>/{path} | [Path Item Object](#path-item-object) | A relative path to an individual endpoint. The field name MUST begin with a slash. The path is **appended** (no relative URL resolution) to the expanded URL from the [`Server Object`](#server-object)'s `url` field in order to construct the full URL. [Path templating](#path-templating) is allowed. When matching URLs, concrete (non-templated) paths would be matched before their templated counterparts. Templated paths with the same hierarchy but different templated names MUST NOT exist as they are identical. In case of ambiguous matching, it's up to the tooling to decide which one to use.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Path Templating Matching  \nAssuming the following paths, the concrete definition, `/pets/mine`, will be matched first if used:  \n```\n/pets/{petId}\n/pets/mine"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "Relative References in URLs",
+      "text": "### Relative References in URLs  \nUnless specified otherwise, all properties that are URLs MAY be relative references as defined by [RFC3986](https://tools.ietf.org/html/rfc3986#section-4.2).\nRelative references are resolved using the URLs defined in the [`Server Object`](#server-object) as a Base URI.  \nRelative references used in `$ref` are processed as per [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03), using the URL of the current document as the base URI. See also the [Reference Object](#reference-object)."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in XML\",\n\"externalValue\": \"http://foo.bar/examples/user-example.xml\"\n}\n}\n},\n\"text/plain\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in Plain text\",\n\"externalValue\": \"http://foo.bar/examples/user-example.txt\"\n}\n}\n},\n\"*/*\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in other format\",\n\"externalValue\": \"http://foo.bar/examples/user-example.whatever\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: user to add to the system\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example\nexternalValue: 'http://foo.bar/examples/user-example.json'\n'application/xml':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example in XML"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "Examples",
+      "text": "<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"linkServer\"></a>server       | [Server Object](#server-object) | A server object to be used by the target operation.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \nA linked operation MUST be identified using either an `operationRef` or `operationId`.\nIn the case of an `operationId`, it MUST be unique and resolved in the scope of the OAS document.\nBecause of the potential for name clashes, the `operationRef` syntax is preferred\nfor specifications with external references.  \n##### Examples  \nComputing a link from a request operation where the `$request.path.id` is used to pass a request parameter to the linked operation.  \n```yaml\npaths:\n/users/{id}:\nparameters:\n- name: id\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "2d5d481efa9e3cb53391a9205f5d7a026d52c09cd31839f25a57d58b2ae6ff8c",
+  "judged_at": "2026-10-07T00:01:00-03:00"
+}

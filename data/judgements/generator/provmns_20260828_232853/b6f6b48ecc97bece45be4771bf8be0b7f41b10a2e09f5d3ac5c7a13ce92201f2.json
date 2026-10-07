@@ -1,0 +1,456 @@
+{
+  "part_id": "generator|provmns_20260828_232853|SCHEMA ScopeType|definition",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "SCHEMA ScopeType",
+  "aspect": "definition",
+  "summary": "schema present; shape official type=string, enum[4] vs generated type=string, enum[3]; 1 differing",
+  "answer": {
+    "why_different": "The generated side uses different enum values: it replaces the specified BASE_NTH_LEVEL and BASE_ALL values with BASE_AND_SUBCLASS and SUBTREE, and omits the specified BASE_SUBTREE value. This is a value difference, not a change of address or structure.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification defines ScopeType with exactly four values: BASE_ONLY, BASE_ALL, BASE_NTH_LEVEL, and BASE_SUBTREE, each with distinct scope semantics.",
+    "openapi": "OpenAPI 3.0 permits an enum on a schema property, and the schema's type string is valid. However, the OpenAPI reference does not define the application-specific enum values; they must come from the 3GPP specification.",
+    "clearer": "official",
+    "clearer_why": "The official enum preserves all four specification-defined choices and their distinctions. The generated enum omits two valid values, adds an unsupported value, and uses SUBTREE without the specification's BASE_SUBTREE name.",
+    "citations": [
+      {
+        "evidence_id": "S18",
+        "quote": "BASE_ONLY ... BASE_ALL ... BASE_NTH_LEVEL ... BASE_SUBTREE"
+      },
+      {
+        "evidence_id": "O9",
+        "quote": "- enum"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated enum contradicts the 3GPP-defined ScopeType values: it omits BASE_NTH_LEVEL, BASE_ALL, and BASE_SUBTREE, and adds BASE_AND_SUBCLASS, which is not specified. The difference is therefore an incorrect value set, supported by S18; O9 confirms that enum is the relevant OpenAPI schema property."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "Table 12.1.1.4.1a.2-1: Definition of type Scope  \nAttribute name   Data type   Description                                                                                                                                                                                                     S\n---------------- ----------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---\nscopeType        ScopeType   Used in the query component of HTTP GET and HTTP DELETE together with scopeLevel to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI   M\nscopeLevel       integer     Used in the query component of HTTP GET and HTTP DELETE together with scopeType to extend the set of targeted resources beyond the base resource identified with the path component of the URI                  M"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.3",
+      "title": "12.1.1.4.1a.3 Type CorrelatedNotification",
+      "text": "###### 12.1.1.4.1a.3 Type CorrelatedNotification  \nTable 12.1.1.4.1a.3 -1: Definition of type CorrelatedNotification"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "ScopeType                        12.1.1.4.4.5    Scope type of a scope\nOperation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\nInsert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\nPatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\nResource                         12.1.1.4.1a.1   Used for resource representations\nScope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\nCorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\nMoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\nNotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.2.4",
+      "title": "12.1.2.4 Data type definitions",
+      "text": "#### 12.1.2.4 Data type definitions  \nSee clause 12.1.1.4."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "scope                         config              M   BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\nfilter                        config              M   Multiple MOIs can be specified in the same operation, emulating filtering.\nmodificationList              config              M   The \"attributes container\" and leaf, leaf-list or list entries representing the attributes.  \nTable 12.1.3.1.4-2: Mapping of IS modifyMOIAttributes output parameters\nto SS equivalents  \n[Extracted Table: 98 from 28532-i00 (Release Rel-18, Series 28_series)]  \n> Note 1: Successful Netconf \\<edit-config\\> operations only return an\n> \\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\n> separate \\<get-config\\> operation."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "##### 12.1.3.1.5 Operation deleteMOI  \nThis IS operation deletes one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "attributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M\nn/a                  map(array(object))   Name contained objects                                                                                                         M  \nThis definition of \\\"Resource\\\" does not specify any attributes or name\ncontained objects. Resource representations with specific attributes and\nname contained objects are contained in the NRM definitions. These\ndefinitions should be used in implementations of the Provisioning MnS\ninstead of this generic definition."
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "###### 12.1.1.4.1a.2 Type Scope  \nTable 12.1.1.4.1a.2-1: Definition of type Scope  \nAttribute name   Data type   Description                                                                                                                                                                                                     S"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.2",
+      "title": "12.1.1.4.2 Void",
+      "text": "##### 12.1.1.4.2 Void"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.3",
+      "title": "12.1.1.4.3 Void",
+      "text": "##### 12.1.1.4.3 Void"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.4",
+      "title": "12.1.1.4.4 Simple data types and enumerations",
+      "text": "##### 12.1.1.4.4 Simple data types and enumerations"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.4.1",
+      "title": "12.1.1.4.4.1 General",
+      "text": "##### 12.1.1.4.4.1 General {#general-1 .H6}  \nThis clause defines simple data types and enumerations that are used by\nthe data structures defined in the previous clauses."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.4.2",
+      "title": "12.1.1.4.4.2 Simple data types",
+      "text": "##### 12.1.1.4.4.2 Simple data types {#simple-data-types .H6}  \nTable 12.1.1.4.3.2-1: Simple data types  \n----------- ----------------- -------------\nType name   Type definition   Description\nn/a         n/a               n/a\n----------- ----------------- -------------"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.4.3",
+      "title": "12.1.1.4.4.3 Enumeration CmNotificationTypes",
+      "text": "##### 12.1.1.4.4.3 Enumeration CmNotificationTypes {#enumeration-cmnotificationtypes .H6}  \nTable 12.1.1.4.4.3-1: Enumeration CmNotificationTypes  \nEnumeration value                Description\n-------------------------------- ----------------------------------------------------\nnotifyMOICreation                Notification type is notifyMOICreation\nnotifyMOIDeletion                Notification type is notifyMOIDeletion\nnotifyMOIAttributeValueChanges   Notification type is notifyMOIAttributeValueChange\nnoitifyMOIChanges                Notification type is notifyMOIChanges"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4",
+      "title": "12.1.1.4 Data type definitions",
+      "text": "#### 12.1.1.4 Data type definitions"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "##### 12.1.1.4.1 General  \nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.  \nTable 12.1.1.4.1-1: Data types defined in this specification  \nData type                        Reference       Description\n-------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nCmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\nSourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\nScopeType                        12.1.1.4.4.5    Scope type of a scope\nOperation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\nInsert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\""
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.4.5",
+      "title": "12.1.1.4.4.5 Enumeration ScopeType",
+      "text": "UNKNOWN                 It is not possible to determine the source of the operation."
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.4.5",
+      "title": "12.1.1.4.4.5 Enumeration ScopeType",
+      "text": "##### 12.1.1.4.4.5 Enumeration ScopeType {#enumeration-scopetype .H6}  \nTable 12.1.1.4.4.4.1-1: Enumeration ScopeType  \nEnumeration value   Description\n------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\nBASE\\_ONLY          Selects only the base resource. The \\\"scopeLevel\\\" parameter shall be absent or ignored if present.\nBASE\\_ALL           Selects the base resource and all of its subordinate resources (incl. the leaf resources). The \\\"scopeLevel\\\" parameter shall be absent or ignored if present.\nBASE\\_NTH\\_LEVEL    Selects all resources on the level, which is indicated by the \\\"scopeLevel\\\" parameter, below the base resource. The base resource is at \\\"scopeLevel\\\" zero.\nBASE\\_SUBTREE       Selects the base resource and all of its subordinate resources down to and including the resources on the level indicated by the \\\"scopeLevel\\\" parameter. The base resource is at \\\"scopeLevel\\\" zero."
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\nNotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\nNotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\nPatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document  \nTable 12.1.1.4.1-2: Data types imported  \nData type                   Reference          Description\n--------------------------- ------------------ ---------------------------------------------------------------------\nDateTime                    TS 28.623 \\[44\\]   Date and time\nDn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "###### 12.1.1.4.1a.1 Type Resource  \n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**  \n**Attribute name**   **Data type**        **Description**                                                                                                                **S**\n-------------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------ -------\nid                   string               Identifier of the resource object                                                                                              M\nobjectClass          string               Object class of the resource object                                                                                            O\nobjectInstance       Dn                   Object instance of the resource object                                                                                         O\nattributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "32.158 \\[15\\], clause 5.2.  \nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.  \nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.1.4",
+      "title": "12.1.1.1.4 Operation modifyMOIAttributes",
+      "text": "##### 12.1.1.1.4 Operation modifyMOIAttributes"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "###### 12.1.1.1.4.1 Mapping to HTTP PUT  \nHTTP PUT is used for a full update of a single resource.  \nTable 12.1.1.1.4.1-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)  \n[Extracted Table: 78 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no meaning when\ntargeting a single resource with the target URI and are not mapped.  \nTable 12.1.1.1.4.1-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                O"
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.4.5",
+      "title": "12.1.1.4.4.5 Enumeration ScopeType",
+      "text": "BASE\\_SUBTREE       Selects the base resource and all of its subordinate resources down to and including the resources on the level indicated by the \\\"scopeLevel\\\" parameter. The base resource is at \\\"scopeLevel\\\" zero."
+    },
+    {
+      "id": "S25",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.4.6",
+      "title": "12.1.1.4.4.6 Enumeration Operation",
+      "text": "##### 12.1.1.4.4.6 Enumeration Operation {#enumeration-operation .H6}  \nTable 12.1.1.4.4.4.6-1: Enumeration Operation  \nEnumeration value   Description\n------------------- -------------------\nadd                 Create operation\nremove              Delete operation\nreplace             Replace operation"
+    },
+    {
+      "id": "S26",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.4.7",
+      "title": "12.1.1.4.4.7 Enumeration PatchOperation",
+      "text": "###### 12.1.1.4.4.7 Enumeration PatchOperation  \nTable 12.1.1.4.4.4.7-1: Enumeration PatchOperation  \nEnumeration value   Description\n------------------- -------------------\nadd                 Add operation\nreplace             Replace operation\nremove              Remove operation\ncopy                Copy operation\nmove                Move operation\ntest                Test operation"
+    },
+    {
+      "id": "S27",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.4.8",
+      "title": "12.1.1.4.4.8 Enumeration Insert",
+      "text": "##### 12.1.1.4.4.8 Enumeration Insert {#enumeration-insert .H6}  \nTable 12.1.1.4.4.4.8-1: Enumeration Insert  \nEnumeration value   Description"
+    },
+    {
+      "id": "S28",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "the object creation request, shall be included in the object creation\nreport with their default values.  \n\\- Attributes with default values, that are deleted and consequently set\nto their default value, shall be included in attribute replacement\nreports.  \nNote all following use-cases use JSON expressed in YAML notation.  \nCase 1: Creation of an MOI is reported with:  \n\\- operation: add  \n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI  \n\\- value: a complete MOI representation, represented by the \\\"id\\\" node\nand the \\\"attributes\\\" container but exluding the list entry itself\nencoded according to RFC7951 \\[50\\].  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object creation:  \nhref: node1.lichtenberg.de  \n...  \nnotificationId: 123456001  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"  \noperation: add  \nvalue:  \nid: job1  \n3gpp-common-measurements:PerfMetricJob:attributes:  \njobId: 9865  \nfileReportingPeriod: 30  \nCase 2: Deletion of an MOI is reported with:  \n\\- operation: remove  \n\\- path: YANG resource identifier pointing to the list entry"
+    },
+    {
+      "id": "S29",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\nErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S30",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "##### 12.1.1.3.2.1.3.3 HTTP PATCH  {#http-patch .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables."
+    },
+    {
+      "id": "S31",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "attribute is represented by a list or leaf-list, then for this last data\nnode the equal sign, the key value(s) or leaf-list value is omitted,\nonly the list/leaf-list name shall be present.  \n\\- value: the content of the leaf/leaf-list entry(s)/container/list\nentry(s) representing the created attribute encoded according to RFC7951\n\\[50\\]. In case of attribute represented by a container/list the child\ndata nodes are encoded only,the container/list itself is not.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports setting the values of the performanceMetrics simple, multivalue\nattribute:  \nhref: node1.spandau.de  \n...  \nnotificationId: 123456003  \npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"  \noperation: add  \nvalue:  \n\\- inOctets  \n\\- inPackets  \n\\- outPackets  \nCase 4: Deleting all values of a complete attribute is reported with  \n\\- operation: remove.  \n\\- path: Same as in case 3.  \n\\- value: not present.  \nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the performanceMetrics attribute:  \nhref: node1.pankow.de  \n..."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "<a name=\"schemaXml\"></a>xml | [XML Object](#xml-object) | This MAY be used only on properties schemas. It has no effect on root schemas. Adds additional metadata to describe the XML representation of this property.\n<a name=\"schemaExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this schema.\n<a name=\"schemaExample\"></a>example | Any | A free-form property to include an example of an instance for this schema. To represent examples that cannot be naturally represented in JSON or YAML, a string value can be used to contain the example with escaping where necessary.\n<a name=\"schemaDeprecated\"></a> deprecated | `boolean` | Specifies that a schema is deprecated and SHOULD be transitioned out of usage. Default value is `false`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- type - Value MUST be a string. Multiple types via an array are not supported.\n- allOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- oneOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- anyOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- not - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- items - Value MUST be an object and not an array. Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema. `items` MUST be present if the `type` is `array`.\n- properties - Property definitions MUST be a [Schema Object](#schema-object) and not a standard JSON Schema (inline or referenced)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "text/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"mediaTypeSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the request body.\n<a name=\"mediaTypeExample\"></a>example | Any | Example of the media type.  The example object SHOULD be in the correct format as specified by the media type.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Cat`",
+      "text": "When used in conjunction with the `anyOf` construct, the use of the discriminator can avoid ambiguity where multiple schemas may satisfy a single payload.  \nIn both the `oneOf` and `anyOf` use cases, all possible schemas MUST be listed explicitly.  To avoid redundancy, the discriminator MAY be added to a parent schema definition, and all schemas comprising the parent schema in an `allOf` construct may be used as an alternate schema.  \nFor example:  \n```\ncomponents:\nschemas:\nPet:\ntype: object\nrequired:\n- pet_type\nproperties:\npet_type:\ntype: string\ndiscriminator:\npropertyName: pet_type\nmapping:\ncachorro: Dog\nCat:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Cat`\nproperties:\nname:\ntype: string\nDog:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)  \nThe OpenAPI Specification allows combining and extending model definitions using the `allOf` property of JSON Schema, in effect offering model composition.\n`allOf` takes an array of object definitions that are validated *independently* but together compose a single object.  \nWhile composition offers model extensibility, it does not imply a hierarchy between the models.\nTo support polymorphism, the OpenAPI Specification adds the `discriminator` field.\nWhen used, the `discriminator` will be the name of the property that decides which schema definition validates the structure of the model.\nAs such, the `discriminator` field MUST be a required field.\nThere are two ways to define the value of a discriminator for an inheriting instance.\n- Use the schema name."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "Discriminator Object",
+      "text": "- petType\nCat:  ## \"Cat\" will be used as the discriminator value\ndescription: A representation of a cat\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\nhuntingSkill:\ntype: string\ndescription: The measured skill for hunting\nenum:\n- clueless\n- lazy\n- adventurous\n- aggressive\nrequired:\n- huntingSkill\nDog:  ## \"Dog\" will be used as the discriminator value\ndescription: A representation of a dog\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\npackSize:\ntype: integer\nformat: int32\ndescription: the size of the pack the dog is from\ndefault: 0\nminimum: 0\nrequired:\n- packSize\n```  \n#### Discriminator Object"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "Properties",
+      "text": "Unless stated otherwise, the property definitions follow the JSON Schema.  \n##### Properties  \nThe following properties are taken directly from the JSON Schema definition and follow the same specifications:  \n- title\n- multipleOf\n- maximum\n- exclusiveMaximum\n- minimum\n- exclusiveMinimum\n- maxLength\n- minLength\n- pattern (This string SHOULD be a valid regular expression, according to the [ECMA 262 regular expression](https://www.ecma-international.org/ecma-262/5.1/#sec-7.8.5) dialect)\n- maxItems\n- minItems\n- uniqueItems\n- maxProperties\n- minProperties\n- required\n- enum  \nThe following properties are taken from the JSON Schema definition but their definitions were adjusted to the OpenAPI Specification.\n- type - Value MUST be a string. Multiple types via an array are not supported.\n- allOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "all other properties specific to a `Dog`",
+      "text": "- type: object\n# all other properties specific to a `Dog`\nproperties:\nbark:\ntype: string\nLizard:\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\n# all other properties specific to a `Lizard`\nproperties:\nlovesRocks:\ntype: boolean\n```  \na payload like this:  \n```\n{\n\"pet_type\": \"Cat\",\n\"name\": \"misty\"\n}\n```  \nwill indicate that the `Cat` schema be used.  Likewise this schema:  \n```\n{\n\"pet_type\": \"cachorro\",\n\"bark\": \"soft\"\n}\n```  \nwill map to `Dog` because of the definition in the `mappings` element.  \n#### XML Object  \nA metadata object that allows for more fine-tuned XML model definitions.  \nWhen using arrays, XML element names are *not* inferred (for singular/plural forms) and the `name` property SHOULD be used to add that information.\nSee examples for expected behavior.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "b6f6b48ecc97bece45be4771bf8be0b7f41b10a2e09f5d3ac5c7a13ce92201f2",
+  "judged_at": "2026-10-07T00:01:34-03:00"
+}

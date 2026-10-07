@@ -1,0 +1,220 @@
+{
+  "part_id": "generator|provmns_20260828_232853|PUT /{className}={id}|callback notifyEvent",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "PUT /{className}={id}",
+  "aspect": "callback notifyEvent",
+  "summary": "1 absent",
+  "answer": {
+    "why_different": "The generated side omits the entire callback structure, so this is a different structure rather than merely a different value or address. The omission removes the callback notification contract from the PUT operation.",
+    "verdict": "error",
+    "spec_3gpp": "The supplied 3GPP evidence defines notification types and notification payload concepts, including notifyMOIDeletion, notifyMOIAttributeValueChanges, and notifyMOIChanges, but it does not explicitly describe this callback location.",
+    "openapi": "The OpenAPI reference defines operation callbacks as a map of callback objects and defines each callback expression as a Path Item Object describing the callback request and expected responses. The official callback therefore represents a valid documented callback contract; omitting it loses that contract.",
+    "clearer": "official",
+    "clearer_why": "The official version shows when and where the notification callback is invoked and documents its request and responses. The generated version provides no callback information.",
+    "citations": [
+      {
+        "evidence_id": "O1",
+        "quote": "callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation."
+      },
+      {
+        "evidence_id": "O3",
+        "quote": "{expression} | [Path Item Object](#path-item-object) | A Path Item Object used to define a callback request and expected responses."
+      },
+      {
+        "evidence_id": "S4",
+        "quote": "notifyMOIDeletion                Notification type is notifyMOIDeletion"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated side omits the callback entirely, losing the official operation's documented notification request and response behavior. OpenAPI supports callbacks on an operation and requires the callback expression to identify a callback Path Item Object (O1, O3)."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "href                        Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId              NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType            NotificationType                Notification type (\\\"notifyMOIAttributeValueChanges\\\")                                                                     M\neventTime                   DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                    SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications     array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType          NotificationType                Notification type (\\\"notifyMOICreation\\\")                                                                                  M\neventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                  SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\nnotificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\nnotificationType          NotificationType                Notification type (\\\"notifyMOIDeletion\\\")                                                                                  M\neventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\nsystemDN                  SystemDN                        System DN                                                                                                                  M\ncorrelatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.4.3",
+      "title": "12.1.1.4.4.3 Enumeration CmNotificationTypes",
+      "text": "notifyMOIDeletion                Notification type is notifyMOIDeletion\nnotifyMOIAttributeValueChanges   Notification type is notifyMOIAttributeValueChange\nnoitifyMOIChanges                Notification type is notifyMOIChanges"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.4.4",
+      "title": "12.1.1.4.4.4 Enumeration SourceIndicator",
+      "text": "##### 12.1.1.4.4.4 Enumeration SourceIndicator {#enumeration-sourceindicator .H6}  \nTable 12.1.1.4.4.4-1: Enumeration SourceIndicator  \nEnumeration value       Description\n----------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------\nRESOURCE\\_OPERATION     The notification was generated in response to an internal operation of the resource.\nMANAGEMENT\\_OPERATION   The notification was generated in response to a management operation applied across the managed object boundary external to the managed object\nSON\\_OPERATION          The notification was generated as result of a SON (Self Organising Network) process like self-configuration, self-optimization, self-healing etc. .\nUNKNOWN                 It is not possible to determine the source of the operation."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.4.5",
+      "title": "12.1.1.4.4.5 Enumeration ScopeType",
+      "text": "##### 12.1.1.4.4.5 Enumeration ScopeType {#enumeration-scopetype .H6}"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "notifyEvent",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "href                 Uri                URI of a common ancestor resource (object) of the resources for which changes are reported. A MnS producer may set this attribute always to the parent of the root resource in the MIB.   M\nnotificationId       NotificationId     Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\].                                                                                                                            M\nnotificationType     NotificationType   Notification type (notifyMOIChanges)                                                                                                                                                      M\neventTime            DateTime           Event (NRM updates) occurrence time                                                                                                                                                       M\nsystemDN             SystemDN           System DN                                                                                                                                                                                 M"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "Patterned Fields",
+      "text": "##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---\n<a name=\"callbackExpression\"></a>{expression} | [Path Item Object](#path-item-object) | A Path Item Object used to define a callback request and expected responses.  A [complete example](../examples/v3.0/callback-example.yaml) is available.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Key Expression  \nThe key that identifies the [Path Item Object](#path-item-object) is a [runtime expression](#runtime-expressions) that can be evaluated in the context of a runtime HTTP request/response to identify the URL to be used for the callback request.\nA simple example might be `$request.body#/url`.\nHowever, using a [runtime expression](#runtime-expressions) the complete HTTP message can be accessed.\nThis includes accessing any part of a body that a JSON Pointer [RFC6901](https://tools.ietf.org/html/rfc6901) can reference.  \nFor example, given the following HTTP request:"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "Callback Object Example",
+      "text": "201 Created\nLocation: http://example.org/subscription/1\n```  \nThe following examples show how the various expressions evaluate, assuming the callback operation has a path parameter named `eventType` and a query parameter named `queryUrl`.  \nExpression | Value\n---|:---\n$url | http://example.org/subscribe/myevent?queryUrl=http://clientdomain.com/stillrunning\n$method | POST\n$request.path.eventType | myevent\n$request.query.queryUrl | http://clientdomain.com/stillrunning\n$request.header.content-Type | application/json\n$request.body#/failedUrl | http://clientdomain.com/stillrunning\n$request.body#/successUrls/2 | http://clientdomain.com/medium\n$response.header.Location | http://example.org/subscription/1  \n##### Callback Object Example  \nThe following example shows a callback to the URL specified by the `id` and `email` property in the request body.  \n```yaml\nmyWebhook:\n'http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}':\npost:\nrequestBody:"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body notifyEvent",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "This includes accessing any part of a body that a JSON Pointer [RFC6901](https://tools.ietf.org/html/rfc6901) can reference.  \nFor example, given the following HTTP request:  \n```http\nPOST /subscribe/myevent?queryUrl=http://clientdomain.com/stillrunning HTTP/1.1\nHost: example.org\nContent-Type: application/json\nContent-Length: 187"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body notifyEvent",
+      "filters": {},
+      "clause": "",
+      "title": "Example Object",
+      "text": "```yaml\nmyWebhook:\n'http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}':\npost:\nrequestBody:\ndescription: Callback payload\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/SomePayload'\nresponses:\n'200':\ndescription: webhook successfully processed and no retries will be performed\n```  \n#### Example Object  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"exampleSummary\"></a>summary | `string` | Short description for the example.\n<a name=\"exampleDescription\"></a>description | `string` | Long description for the example. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"exampleValue\"></a>value | Any | Embedded literal example. The `value` field and `externalValue` field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON or YAML, use a string value to contain the example, escaping where necessary."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body notifyEvent",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"linkParameters\"></a>parameters   | Map[`string`, Any \\| [{expression}](#runtime-expressions)] | A map representing parameters to pass to an operation as specified with `operationId` or identified via `operationRef`. The key is the parameter name to be used, whereas the value can be a constant or an expression to be evaluated and passed to the linked operation.  The parameter name can be qualified using the [parameter location](#parameterIn) `[{in}.]{name}` for operations that use the same parameter name in different locations (e.g. path.id).\n<a name=\"linkRequestBody\"></a>requestBody | Any \\| [{expression}](#runtime-expressions) | A literal value or [{expression}](#runtime-expressions) to use as a request body when calling the target operation.\n<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body notifyEvent",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationRequestBody\"></a>requestBody | [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object) | The request body applicable for this operation.  The `requestBody` is only supported in HTTP methods where the HTTP 1.1 specification [RFC7231](https://tools.ietf.org/html/rfc7231#section-4.3.1) has explicitly defined semantics for request bodies.  In other cases where the HTTP spec is vague, `requestBody` SHALL be ignored by consumers.\n<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body notifyEvent",
+      "filters": {},
+      "clause": "",
+      "title": "Examples",
+      "text": "```\nexpression = ( \"$url\" | \"$method\" | \"$statusCode\" | \"$request.\" source | \"$response.\" source )\nsource = ( header-reference | query-reference | path-reference | body-reference )\nheader-reference = \"header.\" token\nquery-reference = \"query.\" name\npath-reference = \"path.\" name\nbody-reference = \"body\" [\"#\" fragment]\nfragment = a JSON Pointer [RFC 6901](https://tools.ietf.org/html/rfc6901)\nname = *( char )\nchar = as per RFC [7159](https://tools.ietf.org/html/rfc7159#section-7)\ntoken = as per RFC [7230](https://tools.ietf.org/html/rfc7230#section-3.2.6)\n```  \nThe `name` identifier is case-sensitive, whereas `token` is not.  \nThe table below provides examples of runtime expressions and examples of their use in a value:  \n##### Examples  \nSource Location | example expression  | notes\n---|:---|:---|\nHTTP Method            | `$method`         | The allowable values for the `$method` will be those for the HTTP operation.\nRequested media type | `$request.header.accept`        |"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "6c8d226a9a91b60067db696597c4a06807b772ec04b010d394722b7275978d92",
+  "judged_at": "2026-10-06T23:57:16-03:00"
+}

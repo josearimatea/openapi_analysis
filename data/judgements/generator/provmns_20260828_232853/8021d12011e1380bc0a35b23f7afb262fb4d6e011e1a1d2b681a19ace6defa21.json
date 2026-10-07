@@ -1,0 +1,439 @@
+{
+  "part_id": "generator|provmns_20260828_232853|DELETE /{className}={id}|responses",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "DELETE /{className}={id}",
+  "aspect": "responses",
+  "summary": "codes missing ['default']; codes extra ['204', '4XX', '5XX']; 1 absent, 1 differing, 4 extra",
+  "answer": {
+    "why_different": "The generated response block uses a different response value and structure: it replaces the specified empty 200 response and catch-all default error response with a URI-array payload and explicit 204/4XX/5XX responses. This appears consistent with a generic DELETE-response template rather than the resource-specific void response described by the 3GPP evidence.",
+    "verdict": "error",
+    "spec_3gpp": "The DELETE operation is specified as having a void response body, while an error response may use ErrorResponse. The evidence does not establish that 204, 4XX, or 5XX are the specific response codes for this DELETE operation.",
+    "openapi": "OpenAPI permits response content, explicit HTTP status codes, uppercase wildcard ranges such as 4XX and 5XX, and an optional default response. However, a default response is the mechanism for documenting responses other than those declared specifically.",
+    "clearer": "official",
+    "clearer_why": "The official response clearly states that successful deletion returns 200 with an empty body and documents the error case. The generated version misleadingly advertises deleted-resource URIs and omits the general error response.",
+    "citations": [
+      {
+        "evidence_id": "S1",
+        "quote": "12.1.1.1.6 Void"
+      },
+      {
+        "evidence_id": "S6",
+        "quote": "response body               error                   ErrorResponse           O"
+      },
+      {
+        "evidence_id": "O3",
+        "quote": "default | [Response Object](#response-object) \\| [Reference Object](#reference-object) | The documentation of responses other than the ones declared for specific HTTP response codes."
+      },
+      {
+        "evidence_id": "O5",
+        "quote": "To define a range of response codes, this field MAY contain the uppercase wildcard character `X`."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated description says that the response contains deleted-resource URIs, but the 3GPP evidence specifies a void response body for this DELETE operation. This contradicts S1 and loses the official statement that the body is empty."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "Adding an application/json array of URI values contradicts the specified void response body. The DELETE evidence identifies the response as void, while S1 states the relevant response-body behavior."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "error",
+        "reason": "Removing default loses the official catch-all ErrorResponse documentation for undeclared errors. OpenAPI defines default specifically for responses other than those declared by individual status codes, as stated in O3; S6 also identifies ErrorResponse as the DELETE error body."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "uncertain",
+        "reason": "A 204 response with no content is compatible with a void body, and OpenAPI permits HTTP status-code response entries, but the supplied DELETE-specific 3GPP evidence does not establish that 204 is a supported response code. This cannot be decided from S1, S4, or O5."
+      },
+      {
+        "difference_id": "D5",
+        "verdict": "uncertain",
+        "reason": "OpenAPI permits a 4XX wildcard response, and the 3GPP evidence identifies ErrorResponse for errors. However, the supplied DELETE-specific table does not show that 4XX is an allowed response range or that this generated ErrorResponse schema is the required one, so the evidence does not decide whether this addition is correct."
+      },
+      {
+        "difference_id": "D6",
+        "verdict": "uncertain",
+        "reason": "OpenAPI permits a 5XX wildcard response, and the 3GPP evidence identifies ErrorResponse for errors. However, the supplied DELETE-specific table does not show that 5XX is an allowed response range or that this generated ErrorResponse schema is the required one, so the evidence does not decide whether this addition is correct."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.1.6",
+      "title": "12.1.1.1.6 Void",
+      "text": "response body               error                   ErrorResponse           O  \nFurther details on deleting a resource with HTTP DELETE are provided in\nTS 32.158 \\[15\\], clause 5.4."
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.1.6",
+      "title": "12.1.1.1.6 Void",
+      "text": "##### 12.1.1.1.6 Void"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.1.7",
+      "title": "12.1.1.1.7 Void",
+      "text": "##### 12.1.1.1.7 Void"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "following table.  \nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource  \n[Extracted Table: 84 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.  \nTable 12.1.1.3.2.1.3.4-2: Data structures supported by the DELETE\nrequest body on this resource  \n**Data type**   **Description**   **S**\n--------------- ----------------- -------\nn/a             n/a               n/a  \nTable 12.1.1.3.2.1.3.4-3: Data structures supported by the DELETE\nresponse body on this resource  \n**Data type**   **Response codes**   **Description**                                                                                                                                                                                  **S**\n--------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.1.5",
+      "title": "12.1.1.1.5 Operation deleteMOI",
+      "text": "Further details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.  \nNote 1: Void."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.1.5",
+      "title": "12.1.1.1.5 Operation deleteMOI",
+      "text": "##### 12.1.1.1.5 Operation deleteMOI  \nThis operation deletes a single resource representing a managed object\ninstance  \nTable 12.1.1.1.5-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP DELETE)  \n[Extracted Table: 80 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nNote 2: Void.  \nTable 12.1.1.1.5-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP DELETE)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\ndeletionlist            n/a                         n/a                     n/a                     n/a\nstatus                  response status codes       n/a                     n/a                     M\nresponse body               error                   ErrorResponse           O  \nFurther details on deleting a resource with HTTP DELETE are provided in\nTS 32.158 \\[15\\], clause 5.4."
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "Dn                          TS 28.623 \\[44\\]   DN type\nSystemDN                    TS 28.623 \\[44\\]   systemDN type\nUri                         TS 28.623 \\[44\\]   URI type\nAttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\nAttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\nFilter                      TS 28.623 \\[44\\]   Filter type\nNotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\nNotificationType            TS 28.623 \\[44\\]   Notification type\nNotificationHeader          TS 28.623 \\[44\\]   Notification header\nErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.4.1a",
+      "title": "12.1.1.4.1a Structured data types",
+      "text": "##### 12.1.1.4.1a Structured data types"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "###### 12.1.1.4.1a.1 Type Resource  \n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**  \n**Attribute name**   **Data type**        **Description**                                                                                                                **S**"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.2.5",
+      "title": "12.1.1.2.5 Notification notifyMOIChanges",
+      "text": "equivalents (HTTP POST)  \n**IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n----------------------- --------------------------- ----------------------- ----------------------- -------\nobjectClass             request body                href                    Uri                     M\nobjectInstance\nnotificationId          request body                notificationId          NotificationId          M\nnotificationType        request body                notificationType        NotificationType        M\neventTime               request body                eventTime               DateTime                M\nsystemDN                request body                systemDN                SystemDN                M\nmoiChanges              request body                mOIChanges              array(MoiChange)        M"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "Table 12.1.3.1.5-2: Mapping of IS deleteMOI output parameters to SS\nequivalents  \n[Extracted Table: 99 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the deletionList can be retrieved via a\nseparate \\<get-config\\> operation."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "className            Class name of the targeted resource\nid                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3",
+      "title": "12.1.1.3.2.1.3 HTTP methods",
+      "text": "####### 12.1.1.3.2.1.3 HTTP methods"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "##### 12.1.1.3.2.1.3.1 HTTP PUT  {#http-put .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.  \nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource  \n**Data type**   **Description**                                                     **S**\n--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "is mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating\nthe MOI(s) to be deleted.  \nThe Netconf operation attribute on the list representing the\nbaseObjectInstance should be set to delete or remove.  \nThe default-operation parameter should be set to none.  \nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.5-1 and table 12.1.3.1.5-2.  \nTable 12.1.3.1.5-1: Mapping of IS deleteMOI input parameters to SS\nequivalents  \n**IS operation parameter name**   **SS parameter name**   **S**   **Remark**\n--------------------------------- ----------------------- ------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
+    },
+    {
+      "id": "S16",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.2.2",
+      "title": "12.1.1.2.2 Notification notifyMOICreation",
+      "text": "equivalents (HTTP POST)  \n**IS parameter name**     **SS parameter location**   **SS parameter name**     **SS parameter type**           **S**\n------------------------- --------------------------- ------------------------- ------------------------------- -------\nobjectClass               request body                href                      Uri                             M\nobjectInstance\nnotificationId            request body                notificationId            NotificationId                  M\nnotificationType          request body                notificationType          NotificationType                M\neventTime                 request body                eventTime                 DateTime                        M\nsystemDN                  request body                systemDN                  SystemDN                        M\ncorrelatedNotifications   request body                correlatedNotifications   array(CorrelatedNotification)   O\nadditionalText            request body                additionalText            AdditionalText                  O\nsourceIndicator           request body                sourceIndicator           SourceIndicator                 O"
+    },
+    {
+      "id": "S17",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "value:  \nsubAttrB1: def  \nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace  \npath: /ClassA=1\\#/attributes/attrA/subAttrB1  \nvalue: def  \nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 1  \n\\- 2  \n\\- 3  \nIts deletion is reported by the following notification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: remove  \npath: /ClassA=1\\#/attributes/attrD  \nThe complete replacement of the array is reported by the following\nnotification.  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: add  \npath: /ClassA=1\\#/attributes/attrD  \nvalue:  \n\\- 11  \n\\- 21  \n\\- 31  \nThe following example reports the second item in the array changed to\n\\\"22\\\".  \nhref: https://example.com/3gpp  \n\\...  \nmoiChanges  \n\\- notificationId: 123456789  \nop: replace"
+    },
+    {
+      "id": "S18",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "----------------------- --------------------------- ----------------------- ----------------------- -------\nattributeListOut        response body               n/a                     Resource                O\nstatus                  response status codes       n/a                     n/a                     M\nresponse body               error                   ErrorResponse           O  \nFurther details on updating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.3."
+    },
+    {
+      "id": "S19",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "###### 12.1.1.1.4.2 Mapping to HTTP PATCH  \nHTTP PATCH is used to create, update or delete one or multiple\nresources.  \nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)  \n[Extracted Table: 79 from 28532-i00 (Release Rel-18, Series 28_series)]  \nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:  \n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource  \n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource  \n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)"
+    },
+    {
+      "id": "S20",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "--------------- ------------------------------------------------------------------- -------\nResource        Resource representation of the resource to be created or replaced   M  \nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource  \n[Extracted Table: 81 from 28532-i00 (Release Rel-18, Series 28_series)]"
+    },
+    {
+      "id": "S21",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "##### 12.1.1.3.2.1.3.2 HTTP GET  {#http-get .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource  \n[Extracted Table: 82 from 28532-i00 (Release Rel-18, Series 28_series)]  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.  \nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource  \n**Data type**   **Description**   **S**\n--------------- ----------------- -------\nn/a             n/a               n/a  \nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S22",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\nErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S23",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "##### 12.1.1.3.2.1.3.3 HTTP PATCH  {#http-patch .H6}  \nThis method shall support the URI query parameters specified in the\nfollowing table.  \nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource  \n**Name**   **Data type**   **Description**   **S**\n---------- --------------- ----------------- -------\nn/a        n/a             n/a               n/a  \nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables."
+    },
+    {
+      "id": "S24",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.1.2",
+      "title": "12.1.1.1.2 Operation createMOI",
+      "text": "attributeListOut    response body           n/a                 Resource            M\nstatus              response status codes   n/a                 n/a                 M\nresponse body           error               ErrorResponse       O  \nFurther details on creating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.1.2."
+    },
+    {
+      "id": "S25",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "##### 12.1.1.1.3 Operation getMOIAttributes  \nThis operation retrieves one or multiple resources representing managed\nobject instances.  \nTable 12.1.1.1.3-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP GET)  \n[Extracted Table: 76 from 28532-i00 (Release Rel-18, Series 28_series)]  \nNote 1: Void.  \nNote 2: Void.  \nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)  \n[Extracted Table: 77 from 28532-i00 (Release Rel-18, Series 28_series)]  \nFurther details on reading resources with HTTP GET are provided in TS\n32.158 \\[15\\], clause 5.2.  \nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.  \nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S26",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE response status codes 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "ScopeType                        12.1.1.4.4.5    Scope type of a scope\nOperation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\nInsert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\nPatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\nResource                         12.1.1.4.1a.1   Used for resource representations\nScope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\nCorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\nMoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\nNotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\nNotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationRequestBody\"></a>requestBody | [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object) | The request body applicable for this operation.  The `requestBody` is only supported in HTTP methods where the HTTP 1.1 specification [RFC7231](https://tools.ietf.org/html/rfc7231#section-4.3.1) has explicitly defined semantics for request bodies.  In other cases where the HTTP spec is vague, `requestBody` SHALL be ignored by consumers.\n<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object Examples",
+      "text": "<a name=\"responseContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | A map containing descriptions of potential response payloads. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For responses that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"responseLinks\"></a>links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | A map of operations links that can be followed from the response. The key of the map is a short name for the link, following the naming constraints of the names for [Component Objects](#components-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Response Object Examples  \nResponse of an array of a complex type:  \n```json\n{\n\"description\": \"A complex object array response\",\n\"content\": {\n\"application/json\": {\n\"schema\": {"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "The `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"responsesDefault\"></a>default | [Response Object](#response-object) \\| [Reference Object](#reference-object) | The documentation of responses other than the ones declared for specific HTTP response codes. Use this field to cover undeclared responses. A [Reference Object](#reference-object) can link to a response that the [OpenAPI Object's components/responses](#componentsResponses) section defines.  \n##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "---|:---:|---\n<a name=\"responsesCode\"></a>[HTTP Status Code](#http-status-codes) | [Response Object](#response-object) \\| [Reference Object](#reference-object) | Any [HTTP status code](#http-status-codes) can be used as the property name, but only one property per code, to describe the expected response for that HTTP status code.  A [Reference Object](#reference-object) can link to a response that is defined in the [OpenAPI Object's components/responses](#componentsResponses) section. This field MUST be enclosed in quotation marks (for example, \"200\") for compatibility between JSON and YAML. To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`. The following range definitions are allowed: `1XX`, `2XX`, `3XX`, `4XX`, and `5XX`. If a response range is defined using an explicit code, the explicit code definition takes precedence over the range definition for that code."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "",
+      "title": "HTTP Status Codes",
+      "text": "application/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation.\nThe available status codes are defined by [RFC7231](https://tools.ietf.org/html/rfc7231#section-6) and registered status codes are listed in the [IANA Status Code Registry](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object",
+      "text": "X-Rate-Limit-Limit:\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Responses Object  \nA container for the expected responses of an operation.\nThe container maps a HTTP response code to the expected response.  \nThe documentation is not necessarily expected to cover all possible HTTP response codes because they may not be known in advance.\nHowever, documentation is expected to cover a successful operation response and any known errors.  \nThe `default` MAY be used as a default response object for all HTTP codes\nthat are not covered individually by the specification.  \nThe `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "---|:---|:---|\nHTTP Method            | `$method`         | The allowable values for the `$method` will be those for the HTTP operation.\nRequested media type | `$request.header.accept`        |\nRequest parameter      | `$request.path.id`        | Request parameters MUST be declared in the `parameters` section of the parent operation or they cannot be evaluated. This includes request headers.\nRequest body property   | `$request.body#/user/uuid`   | In operations which accept payloads, references may be made to portions of the `requestBody` or the entire body.\nRequest URL            | `$url`            |\nResponse value         | `$response.body#/status`       |  In operations which return payloads, references may be made to portions of the response body or the entire body.\nResponse header        | `$response.header.Server` |  Single header values only are available  \nRuntime expressions preserve the type of the referenced value."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"encodingExplode\"></a>explode | `boolean` | When this is true, property values of type `array` or `object` generate separate parameters for each value of the array, or key-value-pair of the map.  For other types of properties this property has no effect. When [`style`](#encodingStyle) is `form`, the default value is `true`. For all other styles, the default value is `false`. This property SHALL be ignored if the request body media type is not `application/x-www-form-urlencoded`.\n<a name=\"encodingAllowReserved\"></a>allowReserved | `boolean` | Determines whether the parameter value SHOULD allow reserved characters, as defined by [RFC3986](https://tools.ietf.org/html/rfc3986#section-2.2) `:/?#[]@!$&'()*+,;=` to be included without percent-encoding. The default value is `false`. This property SHALL be ignored if the request body media type is not `application/x-www-form-urlencoded`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 default 204 4XX 5XX Deleted-resource URIs",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v3",
+  "cache_key": "8021d12011e1380bc0a35b23f7afb262fb4d6e011e1a1d2b681a19ace6defa21",
+  "judged_at": "2026-10-07T00:00:10-03:00"
+}
