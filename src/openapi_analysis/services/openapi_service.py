@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from openapi_analysis.config.paths import OUTPUTS_GENERATOR_DIR, ROOT, reference_yaml
+from openapi_analysis.config.paths import ROOT, reference_yaml
 from openapi_analysis.config.settings import OFFICIAL_REFERENCE
 from openapi_analysis.openapi.comparison import compare_documents
 from openapi_analysis.reporting.text import render_openapi
@@ -30,7 +30,7 @@ def evaluate_openapi(generated_yaml: Source, official_yaml: Source, *,
     """Evaluate a generated OpenAPI document against the official YAML.
 
     generated_yaml / official_yaml: a parsed dict or a path. save_as=(service, name)
-    also writes the report to data/outputs/generator/<service>/<name>.json|.txt.
+    also writes the report to data/outputs/reports/<service>/generator/.
     """
     gen, gen_label = load(generated_yaml)
     off, off_label = load(official_yaml)
@@ -39,7 +39,8 @@ def evaluate_openapi(generated_yaml: Source, official_yaml: Source, *,
         official_info=SourceInfo(label=off_label,
                                  version=str((off.get("info") or {}).get("version", ""))))
     if save_as:
-        save_report(report, OUTPUTS_GENERATOR_DIR, *save_as,
+        service, name = save_as
+        save_report(report, service, "generator", name,
                     text=render_openapi(report, max_items=10_000))
     return report
 

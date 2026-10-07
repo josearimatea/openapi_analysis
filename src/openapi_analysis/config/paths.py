@@ -6,9 +6,11 @@ data/
     reference/<Service>/     the OFFICIAL OpenAPI YAMLs — the ground truth
     rulesbank/<Service>/     rules banks produced by openapi_rulesbank
     generated/<Service>/     OpenAPI documents produced by openapi_generator
-  outputs/                   reports written by this repo (git-ignored, regenerable)
-    rulesbank/<Service>/     evaluation 1 — one report per rules bank
-    generator/<Service>/     evaluation 2 — one report per generated OpenAPI document
+  outputs/reports/<Service>/ reports written by this repo (git-ignored, regenerable),
+    generator/               one report per generated OpenAPI document and run,
+                             named by when it was made: YYYY-MM-DD_HH-MM-SS.txt
+                             (+ .json, its data); the input is stated inside
+    rulesbank/               one report per rules bank and run, the same way
 
 Inputs are COPIED here (scripts/sync_data.py) rather than read from the sibling
 repos, so a measurement is reproducible from this repo alone and a pinned count
@@ -30,9 +32,7 @@ RULESBANK_DIR = INPUTS_DIR / "rulesbank"
 GENERATED_DIR = INPUTS_DIR / "generated"
 SPECS_DIR = INPUTS_DIR / "specs"          # 3GPP spec markdown each bank came from
 OUTPUTS_DIR = DATA_DIR / "outputs"
-OUTPUTS_RULESBANK_DIR = OUTPUTS_DIR / "rulesbank"
-OUTPUTS_GENERATOR_DIR = OUTPUTS_DIR / "generator"
-OUTPUTS_JUDGE_DIR = OUTPUTS_DIR / "judge"
+REPORTS_DIR = OUTPUTS_DIR / "reports"
 # The judge's verdicts, one file per part — versioned (costly to regenerate; a rerun
 # with the same part, evidence, model and prompt reads them back instead of the LLM).
 JUDGEMENTS_DIR = DATA_DIR / "judgements"
@@ -53,3 +53,9 @@ def rulesbank_dir(service: str) -> Path:
 
 def generated_dir(service: str) -> Path:
     return GENERATED_DIR / service
+
+
+def report_dir(service: str, evaluation: str) -> Path:
+    """Where the reports of one service and evaluation ('generator' | 'rulesbank') go."""
+    return REPORTS_DIR / service / evaluation
+

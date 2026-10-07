@@ -3,7 +3,11 @@
     openapi-analysis rulesbank <rules_bank.json> <official.yaml> [--json]
     openapi-analysis openapi   <generated.yaml>  <official.yaml> [--json]
     openapi-analysis extract   <official.yaml> [-o official_rules.json]
-    openapi-analysis all       # every input in data/inputs → data/outputs/{rulesbank,generator}/<Service>/
+    openapi-analysis all [--no-judge]   # every input in data/inputs → one report each in
+                               # data/outputs/reports/<Service>/{generator,rulesbank}/:
+                               # a generated document's report holds the OpenAPI validation,
+                               # the value-by-value agreement and the semantic review
+                               # (needs [judge]; --no-judge: without the review)
     openapi-analysis judge generator|rulesbank <input> <official.yaml>
                            [--part "OWNER::ASPECT"]... [--limit N]   # layer 3, needs [judge]
 """
@@ -45,7 +49,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("official", type=Path)
     p.add_argument("-o", "--output", type=Path)
 
-    sub.add_parser("all", help="evaluate every input in data/inputs, save to data/outputs")
+    p = sub.add_parser("all", help="evaluate every input in data/inputs, save to data/outputs")
+    p.add_argument("--no-judge", action="store_true",
+                   help="skip the semantic review (step 3, LLM) of the generated documents")
 
     p = sub.add_parser("judge", help="layer 3: an LLM judges each divergence, reading the "
                                      "3GPP spec and the OpenAPI reference (needs [judge])")
@@ -90,11 +96,22 @@ def main(argv: list[str] | None = None) -> int:
             print(f"rulesbank  {r.bank.label:72} coverage {t.covered:3}/{t.expected:<3} "
                   f"fidelity {t.value_equal:3}/{t.value_equal + t.value_different:<3} "
                   f"extra {t.bank_extra}")
-        for r in evaluate_all_generated():
+        for r in evaluate_all_generated(save=args.no_judge):     # with the review, the
+            # generated document's one report is written by the review (it holds steps 1-2)
             c, v = r.contract, r.validity_generated
             valid = "valid" if v.valid else f"INVALID ({len(v.issues)})"
             print(f"openapi    {r.generated.label:72} contract {c.exact:4}/{c.total:<4} "
                   f"absent {len(c.absent)} differing {len(c.differing)}  {valid}")
+        if not args.no_judge:
+            from openapi_analysis.reporting.final import census
+            from openapi_analysis.services.judge_service import judge_all_generated
+
+            for j in judge_all_generated():
+                _, total = census(j)
+                ok = 100 * total.get("correct", 0) / total["total"] if total.get("total") else 0
+                print(f"review     {j.input:72} correct {ok:5.1f}%  "
+                      + "  ".join(f"{k} {n}" for k, n in sorted(j.counts.items()))
+                      + f"  (US$ {j.usage.get('cost_usd', 0)})")
     return 0
 
 

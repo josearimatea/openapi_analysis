@@ -5,9 +5,8 @@
 
 Flow per input: layer 1/2 report → parts (judge/parts.py) → for each part, retrieval
 from the spec and the OpenAPI reference (judge/retrieval.py) → the LLM (judge/judge.py,
-cached under data/judgements/) → a JudgeReport, saved under
-data/outputs/judge/<evaluation>/<service>/<input>.json|.txt, and the short
-final analysis <input>_final.md.
+cached under data/judgements/) → a JudgeReport, saved as ONE report under
+data/outputs/reports/<service>/<evaluation>/YYYY-MM-DD_HH-MM-SS.txt|.json.
 
 Which spec and service apply is read from data/inputs/manifest.json — a generated
 document → the bank it was built from → the spec that bank was extracted from — or
@@ -20,7 +19,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from openapi_analysis.config import judge_settings as s
-from openapi_analysis.config.paths import JUDGEMENTS_DIR, OUTPUTS_JUDGE_DIR, ROOT
+from openapi_analysis.config.paths import JUDGEMENTS_DIR, ROOT
 from openapi_analysis.judge.judge import AskLLM, default_ask, judge_part
 from openapi_analysis.judge.parts import (
     document_owners,
@@ -30,11 +29,11 @@ from openapi_analysis.judge.parts import (
 )
 from openapi_analysis.judge.retrieval import CorpusLayout, Search, default_search, retrieve_evidence
 from openapi_analysis.judge.spec_index import annex_cut, block_of, chunk_clauses, clause_of
-from openapi_analysis.reporting.markdown import render_judge_final
+from openapi_analysis.reporting.final import render_final
 from openapi_analysis.reporting.text import render_judge
 from openapi_analysis.schemas.judge import JudgeReport, Part
 from openapi_analysis.schemas.rulesbank import now
-from openapi_analysis.services.inputs import Source, load, manifest
+from openapi_analysis.services.inputs import Source, load, manifest, save_report
 from openapi_analysis.services.openapi_service import evaluate_openapi
 from openapi_analysis.services.rulesbank_service import evaluate_rules_bank
 
@@ -100,7 +99,8 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
            spec_document: Path, scope: tuple[str, ...], *, select: Select | None,
            limit: int | None, ask: AskLLM | None, search: Search | None,
            save: bool, owners: list[str] | None = None,
-           leaves: dict[str, dict[str, int]] | None = None) -> JudgeReport:
+           leaves: dict[str, dict[str, int]] | None = None,
+           validity: tuple | None = None) -> JudgeReport:
     from openapi_analysis.config.llm_config import usage_tracker
 
     collection = _collection(spec_document)
@@ -126,16 +126,14 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
                          evaluated_at=now(), verdicts=verdicts, usage=usage,
                          parts_total=len(parts), owners_total=len(owners or []),
                          leaves=leaves or {},
+                         validity_generated=validity[0] if validity else None,
+                         validity_official=validity[1] if validity else None,
                          owners_equal=[o for o in owners or []
                                        if o not in {p.owner for p in parts}])
-    if save:
-        out = OUTPUTS_JUDGE_DIR / evaluation / service
-        out.mkdir(parents=True, exist_ok=True)
-        stem = Path(label).stem
-        (out / f"{stem}.json").write_text(report.model_dump_json(indent=2) + "\n",
-                                          encoding="utf-8")
-        (out / f"{stem}.txt").write_text(render_judge(report) + "\n", encoding="utf-8")
-        (out / f"{stem}_final.md").write_text(render_judge_final(report), encoding="utf-8")
+    if save:            # ONE report per input and run: for a generated document, the
+        # final analysis (validation, value-by-value agreement and review, detail)
+        text = render_final(report) if evaluation == "generator" else render_judge(report)
+        save_report(report, service, evaluation, Path(label).stem, text)
     return report
 
 
@@ -161,7 +159,8 @@ def judge_openapi(generated_yaml: Source, official_yaml: Source, *,
     return _judge(parts, "generator", label, service, spec_document, scope, select=select,
                   limit=limit, ask=ask, search=search, save=save,
                   owners=document_owners(report, generated, official),
-                  leaves=leaf_census(report, generated, official))
+                  leaves=leaf_census(report, generated, official),
+                  validity=(report.validity_generated, report.validity_official))
 
 
 def judge_rules_bank(rules_bank: Source, official_yaml: Source, *,
@@ -181,3 +180,20 @@ def judge_rules_bank(rules_bank: Source, official_yaml: Source, *,
     parts = rulesbank_parts(report, bank, Path(label).stem)
     return _judge(parts, "rulesbank", label, service, spec_document, scope, select=select,
                   limit=limit, ask=ask, search=search, save=save)
+
+
+def judge_all_generated(*, save: bool = True) -> list[JudgeReport]:
+    """Semantic review of every generated document in data/inputs (per the manifest),
+    against its service's official YAML — cached verdicts are read back."""
+    from openapi_analysis.config.paths import reference_yaml
+    from openapi_analysis.config.settings import OFFICIAL_REFERENCE
+
+    reports = []
+    for entry in manifest()["generated"]:
+        service = entry["service"]
+        if service in OFFICIAL_REFERENCE:
+            reports.append(judge_openapi(ROOT / entry["path"],
+                                         reference_yaml(service, OFFICIAL_REFERENCE[service]),
+                                         save=save))
+    return reports
+
