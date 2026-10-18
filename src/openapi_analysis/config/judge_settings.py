@@ -2,8 +2,8 @@
 
 Kept apart from settings.py on purpose: this module loads the repo's .env (API keys)
 on import, and only the judge imports it — the deterministic layers never read a key.
-The values mirror openapi_rulesbank (same provider scheme, model, Qdrant collections,
-embedding model and chunk sizes), so the judge reads the corpus the way the
+The values mirror openapi_rulesbank (same provider scheme, model, Qdrant collections
+and chunk sizes; the embedding model comes from qdrant_3gpp_rag, as there), so the judge reads the corpus the way the
 generators were given it.
 """
 
@@ -42,8 +42,15 @@ OPENROUTER_APP_NAME = os.getenv("OPENROUTER_APP_NAME", "openapi-analysis")
 # ── Qdrant / RAG ─────────────────────────────────────────────────────────────
 QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
 QDRANT_PORT = int(os.getenv("QDRANT_PORT", "6333"))
-EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-EMBEDDING_DIM = 384
+# The embedding model of the shared collections, from its single source. A query
+# must use the model the collections were built with.
+try:  # qdrant_3gpp_rag comes with the [judge] extra
+    from qdrant_3gpp_rag.embedding_config import (
+        DEFAULT_EMBEDDING_DIM as EMBEDDING_DIM,
+        DEFAULT_EMBEDDING_MODEL as EMBEDDING_MODEL,
+    )
+except ImportError:  # pragma: no cover — without the extra there is no RAG to embed for
+    EMBEDDING_MODEL, EMBEDDING_DIM = "", 0
 EMBEDDING_DEVICE = "cpu"       # the [judge] extra installs CPU-only torch
 
 # The OpenAPI 3.0.1 reference, a permanent collection built by openapi_rulesbank.
