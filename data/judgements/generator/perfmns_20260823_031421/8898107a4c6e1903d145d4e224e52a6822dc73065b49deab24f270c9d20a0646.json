@@ -1,0 +1,245 @@
+{
+  "part_id": "generator|perfmns_20260823_031421|DOCUMENT info|metadata",
+  "evaluation": "generator",
+  "input": "perfmns_20260823_031421",
+  "owner": "DOCUMENT info",
+  "aspect": "metadata",
+  "summary": "3 differing, 1 extra",
+  "answer": {
+    "why_different": "D1–D3 are different metadata values, likely because the generator used a generic TS 28.532 service identity and an older document version rather than the specific Performance Threshold Monitoring MnS metadata. D4 is a different structure: the generated document adds an `x-` specification-extension block under `info`.",
+    "verdict": "error",
+    "spec_3gpp": "The specification identifies this material as the Performance threshold monitoring service, including data types used by that service; it does not provide evidence for the generated 18.0.0 document version.",
+    "openapi": "The OpenAPI reference requires an Info Object with a title and version, describes the title as the application title and the version as the OpenAPI document version, and permits specification extensions. The generated `x-openapi-generator` block is therefore structurally allowed, but the evidence does not establish that 18.0.0 is the correct document version.",
+    "clearer": "official",
+    "clearer_why": "The official metadata accurately identifies the specific Performance Threshold Monitoring MnS. The generated title and description instead call it Generic management services, which is less specific and conflicts with the service identified by the specification; the extra generator metadata does not remedy that.",
+    "citations": [
+      {
+        "evidence_id": "C1",
+        "quote": "title: TS 28.532 Performance Threshold Monitoring MnS"
+      },
+      {
+        "evidence_id": "C1",
+        "quote": "version: 18.1.0"
+      },
+      {
+        "evidence_id": "C1",
+        "quote": "description: OAS 3.0.1 definition of the Performance Threshold Monitoring MnS © 2023, 3GPP Organizational"
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "title: TS 28.532 Generic management services"
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "version: 18.0.0"
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "description: OAS 3.0.1 definition of TS 28.532 Generic management services © 2023, 3GPP Organizational"
+      },
+      {
+        "evidence_id": "S3",
+        "quote": "12.3.1.2 Performance threshold monitoring service"
+      },
+      {
+        "evidence_id": "O2",
+        "quote": "This object MAY be extended with [Specification Extensions](#specification-extensions)."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated title identifies the document as Generic management services, while the specification identifies the relevant service as the Performance threshold monitoring service and the official metadata names the Performance Threshold Monitoring MnS. This is a wrong service identity, not merely a rewording; see S3, C1, and C2."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "uncertain",
+        "reason": "The version value changes the stated OpenAPI document version, but the supplied specification and OpenAPI passages do not establish whether 18.1.0 or 18.0.0 is correct. The OpenAPI reference only says that `info.version` is the version of the OpenAPI document; see O3, C1, and C2."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "error",
+        "reason": "The generated description changes the subject from the Performance Threshold Monitoring MnS to Generic management services, losing the specific service identity supported by the specification. It therefore conveys incorrect metadata rather than equivalent prose; see S3, C1, and C2."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "improvement",
+        "reason": "The added `x-openapi-generator` block is a valid specification extension under the Info Object and supplies generator provenance that is absent from the official document. The OpenAPI reference expressly permits such extensions; see O2 and C2."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type info",
+      "filters": {},
+      "clause": "12.3.1.2.4.6.2",
+      "title": "12.3.1.2.4.6.2 Simple data types",
+      "text": "12.3.1.2.4 Data type definitions › 12.3.1.2.4.6 Simple data types and enumerations\n\n####### 12.3.1.2.4.6.2 Simple data types\n\nTable 12.3.1.2.4.6.2-1: Simple data types\n\n  Type name         Type definition         Description\n  ----------------- ----------------------- -------------------------------------------------------------\n  PerfMetricValue   Union(integer, Float)   The type of a performance metric is either integer or Float"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "info  title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "12.3.2.4",
+      "title": "12.3.2.4 XML schema",
+      "text": "12.3 Generic performance assurance management service › 12.3.2 Performance data XML file format definition\n\n#### 12.3.2.4 XML schema (part 1/2)\n\nThis clause specifies the XML schema that shall be used for XML files\ncontaining performance data.\n\nName: measData.xsd\n\nVersion: 2.0.0\n\nIdentifier: measData.xsd-v2.0.0\n\n\\<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?\\>\n\n\\<!\\--\n\nTS 28.532 Performance data XML file format definition\n\nmeasData.xsd-v2.0.0\n\n\\--\\>\n\n\\<schema\n\nxmlns=\\\"http://www.w3.org/2001/XMLSchema\\\"\n\nxmlns:md=\\\"http://www.3gpp.org/ftp/specs/archive/28\\_series/28.532\\#measData\\\"\n\ntargetNamespace=\\\"http://www.3gpp.org/ftp/specs/archive/28\\_series/28.532\\#measData\\\"\n\nelementFormDefault=\\\"qualified\\\"\\>\n\n\\<element name=\\\"measDataFile\\\"\\>\n\n\\<complexType\\>\n\n\\<sequence\\>\n\n\\<element name=\\\"fileHeader\\\"\\>\n\n\\<complexType\\>\n\n\\<sequence\\>\n\n\\<element name=\\\"fileSender\\\"\\>\n\n\\<complexType\\>\n\n\\<attribute name=\\\"senderName\\\" type=\\\"string\\\" use=\\\"optional\\\"/\\>\n\n\\<attribute name=\\\"senderType\\\" type=\\\"string\\\" use=\\\"optional\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\<element name=\\\"measData\\\"\\>\n\n\\<complexType\\>\n\n\\<attribute name=\\\"beginTime\\\" type=\\\"dateTime\\\" use=\\\"required\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\</sequence\\>\n\n\\<attribute name=\\\"fileFormatVersion\\\" type=\\\"string\\\"\nuse=\\\"required\\\"/\\>\n\n\\<attribute name=\\\"vendorName\\\" type=\\\"string\\\" use=\\\"optional\\\"/\\>\n\n\\<attribute name=\\\"dnPrefix\\\" type=\\\"string\\\" use=\\\"optional\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\<element name=\\\"measData\\\" minOccurs=\\\"0\\\" maxOccurs=\\\"unbounded\\\"\\>\n\n\\<complexType\\>\n\n\\<sequence\\>\n\n\\<element name=\\\"measEntity\\\"\\>\n\n\\<complexType\\>\n\n\\<attribute name=\\\"localDn\\\" type=\\\"string\\\" use=\\\"optional\\\"/\\>\n\n\\<attribute name=\\\"userLabel\\\" type=\\\"string\\\" use=\\\"optional\\\"/\\>\n\n\\<attribute name=\\\"swVersion\\\" type=\\\"string\\\" use=\\\"optional\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\<element name=\\\"measInfo\\\" minOccurs=\\\"0\\\" maxOccurs=\\\"unbounded\\\"\\>\n\n\\<complexType\\>\n\n\\<sequence\\>\n\n\\<element name=\\\"job\\\" minOccurs=\\\"0\\\"\\>\n\n\\<complexType\\>\n\n\\<attribute name=\\\"jobId\\\" type=\\\"string\\\" use=\\\"required\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\<element name=\\\"granPeriod\\\"\\>\n\n\\<complexType\\>\n\n\\<attribute name=\\\"duration\\\" type=\\\"duration\\\" use=\\\"required\\\"/\\>\n\n\\<attribute name=\\\"endTime\\\" type=\\\"dateTime\\\" use=\\\"required\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\<element name=\\\"repPeriod\\\" minOccurs=\\\"0\\\"\\>\n\n\\<complexType\\>\n\n\\<attribute name=\\\"duration\\\" type=\\\"duration\\\" use=\\\"required\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\<choice\\>\n\n\\<element name=\\\"measTypes\\\"\\>\n\n\\<simpleType\\>\n\n\\<list itemType=\\\"Name\\\"/\\>\n\n\\</simpleType\\>\n\n\\</element\\>\n\n\\<element name=\\\"measType\\\" minOccurs=\\\"0\\\" maxOccurs=\\\"unbounded\\\"\\>\n\n\\<complexType\\>\n\n\\<simpleContent\\>\n\n\\<extension base=\\\"Name\\\"\\>\n\n\\<attribute name=\\\"p\\\" type=\\\"positiveInteger\\\" use=\\\"required\\\"/\\>\n\n\\</extension\\>\n\n\\</simpleContent\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\</choice\\>\n\n\\<element name=\\\"measValue\\\" minOccurs=\\\"0\\\" maxOccurs=\\\"unbounded\\\"\\>\n\n\\<complexType\\>\n\n\\<sequence\\>\n\n\\<choice\\>\n\n\\<element name=\\\"measResults\\\"\\>\n\n\\<simpleType\\>\n\n\\<list itemType=\\\"md:measResultType\\\"/\\>\n\n\\</simpleType\\>\n\n\\</element\\>\n\n\\<element name=\\\"r\\\" minOccurs=\\\"0\\\" maxOccurs=\\\"unbounded\\\"\\>\n\n\\<complexType\\>\n\n\\<simpleContent\\>\n\n\\<extension base=\\\"md:measResultType\\\"\\>\n\n\\<attribute name=\\\"p\\\" type=\\\"positiveInteger\\\" use=\\\"required\\\"/\\>\n\n\\</extension\\>\n\n\\</simpleContent\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\</choice\\>\n\n\\<element name=\\\"suspect\\\" type=\\\"boolean\\\" minOccurs=\\\"0\\\"/\\>\n\n\\</sequence\\>\n\n\\<attribute name=\\\"measObjLdn\\\" type=\\\"string\\\" use=\\\"required\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\</sequence\\>\n\n\\<attribute name=\\\"measInfoId\\\" type=\\\"string\\\" use=\\\"optional\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\</sequence\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\<element name=\\\"fileFooter\\\"\\>\n\n\\<complexType\\>\n\n\\<sequence\\>\n\n\\<element name=\\\"measData\\\"\\>\n\n\\<complexType\\>\n\n\\<attribute name=\\\"endTime\\\" type=\\\"dateTime\\\" use=\\\"required\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "info  title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "12.3.1.2.4.1",
+      "title": "12.3.1.2.4.1 General",
+      "text": "12.3.1.2 Performance threshold monitoring service › 12.3.1.2.4 Data type definitions\n\n###### 12.3.1.2.4.1 General\n\nTable 12.3.1.2.4.1-1: Data types defined in this specification\n\n  **Data type**             **Reference**    **Description**\n  ------------------------- ---------------- -----------------------------------------------------------------------------------------\n  NotifyThresholdCrossing   12.3.1.2.4.2.1   Used in the request body of HTTP POST for the notification type notifyThresholdCrossing\n  PerfNotificationTypes     12.3.1.2.4.6.4   Performance notification types (notifyThresholdCrossing)\n\nTable 12.3.1.1.4.1-2: Data types imported\n\n  **Data type**        **Reference**      **Description**\n  -------------------- ------------------ ---------------------------------------------------------------------\n  DateTime             TS 28.623 \\[44\\]   Date and time\n  Float                TS 28.623 \\[44\\]   Float type\n  Uri                  TS 28.623 \\[44\\]   URI type\n  SystemDN             TS 28.623 \\[44\\]   systemDN type\n  NotificationId       TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationHeader   TS 28.623 \\[44\\]   Notification header\n  ErrorResponse        TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "info  title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "12.3.1.2.1",
+      "title": "12.3.1.2.1 Mapping of operations",
+      "text": "12.3.1 RESTful HTTP-based solution set › 12.3.1.2 Performance threshold monitoring service\n\n##### 12.3.1.2.1 Mapping of operations\n\nNone."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "info  title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "12.3.2.4",
+      "title": "12.3.2.4 XML schema",
+      "text": "12.3 Generic performance assurance management service › 12.3.2 Performance data XML file format definition\n\n#### 12.3.2.4 XML schema (part 2/2)\n\n\\<complexType\\>\n\n\\<sequence\\>\n\n\\<element name=\\\"measData\\\"\\>\n\n\\<complexType\\>\n\n\\<attribute name=\\\"endTime\\\" type=\\\"dateTime\\\" use=\\\"required\\\"/\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\</sequence\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\</sequence\\>\n\n\\</complexType\\>\n\n\\</element\\>\n\n\\<simpleType name=\\\"measResultType\\\"\\>\n\n\\<union memberTypes=\\\"integer float string\\\"\\>\n\n\\<simpleType\\>\n\n\\<restriction base=\\\"string\\\"\\>\n\n\\<enumeration value=\\\"NULL\\\"/\\>\n\n\\</restriction\\>\n\n\\</simpleType\\>\n\n\\</union\\>\n\n\\</simpleType\\>\n\n\\</schema\\>"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "info  title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "12.3.2.2",
+      "title": "12.3.2.2 Mapping table",
+      "text": "12.3 Generic performance assurance management service › 12.3.2 Performance data XML file format definition\n\n#### 12.3.2.2 Mapping table (part 2/5)\n\n+----------------------+----------------------+----------------------+\n| File Content Item    | XML schema based XML | Description          |\n|                      | tag                  |                      |\n+======================+======================+======================+\n| measDataFile         | XML element:         | Document element     |\n|                      | measDataFile         |                      |\n+----------------------+----------------------+----------------------+\n| measFileHeader       | XML element:         |                      |\n|                      | fileHeader           |                      |\n+----------------------+----------------------+----------------------+\n| measData             | XML element:         |                      |\n|                      | measData             |                      |\n+----------------------+----------------------+----------------------+\n| measFileFooter       | XML element:         |                      |\n|                      | fileFooter           |                      |\n+----------------------+----------------------+----------------------+\n| fileFormatVersion    | XML element:         |                      |\n|                      | fileHeader           |                      |\n|                      |                      |                      |\n|                      | XML attribute:       |                      |\n|                      | fileFormatVersion    |                      |\n+----------------------+----------------------+----------------------+\n| senderName           | XML element:         | The DN of the sender |\n|                      | fileHeader           | is split into the DN |\n|                      |                      | prefix contained in  |\n|                      | XML attribute:       | \\\"dnPrefix\\\" and the |\n|                      | dnPrefix             | Local DN (LDN)       |\n|                      |                      | contained in         |\n|                      | XML element:         | \\\"senderName\\\".      |\n|                      | f                    |                      |\n|                      | ileHeader:fileSender |                      |\n|                      |                      |                      |\n|                      | XML attribute:       |                      |\n|                      | senderName           |                      |\n+----------------------+----------------------+----------------------+\n| senderType           | XML element          |                      |\n|                      | f                    |                      |\n|                      | ileHeader:fileSender |                      |\n|                      |                      |                      |\n|                      | XML attribute:       |                      |\n|                      | senderType           |                      |\n+----------------------+----------------------+----------------------+\n| vendorName           | XML element          |                      |\n|                      | fileHeader           |                      |\n|                      |                      |                      |\n|                      | XML attribute        |                      |\n|                      | vendorName           |                      |\n+----------------------+----------------------+----------------------+\n| collectionBeginTime  | XML element:         |                      |\n|                      | fileHeader:measData  |                      |\n|                      |                      |                      |\n|                      | XML attribute        |                      |\n|                      | beginTime            |                      |\n+----------------------+----------------------+----------------------+"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"oasInfo\"></a>info | [Info Object](#info-object) | **REQUIRED**. Provides metadata about the API. The metadata MAY be used by tooling as required.\n<a name=\"oasServers\"></a>servers | [[Server Object](#server-object)] | An array of Server Objects, which provide connectivity information to a target server. If the `servers` property is not provided, or is an empty array, the default value would be a [Server Object](#server-object) with a [url](#serverUrl) value of `/`.\n<a name=\"oasPaths\"></a>paths | [Paths Object](#paths-object) | **REQUIRED**. The available paths and operations for the API.\n<a name=\"oasComponents\"></a>components | [Components Object](#components-object) | An element to hold various schemas for the specification."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "Info Object",
+      "text": "<a name=\"oasExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Info Object  \nThe object provides metadata about the API.\nThe metadata MAY be used by the clients if needed, and MAY be presented in editing or documentation generation tools for convenience.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"infoTitle\"></a>title | `string` | **REQUIRED**. The title of the application.\n<a name=\"infoDescription\"></a>description | `string` | A short description of the application. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"infoTermsOfService\"></a>termsOfService | `string` | A URL to the Terms of Service for the API. MUST be in the format of a URL."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "Info Object Example:",
+      "text": "<a name=\"infoTermsOfService\"></a>termsOfService | `string` | A URL to the Terms of Service for the API. MUST be in the format of a URL.\n<a name=\"infoContact\"></a>contact | [Contact Object](#contact-object) | The contact information for the exposed API.\n<a name=\"infoLicense\"></a>license | [License Object](#license-object) | The license information for the exposed API.\n<a name=\"infoVersion\"></a>version | `string` | **REQUIRED**. The version of the OpenAPI document (which is distinct from the [OpenAPI Specification version](#oasVersion) or the API implementation version).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Info Object Example:  \n```json\n{\n\"title\": \"Sample Pet Store App\",\n\"description\": \"This is a sample server for a pet store.\",\n\"termsOfService\": \"http://example.com/terms/\",\n\"contact\": {\n\"name\": \"API Support\",\n\"url\": \"http://www.example.com/support\",\n\"email\": \"support@example.com\"\n},\n\"license\": {\n\"name\": \"Apache 2.0\","
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "Table of Contents",
+      "text": "## Table of Contents\n<!-- TOC depthFrom:1 depthTo:3 withLinks:1 updateOnSave:1 orderedList:0 -->  \n- [Definitions](#definitions)\n- [OpenAPI Document](#openapi-document)\n- [Path Templating](#path-templating)\n- [Media Types](#media-types)\n- [HTTP Status Codes](#http-status-codes)\n- [Specification](#specification)\n- [Versions](#versions)\n- [Format](#format)\n- [Document Structure](#document-structure)\n- [Data Types](#data-types)\n- [Rich Text Formatting](#rich-text-formatting)\n- [Relative References In URLs](#relative-references-in-urls)\n- [Schema](#schema)\n- [OpenAPI Object](#openapi-object)\n- [Info Object](#info-object)\n- [Contact Object](#contact-object)\n- [License Object](#license-object)\n- [Server Object](#server-object)\n- [Server Variable Object](#server-variable-object)\n- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Info Object Server Object Tag Object",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Operation Object Example  \n```json\n{\n\"tags\": [\n\"pet\"\n],\n\"summary\": \"Updates a pet in the store with form data\",\n\"operationId\": \"updatePetWithForm\",\n\"parameters\": [\n{\n\"name\": \"petId\",\n\"in\": \"path\",\n\"description\": \"ID of pet that needs to be updated\",\n\"required\": true,\n\"schema\": {\n\"type\": \"string\"\n}\n}\n],\n\"requestBody\": {\n\"content\": {\n\"application/x-www-form-urlencoded\": {\n\"schema\": {\n\"type\": \"object\",\n\"properties\": {\n\"name\": {\n\"description\": \"Updated name of the pet\",\n\"type\": \"string\"\n},\n\"status\": {\n\"description\": \"Updated status of the pet\",\n\"type\": \"string\"\n}\n},\n\"required\": [\"status\"]\n}\n}\n}\n},\n\"responses\": {\n\"200\": {\n\"description\": \"Pet updated.\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n},\n\"405\": {\n\"description\": \"Invalid input\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n}\n},\n\"security\": [\n{\n\"petstore_auth\": [\n\"write:pets\",\n\"read:pets\"\n]\n}\n]\n}\n```"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "",
+      "title": "Tag Object",
+      "text": "\"schema\": {\n\"type\": \"integer\"\n}\n}\n```  \n```yaml\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Tag Object  \nAdds metadata to a single tag that is used by the [Operation Object](#operation-object).\nIt is not mandatory to have a Tag Object per tag defined in the Operation Object instances.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"tagName\"></a>name | `string` | **REQUIRED**. The name of the tag.\n<a name=\"tagDescription\"></a>description | `string` | A short description for the tag. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"tagExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this tag.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Tag Object Example  \n```json\n{\n\"name\": \"pet\",\n\"description\": \"Pets operations\"\n}"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "",
+      "title": "External Documentation Object",
+      "text": "security:\n- petstore_auth:\n- write:pets\n- read:pets\n```  \n#### External Documentation Object  \nAllows referencing an external resource for extended documentation.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"externalDocDescription\"></a>description | `string` | A short description of the target documentation. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"externalDocUrl\"></a>url | `string` | **REQUIRED**. The URL for the target documentation. Value MUST be in the format of a URL.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### External Documentation Object Example  \n```json\n{\n\"description\": \"Find more info here\",\n\"url\": \"https://example.com\"\n}\n```  \n```yaml\ndescription: Find more info here\nurl: https://example.com\n```  \n#### Parameter Object  \nDescribes a single operation parameter."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "",
+      "title": "Schema",
+      "text": "### Schema  \nIn the following description, if a field is not explicitly **REQUIRED** or described with a MUST or SHALL, it can be considered OPTIONAL.  \n#### OpenAPI Object  \nThis is the root document object of the [OpenAPI document](#openapi-document).  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"oasVersion\"></a>openapi | `string` | **REQUIRED**. This string MUST be the [semantic version number](https://semver.org/spec/v2.0.0.html) of the [OpenAPI Specification version](#versions) that the OpenAPI document uses. The `openapi` field SHOULD be used by tooling specifications and clients to interpret the OpenAPI document. This is *not* related to the API [`info.version`](#infoVersion) string.\n<a name=\"oasInfo\"></a>info | [Info Object](#info-object) | **REQUIRED**. Provides metadata about the API. The metadata MAY be used by tooling as required."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "",
+      "title": "License Object Example:",
+      "text": "<a name=\"licenseUrl\"></a>url | `string` | A URL to the license used for the API. MUST be in the format of a URL.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### License Object Example:  \n```json\n{\n\"name\": \"Apache 2.0\",\n\"url\": \"https://www.apache.org/licenses/LICENSE-2.0.html\"\n}\n```  \n```yaml\nname: Apache 2.0\nurl: https://www.apache.org/licenses/LICENSE-2.0.html\n```  \n#### Server Object  \nAn object representing a Server.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"serverUrl\"></a>url | `string` | **REQUIRED**. A URL to the target host.  This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to the location where the OpenAPI document is being served. Variable substitutions will be made when a variable is named in `{`brackets`}`."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "document metadata: info version, servers url and variables, tags, externalDocs, security, specification extensions x- title version description x-openapi-generator TS 28.532 Performance Threshold Monitoring MnS TS 28.532 Generic management services 18.1.0 18.0.0",
+      "filters": {},
+      "clause": "",
+      "title": "Appendix A: Revision History",
+      "text": "## Appendix A: Revision History  \nVersion   | Date       | Notes\n---       | ---        | ---\n3.0.1     | 2017-12-06 | Patch release of the OpenAPI Specification 3.0.1\n3.0.0     | 2017-07-26 | Release of the OpenAPI Specification 3.0.0\n3.0.0-rc2 | 2017-06-16 | rc2 of the 3.0 specification\n3.0.0-rc1 | 2017-04-27 | rc1 of the 3.0 specification\n3.0.0-rc0 | 2017-02-28 | Implementer's Draft of the 3.0 specification\n2.0       | 2015-12-31 | Donation of Swagger 2.0 to the Open API Initiative\n2.0       | 2014-09-08 | Release of Swagger 2.0\n1.2       | 2014-03-14 | Initial release of the formal document.\n1.1       | 2012-08-22 | Release of Swagger 1.1\n1.0       | 2011-08-10 | First release of the Swagger Specification"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "8898107a4c6e1903d145d4e224e52a6822dc73065b49deab24f270c9d20a0646",
+  "judged_at": "2026-10-18T21:12:18-03:00"
+}

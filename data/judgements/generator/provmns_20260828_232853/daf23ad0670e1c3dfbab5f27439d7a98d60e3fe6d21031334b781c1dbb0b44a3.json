@@ -1,0 +1,308 @@
+{
+  "part_id": "generator|provmns_20260828_232853|PATH /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}|path",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "PATH /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+  "aspect": "path",
+  "summary": "1 extra",
+  "answer": {
+    "why_different": "The generated document adds an entire path item that is absent from the official side. This is a structural difference involving an additional path/address, not merely a changed value.",
+    "verdict": "improvement",
+    "spec_3gpp": "The 3GPP specification explicitly defines this URI as a Provisioning MnS resource and maps both createMOI (PUT) and deleteMOI (DELETE) to it. The resource overview also lists PUT and DELETE as applicable methods.",
+    "openapi": "The OpenAPI reference permits path-template fields whose names begin with a slash and defines PUT and DELETE as valid Path Item operations. Therefore, the generated path structure is valid OpenAPI 3.0.",
+    "clearer": "generated",
+    "clearer_why": "The generated document makes the specified resource and its PUT and DELETE operations visible to API readers; the official side exposes no definition for this resource path.",
+    "citations": [
+      {
+        "evidence_id": "S1",
+        "quote": "Resource URI:\n{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}"
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "| createMOI         | PUT             | {MnSRoot}/ProvMnS |"
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "| deleteMOI         | DELETE          | {MnSRoot}/ProvMnS |"
+      },
+      {
+        "evidence_id": "O2",
+        "quote": "The field name MUST begin with a slash. ... Path templating is allowed."
+      },
+      {
+        "evidence_id": "O5",
+        "quote": "get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "improvement",
+        "reason": "Adding this path exposes the resource URI and the PUT/DELETE operations required or identified by the 3GPP specification, whereas the official side has no path definition. The path and its templating are permitted by OpenAPI 3.0, as shown by S1, S2, S3, O2, and O5."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.2",
+      "title": "12.1.1.3.2.1.2 URI",
+      "text": "12.1.1.3.2 Resource definitions › 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"\n\n####### 12.1.1.3.2.1.2 URI\n\nResource URI:\n{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}\n\nThe resource URI variables are defined in table 12.1.1.3.2.1.2-1.\n\nTable 12.1.1.3.2.1.2-1: URI variables\n\n  **Name**             **Definition**\n  -------------------- --------------------------------------\n  MnSRoot              See clause 4.4.2 of TS 32.158 \\[15\\]\n  MnSVersion           See clause 4.4.2 of TS 32.158 \\[15\\]\n  URI-LDN-first-part   See clause 4.4.2 of TS 32.158 \\[15\\]\n  className            Class name of the targeted resource\n  id                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.1 Introduction\n\nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.\n\nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents\n\n+-------------------+-----------------+-------------------+-------+\n| **IS operation**  | **HTTP Method** | **Resource URI**  | **S** |\n+===================+=================+===================+=======+\n| createMOI         | PUT             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| getMOIAttributes  | GET             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| mo                | PUT             | {MnSRoot}/ProvMnS | M     |\n| difyMOIAttributes |                 | /{MnSVersion}/{UR |       |\n|                   | PATCH           | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| deleteMOI         | DELETE          | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "12.1.1.3 Resources › 12.1.1.3.1 Resource structure\n\n##### 12.1.1.3.1.1 Resource structure on the MnS producer\n\nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.\n\n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}\n\nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer\n\nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.1.1.3.1-**1**: Resources and methods overview\n\n  Resource name   Resource URI           HTTP method   Description\n  --------------- ---------------------- ------------- --------------------------------------------------------------------------\n  MOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\n  MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.3.3.2",
+      "title": "12.1.3.3.2 Implement IETF RFC 6243: \"With-defaults Capability for NETCONF\"",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.3 Netconf Server behavior\n\n##### 12.1.3.3.2 Implement IETF RFC 6243: \"With-defaults Capability for NETCONF\"\n\nThe Netconf server (MnS producer) shall be compliant to RFC 6243\\[51\\]\nand implement the Netconf\nurn:ietf:params:netconf:capability:with-defaults:1.0 capability. The\n'report-all' retrieval mode shall be supported. Other retrieval modes\nmay be supported. The basic mode should be 'report-all'."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 1/3)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.\n\nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource\n\n  **Data type**   **Description**                                                     **S**\n  --------------- ------------------------------------------------------------------- -------\n  Resource        Resource representation of the resource to be created or replaced   M\n\nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 8/8)\n\nTo allow the MnS consumer to understand which attributes have been\nupdated, the MnS producer may decide to send the following notification.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/3gpp\\\",                           |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOICreation\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"moiChanges\\\": \\[                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"notificationId\\\": 123,                                         |\n|                                                                  |\n| \\\"op\\\": \\\"replace\\\",                                             |\n|                                                                  |\n| \\\"path\\\": \\\"/ClassA=1\\#/attributes\\\",                            |\n|                                                                  |\n| \\\"value\\\": {                                                     |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"oldValueAttrB\\\"                                     |\n|                                                                  |\n| },                                                               |\n|                                                                  |\n| \\\"oldValue\\\": {                                                  |\n|                                                                  |\n| \\\"attrA\\\": \\\"oldValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"oldValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 6/8)\n\nvalue: xyz\n\nWhen all attributes of an object have been updated with a new value, the\nMnS producer may use a compact format reporting that the \\\"attributes\\\"\ncontainer was updated completely.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/3gpp\\\",                           |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOICreation\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"moiChanges\\\": \\[                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"notificationId\\\": 123,                                         |\n|                                                                  |\n| \\\"op\\\": \\\"replace\\\",                                             |\n|                                                                  |\n| \\\"path\\\": \\\"/ClassA=1\\#/attributes\\\",                            |\n|                                                                  |\n| \\\"value\\\": {                                                     |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"newValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nNote that clause 4.3 of IETF RFC 6902 \\[13\\] does not consider it as an\nerror if an attribute value is replaced with exactly the same value. For\nthat reason, it would not be an error if in the example above an\nattribute value is included in the \\\"value\\\" property that did not\nchange value. A MnS producer may consider this compact format hence also\nfor the case that not all attributes of an object have been updated."
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.4 Data type definitions\n\n##### 12.1.1.4.1 General\n\nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.\n\nTable 12.1.1.4.1-1: Data types defined in this specification\n\n  Data type                        Reference       Description\n  -------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  CmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\n  SourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\n  ScopeType                        12.1.1.4.4.5    Scope type of a scope\n  Operation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\n  Insert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\n  PatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\n  Resource                         12.1.1.4.1a.1   Used for resource representations\n  Scope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\n  CorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\n  MoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\n  NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\n  NotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\n  NotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\n  NotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\n  PatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document\n\nTable 12.1.1.4.1-2: Data types imported\n\n  Data type                   Reference          Description\n  --------------------------- ------------------ ---------------------------------------------------------------------\n  DateTime                    TS 28.623 \\[44\\]   Date and time\n  Dn                          TS 28.623 \\[44\\]   DN type\n  SystemDN                    TS 28.623 \\[44\\]   systemDN type\n  Uri                         TS 28.623 \\[44\\]   URI type\n  AttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\n  AttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\n  Filter                      TS 28.623 \\[44\\]   Filter type\n  NotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationType            TS 28.623 \\[44\\]   Notification type\n  NotificationHeader          TS 28.623 \\[44\\]   Notification header\n  ErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.1 Type Resource\n\n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**\n\n  **Attribute name**   **Data type**        **Description**                                                                                                                **S**\n  -------------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------ -------\n  id                   string               Identifier of the resource object                                                                                              M\n  objectClass          string               Object class of the resource object                                                                                            O\n  objectInstance       Dn                   Object instance of the resource object                                                                                         O\n  attributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M\n  n/a                  map(array(object))   Name contained objects                                                                                                         M\n\nThis definition of \\\"Resource\\\" does not specify any attributes or name\ncontained objects. Resource representations with specific attributes and\nname contained objects are contained in the NRM definitions. These\ndefinitions should be used in implementations of the Provisioning MnS\ninstead of this generic definition."
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 1/2)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource\n\n+------------+----------------+----------------------+-------+\n| **Name**   | **Data type**  | **Description**      | **S** |\n+============+================+======================+=======+\n| scope      | Scope          | Extends the set of   | O     |\n|            |                | targeted resources   |       |\n|            | style: form    | beyond the base      |       |\n|            |                | resource identified  |       |\n|            | explode: true  | with the authority   |       |\n|            |                | and path component   |       |\n|            |                | of the URI.          |       |\n+------------+----------------+----------------------+-------+\n| filter     | Filter         | Reduces the targeted | O     |\n|            |                | set of resources by  |       |\n|            |                | applying a filter to |       |\n|            |                | the scoped set of    |       |\n|            |                | resource             |       |\n|            |                | representations.     |       |\n|            |                | Only resources       |       |\n|            |                | representations for  |       |\n|            |                | which the filter     |       |\n|            |                | construct evaluates  |       |\n|            |                | to \\\"true\\\" are      |       |\n|            |                | targeted.            |       |\n+------------+----------------+----------------------+-------+\n| attributes | array(string)  | Attributes of the    | O     |\n|            |                | scoped resources to  |       |\n|            | style: form    | be returned. The     |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of attribute names.  |       |\n+------------+----------------+----------------------+-------+\n| fields     | array(string)  | Attribute fields of  | O     |\n|            |                | the scoped resources |       |\n|            | style: form    | to be returned. The  |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of JSON pointers to  |       |\n|            |                | the attribute        |       |\n|            |                | fields.              |       |\n+------------+----------------+----------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.1",
+      "title": "12.1.1.3.2.1.1 Description",
+      "text": "12.1.1.3.2 Resource definitions › 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"\n\n####### 12.1.1.3.2.1.1 Description\n\nThis resource represents a managed object instance."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 3/3)\n\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+\n| ErrorResponse | 4xx/5xx            | Returned in case of | O     |\n|               |                    | an error            |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 2/2)\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                                                                                                                      **S**\n  --------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.4 HTTP DELETE\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource\n\n+----------+---------------+--------------------------------+-------+\n| **Name** | **Data type** | **Description**                | **S** |\n+==========+===============+================================+=======+\n| scope    | Scope         | Extends the set of targeted    | O     |\n|          |               | resources beyond the base      |       |\n|          | style: form   | resource identified with the   |       |\n|          |               | authority and path component   |       |\n|          | explode: true | of the URI.                    |       |\n+----------+---------------+--------------------------------+-------+\n| filter   | Filter        | Reduces the targeted set of    | O     |\n|          |               | resources by applying a filter |       |\n|          |               | to the scoped set of resource  |       |\n|          |               | representations. Only          |       |\n|          |               | resources representations for  |       |\n|          |               | which the filter construct     |       |\n|          |               | evaluates to \\\"true\\\" are      |       |\n|          |               | targeted.                      |       |\n+----------+---------------+--------------------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.4-2: Data structures supported by the DELETE\nrequest body on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.4-3: Data structures supported by the DELETE\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                  **S**\n  --------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------\n  array(Uri)      200 OK               Status code returned, when query parameters are present in the request and one or multiple resources are deleted. The URIs of the deleted resources are returned in the response message body.   M\n  n/a             204 No Content       Status code returned, when no query parameters are present in the request and only one resource is deleted. The message body is empty.                                                           M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                     M"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "MnSRoot ProvMnS MnSVersion URI-LDN-first-part className id resource URI /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 2/3)\n\n+---------------+--------------------+---------------------+-------+\n| **Data type** | **Response codes** | **Description**     | **S** |\n+===============+====================+=====================+=======+\n| Resource      | 200 OK             | Status code         | M     |\n|               |                    | returned when the   |       |\n|               |                    | resource is         |       |\n|               |                    | replaced, and when  |       |\n|               |                    | the replaced        |       |\n|               |                    | resource            |       |\n|               |                    | representation is   |       |\n|               |                    | not identical to    |       |\n|               |                    | the resource        |       |\n|               |                    | representation in   |       |\n|               |                    | the request.        |       |\n|               |                    |                     |       |\n|               |                    | This status code    |       |\n|               |                    | may be retourned    |       |\n|               |                    | when the resource   |       |\n|               |                    | is updated and when |       |\n|               |                    | the updated         |       |\n|               |                    | resource            |       |\n|               |                    | representation is   |       |\n|               |                    | identical to the    |       |\n|               |                    | resource            |       |\n|               |                    | representation in   |       |\n|               |                    | the request.        |       |\n|               |                    |                     |       |\n|               |                    | The representation  |       |\n|               |                    | of the updated      |       |\n|               |                    | resource is         |       |\n|               |                    | returned in the     |       |\n|               |                    | response message    |       |\n|               |                    | body.               |       |\n+---------------+--------------------+---------------------+-------+\n| Resource      | 201 Created        | Status code         | M     |\n|               |                    | returned when the   |       |\n|               |                    | resource is         |       |\n|               |                    | created. The        |       |\n|               |                    | representation of   |       |\n|               |                    | the created         |       |\n|               |                    | resource is         |       |\n|               |                    | returned in the     |       |\n|               |                    | response message    |       |\n|               |                    | body.               |       |\n+---------------+--------------------+---------------------+-------+\n| n/a           | 204 No Content     | Status code that    | M     |\n|               |                    | may be returned     |       |\n|               |                    | only when the       |       |\n|               |                    | replaced resource   |       |\n|               |                    | representation is   |       |\n|               |                    | identical to the    |       |\n|               |                    | representation in   |       |\n|               |                    | the request. The    |       |\n|               |                    | response has no     |       |\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "2. The [Path Item Object](#path-item-object) MAY be empty. In this case, the viewer will be aware that the path exists, but will not be able to see any of its operations or parameters. This is different than hiding the path itself from the [Paths Object](#paths-object), so the user will not be aware of its existence. This allows the documentation provider to finely control what the viewer can see."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "Patterned Fields",
+      "text": "##### Patterned Fields  \nField Pattern | Type | Description\n---|:---:|---\n<a name=\"pathsPath\"></a>/{path} | [Path Item Object](#path-item-object) | A relative path to an individual endpoint. The field name MUST begin with a slash. The path is **appended** (no relative URL resolution) to the expanded URL from the [`Server Object`](#server-object)'s `url` field in order to construct the full URL. [Path templating](#path-templating) is allowed. When matching URLs, concrete (non-templated) paths would be matched before their templated counterparts. Templated paths with the same hierarchy but different templated names MUST NOT exist as they are identical. In case of ambiguous matching, it's up to the tooling to decide which one to use.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Path Templating Matching  \nAssuming the following paths, the concrete definition, `/pets/mine`, will be matched first if used:  \n```\n/pets/{petId}\n/pets/mine"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "Path Item Object",
+      "text": "description: A list of pets.\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/pet'\n```  \n#### Path Item Object  \nDescribes the operations available on a single path.\nA Path Item MAY be empty, due to [ACL constraints](#security-filtering).\nThe path itself is still exposed to the documentation viewer but they will not know which operations and parameters are available.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"pathItemRef\"></a>$ref | `string` | Allows for an external definition of this path item. The referenced structure MUST be in the format of a [Path Item Object](#path-item-object). If there are conflicts between the referenced definition and this Path Item's definition, the behavior is *undefined*.\n<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "Path Item Object Example",
+      "text": "##### Path Item Object Example  \n```json\n{\n\"get\": {\n\"description\": \"Returns pets based on ID\",\n\"summary\": \"Find pets by ID\",\n\"operationId\": \"getPetsById\",\n\"responses\": {\n\"200\": {\n\"description\": \"pet response\",\n\"content\": {\n\"*/*\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/Pet\"\n}\n}\n}\n}\n},\n\"default\": {\n\"description\": \"error payload\",\n\"content\": {\n\"text/html\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/ErrorModel\"\n}\n}\n}\n}\n}\n},\n\"parameters\": [\n{\n\"name\": \"id\",\n\"in\": \"path\",\n\"description\": \"ID of pet to use\",\n\"required\": true,\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"type\": \"string\"\n}\n},\n\"style\": \"simple\"\n}\n]\n}\n```  \n```yaml\nget:\ndescription: Returns pets based on ID\nsummary: Find pets by ID\noperationId: getPetsById\nresponses:\n'200':\ndescription: pet response\ncontent:\n'*/*' :\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: error payload\ncontent:\n'text/html':\nschema:\n$ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path.\n<a name=\"pathItemDescription\"></a>description | `string` | An optional, string description, intended to apply to all operations in this path. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"pathItemGet\"></a>get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path.\n<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "Path Templating Matching",
+      "text": "##### Path Templating Matching  \nAssuming the following paths, the concrete definition, `/pets/mine`, will be matched first if used:  \n```\n/pets/{petId}\n/pets/mine\n```  \nThe following paths are considered identical and invalid:  \n```\n/pets/{petId}\n/pets/{name}\n```  \nThe following may lead to ambiguous resolution:  \n```\n/{entity}/me\n/books/{id}\n```  \n##### Paths Object Example  \n```json\n{\n\"/pets\": {\n\"get\": {\n\"description\": \"Returns all pets from the system that the user has access to\",\n\"responses\": {\n\"200\": {\n\"description\": \"A list of pets.\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/pet\"\n}\n}\n}\n}\n}\n}\n}\n}\n}\n```  \n```yaml\n/pets:\nget:\ndescription: Returns all pets from the system that the user has access to\nresponses:\n'200':\ndescription: A list of pets.\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/pet'\n```  \n#### Path Item Object  \nDescribes the operations available on a single path."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "Parameter Object",
+      "text": "\"url\": \"https://example.com\"\n}\n```  \n```yaml\ndescription: Find more info here\nurl: https://example.com\n```  \n#### Parameter Object  \nDescribes a single operation parameter.  \nA unique parameter is defined by a combination of a [name](#parameterName) and [location](#parameterIn).  \n##### Parameter Locations\nThere are four possible parameter locations specified by the `in` field:\n* path - Used together with [Path Templating](#path-templating), where the parameter value is actually part of the operation's URL. This does not include the host or base path of the API. For example, in `/items/{itemId}`, the path parameter is `itemId`.\n* query - Parameters that are appended to the URL. For example, in `/items?id=###`, the query parameter is `id`.\n* header - Custom headers that are expected as part of the request. Note that [RFC7230](https://tools.ietf.org/html/rfc7230#page-22) states header names are case insensitive.\n* cookie - Used to pass a specific cookie value to the API."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "Definitions",
+      "text": "## Definitions  \n##### OpenAPI Document\nA document (or set of documents) that defines or describes an API. An OpenAPI definition uses and conforms to the OpenAPI Specification.  \n##### Path Templating\nPath templating refers to the usage of curly braces ({}) to mark a section of a URL path as replaceable using path parameters.  \n##### Media Types\nMedia type definitions are spread across several resources.\nThe media type definitions SHOULD be in compliance with [RFC6838](https://tools.ietf.org/html/rfc6838).  \nSome examples of possible media type definitions:\n```\ntext/plain; charset=utf-8\napplication/json\napplication/vnd.github+json\napplication/vnd.github.v3+json\napplication/vnd.github.v3.raw+json\napplication/vnd.github.v3.text+json\napplication/vnd.github.v3.html+json\napplication/vnd.github.v3.full+json\napplication/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "Examples",
+      "text": "<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"linkServer\"></a>server       | [Server Object](#server-object) | A server object to be used by the target operation.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \nA linked operation MUST be identified using either an `operationRef` or `operationId`.\nIn the case of an `operationId`, it MUST be unique and resolved in the scope of the OAS document.\nBecause of the potential for name clashes, the `operationRef` syntax is preferred\nfor specifications with external references.  \n##### Examples  \nComputing a link from a request operation where the `$request.path.id` is used to pass a request parameter to the linked operation.  \n```yaml\npaths:\n/users/{id}:\nparameters:\n- name: id\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}",
+      "filters": {},
+      "clause": "",
+      "title": "Relative References in URLs",
+      "text": "### Relative References in URLs  \nUnless specified otherwise, all properties that are URLs MAY be relative references as defined by [RFC3986](https://tools.ietf.org/html/rfc3986#section-4.2).\nRelative references are resolved using the URLs defined in the [`Server Object`](#server-object) as a Base URI.  \nRelative references used in `$ref` are processed as per [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03), using the URL of the current document as the base URI. See also the [Reference Object](#reference-object)."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "daf23ad0670e1c3dfbab5f27439d7a98d60e3fe6d21031334b781c1dbb0b44a3",
+  "judged_at": "2026-10-18T21:08:46-03:00"
+}

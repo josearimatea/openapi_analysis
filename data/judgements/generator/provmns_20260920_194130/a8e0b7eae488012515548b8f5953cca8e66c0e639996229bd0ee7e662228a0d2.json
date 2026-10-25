@@ -1,0 +1,310 @@
+{
+  "part_id": "generator|provmns_20260920_194130|GET /{className}={id}|operation",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "GET /{className}={id}",
+  "aspect": "operation",
+  "summary": "2 differing, 1 extra",
+  "answer": {
+    "why_different": "The generated document uses the IS operation name and URI mapping as the basis for the operation metadata, rather than preserving the generic HTTP GET behavior and resource-selection explanation. D1 and D2 are different values that narrow or replace the official meaning; D3 is an additional operation metadata field.",
+    "verdict": "error",
+    "spec_3gpp": "The specification defines getMOIAttributes as retrieving one or multiple resources representing managed object instances, and identifies the GET operation on this URI as retrieving one or multiple resources. It also specifies query parameters for selecting and filtering returned resource properties.",
+    "openapi": "OpenAPI permits summary and description strings on an operation, and defines operationId as a unique identifier for the operation; operationId is recommended for tooling and naming conventions but is not required.",
+    "clearer": "official",
+    "clearer_why": "The official summary accurately states that one or multiple resources are read, while its description explains the GET behavior and the attributes and fields query parameters. The generated text is more implementation-specific and its summary suggests that only MOI attributes are retrieved.",
+    "citations": [
+      {
+        "evidence_id": "S2",
+        "quote": "This operation retrieves one or multiple resources representing managed object instances."
+      },
+      {
+        "evidence_id": "S7",
+        "quote": "MOI .../{className}={id} GET Retrieve one or multiple resources representing managed object instances"
+      },
+      {
+        "evidence_id": "O9",
+        "quote": "operationId | `string` | Unique string used to identify the operation."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated summary says “Retrieve MOI attributes,” which narrows and mischaracterizes the operation: the specification says it retrieves one or multiple resources, not merely attributes. This is supported by S2 and S7; the differing summary values are visible in C1 and C2."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "The generated description replaces the official explanation of GET resource retrieval and attribute/field selection with only an operation-to-URI mapping, losing behavior information relevant to API readers. The specification explicitly covers GET query parameters and resource retrieval in S1 and S2, while C1 and C2 show the lost explanation."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "improvement",
+        "reason": "Adding operationId is valid OpenAPI metadata and gives the operation a stable identifier; the generated value also matches the specification's operation name getMOIAttributes. This is supported by S2 and S8 together with the OpenAPI operationId definition and recommendation in O9."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 1/2)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource\n\n+------------+----------------+----------------------+-------+\n| **Name**   | **Data type**  | **Description**      | **S** |\n+============+================+======================+=======+\n| scope      | Scope          | Extends the set of   | O     |\n|            |                | targeted resources   |       |\n|            | style: form    | beyond the base      |       |\n|            |                | resource identified  |       |\n|            | explode: true  | with the authority   |       |\n|            |                | and path component   |       |\n|            |                | of the URI.          |       |\n+------------+----------------+----------------------+-------+\n| filter     | Filter         | Reduces the targeted | O     |\n|            |                | set of resources by  |       |\n|            |                | applying a filter to |       |\n|            |                | the scoped set of    |       |\n|            |                | resource             |       |\n|            |                | representations.     |       |\n|            |                | Only resources       |       |\n|            |                | representations for  |       |\n|            |                | which the filter     |       |\n|            |                | construct evaluates  |       |\n|            |                | to \\\"true\\\" are      |       |\n|            |                | targeted.            |       |\n+------------+----------------+----------------------+-------+\n| attributes | array(string)  | Attributes of the    | O     |\n|            |                | scoped resources to  |       |\n|            | style: form    | be returned. The     |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of attribute names.  |       |\n+------------+----------------+----------------------+-------+\n| fields     | array(string)  | Attribute fields of  | O     |\n|            |                | the scoped resources |       |\n|            | style: form    | to be returned. The  |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of JSON pointers to  |       |\n|            |                | the attribute        |       |\n|            |                | fields.              |       |\n+------------+----------------+----------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.3 Operation getMOIAttributes (part 1/2)\n\nThis operation retrieves one or multiple resources representing managed\nobject instances.\n\nTable 12.1.1.1.3-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP GET)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | query        | scope        | Scope        | O     |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | true         |       |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | query        | filter       | Filter       | O     |\n+--------------+--------------+--------------+--------------+-------+\n| att          | query        | attributes   | a            | O     |\n| ributeListIn |              |              | rray(string) |       |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | false        |       |\n+--------------+--------------+--------------+--------------+-------+\n|              |              | fields       | a            | O     |\n|              |              |              | rray(string) |       |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | false        |       |\n+--------------+--------------+--------------+--------------+-------+\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.3 Operation getMOIAttributes (part 2/2)\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| attr         | response     | n/a          | Resource or  | M     |\n| ibuteListOut | body         |              |              |       |\n|              |              |              | arr          |       |\n|              |              |              | ay(Resource) |       |\n+--------------+--------------+--------------+--------------+-------+\n| status       | response     | n/a          | n/a          | M     |\n|              | status codes |              |              |       |\n+--------------+--------------+--------------+--------------+-------+\n|              | response     | error        | E            | O     |\n|              | body         |              | rrorResponse |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFurther details on reading resources with HTTP GET are provided in TS\n32.158 \\[15\\], clause 5.2.\n\nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.\n\nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 2/2)\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                                                                                                                      **S**\n  --------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.2 Type Scope\n\nTable 12.1.1.4.1a.2-1: Definition of type Scope\n\n  Attribute name   Data type   Description                                                                                                                                                                                                     S\n  ---------------- ----------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---\n  scopeType        ScopeType   Used in the query component of HTTP GET and HTTP DELETE together with scopeLevel to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI   M\n  scopeLevel       integer     Used in the query component of HTTP GET and HTTP DELETE together with scopeType to extend the set of targeted resources beyond the base resource identified with the path component of the URI                  M"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 3/3)\n\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+\n| ErrorResponse | 4xx/5xx            | Returned in case of | O     |\n|               |                    | an error            |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "12.1.1.3 Resources › 12.1.1.3.1 Resource structure\n\n##### 12.1.1.3.1.1 Resource structure on the MnS producer\n\nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.\n\n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}\n\nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer\n\nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.1.1.3.1-**1**: Resources and methods overview\n\n  Resource name   Resource URI           HTTP method   Description\n  --------------- ---------------------- ------------- --------------------------------------------------------------------------\n  MOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\n  MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.1 Introduction\n\nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.\n\nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents\n\n+-------------------+-----------------+-------------------+-------+\n| **IS operation**  | **HTTP Method** | **Resource URI**  | **S** |\n+===================+=================+===================+=======+\n| createMOI         | PUT             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| getMOIAttributes  | GET             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| mo                | PUT             | {MnSRoot}/ProvMnS | M     |\n| difyMOIAttributes |                 | /{MnSVersion}/{UR |       |\n|                   | PATCH           | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| deleteMOI         | DELETE          | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 1/3)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.\n\nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource\n\n  **Data type**   **Description**                                                     **S**\n  --------------- ------------------------------------------------------------------- -------\n  Resource        Resource representation of the resource to be created or replaced   M\n\nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.1",
+      "title": "12.1.1.3.2.1.1 Description",
+      "text": "12.1.1.3.2 Resource definitions › 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"\n\n####### 12.1.1.3.2.1.1 Description\n\nThis resource represents a managed object instance."
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET operation summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.5 Operation deleteMOI\n\nThis IS operation deletes one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating\nthe MOI(s) to be deleted.\n\nThe Netconf operation attribute on the list representing the\nbaseObjectInstance should be set to delete or remove.\n\nThe default-operation parameter should be set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.5-1 and table 12.1.3.1.5-2.\n\nTable 12.1.3.1.5-1: Mapping of IS deleteMOI input parameters to SS\nequivalents\n\n  **IS operation parameter name**   **SS parameter name**   **S**   **Remark**\n  --------------------------------- ----------------------- ------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  baseObjectInstance                config                  M       A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be deleted MOI and its key.\n  scope                             config                  M       BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\n  filter                            config                  M       Multiple MOIs can be specified in the same operation, emulating filtering.\n\nTable 12.1.3.1.5-2: Mapping of IS deleteMOI output parameters to SS\nequivalents\n\n+-------------------+-------------------+-------+-------------------+\n| **IS operation    | **SS parameter    | **S** | **Remark**        |\n| parameter name**  | name**            |       |                   |\n+===================+===================+=======+===================+\n| deletionList      | no corresponding  | M     | Not supported.    |\n|                   | SS parameter      |       |                   |\n|                   |                   |       | (note 1)          |\n+-------------------+-------------------+-------+-------------------+\n| status            | \\-                | M     | rpc-reply or      |\n|                   |                   |       | rpc-error         |\n|                   |                   |       | indicates general |\n|                   |                   |       | status.           |\n|                   |                   |       |                   |\n|                   |                   |       | The following     |\n|                   |                   |       | elements give     |\n|                   |                   |       | detailed error    |\n|                   |                   |       | information:      |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-tag\\>     |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-path\\>    |\n+-------------------+-------------------+-------+-------------------+\n\nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the deletionList can be retrieved via a\nseparate \\<get-config\\> operation."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET operation summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.4 Operation modifyMOIAttributes\n\nThis IS operation modifies one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. The NETCONF\n\\<edit-config\\> operation can modify attributes in a given MOI or set of\nMOIs but only indirectly supports scope or filtered sets of MOIs that\nare part of the modifyMOIAttributes 3GPP operation specification.\n\\<edit-config\\> needs a config block, containing the explicit config\nchanges to be made for each MOI.\n\nThe default-operation parameter should be set to none.\n\nThe Netconf operation attribute on the list representing modified MOI(s)\nshould be set to create, replace or delete according to the ENUM in the\nmodificationList.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.4-1 and table 12.1.3.1.4-2.\n\nTable 12.1.3.1.4-1: Mapping of IS modifyMOIAttributes input parameters\nto SS equivalents\n\n  IS operation parameter name   SS parameter name   S   Remark\n  ----------------------------- ------------------- --- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  baseObjectInstance            config              M   A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together with the XML elements representing the to be modified MOI and its key.\n  scope                         config              M   BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\n  filter                        config              M   Multiple MOIs can be specified in the same operation, emulating filtering.\n  modificationList              config              M   The \"attributes container\" and leaf, leaf-list or list entries representing the attributes.\n\nTable 12.1.3.1.4-2: Mapping of IS modifyMOIAttributes output parameters\nto SS equivalents\n\n+-------------------+-------------------+-------+-------------------+\n| **IS operation    | **SS parameter    | **S** | **Remark**        |\n| parameter name**  | name**            |       |                   |\n+===================+===================+=======+===================+\n| mo                | no corresponding  | M     | Not supported.    |\n| dificationListOut | SS parameter      |       |                   |\n|                   |                   |       | (note 1)          |\n+-------------------+-------------------+-------+-------------------+\n| status            | \\-                | M     | rpc-reply or      |\n|                   |                   |       | rpc-error         |\n|                   |                   |       | indicates general |\n|                   |                   |       | status.           |\n|                   |                   |       |                   |\n|                   |                   |       | The following     |\n|                   |                   |       | elements give     |\n|                   |                   |       | detailed error    |\n|                   |                   |       | information:      |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-tag\\>     |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-path\\>    |\n+-------------------+-------------------+-------+-------------------+\n\n> Note 1: Successful Netconf \\<edit-config\\> operations only return an\n> \\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\n> separate \\<get-config\\> operation."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET operation summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "12.1.3.1.2",
+      "title": "12.1.3.1.2 Operation createMOI",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.2 Operation createMOI\n\nThe operation is mapped to a NETCONF \\<edit-config\\> operation, with XML\nelements representing the DN path to the MOI, the MOI itself, its id/key\nand its attributes.\n\nThe NETCONF operation attribute on the list representing the newly\ncreated MOI should be set to 'create'.\n\nThe default-operation parameter of the \\<edit-config\\> operation should\nbe set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.2-1 and table 12.1.3.1.2-2.\n\nTable 12.1.3.1.2-1: Mapping from IS createMOI input parameters to SS\nequivalents\n\n  IS operation parameter name   SS parameter name   S   Remark\n  ----------------------------- ------------------- --- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  managedObjectClass            config              M   XML element's name inside the \\<config\\> element.\n  managedObjectInstance         config              M   A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be created MOI and its key.\n  attributeListIn               config              M   The key leaf, the \"attributes container\" and leaf, leaf-list or list entries of YANG models representing the attributes.\n\nTable 12.1.3.1.2-2: Mapping from IS createMOI output parameters to SS\nequivalents\n\n+--------------------+--------------------+---+--------------------+\n| IS operation       | SS parameter name  | S | Remark             |\n| parameter name     |                    |   |                    |\n+====================+====================+===+====================+\n| attributeListOut   | no corresponding   | M | Not supported.     |\n|                    | SS parameter       |   |                    |\n|                    |                    |   | (note 1)           |\n+--------------------+--------------------+---+--------------------+\n| status             | \\-                 | M | OperationSucceeded |\n|                    |                    |   | if NETCONF         |\n|                    |                    |   | rpc-reply contains |\n|                    |                    |   | \\<ok\\> element.    |\n|                    |                    |   |                    |\n|                    |                    |   | OperationFailed if |\n|                    |                    |   | NETCONF-reply      |\n|                    |                    |   | contains           |\n|                    |                    |   | \\<rpc-error\\>.     |\n+--------------------+--------------------+---+--------------------+\n\nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\nseparate \\<get-config\\> operation.\n\n**Examples**\n\nCreate ManagedElement=myNode, GNBDUFunction=1\n\n\\<rpc message-id=\\\"101\\\"\\>\n\n\\<edit-config\\>\n\n\\<target\\>\n\n\\<running/\\>\n\n\\</target\\>\n\n\\<default-operation\\>none\\</default-operation\\>\n\n\\<config\\>\n\n\\< ManagedElement\\>\n\n\\<id\\>myNode\\</id\\>\n\n\\<GNBDUFunction operation=\"create\"\\>\n\n\\<id\\>1\\</id\\>\n\n\\<attributes\\>\n\n\\<gNBIdLength\\>25\\</gNBIdLength\\>\n\n\\<gNBId\\>357\\</gNBId\\>\n\n\\<priorityLabel\\>1\\</priorityLabel\\>\n\n\\<gNBDUName\\>du-south-1\\</gNBDUName\\>\n\n\\<!\\-- other attributes \\-\\--\\>\n\n\\</attributes\\>\n\n\\</GNBDUFunction\\>\n\n\\</ManagedElement\\>\n\n\\</config\\>\n\n\\</edit-config\\>\n\n\\</rpc\\>\n\n\\<!\\-- createMO Response \\--\\>\n\n\\<rpc-reply message-id=\\\"101\\\"\nxmlns=\\\"urn:ietf:params:xml:ns:netconf:base:1.0\\\"\\>\n\n\\<ok/\\>\n\n\\</rpc-reply\\>"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET operation summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "12.1.1.1.2",
+      "title": "12.1.1.1.2 Operation createMOI",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.2 Operation createMOI\n\nThis operation creates a single resource representing a managed object\ninstance.\n\nTable 12.1.1.1.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| manage       | path         | .../{cla     | className:   | M     |\n| dObjectClass |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n| managedOb    |              |              | id: string   |       |\n| jectInstance |              |              |              |       |\n+--------------+--------------+--------------+--------------+-------+\n| att          | request body | n/a          | Resource     | M     |\n| ributeListIn |              |              |              |       |\n+--------------+--------------+--------------+--------------+-------+\n\nNote 1: Void.\n\nTable 12.1.1.1.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)\n\n  IS parameter name   SS parameter location   SS parameter name   SS parameter type   S\n  ------------------- ----------------------- ------------------- ------------------- ---\n  attributeListOut    response body           n/a                 Resource            M\n  status              response status codes   n/a                 n/a                 M\n                      response body           error               ErrorResponse       O\n\nFurther details on creating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.1.2."
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET operation summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "12.1.1.1.5",
+      "title": "12.1.1.1.5 Operation deleteMOI",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.5 Operation deleteMOI\n\nThis operation deletes a single resource representing a managed object\ninstance\n\nTable 12.1.1.1.5-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP DELETE)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.5-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP DELETE)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  deletionlist            n/a                         n/a                     n/a                     n/a\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on deleting a resource with HTTP DELETE are provided in\nTS 32.158 \\[15\\], clause 5.4."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path.\n<a name=\"pathItemDescription\"></a>description | `string` | An optional, string description, intended to apply to all operations in this path. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"pathItemGet\"></a>get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path.\n<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Operation Object Example  \n```json\n{\n\"tags\": [\n\"pet\"\n],\n\"summary\": \"Updates a pet in the store with form data\",\n\"operationId\": \"updatePetWithForm\",\n\"parameters\": [\n{\n\"name\": \"petId\",\n\"in\": \"path\",\n\"description\": \"ID of pet that needs to be updated\",\n\"required\": true,\n\"schema\": {\n\"type\": \"string\"\n}\n}\n],\n\"requestBody\": {\n\"content\": {\n\"application/x-www-form-urlencoded\": {\n\"schema\": {\n\"type\": \"object\",\n\"properties\": {\n\"name\": {\n\"description\": \"Updated name of the pet\",\n\"type\": \"string\"\n},\n\"status\": {\n\"description\": \"Updated status of the pet\",\n\"type\": \"string\"\n}\n},\n\"required\": [\"status\"]\n}\n}\n}\n},\n\"responses\": {\n\"200\": {\n\"description\": \"Pet updated.\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n},\n\"405\": {\n\"description\": \"Invalid input\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n}\n},\n\"security\": [\n{\n\"petstore_auth\": [\n\"write:pets\",\n\"read:pets\"\n]\n}\n]\n}\n```"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path.\n<a name=\"pathItemHead\"></a>head | [Operation Object](#operation-object) | A definition of a HEAD operation on this path.\n<a name=\"pathItemPatch\"></a>patch | [Operation Object](#operation-object) | A definition of a PATCH operation on this path.\n<a name=\"pathItemTrace\"></a>trace | [Operation Object](#operation-object) | A definition of a TRACE operation on this path.\n<a name=\"pathItemServers\"></a>servers | [[Server Object](#server-object)] | An alternative `server` array to service all operations in this path."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"oasComponents\"></a>components | [Components Object](#components-object) | An element to hold various schemas for the specification.\n<a name=\"oasSecurity\"></a>security | [[Security Requirement Object](#security-requirement-object)] | A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition.\n<a name=\"oasTags\"></a>tags | [[Tag Object](#tag-object)] | A list of tags used by the specification with additional metadata. The order of the tags can be used to reflect on their order by the parsing tools. Not all tags that are used by the [Operation Object](#operation-object) must be declared. The tags that are not declared MAY be organized randomly or based on the tools' logic. Each tag name in the list MUST be unique."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "##### Fixed Fields  \nField Name  |  Type  | Description\n---|:---:|---\n<a name=\"linkOperationRef\"></a>operationRef | `string` | A relative or absolute reference to an OAS operation. This field is mutually exclusive of the `operationId` field, and MUST point to an [Operation Object](#operation-object). Relative `operationRef` values MAY be used to locate an existing [Operation Object](#operation-object) in the OpenAPI definition.\n<a name=\"linkOperationId\"></a>operationId  | `string` | The name of an _existing_, resolvable OAS operation, as defined with a unique `operationId`.  This field is mutually exclusive of the `operationRef` field."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "External Documentation Object",
+      "text": "}\n},\n\"405\": {\n\"description\": \"Invalid input\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n}\n},\n\"security\": [\n{\n\"petstore_auth\": [\n\"write:pets\",\n\"read:pets\"\n]\n}\n]\n}\n```  \n```yaml\ntags:\n- pet\nsummary: Updates a pet in the store with form data\noperationId: updatePetWithForm\nparameters:\n- name: petId\nin: path\ndescription: ID of pet that needs to be updated\nrequired: true\nschema:\ntype: string\nrequestBody:\ncontent:\n'application/x-www-form-urlencoded':\nschema:\nproperties:\nname:\ndescription: Updated name of the pet\ntype: string\nstatus:\ndescription: Updated status of the pet\ntype: string\nrequired:\n- status\nresponses:\n'200':\ndescription: Pet updated.\ncontent:\n'application/json': {}\n'application/xml': {}\n'405':\ndescription: Invalid input\ncontent:\n'application/json': {}\n'application/xml': {}\nsecurity:\n- petstore_auth:\n- write:pets\n- read:pets\n```  \n#### External Documentation Object  \nAllows referencing an external resource for extended documentation.  \n##### Fixed Fields"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object",
+      "text": "'*/*' :\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: error payload\ncontent:\n'text/html':\nschema:\n$ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id\nin: path\ndescription: ID of pet to use\nrequired: true\nschema:\ntype: array\nstyle: simple\nitems:\ntype: string\n```  \n#### Operation Object  \nDescribes a single API operation on a path.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"operationTags\"></a>tags | [`string`] | A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.\n<a name=\"operationSummary\"></a>summary | `string` | A short summary of what the operation does.\n<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"operationExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this operation.\n<a name=\"operationId\"></a>operationId | `string` | Unique string used to identify the operation. The id MUST be unique among all operations described in the API. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Reads one or multiple resources Retrieve MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "External Documentation Object",
+      "text": "security:\n- petstore_auth:\n- write:pets\n- read:pets\n```  \n#### External Documentation Object  \nAllows referencing an external resource for extended documentation.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"externalDocDescription\"></a>description | `string` | A short description of the target documentation. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"externalDocUrl\"></a>url | `string` | **REQUIRED**. The URL for the target documentation. Value MUST be in the format of a URL.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### External Documentation Object Example  \n```json\n{\n\"description\": \"Find more info here\",\n\"url\": \"https://example.com\"\n}\n```  \n```yaml\ndescription: Find more info here\nurl: https://example.com\n```  \n#### Parameter Object  \nDescribes a single operation parameter."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "a8e0b7eae488012515548b8f5953cca8e66c0e639996229bd0ee7e662228a0d2",
+  "judged_at": "2026-10-18T20:54:51-03:00"
+}

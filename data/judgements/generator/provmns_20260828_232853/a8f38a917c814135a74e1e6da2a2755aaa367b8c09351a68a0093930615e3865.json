@@ -1,0 +1,313 @@
+{
+  "part_id": "generator|provmns_20260828_232853|PATCH /{className}={id}|responses",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "PATCH /{className}={id}",
+  "aspect": "responses",
+  "summary": "codes missing ['200', '204', 'default']; codes extra ['400', '4XX', '5XX']; 3 absent, 3 extra",
+  "answer": {
+    "why_different": "The generated document appears to have used a generic error-response template, replacing the PATCH-specific success responses and the official default error response with explicit generic error entries. This is primarily a different structure and response coverage, with possible information loss in the error schemas.",
+    "verdict": "error",
+    "spec_3gpp": "The PATCH operation modifies one or more resources and must define its response data structures and response codes. The specification explicitly identifies 400 Bad Request as an appropriate error response when a patch request cannot be honored; the supplied PATCH response table is truncated, but the official context provides the 200, 204, and default response definitions.",
+    "openapi": "OpenAPI requires at least one response and recommends documenting a successful response. A default response may cover undeclared status codes, while explicit status codes and uppercase ranges such as 4XX and 5XX are valid response keys. However, replacing the official default oneOf schema with a generic ErrorResponse is not shown by the evidence to preserve the same information.",
+    "clearer": "official",
+    "clearer_why": "The official version documents both successful outcomes, including whether a response body is returned, and the error case with its two alternative error schemas. The generated version contains only generic error responses and omits the successful PATCH outcomes.",
+    "citations": [
+      {
+        "evidence_id": "C1",
+        "quote": "responses:\n    '200':"
+      },
+      {
+        "evidence_id": "C1",
+        "quote": "    '204':"
+      },
+      {
+        "evidence_id": "C1",
+        "quote": "    default:\n      description: Error case."
+      },
+      {
+        "evidence_id": "S1",
+        "quote": "If the MnS producer cannot honor a patch request for some reason, such as malformed requests or unsupported patch operations, an error response with an appropriate error response code such as \"400 Bad Request\" shall be returned."
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "The `Responses Object` MUST contain at least one response code, and it SHOULD be the response for a successful operation call."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated operation omits the documented 200 success response and therefore loses the successful PATCH outcome in which updated resource representations are returned. C1 states that the 200 response contains the updated Resource representation, and S2 says PATCH response structures and response codes are required."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "The generated operation omits the documented 204 success response, losing the successful PATCH outcome where no updated representation is returned and the body is empty. This information is explicit in C1."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "error",
+        "reason": "The generated operation omits the official default error response, including its two alternative error schemas. OpenAPI defines default as the mechanism for responses not declared individually, and C1 shows that the official default carries ErrorResponseDefault and ErrorResponsePatch."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "uncertain",
+        "reason": "An explicit 400 response is permitted by OpenAPI and is supported as an appropriate PATCH error code by S1. However, the evidence does not establish that the generated generic ErrorResponse is equivalent to the official default's ErrorResponseDefault/ ErrorResponsePatch alternatives, so the effect of this added response cannot be determined independently."
+      },
+      {
+        "difference_id": "D5",
+        "verdict": "uncertain",
+        "reason": "The 4XX response-range key is valid OpenAPI syntax and broadly corresponds to the 4xx error class described by S6. Nevertheless, the evidence does not show that its generic ErrorResponse preserves the official default error alternatives, so equivalence or information loss is not decidable."
+      },
+      {
+        "difference_id": "D6",
+        "verdict": "uncertain",
+        "reason": "The 5XX response-range key is valid OpenAPI syntax and broadly corresponds to the 5xx error class described by S6. The supplied evidence does not establish equivalence between the generated generic ErrorResponse and the official default error schemas, so this difference is uncertain."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.3 HTTP PATCH\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.3-2: Data structures supported by the PATCH request\nbody on this resource\n\n+---------------+--------------------------------------------+-------+\n| **Data type** | **Description**                            | **S** |\n+===============+============================================+=======+\n| Resource, or  | Patch document describing the set of       | M     |\n|               | modifications to be applied to the         |       |\n| array(object) | targeted resources.                        |       |\n|               |                                            |       |\n|               | The following patch media types are        |       |\n|               | available:                                 |       |\n|               |                                            |       |\n|               | \\- \\\"application/merge-patch+json\\\" (RFC   |       |\n|               | 7396 \\[37\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-merge-patch+json\\\"   |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n|               |                                            |       |\n|               | \\- \\\"application/json-patch+json\\\" (RFC    |       |\n|               | 6902 \\[36\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-json-patch+json\\\"    |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n+---------------+--------------------------------------------+-------+\n\nTable 12.1.1.2.1.1.3.3-3: Data structures supported by the PATCH\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                **S**\n  --------------- -------------------- ------------------------------ -------\n  ErrorResponse   4xx/5xx              Returned in case of an error   M"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.1 Mapping to HTTP PUT\n\nHTTP PUT is used for a full update of a single resource.\n\nTable 12.1.1.1.4.1-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource     | M     |\n| ficationList |              |              |              |       |\n+--------------+--------------+--------------+--------------+-------+\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no meaning when\ntargeting a single resource with the target URI and are not mapped.\n\nTable 12.1.1.1.4.1-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                O\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.3."
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.1 Introduction\n\nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.\n\nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents\n\n+-------------------+-----------------+-------------------+-------+\n| **IS operation**  | **HTTP Method** | **Resource URI**  | **S** |\n+===================+=================+===================+=======+\n| createMOI         | PUT             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| getMOIAttributes  | GET             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| mo                | PUT             | {MnSRoot}/ProvMnS | M     |\n| difyMOIAttributes |                 | /{MnSVersion}/{UR |       |\n|                   | PATCH           | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| deleteMOI         | DELETE          | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.4 Data type definitions\n\n##### 12.1.1.4.1 General\n\nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.\n\nTable 12.1.1.4.1-1: Data types defined in this specification\n\n  Data type                        Reference       Description\n  -------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  CmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\n  SourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\n  ScopeType                        12.1.1.4.4.5    Scope type of a scope\n  Operation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\n  Insert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\n  PatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\n  Resource                         12.1.1.4.1a.1   Used for resource representations\n  Scope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\n  CorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\n  MoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\n  NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\n  NotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\n  NotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\n  NotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\n  PatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document\n\nTable 12.1.1.4.1-2: Data types imported\n\n  Data type                   Reference          Description\n  --------------------------- ------------------ ---------------------------------------------------------------------\n  DateTime                    TS 28.623 \\[44\\]   Date and time\n  Dn                          TS 28.623 \\[44\\]   DN type\n  SystemDN                    TS 28.623 \\[44\\]   systemDN type\n  Uri                         TS 28.623 \\[44\\]   URI type\n  AttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\n  AttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\n  Filter                      TS 28.623 \\[44\\]   Filter type\n  NotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationType            TS 28.623 \\[44\\]   Notification type\n  NotificationHeader          TS 28.623 \\[44\\]   Notification header\n  ErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 3/3)\n\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+\n| ErrorResponse | 4xx/5xx            | Returned in case of | O     |\n|               |                    | an error            |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "12.1.1.3 Resources › 12.1.1.3.1 Resource structure\n\n##### 12.1.1.3.1.1 Resource structure on the MnS producer\n\nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.\n\n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}\n\nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer\n\nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.1.1.3.1-**1**: Resources and methods overview\n\n  Resource name   Resource URI           HTTP method   Description\n  --------------- ---------------------- ------------- --------------------------------------------------------------------------\n  MOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\n  MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 2/2)\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                                                                                                                      **S**\n  --------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 1/3)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.\n\nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource\n\n  **Data type**   **Description**                                                     **S**\n  --------------- ------------------------------------------------------------------- -------\n  Resource        Resource representation of the resource to be created or replaced   M\n\nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 2/3)\n\n+---------------+--------------------+---------------------+-------+\n| **Data type** | **Response codes** | **Description**     | **S** |\n+===============+====================+=====================+=======+\n| Resource      | 200 OK             | Status code         | M     |\n|               |                    | returned when the   |       |\n|               |                    | resource is         |       |\n|               |                    | replaced, and when  |       |\n|               |                    | the replaced        |       |\n|               |                    | resource            |       |\n|               |                    | representation is   |       |\n|               |                    | not identical to    |       |\n|               |                    | the resource        |       |\n|               |                    | representation in   |       |\n|               |                    | the request.        |       |\n|               |                    |                     |       |\n|               |                    | This status code    |       |\n|               |                    | may be retourned    |       |\n|               |                    | when the resource   |       |\n|               |                    | is updated and when |       |\n|               |                    | the updated         |       |\n|               |                    | resource            |       |\n|               |                    | representation is   |       |\n|               |                    | identical to the    |       |\n|               |                    | resource            |       |\n|               |                    | representation in   |       |\n|               |                    | the request.        |       |\n|               |                    |                     |       |\n|               |                    | The representation  |       |\n|               |                    | of the updated      |       |\n|               |                    | resource is         |       |\n|               |                    | returned in the     |       |\n|               |                    | response message    |       |\n|               |                    | body.               |       |\n+---------------+--------------------+---------------------+-------+\n| Resource      | 201 Created        | Status code         | M     |\n|               |                    | returned when the   |       |\n|               |                    | resource is         |       |\n|               |                    | created. The        |       |\n|               |                    | representation of   |       |\n|               |                    | the created         |       |\n|               |                    | resource is         |       |\n|               |                    | returned in the     |       |\n|               |                    | response message    |       |\n|               |                    | body.               |       |\n+---------------+--------------------+---------------------+-------+\n| n/a           | 204 No Content     | Status code that    | M     |\n|               |                    | may be returned     |       |\n|               |                    | only when the       |       |\n|               |                    | replaced resource   |       |\n|               |                    | representation is   |       |\n|               |                    | identical to the    |       |\n|               |                    | representation in   |       |\n|               |                    | the request. The    |       |\n|               |                    | response has no     |       |\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH response status codes 200 204 default 400 4XX 5XX",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.4 HTTP DELETE\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource\n\n+----------+---------------+--------------------------------+-------+\n| **Name** | **Data type** | **Description**                | **S** |\n+==========+===============+================================+=======+\n| scope    | Scope         | Extends the set of targeted    | O     |\n|          |               | resources beyond the base      |       |\n|          | style: form   | resource identified with the   |       |\n|          |               | authority and path component   |       |\n|          | explode: true | of the URI.                    |       |\n+----------+---------------+--------------------------------+-------+\n| filter   | Filter        | Reduces the targeted set of    | O     |\n|          |               | resources by applying a filter |       |\n|          |               | to the scoped set of resource  |       |\n|          |               | representations. Only          |       |\n|          |               | resources representations for  |       |\n|          |               | which the filter construct     |       |\n|          |               | evaluates to \\\"true\\\" are      |       |\n|          |               | targeted.                      |       |\n+----------+---------------+--------------------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.4-2: Data structures supported by the DELETE\nrequest body on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.4-3: Data structures supported by the DELETE\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                  **S**\n  --------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------\n  array(Uri)      200 OK               Status code returned, when query parameters are present in the request and one or multiple resources are deleted. The URIs of the deleted resources are returned in the response message body.   M\n  n/a             204 No Content       Status code returned, when no query parameters are present in the request and only one resource is deleted. The message body is empty.                                                           M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                     M"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH response status codes 200 204 default 400 4XX 5XX",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.3 Operation getMOIAttributes (part 2/2)\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| attr         | response     | n/a          | Resource or  | M     |\n| ibuteListOut | body         |              |              |       |\n|              |              |              | arr          |       |\n|              |              |              | ay(Resource) |       |\n+--------------+--------------+--------------+--------------+-------+\n| status       | response     | n/a          | n/a          | M     |\n|              | status codes |              |              |       |\n+--------------+--------------+--------------+--------------+-------+\n|              | response     | error        | E            | O     |\n|              | body         |              | rrorResponse |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFurther details on reading resources with HTTP GET are provided in TS\n32.158 \\[15\\], clause 5.2.\n\nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.\n\nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH response status codes 200 204 default 400 4XX 5XX",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.3.1",
+      "title": "12.1.1.3.2.4.3.1 POST",
+      "text": "12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\" › 12.1.1.3.2.4.3 HTTP methods\n\n##### 12.1.1.3.2.4.3.1 POST\n\nThis method shall support the URI query parameters specified in table\n12.1.1.3.2.4.3.1-1.\n\nTable 12.1.1.3.2.4.3.1-1: URI query parameters supported by the POST\nmethod on this resource\n\n  Name   Data type   Description   S\n  ------ ----------- ------------- -----\n  n/a    n/a         n/a           n/a\n\nThis method shall support the request data structures specified in table\n12.1.1.3.2.4.3.1-2 and the response data structures and response codes\nspecified in table 12.1.1.3.2.4.3.1-3.\n\nTable 12.1.1.3.2.4.3.1-2: Data structures supported by the POST Request\nBody on this resource\n\n  Data type                     Description                                           S\n  ----------------------------- ----------------------------------------------------- ---\n  NotifyMOICreation             Type for a notifyMOICreation notification             M\n  NotifyMOIDeletion             Type for a notifyMOIDeletion notification             M\n  NotifyAttributeValueChanges   Type for a notifyAttributeValueChanges notification   M\n  NotifyMoiChanges              Type for a notifyMOIChanges notification              M\n\nTable 12.1.1.3.2.4.3.1-3: Data structures supported by the POST Response\nBody on this resource\n\n  Data type       Response codes   Description                                        S\n  --------------- ---------------- -------------------------------------------------- ---\n  n/a             204 No Content   In case of success no message body is returned     M\n  ErrorResponse   4xx/5xx          In case of failure the error object is returned.   M"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "The `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"responsesDefault\"></a>default | [Response Object](#response-object) \\| [Reference Object](#reference-object) | The documentation of responses other than the ones declared for specific HTTP response codes. Use this field to cover undeclared responses. A [Reference Object](#reference-object) can link to a response that the [OpenAPI Object's components/responses](#componentsResponses) section defines.  \n##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Responses Object Example  \nA 200 response for a successful operation and a default response for others (implying an error):  \n```json\n{\n\"200\": {\n\"description\": \"a pet to be returned\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/Pet\"\n}\n}\n}\n},\n\"default\": {\n\"description\": \"Unexpected error\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/ErrorModel\"\n}\n}\n}\n}\n}\n```  \n```yaml\n'200':\ndescription: a pet to be returned\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: Unexpected error\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/ErrorModel'\n```  \n#### Response Object\nDescribes a single response from an API Operation, including design-time, static\n`links` to operations based on the response.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object Examples",
+      "text": "##### Response Object Examples  \nResponse of an array of a complex type:  \n```json\n{\n\"description\": \"A complex object array response\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/VeryComplexType\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: A complex object array response\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/VeryComplexType'\n```  \nResponse with a string type:  \n```json\n{\n\"description\": \"A simple string response\",\n\"content\": {\n\"text/plain\": {\n\"schema\": {\n\"type\": \"string\"\n}\n}\n}"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object",
+      "text": "X-Rate-Limit-Limit:\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Responses Object  \nA container for the expected responses of an operation.\nThe container maps a HTTP response code to the expected response.  \nThe documentation is not necessarily expected to cover all possible HTTP response codes because they may not be known in advance.\nHowever, documentation is expected to cover a successful operation response and any known errors.  \nThe `default` MAY be used as a default response object for all HTTP codes\nthat are not covered individually by the specification.  \nThe `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "---|:---:|---\n<a name=\"responsesCode\"></a>[HTTP Status Code](#http-status-codes) | [Response Object](#response-object) \\| [Reference Object](#reference-object) | Any [HTTP status code](#http-status-codes) can be used as the property name, but only one property per code, to describe the expected response for that HTTP status code.  A [Reference Object](#reference-object) can link to a response that is defined in the [OpenAPI Object's components/responses](#componentsResponses) section. This field MUST be enclosed in quotation marks (for example, \"200\") for compatibility between JSON and YAML. To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`. The following range definitions are allowed: `1XX`, `2XX`, `3XX`, `4XX`, and `5XX`. If a response range is defined using an explicit code, the explicit code definition takes precedence over the range definition for that code."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 204 default 400 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "HTTP Status Codes",
+      "text": "application/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation.\nThe available status codes are defined by [RFC7231](https://tools.ietf.org/html/rfc7231#section-6) and registered status codes are listed in the [IANA Status Code Registry](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 204 default 400 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Definitions",
+      "text": "## Definitions  \n##### OpenAPI Document\nA document (or set of documents) that defines or describes an API. An OpenAPI definition uses and conforms to the OpenAPI Specification.  \n##### Path Templating\nPath templating refers to the usage of curly braces ({}) to mark a section of a URL path as replaceable using path parameters.  \n##### Media Types\nMedia type definitions are spread across several resources.\nThe media type definitions SHOULD be in compliance with [RFC6838](https://tools.ietf.org/html/rfc6838).  \nSome examples of possible media type definitions:\n```\ntext/plain; charset=utf-8\napplication/json\napplication/vnd.github+json\napplication/vnd.github.v3+json\napplication/vnd.github.v3.raw+json\napplication/vnd.github.v3.text+json\napplication/vnd.github.v3.html+json\napplication/vnd.github.v3.full+json\napplication/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 204 default 400 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "External Documentation Object",
+      "text": "}\n},\n\"405\": {\n\"description\": \"Invalid input\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n}\n},\n\"security\": [\n{\n\"petstore_auth\": [\n\"write:pets\",\n\"read:pets\"\n]\n}\n]\n}\n```  \n```yaml\ntags:\n- pet\nsummary: Updates a pet in the store with form data\noperationId: updatePetWithForm\nparameters:\n- name: petId\nin: path\ndescription: ID of pet that needs to be updated\nrequired: true\nschema:\ntype: string\nrequestBody:\ncontent:\n'application/x-www-form-urlencoded':\nschema:\nproperties:\nname:\ndescription: Updated name of the pet\ntype: string\nstatus:\ndescription: Updated status of the pet\ntype: string\nrequired:\n- status\nresponses:\n'200':\ndescription: Pet updated.\ncontent:\n'application/json': {}\n'application/xml': {}\n'405':\ndescription: Invalid input\ncontent:\n'application/json': {}\n'application/xml': {}\nsecurity:\n- petstore_auth:\n- write:pets\n- read:pets\n```  \n#### External Documentation Object  \nAllows referencing an external resource for extended documentation.  \n##### Fixed Fields"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 204 default 400 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "note! no enum here means it is an open value",
+      "text": "\"default\": \"demo\",\n\"description\": \"this value is assigned by the service provider, in this example `gigantic-server.com`\"\n},\n\"port\": {\n\"enum\": [\n\"8443\",\n\"443\"\n],\n\"default\": \"8443\"\n},\n\"basePath\": {\n\"default\": \"v2\"\n}\n}\n}\n]\n}\n```  \n```yaml\nservers:\n- url: https://{username}.gigantic-server.com:{port}/{basePath}\ndescription: The production API server\nvariables:\nusername:\n# note! no enum here means it is an open value\ndefault: demo\ndescription: this value is assigned by the service provider, in this example `gigantic-server.com`\nport:\nenum:\n- '8443'\n- '443'\ndefault: '8443'\nbasePath:\n# open meaning there is the opportunity to use special base paths as assigned by the provider, default is `v2`\ndefault: v2\n```  \n#### Server Variable Object  \nAn object representing a Server Variable for server URL template substitution.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 204 default 400 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Describes a single response from an API Operation, including design-time, static\n`links` to operations based on the response.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"responseDescription\"></a>description | `string` | **REQUIRED**. A short description of the response. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"responseHeaders\"></a>headers | Map[`string`, [Header Object](#header-object)  \\| [Reference Object](#reference-object)] |  Maps a header name to its definition. [RFC7230](https://tools.ietf.org/html/rfc7230#page-22) states header names are case insensitive. If a response header is defined with the name `\"Content-Type\"`, it SHALL be ignored."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "a8f38a917c814135a74e1e6da2a2755aaa367b8c09351a68a0093930615e3865",
+  "judged_at": "2026-10-18T21:07:03-03:00"
+}

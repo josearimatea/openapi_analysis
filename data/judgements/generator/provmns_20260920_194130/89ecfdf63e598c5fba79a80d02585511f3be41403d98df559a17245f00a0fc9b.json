@@ -1,0 +1,344 @@
+{
+  "part_id": "generator|provmns_20260920_194130|GET /{className}={id}|responses",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "GET /{className}={id}",
+  "aspect": "responses",
+  "summary": "codes extra ['4XX', '5XX']; 3 absent, 3 differing, 3 extra",
+  "answer": {
+    "why_different": "The generated document appears to simplify and normalize the response definitions: it shortens the success description, models the JSON payload with an explicit oneOf, removes the two 3GPP-specific media types, localizes the ErrorResponseGet reference, and adds explicit 4XX/5XX response ranges.",
+    "verdict": "error",
+    "spec_3gpp": "The specification defines GET as retrieving one or multiple resources, requires the response construction details for selected attributes or fields, supports the hierarchical response construction method, and specifies ErrorResponse for 4xx/5xx errors.",
+    "openapi": "OpenAPI 3.0 permits response-code ranges such as 4XX and 5XX, while default covers responses not declared individually. Response content is represented as a media-type map, and a response schema may be an array or another schema structure.",
+    "clearer": "official",
+    "clearer_why": "The official response definitions preserve the hierarchical and flat media types and explain the attribute/field selection behavior. The generated oneOf is clearer for expressing the Resource-or-array result, but the generated version overall omits important response-format and behavior information.",
+    "citations": [
+      {
+        "evidence_id": "S3",
+        "quote": "| attr ibuteListOut | response body | n/a | Resource or array(Resource) | M |"
+      },
+      {
+        "evidence_id": "S4",
+        "quote": "Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 [15])   M"
+      },
+      {
+        "evidence_id": "S4",
+        "quote": "ErrorResponse   4xx/5xx              Returned in case of an error"
+      },
+      {
+        "evidence_id": "O5",
+        "quote": "To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated description is broadly consistent with a successful GET, but it drops the required information about selected attributes/fields and hierarchical response construction. The specification explicitly includes those qualifiers in the 200 response description (S4)."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "equivalent",
+        "reason": "Although the direct official $ref is absent, the generated oneOf contains the same Resource reference as one of its branches. This is a structural relocation rather than a loss of the Resource schema, as shown by C1 and C2."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "improvement",
+        "reason": "The generated oneOf explicitly represents both a Resource and an array of Resources, matching the specified output type 'Resource or array(Resource)' (S3). The OpenAPI reference also permits response schemas to use array structures (O3)."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "error",
+        "reason": "Removing application/vnd.3gpp.object-tree-hierarchical+json loses a documented response representation. The official response includes this media type and the specification requires the hierarchical response construction method (C1; S4)."
+      },
+      {
+        "difference_id": "D5",
+        "verdict": "error",
+        "reason": "Removing application/vnd.3gpp.object-tree-flat+json loses the documented flat response representation, including its array-of-Resource schema. The official context explicitly defines this media type and schema (C1)."
+      },
+      {
+        "difference_id": "D6",
+        "verdict": "equivalent",
+        "reason": "The generated text explains the same default error case and adds the applicable GET operation and ErrorResponseGet body type. The wording does not contradict the official 'Error case' description, and both sides retain the default response (C1; C2)."
+      },
+      {
+        "difference_id": "D7",
+        "verdict": "uncertain",
+        "reason": "This is an address change from an external reference to a local component reference. The supplied evidence does not establish that the local '#/components/schemas/ErrorResponseGet' is identical to the externally referenced schema, so the result is not decidable from the evidence."
+      },
+      {
+        "difference_id": "D8",
+        "verdict": "improvement",
+        "reason": "The explicit 4XX response documents the error response range required by the specification, which states that ErrorResponse is returned for 4xx errors (S4). OpenAPI 3.0 expressly permits the uppercase 4XX wildcard (O5)."
+      },
+      {
+        "difference_id": "D9",
+        "verdict": "improvement",
+        "reason": "The explicit 5XX response documents the error response range required by the specification, which states that ErrorResponse is returned for 5xx errors (S4). OpenAPI 3.0 expressly permits the uppercase 5XX wildcard (O5)."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 1/2)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource\n\n+------------+----------------+----------------------+-------+\n| **Name**   | **Data type**  | **Description**      | **S** |\n+============+================+======================+=======+\n| scope      | Scope          | Extends the set of   | O     |\n|            |                | targeted resources   |       |\n|            | style: form    | beyond the base      |       |\n|            |                | resource identified  |       |\n|            | explode: true  | with the authority   |       |\n|            |                | and path component   |       |\n|            |                | of the URI.          |       |\n+------------+----------------+----------------------+-------+\n| filter     | Filter         | Reduces the targeted | O     |\n|            |                | set of resources by  |       |\n|            |                | applying a filter to |       |\n|            |                | the scoped set of    |       |\n|            |                | resource             |       |\n|            |                | representations.     |       |\n|            |                | Only resources       |       |\n|            |                | representations for  |       |\n|            |                | which the filter     |       |\n|            |                | construct evaluates  |       |\n|            |                | to \\\"true\\\" are      |       |\n|            |                | targeted.            |       |\n+------------+----------------+----------------------+-------+\n| attributes | array(string)  | Attributes of the    | O     |\n|            |                | scoped resources to  |       |\n|            | style: form    | be returned. The     |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of attribute names.  |       |\n+------------+----------------+----------------------+-------+\n| fields     | array(string)  | Attribute fields of  | O     |\n|            |                | the scoped resources |       |\n|            | style: form    | to be returned. The  |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of JSON pointers to  |       |\n|            |                | the attribute        |       |\n|            |                | fields.              |       |\n+------------+----------------+----------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.3 Operation getMOIAttributes (part 1/2)\n\nThis operation retrieves one or multiple resources representing managed\nobject instances.\n\nTable 12.1.1.1.3-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP GET)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | query        | scope        | Scope        | O     |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | true         |       |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | query        | filter       | Filter       | O     |\n+--------------+--------------+--------------+--------------+-------+\n| att          | query        | attributes   | a            | O     |\n| ributeListIn |              |              | rray(string) |       |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | false        |       |\n+--------------+--------------+--------------+--------------+-------+\n|              |              | fields       | a            | O     |\n|              |              |              | rray(string) |       |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | false        |       |\n+--------------+--------------+--------------+--------------+-------+\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.3 Operation getMOIAttributes (part 2/2)\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| attr         | response     | n/a          | Resource or  | M     |\n| ibuteListOut | body         |              |              |       |\n|              |              |              | arr          |       |\n|              |              |              | ay(Resource) |       |\n+--------------+--------------+--------------+--------------+-------+\n| status       | response     | n/a          | n/a          | M     |\n|              | status codes |              |              |       |\n+--------------+--------------+--------------+--------------+-------+\n|              | response     | error        | E            | O     |\n|              | body         |              | rrorResponse |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFurther details on reading resources with HTTP GET are provided in TS\n32.158 \\[15\\], clause 5.2.\n\nFurther details on the SS parameters \\\"scope\\\" and \\\"filter\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.1.\n\nFurther details on the SS parameters \\\"attributes\\\" and \\\"fields\\\" are\nprovided in TS 32.158 \\[15\\], clause 6.2."
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 2/2)\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                                                                                                                      **S**\n  --------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.2 Type Scope\n\nTable 12.1.1.4.1a.2-1: Definition of type Scope\n\n  Attribute name   Data type   Description                                                                                                                                                                                                     S\n  ---------------- ----------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---\n  scopeType        ScopeType   Used in the query component of HTTP GET and HTTP DELETE together with scopeLevel to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI   M\n  scopeLevel       integer     Used in the query component of HTTP GET and HTTP DELETE together with scopeType to extend the set of targeted resources beyond the base resource identified with the path component of the URI                  M"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 3/3)\n\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+\n| ErrorResponse | 4xx/5xx            | Returned in case of | O     |\n|               |                    | an error            |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "12.1.1.3 Resources › 12.1.1.3.1 Resource structure\n\n##### 12.1.1.3.1.1 Resource structure on the MnS producer\n\nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.\n\n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}\n\nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer\n\nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.1.1.3.1-**1**: Resources and methods overview\n\n  Resource name   Resource URI           HTTP method   Description\n  --------------- ---------------------- ------------- --------------------------------------------------------------------------\n  MOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\n  MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.1 Introduction\n\nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.\n\nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents\n\n+-------------------+-----------------+-------------------+-------+\n| **IS operation**  | **HTTP Method** | **Resource URI**  | **S** |\n+===================+=================+===================+=======+\n| createMOI         | PUT             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| getMOIAttributes  | GET             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| mo                | PUT             | {MnSRoot}/ProvMnS | M     |\n| difyMOIAttributes |                 | /{MnSVersion}/{UR |       |\n|                   | PATCH           | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| deleteMOI         | DELETE          | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 1/3)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.\n\nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource\n\n  **Data type**   **Description**                                                     **S**\n  --------------- ------------------------------------------------------------------- -------\n  Resource        Resource representation of the resource to be created or replaced   M\n\nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.1",
+      "title": "12.1.1.3.2.1.1 Description",
+      "text": "12.1.1.3.2 Resource definitions › 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"\n\n####### 12.1.1.3.2.1.1 Description\n\nThis resource represents a managed object instance."
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET response status codes 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case. TS28623_ComDefs.yaml#/components/schemas/ErrorResponseGet #/components/schemas/ErrorResponseGet",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.3 HTTP PATCH\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.3-2: Data structures supported by the PATCH request\nbody on this resource\n\n+---------------+--------------------------------------------+-------+\n| **Data type** | **Description**                            | **S** |\n+===============+============================================+=======+\n| Resource, or  | Patch document describing the set of       | M     |\n|               | modifications to be applied to the         |       |\n| array(object) | targeted resources.                        |       |\n|               |                                            |       |\n|               | The following patch media types are        |       |\n|               | available:                                 |       |\n|               |                                            |       |\n|               | \\- \\\"application/merge-patch+json\\\" (RFC   |       |\n|               | 7396 \\[37\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-merge-patch+json\\\"   |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n|               |                                            |       |\n|               | \\- \\\"application/json-patch+json\\\" (RFC    |       |\n|               | 6902 \\[36\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-json-patch+json\\\"    |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n+---------------+--------------------------------------------+-------+\n\nTable 12.1.1.2.1.1.3.3-3: Data structures supported by the PATCH\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                **S**\n  --------------- -------------------- ------------------------------ -------\n  ErrorResponse   4xx/5xx              Returned in case of an error   M"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET response status codes 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case. TS28623_ComDefs.yaml#/components/schemas/ErrorResponseGet #/components/schemas/ErrorResponseGet",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET response status codes 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case. TS28623_ComDefs.yaml#/components/schemas/ErrorResponseGet #/components/schemas/ErrorResponseGet",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 4/8)\n\nThe properties \\\"op\\\", \\\"path\\\" and \\\"value\\\" shall use the 3GPP JSON\nPatch format (TS 32.158 \\[15\\]) for reporting NRM changes. The \\\"merge\\\"\noperation specified by 3GPP JSON Patch is not supported in\n\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.\n\nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before\nreplacing the value with the new value, that is contained in \\\"value\\\".\n\nThe following example notification (where JSON is expressed in YAML\nnotation) reports an object creation\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\n\nvalue:\n\nid: 1,\n\nobjectClass: ClassA,\n\nattributes:\n\nattrA: 123\n\nattrB:\n\nsubAttrB1: ABC\n\nsubAttrB2: 56\n\nThe following example reports the deletion of that object.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\n\nThe following example reports the addition of a new attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrC\n\nvalue: xyz\n\nThe following example reports the deletion of the attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\\#/attributes/attrC\n\nThe following example reports a value change for the simple attribute\n\\\"attrA\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\nWhen the old value is reported as well, the notification looks like.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\noldValue: 123\n\nThe following example reports a value change for the complex attribute\n\\\"attrB\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nThe previous two notifications can be combined into a single\nnotification as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nNote the operation \\\"replace\\\" has replace semantics and not merge\nsemantics. The following notification reports the value change of the\nattribute field \\\"attrB:subAttrB1\\\" to \\\"def\\\" and the deletion of the\nattribute field \\\"attrB:subAttrB2\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: def\n\nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA/subAttrB1\n\nvalue: def\n\nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 1\n\n\\- 2\n\n\\- 3\n\nIts deletion is reported by the following notification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\\#/attributes/attrD\n\nThe complete replacement of the array is reported by the following\nnotification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 11\n\n\\- 21\n\n\\- 31"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET response status codes 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case. TS28623_ComDefs.yaml#/components/schemas/ErrorResponseGet #/components/schemas/ErrorResponseGet",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.4 HTTP DELETE\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource\n\n+----------+---------------+--------------------------------+-------+\n| **Name** | **Data type** | **Description**                | **S** |\n+==========+===============+================================+=======+\n| scope    | Scope         | Extends the set of targeted    | O     |\n|          |               | resources beyond the base      |       |\n|          | style: form   | resource identified with the   |       |\n|          |               | authority and path component   |       |\n|          | explode: true | of the URI.                    |       |\n+----------+---------------+--------------------------------+-------+\n| filter   | Filter        | Reduces the targeted set of    | O     |\n|          |               | resources by applying a filter |       |\n|          |               | to the scoped set of resource  |       |\n|          |               | representations. Only          |       |\n|          |               | resources representations for  |       |\n|          |               | which the filter construct     |       |\n|          |               | evaluates to \\\"true\\\" are      |       |\n|          |               | targeted.                      |       |\n+----------+---------------+--------------------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.4-2: Data structures supported by the DELETE\nrequest body on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.4-3: Data structures supported by the DELETE\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                  **S**\n  --------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------\n  array(Uri)      200 OK               Status code returned, when query parameters are present in the request and one or multiple resources are deleted. The URIs of the deleted resources are returned in the response message body.   M\n  n/a             204 No Content       Status code returned, when no query parameters are present in the request and only one resource is deleted. The message body is empty.                                                           M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                     M"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP GET response status codes 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case. TS28623_ComDefs.yaml#/components/schemas/ErrorResponseGet #/components/schemas/ErrorResponseGet",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.2 Mapping of notifications\n\n##### 12.1.3.2.5 Notification notifyMOIChanges (part 1/3)\n\nThe NETCONF/YANG solution set uses the same mapping as the RESTful\nHTTP-based solution set as described in clause 12.1.1.2.5 with the\nchanges and additions described below.\n\n\\- Any changes reported are based on the YANG NRM definitions, even\nthough the RESTful notification mapping is reused.\n\n\\- The media type as specified by the \\\"Content-Type\\\" header in the\nHTTP POST request shall be \\\"application/yang-data+json\\\" and not\n\\\"application/json\\\".\n\n\\- The value of \\\"href\\\" shall be set to the FQDN or IP address\nidentifying the NETCONF server.\n\n\\- The value of \\\"path\\\" shall be a RESTCONF data resource identifier\n(RFC 8040 \\[49\\], clause 3.5.3).\n\n\\- The \\\"path\\\" includes the YANG module name.\n\n\\- The \\\"\\#\\\" character before \\\"/attributes\\\" in \\\"path\\\" is not\npresent. NETCONF/YANG does not differentiate between the stage 2\nconcepts of object and attribute, hence there is no need for a\ndelimiter.\n\n\\- The value of \\\"value\\\" shall follow the JSON encoding of YANG (RFC\n7951 \\[50\\]).\n\n\\- Attribute elements are identified by their value (in case of a YANG\n\\\"leaf-list\\\") or by the values of keys (in case of a YANG \\\"list\\\"). In\nJSON Patch, attribute elements are identified based on their index, i.e.\nbased on the position in the array.\n\n\\- In case no key is defined for a YANG \\\"list\\\" it is not possible to\nreport the creation, deletion or replacement of individual list entries.\nIn this case, whenever the list is modified, the replacement of the\ncomplete attribute or attribute field (the complete list with all list\nenties) shall be reported.\n\n\\- Similarly if an attribute(field) is mapped to a YANG leaf-list with\nnon-unique values it is not possible to report the creation, deletion or\nreplacement of an individual value. In this case, whenever the leaf-list\nis modified, the replacement of the complete attribute or attribute\nfield (the complete leaf-list; all values) shall be reported.\n\n\\- YANG default values shall be handled as follows:\n\n\\- Attributes with default values, for which no value is specified in\nthe object creation request, shall be included in the object creation\nreport with their default values.\n\n\\- Attributes with default values, that are deleted and consequently set\nto their default value, shall be included in attribute replacement\nreports.\n\nNote all following use-cases use JSON expressed in YAML notation.\n\nCase 1: Creation of an MOI is reported with:\n\n\\- operation: add\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: a complete MOI representation, represented by the \\\"id\\\" node\nand the \\\"attributes\\\" container but exluding the list entry itself\nencoded according to RFC7951 \\[50\\].\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object creation:\n\nhref: node1.lichtenberg.de\n\n...\n\nnotificationId: 123456001\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: add\n\nvalue:\n\nid: job1\n\n3gpp-common-measurements:PerfMetricJob:attributes:\n\njobId: 9865\n\nfileReportingPeriod: 30\n\nCase 2: Deletion of an MOI is reported with:\n\n\\- operation: remove\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: not present\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object deletion:\n\nhref: node1.charlottenburg.de\n\n...\n\nnotificationId: 123456002\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: remove\n\nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):\n\n\\- operation: add."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "The `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"responsesDefault\"></a>default | [Response Object](#response-object) \\| [Reference Object](#reference-object) | The documentation of responses other than the ones declared for specific HTTP response codes. Use this field to cover undeclared responses. A [Reference Object](#reference-object) can link to a response that the [OpenAPI Object's components/responses](#componentsResponses) section defines.  \n##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Responses Object Example  \nA 200 response for a successful operation and a default response for others (implying an error):  \n```json\n{\n\"200\": {\n\"description\": \"a pet to be returned\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/Pet\"\n}\n}\n}\n},\n\"default\": {\n\"description\": \"Unexpected error\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/ErrorModel\"\n}\n}\n}\n}\n}\n```  \n```yaml\n'200':\ndescription: a pet to be returned\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: Unexpected error\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/ErrorModel'\n```  \n#### Response Object\nDescribes a single response from an API Operation, including design-time, static\n`links` to operations based on the response.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object Examples",
+      "text": "##### Response Object Examples  \nResponse of an array of a complex type:  \n```json\n{\n\"description\": \"A complex object array response\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/VeryComplexType\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: A complex object array response\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/VeryComplexType'\n```  \nResponse with a string type:  \n```json\n{\n\"description\": \"A simple string response\",\n\"content\": {\n\"text/plain\": {\n\"schema\": {\n\"type\": \"string\"\n}\n}\n}"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object",
+      "text": "X-Rate-Limit-Limit:\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Responses Object  \nA container for the expected responses of an operation.\nThe container maps a HTTP response code to the expected response.  \nThe documentation is not necessarily expected to cover all possible HTTP response codes because they may not be known in advance.\nHowever, documentation is expected to cover a successful operation response and any known errors.  \nThe `default` MAY be used as a default response object for all HTTP codes\nthat are not covered individually by the specification.  \nThe `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "---|:---:|---\n<a name=\"responsesCode\"></a>[HTTP Status Code](#http-status-codes) | [Response Object](#response-object) \\| [Reference Object](#reference-object) | Any [HTTP status code](#http-status-codes) can be used as the property name, but only one property per code, to describe the expected response for that HTTP status code.  A [Reference Object](#reference-object) can link to a response that is defined in the [OpenAPI Object's components/responses](#componentsResponses) section. This field MUST be enclosed in quotation marks (for example, \"200\") for compatibility between JSON and YAML. To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`. The following range definitions are allowed: `1XX`, `2XX`, `3XX`, `4XX`, and `5XX`. If a response range is defined using an explicit code, the explicit code definition takes precedence over the range definition for that code."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "HTTP Status Codes",
+      "text": "application/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation.\nThe available status codes are defined by [RFC7231](https://tools.ietf.org/html/rfc7231#section-6) and registered status codes are listed in the [IANA Status Code Registry](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "Definitions",
+      "text": "## Definitions  \n##### OpenAPI Document\nA document (or set of documents) that defines or describes an API. An OpenAPI definition uses and conforms to the OpenAPI Specification.  \n##### Path Templating\nPath templating refers to the usage of curly braces ({}) to mark a section of a URL path as replaceable using path parameters.  \n##### Media Types\nMedia type definitions are spread across several resources.\nThe media type definitions SHOULD be in compliance with [RFC6838](https://tools.ietf.org/html/rfc6838).  \nSome examples of possible media type definitions:\n```\ntext/plain; charset=utf-8\napplication/json\napplication/vnd.github+json\napplication/vnd.github.v3+json\napplication/vnd.github.v3.raw+json\napplication/vnd.github.v3.text+json\napplication/vnd.github.v3.html+json\napplication/vnd.github.v3.full+json\napplication/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object Examples",
+      "text": "<a name=\"responseContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | A map containing descriptions of potential response payloads. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For responses that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"responseLinks\"></a>links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | A map of operations links that can be followed from the response. The key of the map is a short name for the link, following the naming constraints of the names for [Component Objects](#components-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Response Object Examples  \nResponse of an array of a complex type:  \n```json\n{\n\"description\": \"A complex object array response\",\n\"content\": {\n\"application/json\": {\n\"schema\": {"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "Encoding Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Encoding Object Example  \n```yaml\nrequestBody:\ncontent:\nmultipart/mixed:\nschema:\ntype: object\nproperties:\nid:\n# default is text/plain\ntype: string\nformat: uuid\naddress:\n# default is application/json\ntype: object\nproperties: {}\nhistoryMetadata:\n# need to declare XML format!\ndescription: metadata in XML format\ntype: object\nproperties: {}\nprofileImage:\n# default is application/octet-stream, need to declare an image type only!\ntype: string\nformat: binary\nencoding:\nhistoryMetadata:\n# require XML Content-Type in utf-8 encoding\ncontentType: application/xml; charset=utf-8\nprofileImage:\n# only accept png/jpeg\ncontentType: image/png, image/jpeg\nheaders:\nX-Rate-Limit-Limit:\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Responses Object  \nA container for the expected responses of an operation."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 200 application/json application/vnd.3gpp.object-tree-hierarchical+json application/vnd.3gpp.object-tree-flat+json default 4XX 5XX Error case.",
+      "filters": {},
+      "clause": "",
+      "title": "Path Item Object Example",
+      "text": "##### Path Item Object Example  \n```json\n{\n\"get\": {\n\"description\": \"Returns pets based on ID\",\n\"summary\": \"Find pets by ID\",\n\"operationId\": \"getPetsById\",\n\"responses\": {\n\"200\": {\n\"description\": \"pet response\",\n\"content\": {\n\"*/*\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/Pet\"\n}\n}\n}\n}\n},\n\"default\": {\n\"description\": \"error payload\",\n\"content\": {\n\"text/html\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/ErrorModel\"\n}\n}\n}\n}\n}\n},\n\"parameters\": [\n{\n\"name\": \"id\",\n\"in\": \"path\",\n\"description\": \"ID of pet to use\",\n\"required\": true,\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"type\": \"string\"\n}\n},\n\"style\": \"simple\"\n}\n]\n}\n```  \n```yaml\nget:\ndescription: Returns pets based on ID\nsummary: Find pets by ID\noperationId: getPetsById\nresponses:\n'200':\ndescription: pet response\ncontent:\n'*/*' :\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: error payload\ncontent:\n'text/html':\nschema:\n$ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "89ecfdf63e598c5fba79a80d02585511f3be41403d98df559a17245f00a0fc9b",
+  "judged_at": "2026-10-18T20:55:28-03:00"
+}

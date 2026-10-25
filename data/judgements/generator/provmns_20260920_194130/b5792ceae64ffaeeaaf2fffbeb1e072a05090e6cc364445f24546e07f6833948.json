@@ -1,0 +1,210 @@
+{
+  "part_id": "generator|provmns_20260920_194130|PUT /{className}={id}|callback applied",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "PUT /{className}={id}",
+  "aspect": "callback applied",
+  "summary": "1 extra",
+  "answer": {
+    "why_different": "The generated document introduces an extra callback named `applied`, but its value is a list of dependency/path strings rather than a Callback Object or Reference Object. This is a structural difference, likely caused by treating internal reference/dependency information as an actual callback definition.",
+    "verdict": "error",
+    "spec_3gpp": "The supplied 3GPP passages describe HTTP methods, resource data structures, and notification targets, but do not define a callback named `applied` or support this list-valued callback structure.",
+    "openapi": "OpenAPI 3.0 requires an operation's `callbacks` map to contain Callback Objects or Reference Objects. A callback value describes a callback request through a Path Item Object; the generated value is instead a list of strings, so it is not valid OpenAPI 3.0.",
+    "clearer": "official",
+    "clearer_why": "The official side has no spurious callback. The generated side exposes an invalid and unexplained list under `callbacks.applied`, which does not describe a callback request.",
+    "citations": [
+      {
+        "evidence_id": "C2",
+        "quote": "paths./{className}={id}.put.callbacks.applied:\n- paths./{className}={id}.components\n- components.Resource"
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation."
+      },
+      {
+        "evidence_id": "O4",
+        "quote": "{expression} | [Path Item Object](#path-item-object) | A Path Item Object used to define a callback request and expected responses."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The extra `callbacks.applied` entry has a list of strings as its value, whereas OpenAPI requires callback entries to be Callback Objects or Reference Objects and callback expressions to identify a callback Path Item Object. The generated side is therefore structurally invalid; see C2, O1, and O4."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "applied",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.3 HTTP PATCH\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.3-2: Data structures supported by the PATCH request\nbody on this resource\n\n+---------------+--------------------------------------------+-------+\n| **Data type** | **Description**                            | **S** |\n+===============+============================================+=======+\n| Resource, or  | Patch document describing the set of       | M     |\n|               | modifications to be applied to the         |       |\n| array(object) | targeted resources.                        |       |\n|               |                                            |       |\n|               | The following patch media types are        |       |\n|               | available:                                 |       |\n|               |                                            |       |\n|               | \\- \\\"application/merge-patch+json\\\" (RFC   |       |\n|               | 7396 \\[37\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-merge-patch+json\\\"   |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n|               |                                            |       |\n|               | \\- \\\"application/json-patch+json\\\" (RFC    |       |\n|               | 6902 \\[36\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-json-patch+json\\\"    |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n+---------------+--------------------------------------------+-------+\n\nTable 12.1.1.2.1.1.3.3-3: Data structures supported by the PATCH\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                **S**\n  --------------- -------------------- ------------------------------ -------\n  ErrorResponse   4xx/5xx              Returned in case of an error   M"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "applied",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 1/2)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource\n\n+------------+----------------+----------------------+-------+\n| **Name**   | **Data type**  | **Description**      | **S** |\n+============+================+======================+=======+\n| scope      | Scope          | Extends the set of   | O     |\n|            |                | targeted resources   |       |\n|            | style: form    | beyond the base      |       |\n|            |                | resource identified  |       |\n|            | explode: true  | with the authority   |       |\n|            |                | and path component   |       |\n|            |                | of the URI.          |       |\n+------------+----------------+----------------------+-------+\n| filter     | Filter         | Reduces the targeted | O     |\n|            |                | set of resources by  |       |\n|            |                | applying a filter to |       |\n|            |                | the scoped set of    |       |\n|            |                | resource             |       |\n|            |                | representations.     |       |\n|            |                | Only resources       |       |\n|            |                | representations for  |       |\n|            |                | which the filter     |       |\n|            |                | construct evaluates  |       |\n|            |                | to \\\"true\\\" are      |       |\n|            |                | targeted.            |       |\n+------------+----------------+----------------------+-------+\n| attributes | array(string)  | Attributes of the    | O     |\n|            |                | scoped resources to  |       |\n|            | style: form    | be returned. The     |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of attribute names.  |       |\n+------------+----------------+----------------------+-------+\n| fields     | array(string)  | Attribute fields of  | O     |\n|            |                | the scoped resources |       |\n|            | style: form    | to be returned. The  |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of JSON pointers to  |       |\n|            |                | the attribute        |       |\n|            |                | fields.              |       |\n+------------+----------------+----------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "applied",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.4 HTTP DELETE\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource\n\n+----------+---------------+--------------------------------+-------+\n| **Name** | **Data type** | **Description**                | **S** |\n+==========+===============+================================+=======+\n| scope    | Scope         | Extends the set of targeted    | O     |\n|          |               | resources beyond the base      |       |\n|          | style: form   | resource identified with the   |       |\n|          |               | authority and path component   |       |\n|          | explode: true | of the URI.                    |       |\n+----------+---------------+--------------------------------+-------+\n| filter   | Filter        | Reduces the targeted set of    | O     |\n|          |               | resources by applying a filter |       |\n|          |               | to the scoped set of resource  |       |\n|          |               | representations. Only          |       |\n|          |               | resources representations for  |       |\n|          |               | which the filter construct     |       |\n|          |               | evaluates to \\\"true\\\" are      |       |\n|          |               | targeted.                      |       |\n+----------+---------------+--------------------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.4-2: Data structures supported by the DELETE\nrequest body on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.4-3: Data structures supported by the DELETE\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                  **S**\n  --------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------\n  array(Uri)      200 OK               Status code returned, when query parameters are present in the request and one or multiple resources are deleted. The URIs of the deleted resources are returned in the response message body.   M\n  n/a             204 No Content       Status code returned, when no query parameters are present in the request and only one resource is deleted. The message body is empty.                                                           M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                     M"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "applied",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "applied",
+      "filters": {},
+      "clause": "12.1.1.4.4.4",
+      "title": "12.1.1.4.4.4 Enumeration SourceIndicator",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.4 Enumeration SourceIndicator\n\nTable 12.1.1.4.4.4-1: Enumeration SourceIndicator\n\n  Enumeration value       Description\n  ----------------------- -----------------------------------------------------------------------------------------------------------------------------------------------------\n  RESOURCE\\_OPERATION     The notification was generated in response to an internal operation of the resource.\n  MANAGEMENT\\_OPERATION   The notification was generated in response to a management operation applied across the managed object boundary external to the managed object\n  SON\\_OPERATION          The notification was generated as result of a SON (Self Organising Network) process like self-configuration, self-optimization, self-healing etc. .\n  UNKNOWN                 It is not possible to determine the source of the operation."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Notification applied",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.1",
+      "title": "12.1.1.3.2.4.1 Description",
+      "text": "12.1.1.3.2 Resource definitions › 12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\"\n\n####### 12.1.1.3.2.4.1 Description\n\nThis resource represents a notification target on the MnS consumer."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "Callback Object Example",
+      "text": "201 Created\nLocation: http://example.org/subscription/1\n```  \nThe following examples show how the various expressions evaluate, assuming the callback operation has a path parameter named `eventType` and a query parameter named `queryUrl`.  \nExpression | Value\n---|:---\n$url | http://example.org/subscribe/myevent?queryUrl=http://clientdomain.com/stillrunning\n$method | POST\n$request.path.eventType | myevent\n$request.query.queryUrl | http://clientdomain.com/stillrunning\n$request.header.content-Type | application/json\n$request.body#/failedUrl | http://clientdomain.com/stillrunning\n$request.body#/successUrls/2 | http://clientdomain.com/medium\n$response.header.Location | http://example.org/subscription/1  \n##### Callback Object Example  \nThe following example shows a callback to the URL specified by the `id` and `email` property in the request body.  \n```yaml\nmyWebhook:\n'http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}':\npost:\nrequestBody:"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "Patterned Fields",
+      "text": "##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---\n<a name=\"callbackExpression\"></a>{expression} | [Path Item Object](#path-item-object) | A Path Item Object used to define a callback request and expected responses.  A [complete example](../examples/v3.0/callback-example.yaml) is available.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Key Expression  \nThe key that identifies the [Path Item Object](#path-item-object) is a [runtime expression](#runtime-expressions) that can be evaluated in the context of a runtime HTTP request/response to identify the URL to be used for the callback request.\nA simple example might be `$request.body#/url`.\nHowever, using a [runtime expression](#runtime-expressions) the complete HTTP message can be accessed.\nThis includes accessing any part of a body that a JSON Pointer [RFC6901](https://tools.ietf.org/html/rfc6901) can reference.  \nFor example, given the following HTTP request:"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Callback Object",
+      "filters": {},
+      "clause": "",
+      "title": "Callback Object",
+      "text": "description: The number of allowed requests in the current period\nschema:\ntype: integer\nX-Rate-Limit-Remaining:\ndescription: The number of remaining requests in the current period\nschema:\ntype: integer\nX-Rate-Limit-Reset:\ndescription: The number of seconds left in the current period\nschema:\ntype: integer\n```  \nResponse with no return value:  \n```json\n{\n\"description\": \"object created\"\n}\n```  \n```yaml\ndescription: object created\n```  \n#### Callback Object  \nA map of possible out-of band callbacks related to the parent operation.\nEach value in the map is a [Path Item Object](#path-item-object) that describes a set of requests that may be initiated by the API provider and the expected responses.\nThe key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.  \n##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body applied",
+      "filters": {},
+      "clause": "",
+      "title": "returns array of '#/components/schemas/repository'",
+      "text": "UserRepositories:\n# returns array of '#/components/schemas/repository'\noperationRef: 'https://na2.gigantic-server.com/#/paths/~12.0~1repositories~1{username}/get'\nparameters:\nusername: $response.body#/username\n```  \nNote that in the use of `operationRef`, the _escaped forward-slash_ is necessary when\nusing JSON references.  \n##### Runtime Expressions  \nRuntime expressions allow defining values based on information that will only be available within the HTTP message in an actual API call.\nThis mechanism is used by [Link Objects](#link-object) and [Callback Objects](#callback-object).  \nThe runtime expression is defined by the following [ABNF](https://tools.ietf.org/html/rfc5234) syntax  \n```\nexpression = ( \"$url\" | \"$method\" | \"$statusCode\" | \"$request.\" source | \"$response.\" source )\nsource = ( header-reference | query-reference | path-reference | body-reference )\nheader-reference = \"header.\" token\nquery-reference = \"query.\" name\npath-reference = \"path.\" name"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body applied",
+      "filters": {},
+      "clause": "",
+      "title": "get the `uuid` field from the `uuid` field in the response body",
+      "text": "When a runtime expression fails to evaluate, no parameter value is passed to the target operation.  \nValues from the response body can be used to drive a linked operation.  \n```yaml\nlinks:\naddress:\noperationId: getUserAddressByUUID\nparameters:\n# get the `uuid` field from the `uuid` field in the response body\nuserUuid: $response.body#/uuid\n```  \nClients follow all links at their discretion.\nNeither permissions, nor the capability to make a successful call to that link, is guaranteed\nsolely by the existence of a relationship.  \n##### OperationRef Examples  \nAs references to `operationId` MAY NOT be possible (the `operationId` is an optional\nvalue), references MAY also be made through a relative `operationRef`:  \n```yaml\nlinks:"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body applied",
+      "filters": {},
+      "clause": "",
+      "title": "Examples",
+      "text": "source = ( header-reference | query-reference | path-reference | body-reference )\nheader-reference = \"header.\" token\nquery-reference = \"query.\" name\npath-reference = \"path.\" name\nbody-reference = \"body\" [\"#\" fragment]\nfragment = a JSON Pointer [RFC 6901](https://tools.ietf.org/html/rfc6901)\nname = *( char )\nchar = as per RFC [7159](https://tools.ietf.org/html/rfc7159#section-7)\ntoken = as per RFC [7230](https://tools.ietf.org/html/rfc7230#section-3.2.6)\n```  \nThe `name` identifier is case-sensitive, whereas `token` is not.  \nThe table below provides examples of runtime expressions and examples of their use in a value:  \n##### Examples  \nSource Location | example expression  | notes\n---|:---|:---|\nHTTP Method            | `$method`         | The allowable values for the `$method` will be those for the HTTP operation.\nRequested media type | `$request.header.accept`        |"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body applied",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"linkParameters\"></a>parameters   | Map[`string`, Any \\| [{expression}](#runtime-expressions)] | A map representing parameters to pass to an operation as specified with `operationId` or identified via `operationRef`. The key is the parameter name to be used, whereas the value can be a constant or an expression to be evaluated and passed to the linked operation.  The parameter name can be qualified using the [parameter location](#parameterIn) `[{in}.]{name}` for operations that use the same parameter name in different locations (e.g. path.id).\n<a name=\"linkRequestBody\"></a>requestBody | Any \\| [{expression}](#runtime-expressions) | A literal value or [{expression}](#runtime-expressions) to use as a request body when calling the target operation.\n<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "callback runtime expression URL of the notification request body applied",
+      "filters": {},
+      "clause": "",
+      "title": "Example Object",
+      "text": "```yaml\nmyWebhook:\n'http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}':\npost:\nrequestBody:\ndescription: Callback payload\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/SomePayload'\nresponses:\n'200':\ndescription: webhook successfully processed and no retries will be performed\n```  \n#### Example Object  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"exampleSummary\"></a>summary | `string` | Short description for the example.\n<a name=\"exampleDescription\"></a>description | `string` | Long description for the example. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"exampleValue\"></a>value | Any | Embedded literal example. The `value` field and `externalValue` field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON or YAML, use a string value to contain the example, escaping where necessary."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "b5792ceae64ffaeeaaf2fffbeb1e072a05090e6cc364445f24546e07f6833948",
+  "judged_at": "2026-10-18T20:54:33-03:00"
+}

@@ -1,0 +1,310 @@
+{
+  "part_id": "generator|provmns_20260920_194130|PATCH /{className}={id}|operation",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "PATCH /{className}={id}",
+  "aspect": "operation",
+  "summary": "2 differing, 1 extra",
+  "answer": {
+    "why_different": "The generated operation uses a different, narrower summary and description focused on the IS operation mapping, while the official operation describes the full PATCH behavior. It also adds an operationId as a structural enhancement for operation identification.",
+    "verdict": "error",
+    "spec_3gpp": "The specification states that HTTP PATCH can create, update, or delete one or multiple resources, and maps the modifyMOIAttributes operation to PATCH on this URI. The generated text identifies the mapping but omits the broader PATCH behavior.",
+    "openapi": "OpenAPI permits an operationId and recommends it as a unique identifier for an operation. Summary and description are descriptive fields, so their content should accurately and adequately explain the operation behavior.",
+    "clearer": "official",
+    "clearer_why": "The official summary and description explain the supported PATCH behavior, including creation, updating, deletion, multiple resources, and the role of the target URI and patch document. The generated description provides useful mapping and URI information but omits these behavioral details.",
+    "citations": [
+      {
+        "evidence_id": "S1",
+        "quote": "HTTP PATCH is used to create, update or delete one or multiple resources."
+      },
+      {
+        "evidence_id": "S4",
+        "quote": "modifyMOIAttributes | PUT | PATCH"
+      },
+      {
+        "evidence_id": "O10",
+        "quote": "operationId | string | Unique string used to identify the operation."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated summary is narrower and can mislead readers because it says only “Modify MOI attributes,” omitting that PATCH can create, update, or delete one or multiple resources. This conflicts with the PATCH behavior stated in S1 and the fuller official summary in C1."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "The generated description accurately identifies the IS-to-HTTP mapping, but it loses the official explanation of PATCH semantics and how the patch document identifies modifications. The omitted behavior is specified in S1 and is visible by comparison with the official description in C1."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "improvement",
+        "reason": "Adding operationId provides a useful unique identifier for tooling and follows the OpenAPI recommendation; the value also corresponds to the mapped IS operation modifyMOIAttributes. This is supported by O10 and S4."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.3 HTTP PATCH\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.3-2: Data structures supported by the PATCH request\nbody on this resource\n\n+---------------+--------------------------------------------+-------+\n| **Data type** | **Description**                            | **S** |\n+===============+============================================+=======+\n| Resource, or  | Patch document describing the set of       | M     |\n|               | modifications to be applied to the         |       |\n| array(object) | targeted resources.                        |       |\n|               |                                            |       |\n|               | The following patch media types are        |       |\n|               | available:                                 |       |\n|               |                                            |       |\n|               | \\- \\\"application/merge-patch+json\\\" (RFC   |       |\n|               | 7396 \\[37\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-merge-patch+json\\\"   |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n|               |                                            |       |\n|               | \\- \\\"application/json-patch+json\\\" (RFC    |       |\n|               | 6902 \\[36\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-json-patch+json\\\"    |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n+---------------+--------------------------------------------+-------+\n\nTable 12.1.1.2.1.1.3.3-3: Data structures supported by the PATCH\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                **S**\n  --------------- -------------------- ------------------------------ -------\n  ErrorResponse   4xx/5xx              Returned in case of an error   M"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.1 Mapping to HTTP PUT\n\nHTTP PUT is used for a full update of a single resource.\n\nTable 12.1.1.1.4.1-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource     | M     |\n| ficationList |              |              |              |       |\n+--------------+--------------+--------------+--------------+-------+\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no meaning when\ntargeting a single resource with the target URI and are not mapped.\n\nTable 12.1.1.1.4.1-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                O\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.3."
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.1 Introduction\n\nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.\n\nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents\n\n+-------------------+-----------------+-------------------+-------+\n| **IS operation**  | **HTTP Method** | **Resource URI**  | **S** |\n+===================+=================+===================+=======+\n| createMOI         | PUT             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| getMOIAttributes  | GET             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| mo                | PUT             | {MnSRoot}/ProvMnS | M     |\n| difyMOIAttributes |                 | /{MnSVersion}/{UR |       |\n|                   | PATCH           | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| deleteMOI         | DELETE          | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.4 Data type definitions\n\n##### 12.1.1.4.1 General\n\nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.\n\nTable 12.1.1.4.1-1: Data types defined in this specification\n\n  Data type                        Reference       Description\n  -------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  CmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\n  SourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\n  ScopeType                        12.1.1.4.4.5    Scope type of a scope\n  Operation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\n  Insert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\n  PatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\n  Resource                         12.1.1.4.1a.1   Used for resource representations\n  Scope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\n  CorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\n  MoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\n  NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\n  NotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\n  NotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\n  NotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\n  PatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document\n\nTable 12.1.1.4.1-2: Data types imported\n\n  Data type                   Reference          Description\n  --------------------------- ------------------ ---------------------------------------------------------------------\n  DateTime                    TS 28.623 \\[44\\]   Date and time\n  Dn                          TS 28.623 \\[44\\]   DN type\n  SystemDN                    TS 28.623 \\[44\\]   systemDN type\n  Uri                         TS 28.623 \\[44\\]   URI type\n  AttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\n  AttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\n  Filter                      TS 28.623 \\[44\\]   Filter type\n  NotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationType            TS 28.623 \\[44\\]   Notification type\n  NotificationHeader          TS 28.623 \\[44\\]   Notification header\n  ErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 3/3)\n\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+\n| ErrorResponse | 4xx/5xx            | Returned in case of | O     |\n|               |                    | an error            |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "12.1.1.3 Resources › 12.1.1.3.1 Resource structure\n\n##### 12.1.1.3.1.1 Resource structure on the MnS producer\n\nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.\n\n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}\n\nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer\n\nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.1.1.3.1-**1**: Resources and methods overview\n\n  Resource name   Resource URI           HTTP method   Description\n  --------------- ---------------------- ------------- --------------------------------------------------------------------------\n  MOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\n  MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 2/2)\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                                                                                                                      **S**\n  --------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 1/3)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.\n\nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource\n\n  **Data type**   **Description**                                                     **S**\n  --------------- ------------------------------------------------------------------- -------\n  Resource        Resource representation of the resource to be created or replaced   M\n\nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 2/3)\n\n+---------------+--------------------+---------------------+-------+\n| **Data type** | **Response codes** | **Description**     | **S** |\n+===============+====================+=====================+=======+\n| Resource      | 200 OK             | Status code         | M     |\n|               |                    | returned when the   |       |\n|               |                    | resource is         |       |\n|               |                    | replaced, and when  |       |\n|               |                    | the replaced        |       |\n|               |                    | resource            |       |\n|               |                    | representation is   |       |\n|               |                    | not identical to    |       |\n|               |                    | the resource        |       |\n|               |                    | representation in   |       |\n|               |                    | the request.        |       |\n|               |                    |                     |       |\n|               |                    | This status code    |       |\n|               |                    | may be retourned    |       |\n|               |                    | when the resource   |       |\n|               |                    | is updated and when |       |\n|               |                    | the updated         |       |\n|               |                    | resource            |       |\n|               |                    | representation is   |       |\n|               |                    | identical to the    |       |\n|               |                    | resource            |       |\n|               |                    | representation in   |       |\n|               |                    | the request.        |       |\n|               |                    |                     |       |\n|               |                    | The representation  |       |\n|               |                    | of the updated      |       |\n|               |                    | resource is         |       |\n|               |                    | returned in the     |       |\n|               |                    | response message    |       |\n|               |                    | body.               |       |\n+---------------+--------------------+---------------------+-------+\n| Resource      | 201 Created        | Status code         | M     |\n|               |                    | returned when the   |       |\n|               |                    | resource is         |       |\n|               |                    | created. The        |       |\n|               |                    | representation of   |       |\n|               |                    | the created         |       |\n|               |                    | resource is         |       |\n|               |                    | returned in the     |       |\n|               |                    | response message    |       |\n|               |                    | body.               |       |\n+---------------+--------------------+---------------------+-------+\n| n/a           | 204 No Content     | Status code that    | M     |\n|               |                    | may be returned     |       |\n|               |                    | only when the       |       |\n|               |                    | replaced resource   |       |\n|               |                    | representation is   |       |\n|               |                    | identical to the    |       |\n|               |                    | representation in   |       |\n|               |                    | the request. The    |       |\n|               |                    | response has no     |       |\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH operation summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.4 Operation modifyMOIAttributes\n\nThis IS operation modifies one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. The NETCONF\n\\<edit-config\\> operation can modify attributes in a given MOI or set of\nMOIs but only indirectly supports scope or filtered sets of MOIs that\nare part of the modifyMOIAttributes 3GPP operation specification.\n\\<edit-config\\> needs a config block, containing the explicit config\nchanges to be made for each MOI.\n\nThe default-operation parameter should be set to none.\n\nThe Netconf operation attribute on the list representing modified MOI(s)\nshould be set to create, replace or delete according to the ENUM in the\nmodificationList.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.4-1 and table 12.1.3.1.4-2.\n\nTable 12.1.3.1.4-1: Mapping of IS modifyMOIAttributes input parameters\nto SS equivalents\n\n  IS operation parameter name   SS parameter name   S   Remark\n  ----------------------------- ------------------- --- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  baseObjectInstance            config              M   A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together with the XML elements representing the to be modified MOI and its key.\n  scope                         config              M   BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\n  filter                        config              M   Multiple MOIs can be specified in the same operation, emulating filtering.\n  modificationList              config              M   The \"attributes container\" and leaf, leaf-list or list entries representing the attributes.\n\nTable 12.1.3.1.4-2: Mapping of IS modifyMOIAttributes output parameters\nto SS equivalents\n\n+-------------------+-------------------+-------+-------------------+\n| **IS operation    | **SS parameter    | **S** | **Remark**        |\n| parameter name**  | name**            |       |                   |\n+===================+===================+=======+===================+\n| mo                | no corresponding  | M     | Not supported.    |\n| dificationListOut | SS parameter      |       |                   |\n|                   |                   |       | (note 1)          |\n+-------------------+-------------------+-------+-------------------+\n| status            | \\-                | M     | rpc-reply or      |\n|                   |                   |       | rpc-error         |\n|                   |                   |       | indicates general |\n|                   |                   |       | status.           |\n|                   |                   |       |                   |\n|                   |                   |       | The following     |\n|                   |                   |       | elements give     |\n|                   |                   |       | detailed error    |\n|                   |                   |       | information:      |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-tag\\>     |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-path\\>    |\n+-------------------+-------------------+-------+-------------------+\n\n> Note 1: Successful Netconf \\<edit-config\\> operations only return an\n> \\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\n> separate \\<get-config\\> operation."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH operation summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.5 Operation deleteMOI\n\nThis IS operation deletes one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating\nthe MOI(s) to be deleted.\n\nThe Netconf operation attribute on the list representing the\nbaseObjectInstance should be set to delete or remove.\n\nThe default-operation parameter should be set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.5-1 and table 12.1.3.1.5-2.\n\nTable 12.1.3.1.5-1: Mapping of IS deleteMOI input parameters to SS\nequivalents\n\n  **IS operation parameter name**   **SS parameter name**   **S**   **Remark**\n  --------------------------------- ----------------------- ------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  baseObjectInstance                config                  M       A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be deleted MOI and its key.\n  scope                             config                  M       BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\n  filter                            config                  M       Multiple MOIs can be specified in the same operation, emulating filtering.\n\nTable 12.1.3.1.5-2: Mapping of IS deleteMOI output parameters to SS\nequivalents\n\n+-------------------+-------------------+-------+-------------------+\n| **IS operation    | **SS parameter    | **S** | **Remark**        |\n| parameter name**  | name**            |       |                   |\n+===================+===================+=======+===================+\n| deletionList      | no corresponding  | M     | Not supported.    |\n|                   | SS parameter      |       |                   |\n|                   |                   |       | (note 1)          |\n+-------------------+-------------------+-------+-------------------+\n| status            | \\-                | M     | rpc-reply or      |\n|                   |                   |       | rpc-error         |\n|                   |                   |       | indicates general |\n|                   |                   |       | status.           |\n|                   |                   |       |                   |\n|                   |                   |       | The following     |\n|                   |                   |       | elements give     |\n|                   |                   |       | detailed error    |\n|                   |                   |       | information:      |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-tag\\>     |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-path\\>    |\n+-------------------+-------------------+-------+-------------------+\n\nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the deletionList can be retrieved via a\nseparate \\<get-config\\> operation."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH operation summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.2 Mapping of notifications\n\n##### 12.1.3.2.5 Notification notifyMOIChanges (part 1/3)\n\nThe NETCONF/YANG solution set uses the same mapping as the RESTful\nHTTP-based solution set as described in clause 12.1.1.2.5 with the\nchanges and additions described below.\n\n\\- Any changes reported are based on the YANG NRM definitions, even\nthough the RESTful notification mapping is reused.\n\n\\- The media type as specified by the \\\"Content-Type\\\" header in the\nHTTP POST request shall be \\\"application/yang-data+json\\\" and not\n\\\"application/json\\\".\n\n\\- The value of \\\"href\\\" shall be set to the FQDN or IP address\nidentifying the NETCONF server.\n\n\\- The value of \\\"path\\\" shall be a RESTCONF data resource identifier\n(RFC 8040 \\[49\\], clause 3.5.3).\n\n\\- The \\\"path\\\" includes the YANG module name.\n\n\\- The \\\"\\#\\\" character before \\\"/attributes\\\" in \\\"path\\\" is not\npresent. NETCONF/YANG does not differentiate between the stage 2\nconcepts of object and attribute, hence there is no need for a\ndelimiter.\n\n\\- The value of \\\"value\\\" shall follow the JSON encoding of YANG (RFC\n7951 \\[50\\]).\n\n\\- Attribute elements are identified by their value (in case of a YANG\n\\\"leaf-list\\\") or by the values of keys (in case of a YANG \\\"list\\\"). In\nJSON Patch, attribute elements are identified based on their index, i.e.\nbased on the position in the array.\n\n\\- In case no key is defined for a YANG \\\"list\\\" it is not possible to\nreport the creation, deletion or replacement of individual list entries.\nIn this case, whenever the list is modified, the replacement of the\ncomplete attribute or attribute field (the complete list with all list\nenties) shall be reported.\n\n\\- Similarly if an attribute(field) is mapped to a YANG leaf-list with\nnon-unique values it is not possible to report the creation, deletion or\nreplacement of an individual value. In this case, whenever the leaf-list\nis modified, the replacement of the complete attribute or attribute\nfield (the complete leaf-list; all values) shall be reported.\n\n\\- YANG default values shall be handled as follows:\n\n\\- Attributes with default values, for which no value is specified in\nthe object creation request, shall be included in the object creation\nreport with their default values.\n\n\\- Attributes with default values, that are deleted and consequently set\nto their default value, shall be included in attribute replacement\nreports.\n\nNote all following use-cases use JSON expressed in YAML notation.\n\nCase 1: Creation of an MOI is reported with:\n\n\\- operation: add\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: a complete MOI representation, represented by the \\\"id\\\" node\nand the \\\"attributes\\\" container but exluding the list entry itself\nencoded according to RFC7951 \\[50\\].\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object creation:\n\nhref: node1.lichtenberg.de\n\n...\n\nnotificationId: 123456001\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: add\n\nvalue:\n\nid: job1\n\n3gpp-common-measurements:PerfMetricJob:attributes:\n\njobId: 9865\n\nfileReportingPeriod: 30\n\nCase 2: Deletion of an MOI is reported with:\n\n\\- operation: remove\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: not present\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object deletion:\n\nhref: node1.charlottenburg.de\n\n...\n\nnotificationId: 123456002\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: remove\n\nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):\n\n\\- operation: add."
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH operation summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "12.1.3.1.2",
+      "title": "12.1.3.1.2 Operation createMOI",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.2 Operation createMOI\n\nThe operation is mapped to a NETCONF \\<edit-config\\> operation, with XML\nelements representing the DN path to the MOI, the MOI itself, its id/key\nand its attributes.\n\nThe NETCONF operation attribute on the list representing the newly\ncreated MOI should be set to 'create'.\n\nThe default-operation parameter of the \\<edit-config\\> operation should\nbe set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.2-1 and table 12.1.3.1.2-2.\n\nTable 12.1.3.1.2-1: Mapping from IS createMOI input parameters to SS\nequivalents\n\n  IS operation parameter name   SS parameter name   S   Remark\n  ----------------------------- ------------------- --- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  managedObjectClass            config              M   XML element's name inside the \\<config\\> element.\n  managedObjectInstance         config              M   A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be created MOI and its key.\n  attributeListIn               config              M   The key leaf, the \"attributes container\" and leaf, leaf-list or list entries of YANG models representing the attributes.\n\nTable 12.1.3.1.2-2: Mapping from IS createMOI output parameters to SS\nequivalents\n\n+--------------------+--------------------+---+--------------------+\n| IS operation       | SS parameter name  | S | Remark             |\n| parameter name     |                    |   |                    |\n+====================+====================+===+====================+\n| attributeListOut   | no corresponding   | M | Not supported.     |\n|                    | SS parameter       |   |                    |\n|                    |                    |   | (note 1)           |\n+--------------------+--------------------+---+--------------------+\n| status             | \\-                 | M | OperationSucceeded |\n|                    |                    |   | if NETCONF         |\n|                    |                    |   | rpc-reply contains |\n|                    |                    |   | \\<ok\\> element.    |\n|                    |                    |   |                    |\n|                    |                    |   | OperationFailed if |\n|                    |                    |   | NETCONF-reply      |\n|                    |                    |   | contains           |\n|                    |                    |   | \\<rpc-error\\>.     |\n+--------------------+--------------------+---+--------------------+\n\nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\nseparate \\<get-config\\> operation.\n\n**Examples**\n\nCreate ManagedElement=myNode, GNBDUFunction=1\n\n\\<rpc message-id=\\\"101\\\"\\>\n\n\\<edit-config\\>\n\n\\<target\\>\n\n\\<running/\\>\n\n\\</target\\>\n\n\\<default-operation\\>none\\</default-operation\\>\n\n\\<config\\>\n\n\\< ManagedElement\\>\n\n\\<id\\>myNode\\</id\\>\n\n\\<GNBDUFunction operation=\"create\"\\>\n\n\\<id\\>1\\</id\\>\n\n\\<attributes\\>\n\n\\<gNBIdLength\\>25\\</gNBIdLength\\>\n\n\\<gNBId\\>357\\</gNBId\\>\n\n\\<priorityLabel\\>1\\</priorityLabel\\>\n\n\\<gNBDUName\\>du-south-1\\</gNBDUName\\>\n\n\\<!\\-- other attributes \\-\\--\\>\n\n\\</attributes\\>\n\n\\</GNBDUFunction\\>\n\n\\</ManagedElement\\>\n\n\\</config\\>\n\n\\</edit-config\\>\n\n\\</rpc\\>\n\n\\<!\\-- createMO Response \\--\\>\n\n\\<rpc-reply message-id=\\\"101\\\"\nxmlns=\\\"urn:ietf:params:xml:ns:netconf:base:1.0\\\"\\>\n\n\\<ok/\\>\n\n\\</rpc-reply\\>"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH operation summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.3 Operation getMOIAttributes (part 1/2)\n\nThis operation retrieves one or multiple resources representing managed\nobject instances.\n\nTable 12.1.1.1.3-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP GET)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | query        | scope        | Scope        | O     |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | true         |       |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | query        | filter       | Filter       | O     |\n+--------------+--------------+--------------+--------------+-------+\n| att          | query        | attributes   | a            | O     |\n| ributeListIn |              |              | rray(string) |       |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | false        |       |\n+--------------+--------------+--------------+--------------+-------+\n|              |              | fields       | a            | O     |\n|              |              |              | rray(string) |       |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | false        |       |\n+--------------+--------------+--------------+--------------+-------+\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path.\n<a name=\"pathItemDescription\"></a>description | `string` | An optional, string description, intended to apply to all operations in this path. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"pathItemGet\"></a>get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path.\n<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Operation Object Example  \n```json\n{\n\"tags\": [\n\"pet\"\n],\n\"summary\": \"Updates a pet in the store with form data\",\n\"operationId\": \"updatePetWithForm\",\n\"parameters\": [\n{\n\"name\": \"petId\",\n\"in\": \"path\",\n\"description\": \"ID of pet that needs to be updated\",\n\"required\": true,\n\"schema\": {\n\"type\": \"string\"\n}\n}\n],\n\"requestBody\": {\n\"content\": {\n\"application/x-www-form-urlencoded\": {\n\"schema\": {\n\"type\": \"object\",\n\"properties\": {\n\"name\": {\n\"description\": \"Updated name of the pet\",\n\"type\": \"string\"\n},\n\"status\": {\n\"description\": \"Updated status of the pet\",\n\"type\": \"string\"\n}\n},\n\"required\": [\"status\"]\n}\n}\n}\n},\n\"responses\": {\n\"200\": {\n\"description\": \"Pet updated.\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n},\n\"405\": {\n\"description\": \"Invalid input\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n}\n},\n\"security\": [\n{\n\"petstore_auth\": [\n\"write:pets\",\n\"read:pets\"\n]\n}\n]\n}\n```"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path.\n<a name=\"pathItemHead\"></a>head | [Operation Object](#operation-object) | A definition of a HEAD operation on this path.\n<a name=\"pathItemPatch\"></a>patch | [Operation Object](#operation-object) | A definition of a PATCH operation on this path.\n<a name=\"pathItemTrace\"></a>trace | [Operation Object](#operation-object) | A definition of a TRACE operation on this path.\n<a name=\"pathItemServers\"></a>servers | [[Server Object](#server-object)] | An alternative `server` array to service all operations in this path."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"oasComponents\"></a>components | [Components Object](#components-object) | An element to hold various schemas for the specification.\n<a name=\"oasSecurity\"></a>security | [[Security Requirement Object](#security-requirement-object)] | A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition.\n<a name=\"oasTags\"></a>tags | [[Tag Object](#tag-object)] | A list of tags used by the specification with additional metadata. The order of the tags can be used to reflect on their order by the parsing tools. Not all tags that are used by the [Operation Object](#operation-object) must be declared. The tags that are not declared MAY be organized randomly or based on the tools' logic. Each tag name in the list MUST be unique."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "##### Fixed Fields  \nField Name  |  Type  | Description\n---|:---:|---\n<a name=\"linkOperationRef\"></a>operationRef | `string` | A relative or absolute reference to an OAS operation. This field is mutually exclusive of the `operationId` field, and MUST point to an [Operation Object](#operation-object). Relative `operationRef` values MAY be used to locate an existing [Operation Object](#operation-object) in the OpenAPI definition.\n<a name=\"linkOperationId\"></a>operationId  | `string` | The name of an _existing_, resolvable OAS operation, as defined with a unique `operationId`.  This field is mutually exclusive of the `operationRef` field."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "External Documentation Object",
+      "text": "}\n},\n\"405\": {\n\"description\": \"Invalid input\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n}\n},\n\"security\": [\n{\n\"petstore_auth\": [\n\"write:pets\",\n\"read:pets\"\n]\n}\n]\n}\n```  \n```yaml\ntags:\n- pet\nsummary: Updates a pet in the store with form data\noperationId: updatePetWithForm\nparameters:\n- name: petId\nin: path\ndescription: ID of pet that needs to be updated\nrequired: true\nschema:\ntype: string\nrequestBody:\ncontent:\n'application/x-www-form-urlencoded':\nschema:\nproperties:\nname:\ndescription: Updated name of the pet\ntype: string\nstatus:\ndescription: Updated status of the pet\ntype: string\nrequired:\n- status\nresponses:\n'200':\ndescription: Pet updated.\ncontent:\n'application/json': {}\n'application/xml': {}\n'405':\ndescription: Invalid input\ncontent:\n'application/json': {}\n'application/xml': {}\nsecurity:\n- petstore_auth:\n- write:pets\n- read:pets\n```  \n#### External Documentation Object  \nAllows referencing an external resource for extended documentation.  \n##### Fixed Fields"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object",
+      "text": "'*/*' :\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: error payload\ncontent:\n'text/html':\nschema:\n$ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id\nin: path\ndescription: ID of pet to use\nrequired: true\nschema:\ntype: array\nstyle: simple\nitems:\ntype: string\n```  \n#### Operation Object  \nDescribes a single API operation on a path.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"operationTags\"></a>tags | [`string`] | A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.\n<a name=\"operationSummary\"></a>summary | `string` | A short summary of what the operation does.\n<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "Patterned Fields",
+      "text": "Security Requirement Objects that contain multiple schemes require that all schemes MUST be satisfied for a request to be authorized.\nThis enables support for scenarios where multiple query parameters or HTTP headers are required to convey security information.  \nWhen a list of Security Requirement Objects is defined on the [Open API object](#openapi-object) or [Operation Object](#operation-object), only one of Security Requirement Objects in the list needs to be satisfied to authorize the request.  \n##### Patterned Fields  \nField Pattern | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId Patches one or multiple resources Modify MOI attributes.",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"operationExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this operation.\n<a name=\"operationId\"></a>operationId | `string` | Unique string used to identify the operation. The id MUST be unique among all operations described in the API. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "2b6cbf0a08174ae2a27e537c95b97f9347a1529cf42ecc29269f5997e6fc661b",
+  "judged_at": "2026-10-18T20:55:44-03:00"
+}

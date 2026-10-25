@@ -1,0 +1,288 @@
+{
+  "part_id": "generator|provmns_20260828_232853|PATH /eventListener|path",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "PATH /eventListener",
+  "aspect": "path",
+  "summary": "1 extra",
+  "answer": {
+    "why_different": "The generated document declares the /eventListener path and its POST operation, while the official side has no such path. This is a structural difference: the endpoint is absent from the official document but added in the generated document.",
+    "verdict": "improvement",
+    "spec_3gpp": "The 3GPP specification explicitly maps notifyMOICreation to POST /eventListener and identifies eventListener as a POST resource for sending notifications.",
+    "openapi": "The generated path name is valid because OpenAPI path fields must begin with a slash, and POST is an allowed Path Item Object operation.",
+    "clearer": "generated",
+    "clearer_why": "The generated document exposes the notification endpoint and its operation; the official side is absent and therefore provides no API information for this resource.",
+    "citations": [
+      {
+        "evidence_id": "S1",
+        "quote": "notifyMOICreation                POST              /eventListener     M"
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "eventListener   /eventListener   POST          Send notifications"
+      },
+      {
+        "evidence_id": "O2",
+        "quote": "/{path} | [Path Item Object](#path-item-object) | A relative path to an individual endpoint. The field name MUST begin with a slash."
+      },
+      {
+        "evidence_id": "O5",
+        "quote": "<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path."
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "paths./eventListener:"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "improvement",
+        "reason": "The generated side adds a structurally valid /eventListener path with POST, which is explicitly required for notification delivery by the 3GPP specification; the official side is absent. This rests on S1, S2, O2, O5, and C2."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "eventListener",
+      "filters": {},
+      "clause": "12.1.2.2.1.1",
+      "title": "12.1.2.2.1.1 General",
+      "text": "12.1.2.2 Mapping of notifications › 12.1.2.2.1 Introduction\n\n###### 12.1.2.2.1.1 General\n\nThe 3GPP IS notifications are mapped to SS euivalents according to table\n12.1.2.2.1.1-1.\n\nTable 12.1.2.2.1.1-1: Mapping of 3GPP IS notifications to SS equivalents\n\n  **3GPP IS notifications**        **HTTP Method**   **Resource URI**   **S**\n  -------------------------------- ----------------- ------------------ -------\n  notifyMOICreation                POST              /eventListener     M\n  notifyMOIDeletion                POST              /eventListener     M\n  notifyMOIAttributeValueChanges   POST              /eventListener     M\n  notifyMOIChanges                 POST              /eventListener     M"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "eventListener",
+      "filters": {},
+      "clause": "12.1.2.3.1",
+      "title": "12.1.2.3.1 Resource structure",
+      "text": "12.1.2 RESTful HTTP-based solution set for integration with ONAP VES API › 12.1.2.3 Resources\n\n##### 12.1.2.3.1 Resource structure\n\nFigure 12.1.2.3.1-1 shows the resource structure of the provisioning MnS\nin the context of its integration with VES Event Listener 7.1.1 \\[45\\].\n\n![A screen shot of a computer program Description automatically\ngenerated with low\nconfidence](media/image10.png){width=\"3.8430555555555554in\"\nheight=\"1.6270833333333334in\"}\n\nFigure 12.1.2.3.1-1: Resource URI structure of the provisioning MnS for\nintegration with ONAP VES Event Listener 7.1.1 (Resource structure\nsection) \\[45\\]\n\nTable 12.1.2.3.1-1 provides an overview of the resources and applicable\nHTTP methods.\n\nTable 12.1.2.3.1-**1**: Resources and methods overview\n\n  Resource name   Resource URI     HTTP method   Description\n  --------------- ---------------- ------------- --------------------\n  eventListener   /eventListener   POST          Send notifications"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "eventListener",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.6 Type NotifyMoiDeletion (part 1/2)\n\nTable 12.1.1.4.1a.6 -1: Definition of type NotifyMoiDeletion\n\n  ------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n  **Attribute name**        **Data type**                   **Description**                                                                                                            **S**\n  href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\n  notificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\n  notificationType          NotificationType                Notification type (\\\"notifyMOIDeletion\\\")                                                                                  M\n  eventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\n  systemDN                  SystemDN                        System DN                                                                                                                  M\n  correlatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\n  additionalText            string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\n  sourceIndicator           SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\n  attributeList             AttributeNameValuePairSet       Attributes (name/value pairs) of the deleted MOI.                                                                          O\n  ------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n\nThe following example demonstrates the deletion of an object. The\nmessage body includes the name/value pairs representing the attributes\nof the deleted object."
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type eventListener",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.5 Type NotifyMoiCreation (part 1/3)\n\nTable 12.1.1.4.1a.5 -1: Definition of type NotifyMoiCreation\n\n  ------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n  **Attribute name**        **Data type**                   **Description**                                                                                                            **S**\n  href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\n  notificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\n  notificationType          NotificationType                Notification type (\\\"notifyMOICreation\\\")                                                                                  M\n  eventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\n  systemDN                  SystemDN                        System DN                                                                                                                  M\n  correlatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\n  additionalText            string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\n  sourceIndicator           SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\n  attributeList             AttributeNameValuePairSet       The attributes (name/value pairs) of the created MOI.                                                                      O\n  ------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n\nThe following example shows a notification reporting the creation of an\nobject with two attributes \\\"attrA\\\" and \\\"attrB\\\". Note that the\nnotification includes the name/value pairs representing the attributes\nof the created object only and not the complete object representation."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type eventListener",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.1 Type Resource\n\n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**\n\n  **Attribute name**   **Data type**        **Description**                                                                                                                **S**\n  -------------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------ -------\n  id                   string               Identifier of the resource object                                                                                              M\n  objectClass          string               Object class of the resource object                                                                                            O\n  objectInstance       Dn                   Object instance of the resource object                                                                                         O\n  attributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M\n  n/a                  map(array(object))   Name contained objects                                                                                                         M\n\nThis definition of \\\"Resource\\\" does not specify any attributes or name\ncontained objects. Resource representations with specific attributes and\nname contained objects are contained in the NRM definitions. These\ndefinitions should be used in implementations of the Provisioning MnS\ninstead of this generic definition."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type eventListener",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 1/5)\n\nTable 12.1.1.4.1a.7 -1: Definition of type\nNotifyMoiAttributeValueChanges\n\n  --------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n  **Attribute name**          **Data type**                   **Description**                                                                                                            **S**\n  href                        Uri                             URI of the resource where the event (alarm) occurred                                                                       M\n  notificationId              NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\n  notificationType            NotificationType                Notification type (\\\"notifyMOIAttributeValueChanges\\\")                                                                     M\n  eventTime                   DateTime                        Event (MOI creation) occurrence time                                                                                       M\n  systemDN                    SystemDN                        System DN                                                                                                                  M\n  correlatedNotifications     array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\n  additionalText              string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\n  sourceIndicator             SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\n  attributeListValueChanges   AttributeValueChangeSet         List with names of changed attributes, together with new value and optionally old value                                    M\n  --------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n\nThe following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\"."
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type eventListener",
+      "filters": {},
+      "clause": "12.1.1.4.4.2",
+      "title": "12.1.1.4.4.2 Simple data types",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.2 Simple data types\n\nTable 12.1.1.4.3.2-1: Simple data types\n\n  ----------- ----------------- -------------\n  Type name   Type definition   Description\n  n/a         n/a               n/a\n  ----------- ----------------- -------------"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type eventListener",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.8 Type NotifyMoiChanges\n\n**Table 12.1.1.4.1a.8 -1: Definition of type NotifyMoiChanges**\n\n  -------------------- ------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  **Attribute name**   **Data type**      **Description**                                                                                                                                                                           **S**\n  href                 Uri                URI of a common ancestor resource (object) of the resources for which changes are reported. A MnS producer may set this attribute always to the parent of the root resource in the MIB.   M\n  notificationId       NotificationId     Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\].                                                                                                                            M\n  notificationType     NotificationType   Notification type (notifyMOIChanges)                                                                                                                                                      M\n  eventTime            DateTime           Event (NRM updates) occurrence time                                                                                                                                                       M\n  systemDN             SystemDN           System DN                                                                                                                                                                                 M\n  moiChanges           array(MoiChange)   MOI changes to be reported                                                                                                                                                                M\n  -------------------- ------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "eventListener resource URI /eventListener",
+      "filters": {},
+      "clause": "12.1.1.3.2.4.2",
+      "title": "12.1.1.3.2.4.2 URI",
+      "text": "12.1.1.3.2 Resource definitions › 12.1.1.3.2.4 Resource \\\"{notificationTarget}\\\"\n\n####### 12.1.1.3.2.4.2 URI\n\nResource URI: {notificationTarget}\n\nThe resource URI variables are defined in table 12.1.1.3.2.4.2-1.\n\nTable 12.1.1.3.2.4.2-1: URI variables\n\n  Name                 Definition\n  -------------------- ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  notificationTarget   URI of the notification target on the MnS consumer, contained in the notification subscription, see notificationRecipientAddress defined in clause 4.3.22.2 in TS 28.622 \\[11\\]."
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "eventListener resource URI /eventListener",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.2",
+      "title": "12.1.1.3.2.1.2 URI",
+      "text": "12.1.1.3.2 Resource definitions › 12.1.1.3.2.1 Resource \\\".../{className}={id}\\\"\n\n####### 12.1.1.3.2.1.2 URI\n\nResource URI:\n{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}\n\nThe resource URI variables are defined in table 12.1.1.3.2.1.2-1.\n\nTable 12.1.1.3.2.1.2-1: URI variables\n\n  **Name**             **Definition**\n  -------------------- --------------------------------------\n  MnSRoot              See clause 4.4.2 of TS 32.158 \\[15\\]\n  MnSVersion           See clause 4.4.2 of TS 32.158 \\[15\\]\n  URI-LDN-first-part   See clause 4.4.2 of TS 32.158 \\[15\\]\n  className            Class name of the targeted resource\n  id                   Identifier of the targeted resource"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "eventListener resource URI /eventListener",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.4 HTTP DELETE\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource\n\n+----------+---------------+--------------------------------+-------+\n| **Name** | **Data type** | **Description**                | **S** |\n+==========+===============+================================+=======+\n| scope    | Scope         | Extends the set of targeted    | O     |\n|          |               | resources beyond the base      |       |\n|          | style: form   | resource identified with the   |       |\n|          |               | authority and path component   |       |\n|          | explode: true | of the URI.                    |       |\n+----------+---------------+--------------------------------+-------+\n| filter   | Filter        | Reduces the targeted set of    | O     |\n|          |               | resources by applying a filter |       |\n|          |               | to the scoped set of resource  |       |\n|          |               | representations. Only          |       |\n|          |               | resources representations for  |       |\n|          |               | which the filter construct     |       |\n|          |               | evaluates to \\\"true\\\" are      |       |\n|          |               | targeted.                      |       |\n+----------+---------------+--------------------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.4-2: Data structures supported by the DELETE\nrequest body on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.4-3: Data structures supported by the DELETE\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                  **S**\n  --------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------\n  array(Uri)      200 OK               Status code returned, when query parameters are present in the request and one or multiple resources are deleted. The URIs of the deleted resources are returned in the response message body.   M\n  n/a             204 No Content       Status code returned, when no query parameters are present in the request and only one resource is deleted. The message body is empty.                                                           M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                     M"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "eventListener resource URI /eventListener",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 1/2)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource\n\n+------------+----------------+----------------------+-------+\n| **Name**   | **Data type**  | **Description**      | **S** |\n+============+================+======================+=======+\n| scope      | Scope          | Extends the set of   | O     |\n|            |                | targeted resources   |       |\n|            | style: form    | beyond the base      |       |\n|            |                | resource identified  |       |\n|            | explode: true  | with the authority   |       |\n|            |                | and path component   |       |\n|            |                | of the URI.          |       |\n+------------+----------------+----------------------+-------+\n| filter     | Filter         | Reduces the targeted | O     |\n|            |                | set of resources by  |       |\n|            |                | applying a filter to |       |\n|            |                | the scoped set of    |       |\n|            |                | resource             |       |\n|            |                | representations.     |       |\n|            |                | Only resources       |       |\n|            |                | representations for  |       |\n|            |                | which the filter     |       |\n|            |                | construct evaluates  |       |\n|            |                | to \\\"true\\\" are      |       |\n|            |                | targeted.            |       |\n+------------+----------------+----------------------+-------+\n| attributes | array(string)  | Attributes of the    | O     |\n|            |                | scoped resources to  |       |\n|            | style: form    | be returned. The     |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of attribute names.  |       |\n+------------+----------------+----------------------+-------+\n| fields     | array(string)  | Attribute fields of  | O     |\n|            |                | the scoped resources |       |\n|            | style: form    | to be returned. The  |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of JSON pointers to  |       |\n|            |                | the attribute        |       |\n|            |                | fields.              |       |\n+------------+----------------+----------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "eventListener resource URI /eventListener",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.3 HTTP PATCH\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.3-2: Data structures supported by the PATCH request\nbody on this resource\n\n+---------------+--------------------------------------------+-------+\n| **Data type** | **Description**                            | **S** |\n+===============+============================================+=======+\n| Resource, or  | Patch document describing the set of       | M     |\n|               | modifications to be applied to the         |       |\n| array(object) | targeted resources.                        |       |\n|               |                                            |       |\n|               | The following patch media types are        |       |\n|               | available:                                 |       |\n|               |                                            |       |\n|               | \\- \\\"application/merge-patch+json\\\" (RFC   |       |\n|               | 7396 \\[37\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-merge-patch+json\\\"   |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n|               |                                            |       |\n|               | \\- \\\"application/json-patch+json\\\" (RFC    |       |\n|               | 6902 \\[36\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-json-patch+json\\\"    |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n+---------------+--------------------------------------------+-------+\n\nTable 12.1.1.2.1.1.3.3-3: Data structures supported by the PATCH\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                **S**\n  --------------- -------------------- ------------------------------ -------\n  ErrorResponse   4xx/5xx              Returned in case of an error   M"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "2. The [Path Item Object](#path-item-object) MAY be empty. In this case, the viewer will be aware that the path exists, but will not be able to see any of its operations or parameters. This is different than hiding the path itself from the [Paths Object](#paths-object), so the user will not be aware of its existence. This allows the documentation provider to finely control what the viewer can see."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "Patterned Fields",
+      "text": "##### Patterned Fields  \nField Pattern | Type | Description\n---|:---:|---\n<a name=\"pathsPath\"></a>/{path} | [Path Item Object](#path-item-object) | A relative path to an individual endpoint. The field name MUST begin with a slash. The path is **appended** (no relative URL resolution) to the expanded URL from the [`Server Object`](#server-object)'s `url` field in order to construct the full URL. [Path templating](#path-templating) is allowed. When matching URLs, concrete (non-templated) paths would be matched before their templated counterparts. Templated paths with the same hierarchy but different templated names MUST NOT exist as they are identical. In case of ambiguous matching, it's up to the tooling to decide which one to use.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Path Templating Matching  \nAssuming the following paths, the concrete definition, `/pets/mine`, will be matched first if used:  \n```\n/pets/{petId}\n/pets/mine"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "Path Item Object",
+      "text": "description: A list of pets.\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/pet'\n```  \n#### Path Item Object  \nDescribes the operations available on a single path.\nA Path Item MAY be empty, due to [ACL constraints](#security-filtering).\nThe path itself is still exposed to the documentation viewer but they will not know which operations and parameters are available.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"pathItemRef\"></a>$ref | `string` | Allows for an external definition of this path item. The referenced structure MUST be in the format of a [Path Item Object](#path-item-object). If there are conflicts between the referenced definition and this Path Item's definition, the behavior is *undefined*.\n<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "Path Item Object Example",
+      "text": "##### Path Item Object Example  \n```json\n{\n\"get\": {\n\"description\": \"Returns pets based on ID\",\n\"summary\": \"Find pets by ID\",\n\"operationId\": \"getPetsById\",\n\"responses\": {\n\"200\": {\n\"description\": \"pet response\",\n\"content\": {\n\"*/*\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/Pet\"\n}\n}\n}\n}\n},\n\"default\": {\n\"description\": \"error payload\",\n\"content\": {\n\"text/html\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/ErrorModel\"\n}\n}\n}\n}\n}\n},\n\"parameters\": [\n{\n\"name\": \"id\",\n\"in\": \"path\",\n\"description\": \"ID of pet to use\",\n\"required\": true,\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"type\": \"string\"\n}\n},\n\"style\": \"simple\"\n}\n]\n}\n```  \n```yaml\nget:\ndescription: Returns pets based on ID\nsummary: Find pets by ID\noperationId: getPetsById\nresponses:\n'200':\ndescription: pet response\ncontent:\n'*/*' :\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: error payload\ncontent:\n'text/html':\nschema:\n$ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Paths Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path.\n<a name=\"pathItemDescription\"></a>description | `string` | An optional, string description, intended to apply to all operations in this path. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"pathItemGet\"></a>get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path.\n<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /eventListener",
+      "filters": {},
+      "clause": "",
+      "title": "Path Templating Matching",
+      "text": "##### Path Templating Matching  \nAssuming the following paths, the concrete definition, `/pets/mine`, will be matched first if used:  \n```\n/pets/{petId}\n/pets/mine\n```  \nThe following paths are considered identical and invalid:  \n```\n/pets/{petId}\n/pets/{name}\n```  \nThe following may lead to ambiguous resolution:  \n```\n/{entity}/me\n/books/{id}\n```  \n##### Paths Object Example  \n```json\n{\n\"/pets\": {\n\"get\": {\n\"description\": \"Returns all pets from the system that the user has access to\",\n\"responses\": {\n\"200\": {\n\"description\": \"A list of pets.\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/pet\"\n}\n}\n}\n}\n}\n}\n}\n}\n}\n```  \n```yaml\n/pets:\nget:\ndescription: Returns all pets from the system that the user has access to\nresponses:\n'200':\ndescription: A list of pets.\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/pet'\n```  \n#### Path Item Object  \nDescribes the operations available on a single path."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /eventListener",
+      "filters": {},
+      "clause": "",
+      "title": "Table of Contents",
+      "text": "## Table of Contents\n<!-- TOC depthFrom:1 depthTo:3 withLinks:1 updateOnSave:1 orderedList:0 -->  \n- [Definitions](#definitions)\n- [OpenAPI Document](#openapi-document)\n- [Path Templating](#path-templating)\n- [Media Types](#media-types)\n- [HTTP Status Codes](#http-status-codes)\n- [Specification](#specification)\n- [Versions](#versions)\n- [Format](#format)\n- [Document Structure](#document-structure)\n- [Data Types](#data-types)\n- [Rich Text Formatting](#rich-text-formatting)\n- [Relative References In URLs](#relative-references-in-urls)\n- [Schema](#schema)\n- [OpenAPI Object](#openapi-object)\n- [Info Object](#info-object)\n- [Contact Object](#contact-object)\n- [License Object](#license-object)\n- [Server Object](#server-object)\n- [Server Variable Object](#server-variable-object)\n- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /eventListener",
+      "filters": {},
+      "clause": "",
+      "title": "Definitions",
+      "text": "## Definitions  \n##### OpenAPI Document\nA document (or set of documents) that defines or describes an API. An OpenAPI definition uses and conforms to the OpenAPI Specification.  \n##### Path Templating\nPath templating refers to the usage of curly braces ({}) to mark a section of a URL path as replaceable using path parameters.  \n##### Media Types\nMedia type definitions are spread across several resources.\nThe media type definitions SHOULD be in compliance with [RFC6838](https://tools.ietf.org/html/rfc6838).  \nSome examples of possible media type definitions:\n```\ntext/plain; charset=utf-8\napplication/json\napplication/vnd.github+json\napplication/vnd.github.v3+json\napplication/vnd.github.v3.raw+json\napplication/vnd.github.v3.text+json\napplication/vnd.github.v3.html+json\napplication/vnd.github.v3.full+json\napplication/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /eventListener",
+      "filters": {},
+      "clause": "",
+      "title": "Parameter Object",
+      "text": "\"url\": \"https://example.com\"\n}\n```  \n```yaml\ndescription: Find more info here\nurl: https://example.com\n```  \n#### Parameter Object  \nDescribes a single operation parameter.  \nA unique parameter is defined by a combination of a [name](#parameterName) and [location](#parameterIn).  \n##### Parameter Locations\nThere are four possible parameter locations specified by the `in` field:\n* path - Used together with [Path Templating](#path-templating), where the parameter value is actually part of the operation's URL. This does not include the host or base path of the API. For example, in `/items/{itemId}`, the path parameter is `itemId`.\n* query - Parameters that are appended to the URL. For example, in `/items?id=###`, the query parameter is `id`.\n* header - Custom headers that are expected as part of the request. Note that [RFC7230](https://tools.ietf.org/html/rfc7230#page-22) states header names are case insensitive.\n* cookie - Used to pass a specific cookie value to the API."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "relative path, path templating /eventListener",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "* cookie - Used to pass a specific cookie value to the API.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"parameterName\"></a>name | `string` | **REQUIRED**. The name of the parameter. Parameter names are *case sensitive*. <ul><li>If [`in`](#parameterIn) is `\"path\"`, the `name` field MUST correspond to the associated path segment from the [path](#pathsPath) field in the [Paths Object](#paths-object). See [Path Templating](#path-templating) for further information.<li>If [`in`](#parameterIn) is `\"header\"` and the `name` field is `\"Accept\"`, `\"Content-Type\"` or `\"Authorization\"`, the parameter definition SHALL be ignored.<li>For all other cases, the `name` corresponds to the parameter name used by the [`in`](#parameterIn) property.</ul>\n<a name=\"parameterIn\"></a>in | `string` | **REQUIRED**. The location of the parameter. Possible values are \"query\", \"header\", \"path\" or \"cookie\"."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "2ecc5ec5ce0c818eac448a90123d1c5decd323bed84de0162cb3af86520b7fdc",
+  "judged_at": "2026-10-18T21:08:56-03:00"
+}

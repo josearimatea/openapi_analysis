@@ -1,0 +1,314 @@
+{
+  "part_id": "generator|provmns_20260828_232853|DELETE /{className}={id}|operation",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "DELETE /{className}={id}",
+  "aspect": "operation",
+  "summary": "2 absent, 1 extra",
+  "answer": {
+    "why_different": "The generated operation differs through a structural omission of the official summary and description, while also adding an operation-level identifier. The omissions lose official explanatory prose; the added operationId is an OpenAPI metadata enhancement.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification defines this as an operation that deletes a single resource and identifies the resource through the target URI.",
+    "openapi": "OpenAPI permits summary and description on an operation, defines summary as a short explanation and description as a verbose explanation, and defines operationId as a unique identifier intended for tooling. The added operationId is therefore supported, provided it is unique in the complete document.",
+    "clearer": "official",
+    "clearer_why": "The official operation explains what is deleted and how the target is identified. The generated operation has no summary or description, so its operationId alone is less informative to an API reader.",
+    "citations": [
+      {
+        "evidence_id": "C1",
+        "quote": "summary: Deletes one resource"
+      },
+      {
+        "evidence_id": "C1",
+        "quote": "description: With HTTP DELETE one resource is deleted. The resources to be deleted is identified with"
+      },
+      {
+        "evidence_id": "S1",
+        "quote": "This operation deletes a single resource representing a managed object instance"
+      },
+      {
+        "evidence_id": "O7",
+        "quote": "operationId | `string` | Unique string used to identify the operation."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated operation omits the official summary, losing a concise statement of the operation's purpose. The 3GPP specification confirms that deletion of a single resource is the operation's purpose, and OpenAPI defines summary as a short operation explanation; citations C1, S1, and O8 support this ruling."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "The generated operation omits the official description, losing the clarification that HTTP DELETE deletes one resource identified by the target URI. This information is consistent with the 3GPP operation definition, so the omission loses useful API information; citations C1 and S1 support this ruling."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "improvement",
+        "reason": "The generated side adds an operationId, which gives tools and consumers a stable identifier and follows the OpenAPI recommendation to use conventional operation identifiers. The identifier must be unique in the complete document, but nothing provided indicates that this value is invalid; citation O7 supports the improvement."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.1.5",
+      "title": "12.1.1.1.5 Operation deleteMOI",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.5 Operation deleteMOI\n\nThis operation deletes a single resource representing a managed object\ninstance\n\nTable 12.1.1.1.5-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP DELETE)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.5-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP DELETE)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  deletionlist            n/a                         n/a                     n/a                     n/a\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on deleting a resource with HTTP DELETE are provided in\nTS 32.158 \\[15\\], clause 5.4."
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.4 HTTP DELETE\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource\n\n+----------+---------------+--------------------------------+-------+\n| **Name** | **Data type** | **Description**                | **S** |\n+==========+===============+================================+=======+\n| scope    | Scope         | Extends the set of targeted    | O     |\n|          |               | resources beyond the base      |       |\n|          | style: form   | resource identified with the   |       |\n|          |               | authority and path component   |       |\n|          | explode: true | of the URI.                    |       |\n+----------+---------------+--------------------------------+-------+\n| filter   | Filter        | Reduces the targeted set of    | O     |\n|          |               | resources by applying a filter |       |\n|          |               | to the scoped set of resource  |       |\n|          |               | representations. Only          |       |\n|          |               | resources representations for  |       |\n|          |               | which the filter construct     |       |\n|          |               | evaluates to \\\"true\\\" are      |       |\n|          |               | targeted.                      |       |\n+----------+---------------+--------------------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.4-2: Data structures supported by the DELETE\nrequest body on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.4-3: Data structures supported by the DELETE\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                  **S**\n  --------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------\n  array(Uri)      200 OK               Status code returned, when query parameters are present in the request and one or multiple resources are deleted. The URIs of the deleted resources are returned in the response message body.   M\n  n/a             204 No Content       Status code returned, when no query parameters are present in the request and only one resource is deleted. The message body is empty.                                                           M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                     M"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.2 Type Scope\n\nTable 12.1.1.4.1a.2-1: Definition of type Scope\n\n  Attribute name   Data type   Description                                                                                                                                                                                                     S\n  ---------------- ----------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---\n  scopeType        ScopeType   Used in the query component of HTTP GET and HTTP DELETE together with scopeLevel to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI   M\n  scopeLevel       integer     Used in the query component of HTTP GET and HTTP DELETE together with scopeType to extend the set of targeted resources beyond the base resource identified with the path component of the URI                  M"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.6 Type NotifyMoiDeletion (part 2/2)\n\nThe following example demonstrates the deletion of an object. The\nmessage body includes the name/value pairs representing the attributes\nof the deleted object.\n\n+-----------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1             |\n|                                                                 |\n| Host: example.com                                               |\n|                                                                 |\n| Content-Type: application/json                                  |\n|                                                                 |\n| {                                                               |\n|                                                                 |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\", |\n|                                                                 |\n| \\\"notificationId\\\": 123456789,                                  |\n|                                                                 |\n| \\\"notificationType\\\": \\\"notifyMOIDeletion\\\",                    |\n|                                                                 |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",               |\n|                                                                 |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\" |\n|                                                                 |\n| }                                                               |\n+-----------------------------------------------------------------+\n\nThe message body may include the name/value pairs representing the\nattributes of the deleted object.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIDeletion\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeList\\\":                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"valueAttrA\\\",                                       |\n|                                                                  |\n| \\\"attrB\\\": \\\"valueAttrB\\\"                                        |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 3/3)\n\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+\n| ErrorResponse | 4xx/5xx            | Returned in case of | O     |\n|               |                    | an error            |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "12.1.1.3 Resources › 12.1.1.3.1 Resource structure\n\n##### 12.1.1.3.1.1 Resource structure on the MnS producer\n\nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.\n\n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}\n\nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer\n\nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.1.1.3.1-**1**: Resources and methods overview\n\n  Resource name   Resource URI           HTTP method   Description\n  --------------- ---------------------- ------------- --------------------------------------------------------------------------\n  MOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\n  MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 2/2)\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                                                                                                                      **S**\n  --------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.1 Introduction\n\nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.\n\nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents\n\n+-------------------+-----------------+-------------------+-------+\n| **IS operation**  | **HTTP Method** | **Resource URI**  | **S** |\n+===================+=================+===================+=======+\n| createMOI         | PUT             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| getMOIAttributes  | GET             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| mo                | PUT             | {MnSRoot}/ProvMnS | M     |\n| difyMOIAttributes |                 | /{MnSVersion}/{UR |       |\n|                   | PATCH           | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| deleteMOI         | DELETE          | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 1/3)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.\n\nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource\n\n  **Data type**   **Description**                                                     **S**\n  --------------- ------------------------------------------------------------------- -------\n  Resource        Resource representation of the resource to be created or replaced   M\n\nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE operation summary description operationId",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.5 Operation deleteMOI\n\nThis IS operation deletes one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating\nthe MOI(s) to be deleted.\n\nThe Netconf operation attribute on the list representing the\nbaseObjectInstance should be set to delete or remove.\n\nThe default-operation parameter should be set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.5-1 and table 12.1.3.1.5-2.\n\nTable 12.1.3.1.5-1: Mapping of IS deleteMOI input parameters to SS\nequivalents\n\n  **IS operation parameter name**   **SS parameter name**   **S**   **Remark**\n  --------------------------------- ----------------------- ------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  baseObjectInstance                config                  M       A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be deleted MOI and its key.\n  scope                             config                  M       BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\n  filter                            config                  M       Multiple MOIs can be specified in the same operation, emulating filtering.\n\nTable 12.1.3.1.5-2: Mapping of IS deleteMOI output parameters to SS\nequivalents\n\n+-------------------+-------------------+-------+-------------------+\n| **IS operation    | **SS parameter    | **S** | **Remark**        |\n| parameter name**  | name**            |       |                   |\n+===================+===================+=======+===================+\n| deletionList      | no corresponding  | M     | Not supported.    |\n|                   | SS parameter      |       |                   |\n|                   |                   |       | (note 1)          |\n+-------------------+-------------------+-------+-------------------+\n| status            | \\-                | M     | rpc-reply or      |\n|                   |                   |       | rpc-error         |\n|                   |                   |       | indicates general |\n|                   |                   |       | status.           |\n|                   |                   |       |                   |\n|                   |                   |       | The following     |\n|                   |                   |       | elements give     |\n|                   |                   |       | detailed error    |\n|                   |                   |       | information:      |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-tag\\>     |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-path\\>    |\n+-------------------+-------------------+-------+-------------------+\n\nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the deletionList can be retrieved via a\nseparate \\<get-config\\> operation."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE operation summary description operationId",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.4 Data type definitions\n\n##### 12.1.1.4.1 General\n\nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.\n\nTable 12.1.1.4.1-1: Data types defined in this specification\n\n  Data type                        Reference       Description\n  -------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  CmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\n  SourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\n  ScopeType                        12.1.1.4.4.5    Scope type of a scope\n  Operation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\n  Insert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\n  PatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\n  Resource                         12.1.1.4.1a.1   Used for resource representations\n  Scope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\n  CorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\n  MoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\n  NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\n  NotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\n  NotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\n  NotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\n  PatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document\n\nTable 12.1.1.4.1-2: Data types imported\n\n  Data type                   Reference          Description\n  --------------------------- ------------------ ---------------------------------------------------------------------\n  DateTime                    TS 28.623 \\[44\\]   Date and time\n  Dn                          TS 28.623 \\[44\\]   DN type\n  SystemDN                    TS 28.623 \\[44\\]   systemDN type\n  Uri                         TS 28.623 \\[44\\]   URI type\n  AttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\n  AttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\n  Filter                      TS 28.623 \\[44\\]   Filter type\n  NotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationType            TS 28.623 \\[44\\]   Notification type\n  NotificationHeader          TS 28.623 \\[44\\]   Notification header\n  ErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE operation summary description operationId",
+      "filters": {},
+      "clause": "12.1.1.4.4.6",
+      "title": "12.1.1.4.4.6 Enumeration Operation",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.6 Enumeration Operation\n\nTable 12.1.1.4.4.4.6-1: Enumeration Operation\n\n  Enumeration value   Description\n  ------------------- -------------------\n  add                 Create operation\n  remove              Delete operation\n  replace             Replace operation"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE operation summary description operationId",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.6 Type NotifyMoiDeletion (part 1/2)\n\nTable 12.1.1.4.1a.6 -1: Definition of type NotifyMoiDeletion\n\n  ------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n  **Attribute name**        **Data type**                   **Description**                                                                                                            **S**\n  href                      Uri                             URI of the resource where the event (alarm) occurred                                                                       M\n  notificationId            NotificationId                  Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]                                                              M\n  notificationType          NotificationType                Notification type (\\\"notifyMOIDeletion\\\")                                                                                  M\n  eventTime                 DateTime                        Event (MOI creation) occurrence time                                                                                       M\n  systemDN                  SystemDN                        System DN                                                                                                                  M\n  correlatedNotifications   array(CorrelatedNotification)   Set of all notifications to which this notification is considered to be correlated as defined in ITU-T Rec. X. 733 \\[4\\]   O\n  additionalText            string                          Allows a free form text description to be reported as defined in ITU-T Rec. X. 733 \\[4\\]                                   O\n  sourceIndicator           SourceIndicator                 Indicates the source of the operation that led to the generation of this notification.                                     O\n  attributeList             AttributeNameValuePairSet       Attributes (name/value pairs) of the deleted MOI.                                                                          O\n  ------------------------- ------------------------------- -------------------------------------------------------------------------------------------------------------------------- -------\n\nThe following example demonstrates the deletion of an object. The\nmessage body includes the name/value pairs representing the attributes\nof the deleted object."
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP DELETE operation summary description operationId",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.2 Mapping of notifications\n\n##### 12.1.3.2.5 Notification notifyMOIChanges (part 1/3)\n\nThe NETCONF/YANG solution set uses the same mapping as the RESTful\nHTTP-based solution set as described in clause 12.1.1.2.5 with the\nchanges and additions described below.\n\n\\- Any changes reported are based on the YANG NRM definitions, even\nthough the RESTful notification mapping is reused.\n\n\\- The media type as specified by the \\\"Content-Type\\\" header in the\nHTTP POST request shall be \\\"application/yang-data+json\\\" and not\n\\\"application/json\\\".\n\n\\- The value of \\\"href\\\" shall be set to the FQDN or IP address\nidentifying the NETCONF server.\n\n\\- The value of \\\"path\\\" shall be a RESTCONF data resource identifier\n(RFC 8040 \\[49\\], clause 3.5.3).\n\n\\- The \\\"path\\\" includes the YANG module name.\n\n\\- The \\\"\\#\\\" character before \\\"/attributes\\\" in \\\"path\\\" is not\npresent. NETCONF/YANG does not differentiate between the stage 2\nconcepts of object and attribute, hence there is no need for a\ndelimiter.\n\n\\- The value of \\\"value\\\" shall follow the JSON encoding of YANG (RFC\n7951 \\[50\\]).\n\n\\- Attribute elements are identified by their value (in case of a YANG\n\\\"leaf-list\\\") or by the values of keys (in case of a YANG \\\"list\\\"). In\nJSON Patch, attribute elements are identified based on their index, i.e.\nbased on the position in the array.\n\n\\- In case no key is defined for a YANG \\\"list\\\" it is not possible to\nreport the creation, deletion or replacement of individual list entries.\nIn this case, whenever the list is modified, the replacement of the\ncomplete attribute or attribute field (the complete list with all list\nenties) shall be reported.\n\n\\- Similarly if an attribute(field) is mapped to a YANG leaf-list with\nnon-unique values it is not possible to report the creation, deletion or\nreplacement of an individual value. In this case, whenever the leaf-list\nis modified, the replacement of the complete attribute or attribute\nfield (the complete leaf-list; all values) shall be reported.\n\n\\- YANG default values shall be handled as follows:\n\n\\- Attributes with default values, for which no value is specified in\nthe object creation request, shall be included in the object creation\nreport with their default values.\n\n\\- Attributes with default values, that are deleted and consequently set\nto their default value, shall be included in attribute replacement\nreports.\n\nNote all following use-cases use JSON expressed in YAML notation.\n\nCase 1: Creation of an MOI is reported with:\n\n\\- operation: add\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: a complete MOI representation, represented by the \\\"id\\\" node\nand the \\\"attributes\\\" container but exluding the list entry itself\nencoded according to RFC7951 \\[50\\].\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object creation:\n\nhref: node1.lichtenberg.de\n\n...\n\nnotificationId: 123456001\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: add\n\nvalue:\n\nid: job1\n\n3gpp-common-measurements:PerfMetricJob:attributes:\n\njobId: 9865\n\nfileReportingPeriod: 30\n\nCase 2: Deletion of an MOI is reported with:\n\n\\- operation: remove\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: not present\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object deletion:\n\nhref: node1.charlottenburg.de\n\n...\n\nnotificationId: 123456002\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: remove\n\nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):\n\n\\- operation: add."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path.\n<a name=\"pathItemDescription\"></a>description | `string` | An optional, string description, intended to apply to all operations in this path. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"pathItemGet\"></a>get | [Operation Object](#operation-object) | A definition of a GET operation on this path.\n<a name=\"pathItemPut\"></a>put | [Operation Object](#operation-object) | A definition of a PUT operation on this path.\n<a name=\"pathItemPost\"></a>post | [Operation Object](#operation-object) | A definition of a POST operation on this path.\n<a name=\"pathItemDelete\"></a>delete | [Operation Object](#operation-object) | A definition of a DELETE operation on this path.\n<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Operation Object Example  \n```json\n{\n\"tags\": [\n\"pet\"\n],\n\"summary\": \"Updates a pet in the store with form data\",\n\"operationId\": \"updatePetWithForm\",\n\"parameters\": [\n{\n\"name\": \"petId\",\n\"in\": \"path\",\n\"description\": \"ID of pet that needs to be updated\",\n\"required\": true,\n\"schema\": {\n\"type\": \"string\"\n}\n}\n],\n\"requestBody\": {\n\"content\": {\n\"application/x-www-form-urlencoded\": {\n\"schema\": {\n\"type\": \"object\",\n\"properties\": {\n\"name\": {\n\"description\": \"Updated name of the pet\",\n\"type\": \"string\"\n},\n\"status\": {\n\"description\": \"Updated status of the pet\",\n\"type\": \"string\"\n}\n},\n\"required\": [\"status\"]\n}\n}\n}\n},\n\"responses\": {\n\"200\": {\n\"description\": \"Pet updated.\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n},\n\"405\": {\n\"description\": \"Invalid input\",\n\"content\": {\n\"application/json\": {},\n\"application/xml\": {}\n}\n}\n},\n\"security\": [\n{\n\"petstore_auth\": [\n\"write:pets\",\n\"read:pets\"\n]\n}\n]\n}\n```"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"pathItemOptions\"></a>options | [Operation Object](#operation-object) | A definition of a OPTIONS operation on this path.\n<a name=\"pathItemHead\"></a>head | [Operation Object](#operation-object) | A definition of a HEAD operation on this path.\n<a name=\"pathItemPatch\"></a>patch | [Operation Object](#operation-object) | A definition of a PATCH operation on this path.\n<a name=\"pathItemTrace\"></a>trace | [Operation Object](#operation-object) | A definition of a TRACE operation on this path.\n<a name=\"pathItemServers\"></a>servers | [[Server Object](#server-object)] | An alternative `server` array to service all operations in this path."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Operation Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"oasComponents\"></a>components | [Components Object](#components-object) | An element to hold various schemas for the specification.\n<a name=\"oasSecurity\"></a>security | [[Security Requirement Object](#security-requirement-object)] | A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition.\n<a name=\"oasTags\"></a>tags | [[Tag Object](#tag-object)] | A list of tags used by the specification with additional metadata. The order of the tags can be used to reflect on their order by the parsing tools. Not all tags that are used by the [Operation Object](#operation-object) must be declared. The tags that are not declared MAY be organized randomly or based on the tools' logic. Each tag name in the list MUST be unique."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "##### Fixed Fields  \nField Name  |  Type  | Description\n---|:---:|---\n<a name=\"linkOperationRef\"></a>operationRef | `string` | A relative or absolute reference to an OAS operation. This field is mutually exclusive of the `operationId` field, and MUST point to an [Operation Object](#operation-object). Relative `operationRef` values MAY be used to locate an existing [Operation Object](#operation-object) in the OpenAPI definition.\n<a name=\"linkOperationId\"></a>operationId  | `string` | The name of an _existing_, resolvable OAS operation, as defined with a unique `operationId`.  This field is mutually exclusive of the `operationRef` field."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"operationExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this operation.\n<a name=\"operationId\"></a>operationId | `string` | Unique string used to identify the operation. The id MUST be unique among all operations described in the API. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object",
+      "text": "'*/*' :\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: error payload\ncontent:\n'text/html':\nschema:\n$ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id\nin: path\ndescription: ID of pet to use\nrequired: true\nschema:\ntype: array\nstyle: simple\nitems:\ntype: string\n```  \n#### Operation Object  \nDescribes a single API operation on a path.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"operationTags\"></a>tags | [`string`] | A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.\n<a name=\"operationSummary\"></a>summary | `string` | A short summary of what the operation does.\n<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId",
+      "filters": {},
+      "clause": "",
+      "title": "the target link operationId",
+      "text": "```yaml\npaths:\n/users/{id}:\nparameters:\n- name: id\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string\nget:\nresponses:\n'200':\ndescription: the user being returned\ncontent:\napplication/json:\nschema:\ntype: object\nproperties:\nuuid: # the unique user id\ntype: string\nformat: uuid\nlinks:\naddress:\n# the target link operationId\noperationId: getUserAddress\nparameters:\n# get the `id` field from the request path parameter named `id`\nuserId: $request.path.id\n# the path item of the linked operation\n/users/{userid}/address:\nparameters:\n- name: userid\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string\n# linked operation\nget:\noperationId: getUserAddress\nresponses:\n'200':\ndescription: the user's address\n```  \nWhen a runtime expression fails to evaluate, no parameter value is passed to the target operation.  \nValues from the response body can be used to drive a linked operation.  \n```yaml\nlinks:\naddress:"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "operation fields operationId summary summary description operationId",
+      "filters": {},
+      "clause": "",
+      "title": "Examples",
+      "text": "<a name=\"linkDescription\"></a>description  | `string` | A description of the link. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"linkServer\"></a>server       | [Server Object](#server-object) | A server object to be used by the target operation.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \nA linked operation MUST be identified using either an `operationRef` or `operationId`.\nIn the case of an `operationId`, it MUST be unique and resolved in the scope of the OAS document.\nBecause of the potential for name clashes, the `operationRef` syntax is preferred\nfor specifications with external references.  \n##### Examples  \nComputing a link from a request operation where the `$request.path.id` is used to pass a request parameter to the linked operation.  \n```yaml\npaths:\n/users/{id}:\nparameters:\n- name: id\nin: path\nrequired: true\ndescription: the user identifier, as userId\nschema:\ntype: string"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "0614211d5256a04b6bcbe1b9f68d2325733bb8691608c45e140413d0312fc3c2",
+  "judged_at": "2026-10-18T21:07:32-03:00"
+}

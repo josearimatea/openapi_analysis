@@ -1,0 +1,310 @@
+{
+  "part_id": "generator|provmns_20260828_232853|SCHEMA ScopeType|definition",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "SCHEMA ScopeType",
+  "aspect": "definition",
+  "summary": "schema present; shape official type=string, enum[4] vs generated type=string, enum[3]; 1 differing",
+  "answer": {
+    "why_different": "The generated schema uses a different enum vocabulary: it omits BASE_NTH_LEVEL and BASE_ALL, renames BASE_SUBTREE to SUBTREE, and adds the unsupported value BASE_AND_SUBCLASS. This is a value-level difference, not a structural or address-level difference.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification defines exactly four ScopeType values: BASE_ONLY, BASE_ALL, BASE_NTH_LEVEL, and BASE_SUBTREE, with distinct meanings for selecting the base, all subordinate resources, a specific level, or a subtree.",
+    "openapi": "OpenAPI 3.0 supports enum as a Schema Object property, but the reference does not authorize replacing or inventing domain-specific enum values. The generated schema is syntactically valid OpenAPI, but its values do not match the 3GPP-defined enumeration.",
+    "clearer": "official",
+    "clearer_why": "The official names correspond directly to the four values defined by the specification. The generated names omit two valid choices, introduce an unsupported choice, and use SUBTREE instead of the specified BASE_SUBTREE, making the allowed scope behavior less precise.",
+    "citations": [
+      {
+        "evidence_id": "S2",
+        "quote": "BASE_ALL           Selects the base resource and all of its subordinate resources (incl. the leaf resources)."
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "BASE_NTH\\_LEVEL    Selects all resources on the level, which is indicated by the \"scopeLevel\" parameter, below the base resource."
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "BASE\\_SUBTREE       Selects the base resource and all of its subordinate resources down to and including the resources on the level indicated by the \"scopeLevel\" parameter."
+      },
+      {
+        "evidence_id": "C1",
+        "quote": "  - BASE_NTH_LEVEL"
+      },
+      {
+        "evidence_id": "C1",
+        "quote": "  - BASE_ALL"
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "  - BASE_AND_SUBCLASS"
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "  - SUBTREE"
+      },
+      {
+        "evidence_id": "O8",
+        "quote": "- enum"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated enum contradicts the 3GPP enumeration: it removes BASE_NTH_LEVEL and BASE_ALL, changes BASE_SUBTREE to SUBTREE, and adds BASE_AND_SUBCLASS, which is not defined by the specification. The official and generated enum lists are shown in C1 and C2, while S2 defines the required four values."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.2 Type Scope\n\nTable 12.1.1.4.1a.2-1: Definition of type Scope\n\n  Attribute name   Data type   Description                                                                                                                                                                                                     S\n  ---------------- ----------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---\n  scopeType        ScopeType   Used in the query component of HTTP GET and HTTP DELETE together with scopeLevel to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI   M\n  scopeLevel       integer     Used in the query component of HTTP GET and HTTP DELETE together with scopeType to extend the set of targeted resources beyond the base resource identified with the path component of the URI                  M"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.4.5",
+      "title": "12.1.1.4.4.5 Enumeration ScopeType",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.5 Enumeration ScopeType\n\nTable 12.1.1.4.4.4.1-1: Enumeration ScopeType\n\n  Enumeration value   Description\n  ------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  BASE\\_ONLY          Selects only the base resource. The \\\"scopeLevel\\\" parameter shall be absent or ignored if present.\n  BASE\\_ALL           Selects the base resource and all of its subordinate resources (incl. the leaf resources). The \\\"scopeLevel\\\" parameter shall be absent or ignored if present.\n  BASE\\_NTH\\_LEVEL    Selects all resources on the level, which is indicated by the \\\"scopeLevel\\\" parameter, below the base resource. The base resource is at \\\"scopeLevel\\\" zero.\n  BASE\\_SUBTREE       Selects the base resource and all of its subordinate resources down to and including the resources on the level indicated by the \\\"scopeLevel\\\" parameter. The base resource is at \\\"scopeLevel\\\" zero."
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.4 Data type definitions\n\n##### 12.1.1.4.1 General\n\nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.\n\nTable 12.1.1.4.1-1: Data types defined in this specification\n\n  Data type                        Reference       Description\n  -------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  CmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\n  SourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\n  ScopeType                        12.1.1.4.4.5    Scope type of a scope\n  Operation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\n  Insert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\n  PatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\n  Resource                         12.1.1.4.1a.1   Used for resource representations\n  Scope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\n  CorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\n  MoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\n  NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\n  NotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\n  NotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\n  NotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\n  PatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document\n\nTable 12.1.1.4.1-2: Data types imported\n\n  Data type                   Reference          Description\n  --------------------------- ------------------ ---------------------------------------------------------------------\n  DateTime                    TS 28.623 \\[44\\]   Date and time\n  Dn                          TS 28.623 \\[44\\]   DN type\n  SystemDN                    TS 28.623 \\[44\\]   systemDN type\n  Uri                         TS 28.623 \\[44\\]   URI type\n  AttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\n  AttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\n  Filter                      TS 28.623 \\[44\\]   Filter type\n  NotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationType            TS 28.623 \\[44\\]   Notification type\n  NotificationHeader          TS 28.623 \\[44\\]   Notification header\n  ErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 7/8)\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/3gpp\\\",                           |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOICreation\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"moiChanges\\\": \\[                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"notificationId\\\": 123,                                         |\n|                                                                  |\n| \\\"op\\\": \\\"replace\\\",                                             |\n|                                                                  |\n| \\\"path\\\": \\\"/ClassA=1\\#/attributes\\\",                            |\n|                                                                  |\n| \\\"value\\\": {                                                     |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"oldValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nTo allow the MnS consumer to understand which attributes have been\nupdated, the MnS producer may decide to send the following notification."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.9",
+      "title": "12.1.1.4.1a.9 Type PatchItem",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.9 Type PatchItem\n\nTable 12.1.1.4.1a.9 -1: Definition of type PatchItem\n\n  ---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---\n  Attribute name   Data type        Description                                                                                                                        S\n  op               PatchOperation   Patch operation.                                                                                                                   M\n  from             string           Present only for \\\"copy\\\" and \\\"move\\\" operations, identifies the value to be copied or moved to the location specified by path.   M\n  path             string           Path specifying the patched value.                                                                                                 M\n  value            any type         New value for the resource identified by \\\"path\\\".                                                                                 M\n  ---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.1 Type Resource\n\n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**\n\n  **Attribute name**   **Data type**        **Description**                                                                                                                **S**\n  -------------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------ -------\n  id                   string               Identifier of the resource object                                                                                              M\n  objectClass          string               Object class of the resource object                                                                                            O\n  objectInstance       Dn                   Object instance of the resource object                                                                                         O\n  attributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M\n  n/a                  map(array(object))   Name contained objects                                                                                                         M\n\nThis definition of \\\"Resource\\\" does not specify any attributes or name\ncontained objects. Resource representations with specific attributes and\nname contained objects are contained in the NRM definitions. These\ndefinitions should be used in implementations of the Provisioning MnS\ninstead of this generic definition."
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 1/8)\n\nTable 12.1.1.4.1a.4 -1: Definition of type MoiChange"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.4.2",
+      "title": "12.1.1.4.4.2 Simple data types",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.2 Simple data types\n\nTable 12.1.1.4.3.2-1: Simple data types\n\n  ----------- ----------------- -------------\n  Type name   Type definition   Description\n  n/a         n/a               n/a\n  ----------- ----------------- -------------"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type ScopeType",
+      "filters": {},
+      "clause": "12.1.1.4.1a.8",
+      "title": "12.1.1.4.1a.8 Type NotifyMoiChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.8 Type NotifyMoiChanges\n\n**Table 12.1.1.4.1a.8 -1: Definition of type NotifyMoiChanges**\n\n  -------------------- ------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  **Attribute name**   **Data type**      **Description**                                                                                                                                                                           **S**\n  href                 Uri                URI of a common ancestor resource (object) of the resources for which changes are reported. A MnS producer may set this attribute always to the parent of the root resource in the MIB.   M\n  notificationId       NotificationId     Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\].                                                                                                                            M\n  notificationType     NotificationType   Notification type (notifyMOIChanges)                                                                                                                                                      M\n  eventTime            DateTime           Event (NRM updates) occurrence time                                                                                                                                                       M\n  systemDN             SystemDN           System DN                                                                                                                                                                                 M\n  moiChanges           array(MoiChange)   MOI changes to be reported                                                                                                                                                                M\n  -------------------- ------------------ ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 4/5)\n\nIn the next example \\\"attrA\\\" is a structured attribute with the\nattribute fields \\\"attrFieldAA\\\" and \\\"attrFieldAB\\\". The attribute\nfield \\\"attrFieldAA\\\" changed value, the attribute field \\\"attrFieldAB\\\"\ndid not change value. The attribute value change notification reporting\nthis change may look as follows.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.org                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIAttributeValueChanges\\\",        |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeListValueChanges\\\": \\[                                |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": {                                                     |\n|                                                                  |\n| \\\"attrFieldAA\\\": \\\"newValueAttrFieldAA\\\",                        |\n|                                                                  |\n| \\\"attrFieldAB\\\": \\\"oldValueAttrFieldAB\\\"                         |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| },                                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": {                                                     |\n|                                                                  |\n| \\\"attrFieldAA\\\": \\\"oldValueAttrFieldAA\\\",                        |\n|                                                                  |\n| \\\"attrFieldAB\\\": \\\"oldValueAttrFieldAB\\\"                         |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 2/5)\n\nThe following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\".\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.org                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIAttributeValueChanges\\\",        |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeListValueChanges\\\": \\[                                |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"newValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nIn addition to the new values, the old values may be included in the\nnotification."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.4.8",
+      "title": "12.1.1.4.4.8 Enumeration Insert",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.8 Enumeration Insert\n\nTable 12.1.1.4.4.4.8-1: Enumeration Insert\n\n  Enumeration value   Description\n  ------------------- -------------------------------------------------------------------------------------------------------------------------------------\n  before              Specifies the new attribute element is inserted before the attribute element identified by the \\\"path\\\" attribute of \\\"MoiChange\\\".\n  after               Specifies the new attribute element is inserted after the attribute element identified by the \\\"path\\\" attribute of \\\"MoiChange\\\"."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.5 Type NotifyMoiCreation (part 2/3)\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOICreation\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeList\\\":                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"valueAttrA\\\",                                       |\n|                                                                  |\n| \\\"attrB\\\": \\\"valueAttrB\\\"                                        |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nThe creation of an empty object not containing any attribute values is\nreported as follows."
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "ScopeType attributes enum",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 3/5)\n\nIn addition to the new values, the old values may be included in the\nnotification.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.org                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIAttributeValueChanges\\\",        |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeListValueChanges\\\": \\[                                |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"newValueAttrB\\\"                                     |\n|                                                                  |\n| },                                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"oldValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"oldValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nIn the example above the attribute values are of simple type. For\nattributes of structured type, the question is if all attribute fields\nof an attribute, where at least one attribute field changed its value,\nneed to be reported or only those attribute fields that changed value.\nAssume an attribute field that did not change value is not included in\nthe notification. In this case the MnS consumer receiving the\nnotification cannot tell if the attribute field was deleted or if the\nattribute field did not change value. It is not possible to distinguish\nthese two cases based on the information in the notification. For that\nreason, always all attribute fields of an attribute need to be included\nin the notification. For structured attributes with many attribute\nfields this may not be very efficient."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "text/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"mediaTypeSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the request body.\n<a name=\"mediaTypeExample\"></a>example | Any | Example of the media type.  The example object SHOULD be in the correct format as specified by the media type.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- type - Value MUST be a string. Multiple types via an array are not supported.\n- allOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- oneOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- anyOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- not - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- items - Value MUST be an object and not an array. Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema. `items` MUST be present if the `type` is `array`.\n- properties - Property definitions MUST be a [Schema Object](#schema-object) and not a standard JSON Schema (inline or referenced)."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- properties - Property definitions MUST be a [Schema Object](#schema-object) and not a standard JSON Schema (inline or referenced).\n- additionalProperties - Value can be boolean or object. Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- description - [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n- format - See [Data Type Formats](#dataTypeFormat) for further details. While relying on JSON Schema's defined formats, the OAS offers a few additional predefined formats.\n- default - The default value represents what would be assumed by the consumer of the input as the value of the schema if one is not provided. Unlike JSON Schema, the value MUST conform to the defined type for the Schema Object defined at the same level. For example, if `type` is `string`, then `default` can be `\"foo\"` but cannot be `1`."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"parameterSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the parameter.\n<a name=\"parameterExample\"></a>example | Any | Example of the media type.  The example SHOULD match the specified schema and encoding properties if present.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema. To represent examples of media types that cannot naturally be represented in JSON or YAML, a string value can contain the example with escaping where necessary."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)  \nThe OpenAPI Specification allows combining and extending model definitions using the `allOf` property of JSON Schema, in effect offering model composition.\n`allOf` takes an array of object definitions that are validated *independently* but together compose a single object.  \nWhile composition offers model extensibility, it does not imply a hierarchy between the models.\nTo support polymorphism, the OpenAPI Specification adds the `discriminator` field.\nWhen used, the `discriminator` will be the name of the property that decides which schema definition validates the structure of the model.\nAs such, the `discriminator` field MUST be a required field.\nThere are two ways to define the value of a discriminator for an inheriting instance.\n- Use the schema name."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "Models with Polymorphism Support",
+      "text": "ExtendedErrorModel:\nallOf:\n- $ref: '#/components/schemas/ErrorModel'\n- type: object\nrequired:\n- rootCause\nproperties:\nrootCause:\ntype: string\n```  \n###### Models with Polymorphism Support  \n```json\n{\n\"components\": {\n\"schemas\": {\n\"Pet\": {\n\"type\": \"object\",\n\"discriminator\": {\n\"propertyName\": \"petType\"\n},\n\"properties\": {\n\"name\": {\n\"type\": \"string\"\n},\n\"petType\": {\n\"type\": \"string\"\n}\n},\n\"required\": [\n\"name\",\n\"petType\"\n]\n},\n\"Cat\": {\n\"description\": \"A representation of a cat. Note that `Cat` will be used as the discriminator value.\",\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/Pet\"\n},\n{\n\"type\": \"object\",\n\"properties\": {\n\"huntingSkill\": {\n\"type\": \"string\",\n\"description\": \"The measured skill for hunting\",\n\"default\": \"lazy\",\n\"enum\": [\n\"clueless\",\n\"lazy\",\n\"adventurous\",\n\"aggressive\"\n]\n}\n},\n\"required\": [\n\"huntingSkill\"\n]\n}\n]\n},\n\"Dog\": {\n\"description\": \"A representation of a dog. Note that `Dog` will be used as the discriminator value.\",\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/Pet\"\n},\n{"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "Properties",
+      "text": "Unless stated otherwise, the property definitions follow the JSON Schema.  \n##### Properties  \nThe following properties are taken directly from the JSON Schema definition and follow the same specifications:  \n- title\n- multipleOf\n- maximum\n- exclusiveMaximum\n- minimum\n- exclusiveMinimum\n- maxLength\n- minLength\n- pattern (This string SHOULD be a valid regular expression, according to the [ECMA 262 regular expression](https://www.ecma-international.org/ecma-262/5.1/#sec-7.8.5) dialect)\n- maxItems\n- minItems\n- uniqueItems\n- maxProperties\n- minProperties\n- required\n- enum  \nThe following properties are taken from the JSON Schema definition but their definitions were adjusted to the OpenAPI Specification.\n- type - Value MUST be a string. Multiple types via an array are not supported.\n- allOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "Discriminator Object",
+      "text": "Pet:\ntype: object\ndiscriminator:\npropertyName: petType\nproperties:\nname:\ntype: string\npetType:\ntype: string\nrequired:\n- name\n- petType\nCat:  ## \"Cat\" will be used as the discriminator value\ndescription: A representation of a cat\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\nhuntingSkill:\ntype: string\ndescription: The measured skill for hunting\nenum:\n- clueless\n- lazy\n- adventurous\n- aggressive\nrequired:\n- huntingSkill\nDog:  ## \"Dog\" will be used as the discriminator value\ndescription: A representation of a dog\nallOf:\n- $ref: '#/components/schemas/Pet'\n- type: object\nproperties:\npackSize:\ntype: integer\nformat: int32\ndescription: the size of the pack the dog is from\ndefault: 0\nminimum: 0\nrequired:\n- packSize\n```  \n#### Discriminator Object"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required enum",
+      "filters": {},
+      "clause": "",
+      "title": "XML Modeling",
+      "text": "As such, the `discriminator` field MUST be a required field.\nThere are two ways to define the value of a discriminator for an inheriting instance.\n- Use the schema name.\n- Override the schema name by overriding the property with a new value. If a new value exists, this takes precedence over the schema name.\nAs such, inline schema definitions, which do not have a given id, *cannot* be used in polymorphism.  \n###### XML Modeling  \nThe [xml](#schemaXml) property allows extra definitions when translating the JSON definition to XML.\nThe [XML Object](#xml-object) contains additional information about the available options.  \n##### Schema Object Examples  \n###### Primitive Sample  \n```json\n{\n\"type\": \"string\",\n\"format\": \"email\"\n}\n```  \n```yaml\ntype: string\nformat: email\n```  \n###### Simple Model  \n```json\n{\n\"type\": \"object\",\n\"required\": [\n\"name\"\n],\n\"properties\": {\n\"name\": {\n\"type\": \"string\"\n},\n\"address\": {\n\"$ref\": \"#/components/schemas/Address\"\n},\n\"age\": {\n\"type\": \"integer\","
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "3c8db01066df2dbddf8acd8dd59b4d3b076d5d6f4ba3f1d649cc3bc31be57c72",
+  "judged_at": "2026-10-18T21:09:20-03:00"
+}

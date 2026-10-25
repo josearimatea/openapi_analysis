@@ -1,0 +1,300 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA PatchOperation|placement",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA PatchOperation",
+  "aspect": "placement",
+  "summary": "schema present; generated defines it at components.schemas.PatchOperation, components.PatchOperation; 1 extra",
+  "answer": {
+    "why_different": "The generated document duplicates the schema at a different, unsupported address: it places PatchOperation directly under components instead of only under components.schemas. This is a structural and placement difference, and the extra key makes the generated document invalid OpenAPI 3.0.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification defines PatchOperation as an enumeration with the values add, replace, remove, copy, move, and test, with the corresponding descriptions. It does not support an additional components-level declaration.",
+    "openapi": "OpenAPI 3.0 defines reusable schemas under components.schemas; components itself has a fixed set of component maps, so components.PatchOperation is not a valid component location.",
+    "clearer": "official",
+    "clearer_why": "The official version has one valid schema location and avoids the confusing, invalid duplicate declaration.",
+    "citations": [
+      {
+        "evidence_id": "C2",
+        "quote": "components.PatchOperation:"
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object)."
+      },
+      {
+        "evidence_id": "S1",
+        "quote": "Enumeration value   Description"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The extra components.PatchOperation is at an unsupported component address and makes the generated document invalid OpenAPI 3.0; O1 permits reusable schemas under components.schemas, while C2 shows the duplicate declaration at components.PatchOperation."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.4.7",
+      "title": "12.1.1.4.4.7 Enumeration PatchOperation",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n###### 12.1.1.4.4.7 Enumeration PatchOperation\n\nTable 12.1.1.4.4.4.7-1: Enumeration PatchOperation\n\n  Enumeration value   Description\n  ------------------- -------------------\n  add                 Add operation\n  replace             Replace operation\n  remove              Remove operation\n  copy                Copy operation\n  move                Move operation\n  test                Test operation"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.1a.9",
+      "title": "12.1.1.4.1a.9 Type PatchItem",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.9 Type PatchItem\n\nTable 12.1.1.4.1a.9 -1: Definition of type PatchItem\n\n  ---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---\n  Attribute name   Data type        Description                                                                                                                        S\n  op               PatchOperation   Patch operation.                                                                                                                   M\n  from             string           Present only for \\\"copy\\\" and \\\"move\\\" operations, identifies the value to be copied or moved to the location specified by path.   M\n  path             string           Path specifying the patched value.                                                                                                 M\n  value            any type         New value for the resource identified by \\\"path\\\".                                                                                 M\n  ---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.4 Data type definitions\n\n##### 12.1.1.4.1 General\n\nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.\n\nTable 12.1.1.4.1-1: Data types defined in this specification\n\n  Data type                        Reference       Description\n  -------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  CmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\n  SourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\n  ScopeType                        12.1.1.4.4.5    Scope type of a scope\n  Operation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\n  Insert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\n  PatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\n  Resource                         12.1.1.4.1a.1   Used for resource representations\n  Scope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\n  CorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\n  MoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\n  NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\n  NotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\n  NotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\n  NotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\n  PatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document\n\nTable 12.1.1.4.1-2: Data types imported\n\n  Data type                   Reference          Description\n  --------------------------- ------------------ ---------------------------------------------------------------------\n  DateTime                    TS 28.623 \\[44\\]   Date and time\n  Dn                          TS 28.623 \\[44\\]   DN type\n  SystemDN                    TS 28.623 \\[44\\]   systemDN type\n  Uri                         TS 28.623 \\[44\\]   URI type\n  AttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\n  AttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\n  Filter                      TS 28.623 \\[44\\]   Filter type\n  NotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationType            TS 28.623 \\[44\\]   Notification type\n  NotificationHeader          TS 28.623 \\[44\\]   Notification header\n  ErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.4 Operation modifyMOIAttributes\n\nThis IS operation modifies one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. The NETCONF\n\\<edit-config\\> operation can modify attributes in a given MOI or set of\nMOIs but only indirectly supports scope or filtered sets of MOIs that\nare part of the modifyMOIAttributes 3GPP operation specification.\n\\<edit-config\\> needs a config block, containing the explicit config\nchanges to be made for each MOI.\n\nThe default-operation parameter should be set to none.\n\nThe Netconf operation attribute on the list representing modified MOI(s)\nshould be set to create, replace or delete according to the ENUM in the\nmodificationList.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.4-1 and table 12.1.3.1.4-2.\n\nTable 12.1.3.1.4-1: Mapping of IS modifyMOIAttributes input parameters\nto SS equivalents\n\n  IS operation parameter name   SS parameter name   S   Remark\n  ----------------------------- ------------------- --- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  baseObjectInstance            config              M   A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together with the XML elements representing the to be modified MOI and its key.\n  scope                         config              M   BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\n  filter                        config              M   Multiple MOIs can be specified in the same operation, emulating filtering.\n  modificationList              config              M   The \"attributes container\" and leaf, leaf-list or list entries representing the attributes.\n\nTable 12.1.3.1.4-2: Mapping of IS modifyMOIAttributes output parameters\nto SS equivalents\n\n+-------------------+-------------------+-------+-------------------+\n| **IS operation    | **SS parameter    | **S** | **Remark**        |\n| parameter name**  | name**            |       |                   |\n+===================+===================+=======+===================+\n| mo                | no corresponding  | M     | Not supported.    |\n| dificationListOut | SS parameter      |       |                   |\n|                   |                   |       | (note 1)          |\n+-------------------+-------------------+-------+-------------------+\n| status            | \\-                | M     | rpc-reply or      |\n|                   |                   |       | rpc-error         |\n|                   |                   |       | indicates general |\n|                   |                   |       | status.           |\n|                   |                   |       |                   |\n|                   |                   |       | The following     |\n|                   |                   |       | elements give     |\n|                   |                   |       | detailed error    |\n|                   |                   |       | information:      |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-tag\\>     |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-path\\>    |\n+-------------------+-------------------+-------+-------------------+\n\n> Note 1: Successful Netconf \\<edit-config\\> operations only return an\n> \\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\n> separate \\<get-config\\> operation."
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.1 Type Resource\n\n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**\n\n  **Attribute name**   **Data type**        **Description**                                                                                                                **S**\n  -------------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------ -------\n  id                   string               Identifier of the resource object                                                                                              M\n  objectClass          string               Object class of the resource object                                                                                            O\n  objectInstance       Dn                   Object instance of the resource object                                                                                         O\n  attributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M\n  n/a                  map(array(object))   Name contained objects                                                                                                         M\n\nThis definition of \\\"Resource\\\" does not specify any attributes or name\ncontained objects. Resource representations with specific attributes and\nname contained objects are contained in the NRM definitions. These\ndefinitions should be used in implementations of the Provisioning MnS\ninstead of this generic definition."
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchOperation",
+      "filters": {},
+      "clause": "12.1.3.1.5",
+      "title": "12.1.3.1.5 Operation deleteMOI",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.5 Operation deleteMOI\n\nThis IS operation deletes one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. \\<edit-config\\> can\ndelete one or more specific MOIs but only indirectly supports scope or\nfiltered sets of MOIs that are part of the generic deleteMOI 3GPP\noperation specification. \\<edit-config\\> uses a config block, indicating\nthe MOI(s) to be deleted.\n\nThe Netconf operation attribute on the list representing the\nbaseObjectInstance should be set to delete or remove.\n\nThe default-operation parameter should be set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.5-1 and table 12.1.3.1.5-2.\n\nTable 12.1.3.1.5-1: Mapping of IS deleteMOI input parameters to SS\nequivalents\n\n  **IS operation parameter name**   **SS parameter name**   **S**   **Remark**\n  --------------------------------- ----------------------- ------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  baseObjectInstance                config                  M       A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be deleted MOI and its key.\n  scope                             config                  M       BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\n  filter                            config                  M       Multiple MOIs can be specified in the same operation, emulating filtering.\n\nTable 12.1.3.1.5-2: Mapping of IS deleteMOI output parameters to SS\nequivalents\n\n+-------------------+-------------------+-------+-------------------+\n| **IS operation    | **SS parameter    | **S** | **Remark**        |\n| parameter name**  | name**            |       |                   |\n+===================+===================+=======+===================+\n| deletionList      | no corresponding  | M     | Not supported.    |\n|                   | SS parameter      |       |                   |\n|                   |                   |       | (note 1)          |\n+-------------------+-------------------+-------+-------------------+\n| status            | \\-                | M     | rpc-reply or      |\n|                   |                   |       | rpc-error         |\n|                   |                   |       | indicates general |\n|                   |                   |       | status.           |\n|                   |                   |       |                   |\n|                   |                   |       | The following     |\n|                   |                   |       | elements give     |\n|                   |                   |       | detailed error    |\n|                   |                   |       | information:      |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-tag\\>     |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-path\\>    |\n+-------------------+-------------------+-------+-------------------+\n\nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the deletionList can be retrieved via a\nseparate \\<get-config\\> operation."
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 4/8)\n\nThe properties \\\"op\\\", \\\"path\\\" and \\\"value\\\" shall use the 3GPP JSON\nPatch format (TS 32.158 \\[15\\]) for reporting NRM changes. The \\\"merge\\\"\noperation specified by 3GPP JSON Patch is not supported in\n\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.\n\nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before\nreplacing the value with the new value, that is contained in \\\"value\\\".\n\nThe following example notification (where JSON is expressed in YAML\nnotation) reports an object creation\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\n\nvalue:\n\nid: 1,\n\nobjectClass: ClassA,\n\nattributes:\n\nattrA: 123\n\nattrB:\n\nsubAttrB1: ABC\n\nsubAttrB2: 56\n\nThe following example reports the deletion of that object.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\n\nThe following example reports the addition of a new attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrC\n\nvalue: xyz\n\nThe following example reports the deletion of the attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\\#/attributes/attrC\n\nThe following example reports a value change for the simple attribute\n\\\"attrA\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\nWhen the old value is reported as well, the notification looks like.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\noldValue: 123\n\nThe following example reports a value change for the complex attribute\n\\\"attrB\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nThe previous two notifications can be combined into a single\nnotification as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nNote the operation \\\"replace\\\" has replace semantics and not merge\nsemantics. The following notification reports the value change of the\nattribute field \\\"attrB:subAttrB1\\\" to \\\"def\\\" and the deletion of the\nattribute field \\\"attrB:subAttrB2\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: def\n\nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA/subAttrB1\n\nvalue: def\n\nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 1\n\n\\- 2\n\n\\- 3\n\nIts deletion is reported by the following notification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\\#/attributes/attrD\n\nThe complete replacement of the array is reported by the following\nnotification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 11\n\n\\- 21\n\n\\- 31"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.4.2",
+      "title": "12.1.1.4.4.2 Simple data types",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.2 Simple data types\n\nTable 12.1.1.4.3.2-1: Simple data types\n\n  ----------- ----------------- -------------\n  Type name   Type definition   Description\n  n/a         n/a               n/a\n  ----------- ----------------- -------------"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.4.6",
+      "title": "12.1.1.4.4.6 Enumeration Operation",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.6 Enumeration Operation\n\nTable 12.1.1.4.4.4.6-1: Enumeration Operation\n\n  Enumeration value   Description\n  ------------------- -------------------\n  add                 Create operation\n  remove              Delete operation\n  replace             Replace operation"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation attributes PatchOperation",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.2 Mapping of notifications\n\n##### 12.1.3.2.5 Notification notifyMOIChanges (part 2/3)\n\noperation: remove\n\nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):\n\n\\- operation: add.\n\n\\- path: YANG resource identifier pointing to the\nleaf/leaf-list/container/list representing the attribute. If the\nattribute is represented by a list or leaf-list, then for this last data\nnode the equal sign, the key value(s) or leaf-list value is omitted,\nonly the list/leaf-list name shall be present.\n\n\\- value: the content of the leaf/leaf-list entry(s)/container/list\nentry(s) representing the created attribute encoded according to RFC7951\n\\[50\\]. In case of attribute represented by a container/list the child\ndata nodes are encoded only,the container/list itself is not.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports setting the values of the performanceMetrics simple, multivalue\nattribute:\n\nhref: node1.spandau.de\n\n...\n\nnotificationId: 123456003\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"\n\noperation: add\n\nvalue:\n\n\\- inOctets\n\n\\- inPackets\n\n\\- outPackets\n\nCase 4: Deleting all values of a complete attribute is reported with\n\n\\- operation: remove.\n\n\\- path: Same as in case 3.\n\n\\- value: not present.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the performanceMetrics attribute:\n\nhref: node1.pankow.de\n\n...\n\nnotificationId: 123456004\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"\n\noperation: remove\n\nCase 5: Replacing a (complete) attribute is reported as follows.\n(Removing all previous values of the attribute and setting new\nvalue(s)):\n\n\\- operation: replace.\n\n\\- path: Same as in case 3.\n\n\\- value: Same as in case 3.\n\nCase 6: Adding a new value to a multivalue attribute (an attribute with\nmultiplicity upper bound greater than 1) is reported as follows. (This\ndoes not imply any change to exisiting values):\n\n\\- operation: add/\n\n\\- path: YANG resource identifier pointing to a leaf-list/list entry\nrepresenting an attribute element(value). In case of adding a new\nelement to an attribute with the property isOrdered=True the new\nelement/value is inserted before the pointed element(value), unless the\n\\\"insert\\\" subparameter specifies differently.\n\n\\- value: the leaf-list/list entry representing the new attribute value\nencoded according to RFC7951 \\[50\\]. In case of a list the child data\nnodes are encoded the list-entry itself is not.\n\n\\- insert: an additional input subparameter is added to the moiChange\ninput parameter. This indicates whether the new element/value was added\nbefore or after the element/value specified in path. The subparameter is\nonly valid in case of attributes with the property isOrdered=True. It\ncan take the values \\\"before\\\", \\\"after\\\". If missing it defaults to\n\\\"before\\\".\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports adding a new element/value to the \\\"performanceMetrics\\\"\nattribute before the outPackets element.:\n\nnotificationId: 123456006\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics/performanceMetrics=outPackets\\\"\n\noperation: add\n\ninsert: before\n\nvalue: outOctets\n\nCase 7: Deleting a single element/value from a multivalue attribute is\nreported as follows. (This does not imply any change to any other\nelements):\n\n\\- operation: remove.\n\n\\- path: Same as case 6.\n\n\\- value: not present.\n\nCase 8: Replacement of a single value for a multivalue attribute is\nreported as follows. This implies removing the old value; in case of a\nstructured attribute removal all its subparts. This does not imply any\nchange to any other values:"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation attributes PatchOperation",
+      "filters": {},
+      "clause": "12.1.3.1.2",
+      "title": "12.1.3.1.2 Operation createMOI",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.2 Operation createMOI\n\nThe operation is mapped to a NETCONF \\<edit-config\\> operation, with XML\nelements representing the DN path to the MOI, the MOI itself, its id/key\nand its attributes.\n\nThe NETCONF operation attribute on the list representing the newly\ncreated MOI should be set to 'create'.\n\nThe default-operation parameter of the \\<edit-config\\> operation should\nbe set to none.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.2-1 and table 12.1.3.1.2-2.\n\nTable 12.1.3.1.2-1: Mapping from IS createMOI input parameters to SS\nequivalents\n\n  IS operation parameter name   SS parameter name   S   Remark\n  ----------------------------- ------------------- --- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  managedObjectClass            config              M   XML element's name inside the \\<config\\> element.\n  managedObjectInstance         config              M   A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together wilt the XML elements representing the to be created MOI and its key.\n  attributeListIn               config              M   The key leaf, the \"attributes container\" and leaf, leaf-list or list entries of YANG models representing the attributes.\n\nTable 12.1.3.1.2-2: Mapping from IS createMOI output parameters to SS\nequivalents\n\n+--------------------+--------------------+---+--------------------+\n| IS operation       | SS parameter name  | S | Remark             |\n| parameter name     |                    |   |                    |\n+====================+====================+===+====================+\n| attributeListOut   | no corresponding   | M | Not supported.     |\n|                    | SS parameter       |   |                    |\n|                    |                    |   | (note 1)           |\n+--------------------+--------------------+---+--------------------+\n| status             | \\-                 | M | OperationSucceeded |\n|                    |                    |   | if NETCONF         |\n|                    |                    |   | rpc-reply contains |\n|                    |                    |   | \\<ok\\> element.    |\n|                    |                    |   |                    |\n|                    |                    |   | OperationFailed if |\n|                    |                    |   | NETCONF-reply      |\n|                    |                    |   | contains           |\n|                    |                    |   | \\<rpc-error\\>.     |\n+--------------------+--------------------+---+--------------------+\n\nNOTE 1: Successful Netconf \\<edit-config\\> operations only return an\n\\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\nseparate \\<get-config\\> operation.\n\n**Examples**\n\nCreate ManagedElement=myNode, GNBDUFunction=1\n\n\\<rpc message-id=\\\"101\\\"\\>\n\n\\<edit-config\\>\n\n\\<target\\>\n\n\\<running/\\>\n\n\\</target\\>\n\n\\<default-operation\\>none\\</default-operation\\>\n\n\\<config\\>\n\n\\< ManagedElement\\>\n\n\\<id\\>myNode\\</id\\>\n\n\\<GNBDUFunction operation=\"create\"\\>\n\n\\<id\\>1\\</id\\>\n\n\\<attributes\\>\n\n\\<gNBIdLength\\>25\\</gNBIdLength\\>\n\n\\<gNBId\\>357\\</gNBId\\>\n\n\\<priorityLabel\\>1\\</priorityLabel\\>\n\n\\<gNBDUName\\>du-south-1\\</gNBDUName\\>\n\n\\<!\\-- other attributes \\-\\--\\>\n\n\\</attributes\\>\n\n\\</GNBDUFunction\\>\n\n\\</ManagedElement\\>\n\n\\</config\\>\n\n\\</edit-config\\>\n\n\\</rpc\\>\n\n\\<!\\-- createMO Response \\--\\>\n\n\\<rpc-reply message-id=\\\"101\\\"\nxmlns=\\\"urn:ietf:params:xml:ns:netconf:base:1.0\\\"\\>\n\n\\<ok/\\>\n\n\\</rpc-reply\\>"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation attributes PatchOperation",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.2 Mapping of notifications\n\n##### 12.1.3.2.5 Notification notifyMOIChanges (part 3/3)\n\n\\- operation: replace.\n\n\\- path: Same as case 6.\n\n\\- value: Same as case 6.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports replacing an element/value of the \\\"thresholdInfoList\\\"\nstructured attribute:\n\nnotificationId: 123456008\n\npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1\n\noperation: replace\n\nvalue:\n\n\\- idx: thr1\n\nthresholdDirection: UP\n\nthresholdValue: \\'4.5\\'\n\nCase 9: Adding afield (subpart) of an attribute value is reported as\nfollows (only used for structured attributes represented by a list or\ncontainer in YANG):\n\n\\- operation: add.\n\n\\- path: YANG Resource Identifier pointing to the\nleaf/leaf-list/container/list representing the attribute field. If the\nattribute field is represented by a list or leaf-list, the field has\nmultiplicity upper bound greater than 1, with the property\nisOrdered=True the new element/value is inserted before the pointed\nelement(value), unless the \\\"insert\\\" subparameter specifies\ndifferently.\n\n\\- value: the leaf/leaf-list/container/list representing the new\nattribute field values encoded according to RFC7951. In case of a\nlist/container representing the attribute field, value shall contain\nonly the child data nodes, but not the container/list-entry itself.\n\n\\- insert: In case the field has multiplicity upper bound greater than 1\nand has the property isOrdered=True, the subparameter is used similarly\nas in case 6.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports adding a value to the \\\" hysteresis \\\" attribute subpart:\n\nnotificationId: 123456009\n\npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1/hysteresis\n\noperation: add\n\nvalue: \\'10\\'\n\nCase 10: Deleting a field (subpart) of an attribute is reported as\nfollows. (only used for structured attributes represented by a list or\ncontainer in YANG):\n\n\\- operation: remove.\n\n\\- path: Same as case 9.\n\n\\- value: Not present.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the \\\"hysteresis\\\" attribute field:\n\nnotificationId: 123456010\n\npath:\n3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:ThresholdMonitor=job1/attributes/thresholdInfoList=thr1/hysteresis\n\noperation: remove\n\nCase 11: Replacement of a field (subpart) of an attribute is reported as\nfollows. This implies removing previous value(s). (only used for\nstructured attributes represented by a list or container in YANG):\n\n\\- operation: replace.\n\n\\- path: Same as case 9.\n\n\\- value: Same as case 9."
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation attributes PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 3/5)\n\nIn addition to the new values, the old values may be included in the\nnotification.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.org                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIAttributeValueChanges\\\",        |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeListValueChanges\\\": \\[                                |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"newValueAttrB\\\"                                     |\n|                                                                  |\n| },                                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"oldValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"oldValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nIn the example above the attribute values are of simple type. For\nattributes of structured type, the question is if all attribute fields\nof an attribute, where at least one attribute field changed its value,\nneed to be reported or only those attribute fields that changed value.\nAssume an attribute field that did not change value is not included in\nthe notification. In this case the MnS consumer receiving the\nnotification cannot tell if the attribute field was deleted or if the\nattribute field did not change value. It is not possible to distinguish\nthese two cases based on the information in the notification. For that\nreason, always all attribute fields of an attribute need to be included\nin the notification. For structured attributes with many attribute\nfields this may not be very efficient."
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchOperation attributes PatchOperation",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 5/5)\n\nNote also that for multi-valued attributes all attribute elements of the\nnew value need to be reported. It is not possible to report only added,\ndeleted, or modified attribute elements. Furthermore, the notification\ndoes not allow reporting of deleted attributes. When this is required\nthe MnS producer needs to include always all attributes of the object in\nthe notification. It is outside the present document how the MnS\nproducer signals to the MnS consumer if all attributes or only the\nchanged ones are included in the attribute value change notification.\nThe notification itself does not include this information."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "Components Object",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n#### Components Object  \nHolds a set of reusable objects for different aspects of the OAS.\nAll objects defined within the components object will have no effect on the API unless they are explicitly referenced from properties outside the components object.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---|---\n<a name=\"componentsSchemas\"></a> schemas | Map[`string`, [Schema Object](#schema-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Schema Objects](#schema-object).\n<a name=\"componentsResponses\"></a> responses | Map[`string`, [Response Object](#response-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Response Objects](#response-object)."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "Model with Map/Dictionary Properties",
+      "text": "```json\n{\n\"type\": \"object\",\n\"required\": [\n\"name\"\n],\n\"properties\": {\n\"name\": {\n\"type\": \"string\"\n},\n\"address\": {\n\"$ref\": \"#/components/schemas/Address\"\n},\n\"age\": {\n\"type\": \"integer\",\n\"format\": \"int32\",\n\"minimum\": 0\n}\n}\n}\n```  \n```yaml\ntype: object\nrequired:\n- name\nproperties:\nname:\ntype: string\naddress:\n$ref: '#/components/schemas/Address'\nage:\ntype: integer\nformat: int32\nminimum: 0\n```  \n###### Model with Map/Dictionary Properties  \nFor a simple string to string mapping:  \n```json\n{\n\"type\": \"object\",\n\"additionalProperties\": {\n\"type\": \"string\"\n}\n}\n```  \n```yaml\ntype: object\nadditionalProperties:\ntype: string\n```  \nFor a string to model mapping:  \n```json\n{\n\"type\": \"object\",\n\"additionalProperties\": {\n\"$ref\": \"#/components/schemas/ComplexModel\"\n}\n}\n```  \n```yaml\ntype: object\nadditionalProperties:\n$ref: '#/components/schemas/ComplexModel'\n```  \n###### Model with Example  \n```json\n{\n\"type\": \"object\",\n\"properties\": {\n\"id\": {\n\"type\": \"integer\",\n\"format\": \"int64\"\n},\n\"name\": {\n\"type\": \"string\""
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- [Components Object](#components-object)\n- [Paths Object](#paths-object)\n- [Path Item Object](#path-item-object)\n- [Operation Object](#operation-object)\n- [External Documentation Object](#external-documentation-object)\n- [Parameter Object](#parameter-object)\n- [Request Body Object](#request-body-object)\n- [Media Type Object](#media-type-object)\n- [Encoding Object](#encoding-object)\n- [Responses Object](#responses-object)\n- [Response Object](#response-object)\n- [Callback Object](#callback-object)\n- [Example Object](#example-object)\n- [Link Object](#link-object)\n- [Header Object](#header-object)\n- [Tag Object](#tag-object)\n- [Reference Object](#reference-object)\n- [Schema Object](#schema-object)\n- [Discriminator Object](#discriminator-object)\n- [XML Object](#xml-object)\n- [Security Scheme Object](#security-scheme-object)\n- [OAuth Flows Object](#oauth-flows-object)\n- [OAuth Flow Object](#oauth-flow-object)\n- [Security Requirement Object](#security-requirement-object)"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "Model with Example",
+      "text": "$ref: '#/components/schemas/ComplexModel'\n```  \n###### Model with Example  \n```json\n{\n\"type\": \"object\",\n\"properties\": {\n\"id\": {\n\"type\": \"integer\",\n\"format\": \"int64\"\n},\n\"name\": {\n\"type\": \"string\"\n}\n},\n\"required\": [\n\"name\"\n],\n\"example\": {\n\"name\": \"Puma\",\n\"id\": 1\n}\n}\n```  \n```yaml\ntype: object\nproperties:\nid:\ntype: integer\nformat: int64\nname:\ntype: string\nrequired:\n- name\nexample:\nname: Puma\nid: 1\n```  \n###### Models with Composition  \n```json\n{\n\"components\": {\n\"schemas\": {\n\"ErrorModel\": {\n\"type\": \"object\",\n\"required\": [\n\"message\",\n\"code\"\n],\n\"properties\": {\n\"message\": {\n\"type\": \"string\"\n},\n\"code\": {\n\"type\": \"integer\",\n\"minimum\": 100,\n\"maximum\": 600\n}\n}\n},\n\"ExtendedErrorModel\": {\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/ErrorModel\"\n},\n{\n\"type\": \"object\",\n\"required\": [\n\"rootCause\"\n],\n\"properties\": {\n\"rootCause\": {\n\"type\": \"string\"\n}\n}\n}\n]\n}\n}\n}\n}\n```  \n```yaml\ncomponents:\nschemas:"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Components Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"oasComponents\"></a>components | [Components Object](#components-object) | An element to hold various schemas for the specification.\n<a name=\"oasSecurity\"></a>security | [[Security Requirement Object](#security-requirement-object)] | A declaration of which security mechanisms can be used across the API. The list of values includes alternative security requirement objects that can be used. Only one of the security requirement objects need to be satisfied to authorize a request. Individual operations can override this definition.\n<a name=\"oasTags\"></a>tags | [[Tag Object](#tag-object)] | A list of tags used by the specification with additional metadata. The order of the tags can be used to reflect on their order by the parsing tools. Not all tags that are used by the [Operation Object](#operation-object) must be declared. The tags that are not declared MAY be organized randomly or based on the tools' logic. Each tag name in the list MUST be unique."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref PatchOperation",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in XML\",\n\"externalValue\": \"http://foo.bar/examples/user-example.xml\"\n}\n}\n},\n\"text/plain\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in Plain text\",\n\"externalValue\": \"http://foo.bar/examples/user-example.txt\"\n}\n}\n},\n\"*/*\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in other format\",\n\"externalValue\": \"http://foo.bar/examples/user-example.whatever\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: user to add to the system\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example\nexternalValue: 'http://foo.bar/examples/user-example.json'\n'application/xml':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example in XML"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref PatchOperation",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref PatchOperation",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsParameters\"></a> parameters | Map[`string`, [Parameter Object](#parameter-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Parameter Objects](#parameter-object).\n<a name=\"componentsExamples\"></a> examples | Map[`string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Example Objects](#example-object).\n<a name=\"componentsRequestBodies\"></a> requestBodies | Map[`string`, [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Request Body Objects](#request-body-object).\n<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object)."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref PatchOperation",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "MyResponseType:\noneOf:\n- $ref: '#/components/schemas/Cat'\n- $ref: '#/components/schemas/Dog'\n- $ref: '#/components/schemas/Lizard'\n- $ref: 'https://gigantic-server.com/schemas/Monster/schema.json'\ndiscriminator:\npropertyName: pet_type\nmapping:\ndog: '#/components/schemas/Dog'\nmonster: 'https://gigantic-server.com/schemas/Monster/schema.json'\n```  \nHere the discriminator _value_ of `dog` will map to the schema `#/components/schemas/Dog`, rather than the default (implicit) value of `Dog`.  If the discriminator _value_ does not match an implicit or explicit mapping, no schema can be determined and validation SHOULD fail. Mapping keys MUST be string values, but tooling MAY convert response values to strings for comparison.  \nWhen used in conjunction with the `anyOf` construct, the use of the discriminator can avoid ambiguity where multiple schemas may satisfy a single payload."
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "reusable schemas held in components schemas, $ref PatchOperation",
+      "filters": {},
+      "clause": "",
+      "title": "Operation Object",
+      "text": "'*/*' :\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: error payload\ncontent:\n'text/html':\nschema:\n$ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id\nin: path\ndescription: ID of pet to use\nrequired: true\nschema:\ntype: array\nstyle: simple\nitems:\ntype: string\n```  \n#### Operation Object  \nDescribes a single API operation on a path.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"operationTags\"></a>tags | [`string`] | A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier.\n<a name=\"operationSummary\"></a>summary | `string` | A short summary of what the operation does.\n<a name=\"operationDescription\"></a>description | `string` | A verbose explanation of the operation behavior. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "def7d6ba06a64f90b4a71792070ca79431f2c8f6d916d56f4ecd47bc9e428ee7",
+  "judged_at": "2026-10-18T21:02:31-03:00"
+}

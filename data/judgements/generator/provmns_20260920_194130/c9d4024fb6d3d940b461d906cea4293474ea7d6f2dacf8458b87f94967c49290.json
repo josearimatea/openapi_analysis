@@ -1,0 +1,309 @@
+{
+  "part_id": "generator|provmns_20260920_194130|SCHEMA PatchItem|definition",
+  "evaluation": "generator",
+  "input": "provmns_20260920_194130",
+  "owner": "SCHEMA PatchItem",
+  "aspect": "definition",
+  "summary": "schema present; 1 absent, 1 differing",
+  "answer": {
+    "why_different": "D1 is a different schema value: the generated schema omits the official nullable constraint for value. D2 is a different requiredness declaration, apparently generated from the specification's mandatory (M) markers rather than copied from the official OpenAPI document.",
+    "verdict": "error",
+    "spec_3gpp": "The specification defines op, from, path, and value as mandatory (M), while describing value as having an \"any type\". It also says that from is present only for copy and move operations, creating a conditional requirement that the evidence does not resolve fully in OpenAPI.",
+    "openapi": "OpenAPI 3.0 defines nullable as allowing null and states that its default is false. An empty property schema is allowed as a Schema Object, but it does not preserve the official nullable setting.",
+    "clearer": "official",
+    "clearer_why": "The official schema explicitly communicates that value may be null. Although the generated required list more directly reflects the specification's M markers, value: {} is less informative about the permitted values and omits the explicit null allowance.",
+    "citations": [
+      {
+        "evidence_id": "C1",
+        "quote": "    value:\n      nullable: true"
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "    value: {}\n  required:\n  - op\n  - from\n  - path\n  - value"
+      },
+      {
+        "evidence_id": "S1",
+        "quote": "  value            any type         New value for the resource identified by \"path\".                                                                                 M"
+      },
+      {
+        "evidence_id": "O3",
+        "quote": "nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated schema omits nullable: true, so under OpenAPI's default nullable: false it no longer permits null values. This loses the constraint expressed by the official schema, as shown by C1, C2, and O3."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "improvement",
+        "reason": "The generated required list marks all four PatchItem attributes as required, matching the specification's M markers for op, from, path, and value in S1. The specification's conditional statement that from is present only for copy and move means the precise conditional behavior is not represented, but the generated declaration is better supported by the supplied specification than the official list."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem",
+      "filters": {},
+      "clause": "12.1.1.4.1a.9",
+      "title": "12.1.1.4.1a.9 Type PatchItem",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.9 Type PatchItem\n\nTable 12.1.1.4.1a.9 -1: Definition of type PatchItem\n\n  ---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---\n  Attribute name   Data type        Description                                                                                                                        S\n  op               PatchOperation   Patch operation.                                                                                                                   M\n  from             string           Present only for \\\"copy\\\" and \\\"move\\\" operations, identifies the value to be copied or moved to the location specified by path.   M\n  path             string           Path specifying the patched value.                                                                                                 M\n  value            any type         New value for the resource identified by \\\"path\\\".                                                                                 M\n  ---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.4 Data type definitions\n\n##### 12.1.1.4.1 General\n\nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.\n\nTable 12.1.1.4.1-1: Data types defined in this specification\n\n  Data type                        Reference       Description\n  -------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  CmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\n  SourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\n  ScopeType                        12.1.1.4.4.5    Scope type of a scope\n  Operation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\n  Insert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\n  PatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\n  Resource                         12.1.1.4.1a.1   Used for resource representations\n  Scope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\n  CorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\n  MoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\n  NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\n  NotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\n  NotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\n  NotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\n  PatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document\n\nTable 12.1.1.4.1-2: Data types imported\n\n  Data type                   Reference          Description\n  --------------------------- ------------------ ---------------------------------------------------------------------\n  DateTime                    TS 28.623 \\[44\\]   Date and time\n  Dn                          TS 28.623 \\[44\\]   DN type\n  SystemDN                    TS 28.623 \\[44\\]   systemDN type\n  Uri                         TS 28.623 \\[44\\]   URI type\n  AttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\n  AttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\n  Filter                      TS 28.623 \\[44\\]   Filter type\n  NotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationType            TS 28.623 \\[44\\]   Notification type\n  NotificationHeader          TS 28.623 \\[44\\]   Notification header\n  ErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.3 HTTP PATCH\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.3-2: Data structures supported by the PATCH request\nbody on this resource\n\n+---------------+--------------------------------------------+-------+\n| **Data type** | **Description**                            | **S** |\n+===============+============================================+=======+\n| Resource, or  | Patch document describing the set of       | M     |\n|               | modifications to be applied to the         |       |\n| array(object) | targeted resources.                        |       |\n|               |                                            |       |\n|               | The following patch media types are        |       |\n|               | available:                                 |       |\n|               |                                            |       |\n|               | \\- \\\"application/merge-patch+json\\\" (RFC   |       |\n|               | 7396 \\[37\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-merge-patch+json\\\"   |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n|               |                                            |       |\n|               | \\- \\\"application/json-patch+json\\\" (RFC    |       |\n|               | 6902 \\[36\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-json-patch+json\\\"    |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n+---------------+--------------------------------------------+-------+\n\nTable 12.1.1.2.1.1.3.3-3: Data structures supported by the PATCH\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                **S**\n  --------------- -------------------- ------------------------------ -------\n  ErrorResponse   4xx/5xx              Returned in case of an error   M"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem",
+      "filters": {},
+      "clause": "12.1.1.4.4.7",
+      "title": "12.1.1.4.4.7 Enumeration PatchOperation",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n###### 12.1.1.4.4.7 Enumeration PatchOperation\n\nTable 12.1.1.4.4.4.7-1: Enumeration PatchOperation\n\n  Enumeration value   Description\n  ------------------- -------------------\n  add                 Add operation\n  replace             Replace operation\n  remove              Remove operation\n  copy                Copy operation\n  move                Move operation\n  test                Test operation"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchItem",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 1/8)\n\nTable 12.1.1.4.1a.4 -1: Definition of type MoiChange"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchItem",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 5/8)\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 11\n\n\\- 21\n\n\\- 31\n\nThe following example reports the second item in the array changed to\n\\\"22\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrD/1\n\nvalue: 22\n\nNote the array index of the second item is \\\"1\\\".\n\nAssume now \\\"attrE\\\" is a JSON array with complex array items, for\nexample.\n\n\\[{subItemE1: 11, subItemD2: abc}, {subItemE1: 21, subItemE2: def},\n{subItemE1: 31, subItemE2\\\": ghi}.\n\nA value change to\n\n\\[{subItemE1: 11, subItemE2: abc}, {subItemE1: 21, subItemE2: xyz},\n{subItemE1: 31, subItemE2\\\": ghi}.\n\nis reported by\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrE/1/subItemE2\n\nvalue: xyz\n\nWhen \\\"subItemE2\\\" is defined as array item key at stage 2, then\n\\\"attrE\\\" should contain a JSON map.\n\nattrE:\n\n11:\n\nsubItemE2: abc\n\n21:\n\nsubItemE2: def\n\n31:\n\nsubItemE2: ghi\n\nThe same change as above is now reported by the notification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrE/21/subItemD2\n\nvalue: xyz\n\nWhen all attributes of an object have been updated with a new value, the\nMnS producer may use a compact format reporting that the \\\"attributes\\\"\ncontainer was updated completely."
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchItem",
+      "filters": {},
+      "clause": "12.1.1.4.1a.1",
+      "title": "12.1.1.4.1a.1 Type Resource",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.1 Type Resource\n\n**Table 12.1.1.4.1a.1 -1: Definition of type Resource**\n\n  **Attribute name**   **Data type**        **Description**                                                                                                                **S**\n  -------------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------ -------\n  id                   string               Identifier of the resource object                                                                                              M\n  objectClass          string               Object class of the resource object                                                                                            O\n  objectInstance       Dn                   Object instance of the resource object                                                                                         O\n  attributes           object               \\\"attributes\\\" (JSON) object whose members are the IOC attributes (except for \\\"id\", \\\"objectClass\" and \\\"objectInstance\\\").   M\n  n/a                  map(array(object))   Name contained objects                                                                                                         M\n\nThis definition of \\\"Resource\\\" does not specify any attributes or name\ncontained objects. Resource representations with specific attributes and\nname contained objects are contained in the NRM definitions. These\ndefinitions should be used in implementations of the Provisioning MnS\ninstead of this generic definition."
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchItem",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 4/8)\n\nThe properties \\\"op\\\", \\\"path\\\" and \\\"value\\\" shall use the 3GPP JSON\nPatch format (TS 32.158 \\[15\\]) for reporting NRM changes. The \\\"merge\\\"\noperation specified by 3GPP JSON Patch is not supported in\n\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.\n\nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before\nreplacing the value with the new value, that is contained in \\\"value\\\".\n\nThe following example notification (where JSON is expressed in YAML\nnotation) reports an object creation\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\n\nvalue:\n\nid: 1,\n\nobjectClass: ClassA,\n\nattributes:\n\nattrA: 123\n\nattrB:\n\nsubAttrB1: ABC\n\nsubAttrB2: 56\n\nThe following example reports the deletion of that object.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\n\nThe following example reports the addition of a new attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrC\n\nvalue: xyz\n\nThe following example reports the deletion of the attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\\#/attributes/attrC\n\nThe following example reports a value change for the simple attribute\n\\\"attrA\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\nWhen the old value is reported as well, the notification looks like.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\noldValue: 123\n\nThe following example reports a value change for the complex attribute\n\\\"attrB\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nThe previous two notifications can be combined into a single\nnotification as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nNote the operation \\\"replace\\\" has replace semantics and not merge\nsemantics. The following notification reports the value change of the\nattribute field \\\"attrB:subAttrB1\\\" to \\\"def\\\" and the deletion of the\nattribute field \\\"attrB:subAttrB2\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: def\n\nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA/subAttrB1\n\nvalue: def\n\nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 1\n\n\\- 2\n\n\\- 3\n\nIts deletion is reported by the following notification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\\#/attributes/attrD\n\nThe complete replacement of the array is reported by the following\nnotification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 11\n\n\\- 21\n\n\\- 31"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type PatchItem",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 7/8)\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/3gpp\\\",                           |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOICreation\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"moiChanges\\\": \\[                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"notificationId\\\": 123,                                         |\n|                                                                  |\n| \\\"op\\\": \\\"replace\\\",                                             |\n|                                                                  |\n| \\\"path\\\": \\\"/ClassA=1\\#/attributes\\\",                            |\n|                                                                  |\n| \\\"value\\\": {                                                     |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"oldValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nTo allow the MnS consumer to understand which attributes have been\nupdated, the MnS producer may decide to send the following notification."
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem attributes value required",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 5/5)\n\nNote also that for multi-valued attributes all attribute elements of the\nnew value need to be reported. It is not possible to report only added,\ndeleted, or modified attribute elements. Furthermore, the notification\ndoes not allow reporting of deleted attributes. When this is required\nthe MnS producer needs to include always all attributes of the object in\nthe notification. It is outside the present document how the MnS\nproducer signals to the MnS consumer if all attributes or only the\nchanged ones are included in the attribute value change notification.\nThe notification itself does not include this information."
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem attributes value required",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 4/5)\n\nIn the next example \\\"attrA\\\" is a structured attribute with the\nattribute fields \\\"attrFieldAA\\\" and \\\"attrFieldAB\\\". The attribute\nfield \\\"attrFieldAA\\\" changed value, the attribute field \\\"attrFieldAB\\\"\ndid not change value. The attribute value change notification reporting\nthis change may look as follows.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.org                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIAttributeValueChanges\\\",        |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeListValueChanges\\\": \\[                                |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": {                                                     |\n|                                                                  |\n| \\\"attrFieldAA\\\": \\\"newValueAttrFieldAA\\\",                        |\n|                                                                  |\n| \\\"attrFieldAB\\\": \\\"oldValueAttrFieldAB\\\"                         |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| },                                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": {                                                     |\n|                                                                  |\n| \\\"attrFieldAA\\\": \\\"oldValueAttrFieldAA\\\",                        |\n|                                                                  |\n| \\\"attrFieldAB\\\": \\\"oldValueAttrFieldAB\\\"                         |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+"
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem attributes value required",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 2/5)\n\nThe following example notification reports the modification of the\nattribute values for \\\"attrA\\\" and \\\"attrB\\\".\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.org                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIAttributeValueChanges\\\",        |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeListValueChanges\\\": \\[                                |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"newValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nIn addition to the new values, the old values may be included in the\nnotification."
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem attributes value required",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.2 Mapping of notifications\n\n##### 12.1.3.2.5 Notification notifyMOIChanges (part 2/3)\n\noperation: remove\n\nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):\n\n\\- operation: add.\n\n\\- path: YANG resource identifier pointing to the\nleaf/leaf-list/container/list representing the attribute. If the\nattribute is represented by a list or leaf-list, then for this last data\nnode the equal sign, the key value(s) or leaf-list value is omitted,\nonly the list/leaf-list name shall be present.\n\n\\- value: the content of the leaf/leaf-list entry(s)/container/list\nentry(s) representing the created attribute encoded according to RFC7951\n\\[50\\]. In case of attribute represented by a container/list the child\ndata nodes are encoded only,the container/list itself is not.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports setting the values of the performanceMetrics simple, multivalue\nattribute:\n\nhref: node1.spandau.de\n\n...\n\nnotificationId: 123456003\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"\n\noperation: add\n\nvalue:\n\n\\- inOctets\n\n\\- inPackets\n\n\\- outPackets\n\nCase 4: Deleting all values of a complete attribute is reported with\n\n\\- operation: remove.\n\n\\- path: Same as in case 3.\n\n\\- value: not present.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the performanceMetrics attribute:\n\nhref: node1.pankow.de\n\n...\n\nnotificationId: 123456004\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"\n\noperation: remove\n\nCase 5: Replacing a (complete) attribute is reported as follows.\n(Removing all previous values of the attribute and setting new\nvalue(s)):\n\n\\- operation: replace.\n\n\\- path: Same as in case 3.\n\n\\- value: Same as in case 3.\n\nCase 6: Adding a new value to a multivalue attribute (an attribute with\nmultiplicity upper bound greater than 1) is reported as follows. (This\ndoes not imply any change to exisiting values):\n\n\\- operation: add/\n\n\\- path: YANG resource identifier pointing to a leaf-list/list entry\nrepresenting an attribute element(value). In case of adding a new\nelement to an attribute with the property isOrdered=True the new\nelement/value is inserted before the pointed element(value), unless the\n\\\"insert\\\" subparameter specifies differently.\n\n\\- value: the leaf-list/list entry representing the new attribute value\nencoded according to RFC7951 \\[50\\]. In case of a list the child data\nnodes are encoded the list-entry itself is not.\n\n\\- insert: an additional input subparameter is added to the moiChange\ninput parameter. This indicates whether the new element/value was added\nbefore or after the element/value specified in path. The subparameter is\nonly valid in case of attributes with the property isOrdered=True. It\ncan take the values \\\"before\\\", \\\"after\\\". If missing it defaults to\n\\\"before\\\".\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports adding a new element/value to the \\\"performanceMetrics\\\"\nattribute before the outPackets element.:\n\nnotificationId: 123456006\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics/performanceMetrics=outPackets\\\"\n\noperation: add\n\ninsert: before\n\nvalue: outOctets\n\nCase 7: Deleting a single element/value from a multivalue attribute is\nreported as follows. (This does not imply any change to any other\nelements):\n\n\\- operation: remove.\n\n\\- path: Same as case 6.\n\n\\- value: not present.\n\nCase 8: Replacement of a single value for a multivalue attribute is\nreported as follows. This implies removing the old value; in case of a\nstructured attribute removal all its subparts. This does not imply any\nchange to any other values:"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "PatchItem attributes value required",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.5 Type NotifyMoiCreation (part 2/3)\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOICreation\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeList\\\":                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"valueAttrA\\\",                                       |\n|                                                                  |\n| \\\"attrB\\\": \\\"valueAttrB\\\"                                        |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nThe creation of an empty object not containing any attribute values is\nreported as follows."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "text/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"mediaTypeSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the request body.\n<a name=\"mediaTypeExample\"></a>example | Any | Example of the media type.  The example object SHOULD be in the correct format as specified by the media type.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- type - Value MUST be a string. Multiple types via an array are not supported.\n- allOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- oneOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- anyOf - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- not - Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- items - Value MUST be an object and not an array. Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema. `items` MUST be present if the `type` is `array`.\n- properties - Property definitions MUST be a [Schema Object](#schema-object) and not a standard JSON Schema (inline or referenced)."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "- properties - Property definitions MUST be a [Schema Object](#schema-object) and not a standard JSON Schema (inline or referenced).\n- additionalProperties - Value can be boolean or object. Inline or referenced schema MUST be of a [Schema Object](#schema-object) and not a standard JSON Schema.\n- description - [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n- format - See [Data Type Formats](#dataTypeFormat) for further details. While relying on JSON Schema's defined formats, the OAS offers a few additional predefined formats.\n- default - The default value represents what would be assumed by the consumer of the input as the value of the schema if one is not provided. Unlike JSON Schema, the value MUST conform to the defined type for the Schema Object defined at the same level. For example, if `type` is `string`, then `default` can be `\"foo\"` but cannot be `1`."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Schema Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"parameterSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the parameter.\n<a name=\"parameterExample\"></a>example | Any | Example of the media type.  The example SHOULD match the specified schema and encoding properties if present.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema. To represent examples of media types that cannot naturally be represented in JSON or YAML, a string value can contain the example with escaping where necessary."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required value required",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)  \nThe OpenAPI Specification allows combining and extending model definitions using the `allOf` property of JSON Schema, in effect offering model composition.\n`allOf` takes an array of object definitions that are validated *independently* but together compose a single object.  \nWhile composition offers model extensibility, it does not imply a hierarchy between the models.\nTo support polymorphism, the OpenAPI Specification adds the `discriminator` field.\nWhen used, the `discriminator` will be the name of the property that decides which schema definition validates the structure of the model.\nAs such, the `discriminator` field MUST be a required field.\nThere are two ways to define the value of a discriminator for an inheriting instance.\n- Use the schema name."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required value required",
+      "filters": {},
+      "clause": "",
+      "title": "Models with Polymorphism Support",
+      "text": "ExtendedErrorModel:\nallOf:\n- $ref: '#/components/schemas/ErrorModel'\n- type: object\nrequired:\n- rootCause\nproperties:\nrootCause:\ntype: string\n```  \n###### Models with Polymorphism Support  \n```json\n{\n\"components\": {\n\"schemas\": {\n\"Pet\": {\n\"type\": \"object\",\n\"discriminator\": {\n\"propertyName\": \"petType\"\n},\n\"properties\": {\n\"name\": {\n\"type\": \"string\"\n},\n\"petType\": {\n\"type\": \"string\"\n}\n},\n\"required\": [\n\"name\",\n\"petType\"\n]\n},\n\"Cat\": {\n\"description\": \"A representation of a cat. Note that `Cat` will be used as the discriminator value.\",\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/Pet\"\n},\n{\n\"type\": \"object\",\n\"properties\": {\n\"huntingSkill\": {\n\"type\": \"string\",\n\"description\": \"The measured skill for hunting\",\n\"default\": \"lazy\",\n\"enum\": [\n\"clueless\",\n\"lazy\",\n\"adventurous\",\n\"aggressive\"\n]\n}\n},\n\"required\": [\n\"huntingSkill\"\n]\n}\n]\n},\n\"Dog\": {\n\"description\": \"A representation of a dog. Note that `Dog` will be used as the discriminator value.\",\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/Pet\"\n},\n{"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required value required",
+      "filters": {},
+      "clause": "",
+      "title": "XML Modeling",
+      "text": "As such, the `discriminator` field MUST be a required field.\nThere are two ways to define the value of a discriminator for an inheriting instance.\n- Use the schema name.\n- Override the schema name by overriding the property with a new value. If a new value exists, this takes precedence over the schema name.\nAs such, inline schema definitions, which do not have a given id, *cannot* be used in polymorphism.  \n###### XML Modeling  \nThe [xml](#schemaXml) property allows extra definitions when translating the JSON definition to XML.\nThe [XML Object](#xml-object) contains additional information about the available options.  \n##### Schema Object Examples  \n###### Primitive Sample  \n```json\n{\n\"type\": \"string\",\n\"format\": \"email\"\n}\n```  \n```yaml\ntype: string\nformat: email\n```  \n###### Simple Model  \n```json\n{\n\"type\": \"object\",\n\"required\": [\n\"name\"\n],\n\"properties\": {\n\"name\": {\n\"type\": \"string\"\n},\n\"address\": {\n\"$ref\": \"#/components/schemas/Address\"\n},\n\"age\": {\n\"type\": \"integer\","
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required value required",
+      "filters": {},
+      "clause": "",
+      "title": "Composition and Inheritance (Polymorphism)",
+      "text": "<a name=\"schemaXml\"></a>xml | [XML Object](#xml-object) | This MAY be used only on properties schemas. It has no effect on root schemas. Adds additional metadata to describe the XML representation of this property.\n<a name=\"schemaExternalDocs\"></a>externalDocs | [External Documentation Object](#external-documentation-object) | Additional external documentation for this schema.\n<a name=\"schemaExample\"></a>example | Any | A free-form property to include an example of an instance for this schema. To represent examples that cannot be naturally represented in JSON or YAML, a string value can be used to contain the example with escaping where necessary.\n<a name=\"schemaDeprecated\"></a> deprecated | `boolean` | Specifies that a schema is deprecated and SHOULD be transitioned out of usage. Default value is `false`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n###### Composition and Inheritance (Polymorphism)"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "allOf composition and inheritance, properties, required value required",
+      "filters": {},
+      "clause": "",
+      "title": "Model with Example",
+      "text": "$ref: '#/components/schemas/ComplexModel'\n```  \n###### Model with Example  \n```json\n{\n\"type\": \"object\",\n\"properties\": {\n\"id\": {\n\"type\": \"integer\",\n\"format\": \"int64\"\n},\n\"name\": {\n\"type\": \"string\"\n}\n},\n\"required\": [\n\"name\"\n],\n\"example\": {\n\"name\": \"Puma\",\n\"id\": 1\n}\n}\n```  \n```yaml\ntype: object\nproperties:\nid:\ntype: integer\nformat: int64\nname:\ntype: string\nrequired:\n- name\nexample:\nname: Puma\nid: 1\n```  \n###### Models with Composition  \n```json\n{\n\"components\": {\n\"schemas\": {\n\"ErrorModel\": {\n\"type\": \"object\",\n\"required\": [\n\"message\",\n\"code\"\n],\n\"properties\": {\n\"message\": {\n\"type\": \"string\"\n},\n\"code\": {\n\"type\": \"integer\",\n\"minimum\": 100,\n\"maximum\": 600\n}\n}\n},\n\"ExtendedErrorModel\": {\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/ErrorModel\"\n},\n{\n\"type\": \"object\",\n\"required\": [\n\"rootCause\"\n],\n\"properties\": {\n\"rootCause\": {\n\"type\": \"string\"\n}\n}\n}\n]\n}\n}\n}\n}\n```  \n```yaml\ncomponents:\nschemas:"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "c9d4024fb6d3d940b461d906cea4293474ea7d6f2dacf8458b87f94967c49290",
+  "judged_at": "2026-10-18T21:00:13-03:00"
+}

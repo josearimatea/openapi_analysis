@@ -1,0 +1,300 @@
+{
+  "part_id": "generator|provmns_20260828_232853|SCHEMA Filter|extra",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "SCHEMA Filter",
+  "aspect": "extra",
+  "summary": "schema extra; shape official — vs generated type=object; external in the official YAML (TS28623_ComDefs.yaml); the generated document defines its own copy; 1 extra",
+  "answer": {
+    "why_different": "The generated side introduces a local `components.schemas.Filter` definition, whereas the official side has no local schema at this location and uses an external definition. This is a structural/address difference: the schema is defined locally rather than referenced from the external document.",
+    "verdict": "uncertain",
+    "spec_3gpp": "The specification identifies `Filter` as a data type for the filter query parameter and describes its filtering purpose, but the supplied passages do not define the complete schema structure or require a particular OpenAPI reference location.",
+    "openapi": "OpenAPI permits a Reference Object wherever a Schema Object can be used, and recommends using `$ref` when an OpenAPI document is divided into connected parts. However, the supplied evidence does not establish whether this generated local schema is used instead of the authoritative external definition or whether the local definition is incomplete.",
+    "clearer": "official",
+    "clearer_why": "The official external definition provides the authoritative reusable schema, while the generated `type: object` line gives no properties or filtering constraints and therefore does not explain the Filter data type adequately.",
+    "citations": [
+      {
+        "evidence_id": "C2",
+        "quote": "components.schemas.Filter:\n  type: object"
+      },
+      {
+        "evidence_id": "O8",
+        "quote": "In the latter case, `$ref` fields MUST be used in the specification to reference those parts"
+      },
+      {
+        "evidence_id": "O4",
+        "quote": "Alternatively, any time a Schema Object can be used, a Reference Object can be used in its place."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "uncertain",
+        "reason": "This is a local-definition versus external-reference difference. The reference recommends `$ref` for connected document parts, but the supplied evidence does not show the external schema's contents or prove that the generated local definition changes the effective API semantics; therefore the result is uncertain rather than a definite error."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter",
+      "filters": {},
+      "clause": "12.1.3.1.3",
+      "title": "12.1.3.1.3 Operation getMOIAttributes",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.3 Operation getMOIAttributes (part 2/4)\n\n+--------------------+-------------------+---+--------------------+\n| IS operation       | SS parameter name | S | Remark             |\n| parameter name     |                   |   |                    |\n+====================+===================+===+====================+\n| baseObjectInstance | filter            | M | Initial part of    |\n|                    |                   |   | the filter         |\n|                    |                   |   | element.           |\n|                    |                   |   |                    |\n|                    |                   |   | For subtree filter |\n|                    |                   |   | this is a set of   |\n|                    |                   |   | XML element        |\n|                    |                   |   | representing lists |\n|                    |                   |   | containing MOIs    |\n|                    |                   |   | together with the  |\n|                    |                   |   | leafs representing |\n|                    |                   |   | key values for     |\n|                    |                   |   | these MOIs from    |\n|                    |                   |   | the root MOI (e.g. |\n|                    |                   |   | ManagedElement) to |\n|                    |                   |   | the                |\n|                    |                   |   | b                  |\n|                    |                   |   | aseObjectInstance. |\n|                    |                   |   |                    |\n|                    |                   |   | For Xpath filter   |\n|                    |                   |   | it is the initial  |\n|                    |                   |   | parts of the Xpath |\n|                    |                   |   | expression         |\n|                    |                   |   | representing the   |\n|                    |                   |   | same information.  |\n+--------------------+-------------------+---+--------------------+\n| scope              | filter            | M | BASE\\_ONLY and     |\n|                    |                   |   | BASE\\_ALL realized |\n|                    |                   |   | by the initial XML |\n|                    |                   |   | elements of the    |\n|                    |                   |   | \\<get\\> operation. |\n|                    |                   |   | BASE\\_SUBTREE and  |\n|                    |                   |   | BASE\\_NTH\\_LEVEL   |\n|                    |                   |   | is encoded in the  |\n|                    |                   |   | Xpath filter.      |\n+--------------------+-------------------+---+--------------------+\n| level              | filter            | M | Included in the    |\n|                    |                   |   | Xpath filter, see  |\n|                    |                   |   | examples. (If      |\n|                    |                   |   | level is used      |\n|                    |                   |   | Xpath filtering    |\n|                    |                   |   | must be used.      |\n|                    |                   |   |                    |\n|                    |                   |   | For BASE\\_SUBTREE  |\n|                    |                   |   | the levels number  |\n|                    |                   |   | is transformed     |\n|                    |                   |   | into a number of   |\n|                    |                   |   | filter             |\n|                    |                   |   | sub-expressions    |\n|                    |                   |   | joined by the OR   |\n|                    |                   |   | operator.          |\n|                    |                   |   |                    |"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter",
+      "filters": {},
+      "clause": "12.1.3.1.3",
+      "title": "12.1.3.1.3 Operation getMOIAttributes",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.3 Operation getMOIAttributes (part 3/4)\n\n|                    |                   |   | operator.          |\n|                    |                   |   |                    |\n|                    |                   |   | For                |\n|                    |                   |   | BASE\\_NTH\\_LEVEL   |\n|                    |                   |   | included in the    |\n|                    |                   |   | Xpath expression   |\n|                    |                   |   | as a sequence of   |\n|                    |                   |   | '\\*' parts         |\n|                    |                   |   | (descendant axis)  |\n|                    |                   |   | The number of '\\*' |\n|                    |                   |   | correspond to the  |\n|                    |                   |   | number of levels.  |\n+--------------------+-------------------+---+--------------------+\n| filter             | filter            | M | Netconf Subtree or |\n|                    |                   |   | Xpath filter       |\n+--------------------+-------------------+---+--------------------+\n| attributeListIn    | filter            | M | add the attributes |\n|                    |                   |   | to the subtree or  |\n|                    |                   |   | Xpath filter       |\n+--------------------+-------------------+---+--------------------+"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 1/2)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.2-1: URI query parameters supported by the GET\nmethod on this resource\n\n+------------+----------------+----------------------+-------+\n| **Name**   | **Data type**  | **Description**      | **S** |\n+============+================+======================+=======+\n| scope      | Scope          | Extends the set of   | O     |\n|            |                | targeted resources   |       |\n|            | style: form    | beyond the base      |       |\n|            |                | resource identified  |       |\n|            | explode: true  | with the authority   |       |\n|            |                | and path component   |       |\n|            |                | of the URI.          |       |\n+------------+----------------+----------------------+-------+\n| filter     | Filter         | Reduces the targeted | O     |\n|            |                | set of resources by  |       |\n|            |                | applying a filter to |       |\n|            |                | the scoped set of    |       |\n|            |                | resource             |       |\n|            |                | representations.     |       |\n|            |                | Only resources       |       |\n|            |                | representations for  |       |\n|            |                | which the filter     |       |\n|            |                | construct evaluates  |       |\n|            |                | to \\\"true\\\" are      |       |\n|            |                | targeted.            |       |\n+------------+----------------+----------------------+-------+\n| attributes | array(string)  | Attributes of the    | O     |\n|            |                | scoped resources to  |       |\n|            | style: form    | be returned. The     |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of attribute names.  |       |\n+------------+----------------+----------------------+-------+\n| fields     | array(string)  | Attribute fields of  | O     |\n|            |                | the scoped resources |       |\n|            | style: form    | to be returned. The  |       |\n|            |                | value is a           |       |\n|            | explode: false | comma-separated list |       |\n|            |                | of JSON pointers to  |       |\n|            |                | the attribute        |       |\n|            |                | fields.              |       |\n+------------+----------------+----------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.2-2: Data structures supported by the GET request\nbody on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.4",
+      "title": "12.1.1.3.2.1.3.4 HTTP DELETE",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.4 HTTP DELETE\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.4-1: URI query parameters supported by the DELETE\nmethod on this resource\n\n+----------+---------------+--------------------------------+-------+\n| **Name** | **Data type** | **Description**                | **S** |\n+==========+===============+================================+=======+\n| scope    | Scope         | Extends the set of targeted    | O     |\n|          |               | resources beyond the base      |       |\n|          | style: form   | resource identified with the   |       |\n|          |               | authority and path component   |       |\n|          | explode: true | of the URI.                    |       |\n+----------+---------------+--------------------------------+-------+\n| filter   | Filter        | Reduces the targeted set of    | O     |\n|          |               | resources by applying a filter |       |\n|          |               | to the scoped set of resource  |       |\n|          |               | representations. Only          |       |\n|          |               | resources representations for  |       |\n|          |               | which the filter construct     |       |\n|          |               | evaluates to \\\"true\\\" are      |       |\n|          |               | targeted.                      |       |\n+----------+---------------+--------------------------------+-------+\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.4-2: Data structures supported by the DELETE\nrequest body on this resource\n\n  **Data type**   **Description**   **S**\n  --------------- ----------------- -------\n  n/a             n/a               n/a\n\nTable 12.1.1.3.2.1.3.4-3: Data structures supported by the DELETE\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                  **S**\n  --------------- -------------------- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -------\n  array(Uri)      200 OK               Status code returned, when query parameters are present in the request and one or multiple resources are deleted. The URIs of the deleted resources are returned in the response message body.   M\n  n/a             204 No Content       Status code returned, when no query parameters are present in the request and only one resource is deleted. The message body is empty.                                                           M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                     M"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter",
+      "filters": {},
+      "clause": "12.1.3.1.3",
+      "title": "12.1.3.1.3 Operation getMOIAttributes",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.3 Operation getMOIAttributes (part 4/4)\n\nTable 12.1.3.1.3-2: Mapping of IS getMOIAttributes output parameters to\nSS equivalents\n\n  IS operation parameter name   SS parameter name   S   Remark\n  ----------------------------- ------------------- --- -------------------------------------------------------------------\n  managedObjectClass            data                M   Can be extracted from the NETCONF \\<rpc-reply\\> \\<data\\> elements\n  managedObjectInstance         data                M   Can be extracted from the NETCONF \\<rpc-reply\\> \\<data\\> elements\n  attributeListOut              data                M   Can be extracted from the NETCONF \\<rpc-reply\\> \\<data\\> elements\n  status                        data                M   rpc-reply or rpc-error indicates general status.\n\nIf scope is ***BASE\\_ONLY*** the \\<get\\> shall be directed against the\n\"attributes\" container of the baseObjectInstance.\n\n**Example 1**\n\nA getMOIAttributes for base object ManagedElement=myNode, scope =\nBASE\\_ONLY, filter=none, attributesListIn=empty is mapped into the\nfollowing \\<get-config\\> operation -\n\n\\<rpc message-id=\\\"101\\\"\n\nxmlns=\\\"urn:ietf:params:xml:ns:netconf:base:1.0\\\"\\>\n\n\\<get-config\\>\n\n\\<source\\>\n\n\\<running/\\>\n\n\\</source\\>\n\n\\<filter type=\\\"subtree\\\"\\>\n\n\\<ManagedElement\\>\n\n\\<id\\>myNode\\</id\\>\n\n\\<attributes/\\>\n\n\\</ManagedElement\\>\n\n\\</filter\\>\n\n\\</get-config\\>\n\n\\</rpc\\>\n\nIf scope is ***BASE\\_ALL*** the \\<get\\> shall be directed against the\nlist representing the baseObjectInstance.\n\n**Example 2**\n\nA getMOIAttributes for base object ManagedElement=myNode, scope =\nBASE\\_ALL, filter=, MeasurementControl.pMAdministrativeState=UNLOCKED,\nattributesListIn=empty.\n\n\\<rpc message-id=\\\"101\\\"\n\nxmlns=\\\"urn:ietf:params:xml:ns:netconf:base:1.0\\\"\\>\n\n\\<get\\>\n\n\\<source\\>\n\n\\<running/\\>\n\n\\</source\\>\n\n\\<filter type=\\\"subtree\\\"\\>\n\n\\<ManagedElement\\>\n\n\\<id\\>myNode\\</id\\>\n\n\\<MeasurementControl\\>\n\n\\<pMAdministrativeState\\>\n\nUNLOCKED\n\n\\</pMAdministrativeState\\>\n\n\\</MeasurementControl\\>\n\n\\</ManagedElement\\>\n\n\\</filter\\>\n\n\\</get\\>\n\n\\</rpc\\>\n\nIf scope is ***BASE\\_SUBTREE*** the \\<get\\> shall be directed against\nthe list representing the baseObjectInstance. The Xpath filter\nexpression will need a sub-expression for each level joined by the OR\noperator.\n\n**Example 3**\n\nA getMOIAttributes for base object ManagedElement=me1, scope = BASE\\_\nSUBTREE, level=2, filter=none, attributesListIn=empty.\n\n\\<rpc xmlns=\\\"urn:ietf:params:xml:ns:netconf:base:1.0\\\"\nmessage-id=\\\"101\\\"\\>\n\n\\<get\\>\n\n\\<source\\>\n\n\\<running/\\>\n\n\\</source\\>\n\n\\<filter type=\\\"xpath\\\"\n\nselect=\\\"/me3gpp:ManagedElement\\[id=\\'me1\\'\\]/attributes \\|\n\n/me3gpp:ManagedElement\\[id=\\'me1\\'\\]/\\*/attributes \\|\n\n/me3gpp:ManagedElement\\[id=\\'me1\\'\\]/\\*/\\*/attributes\\\" /\\>\n\n\\</get\\>\n\n\\</rpc\\>\n\nIf scope is ***BASE\\_NTH\\_LEVEL*** the \\<get\\> shall be directed against\nthe list representing classes at the N*th* level under the\nbaseObjectInstance. The number of '\\*' parts (descendant axis) will\ncorrespond to the number of levels.\n\n**Example 4**\n\nA getMOIAttributes for base object ManagedElement=myNode, scope =\nBASE\\_NTH\\_LEVEL, level=2, filter=none, attributesListIn=empty.\n\n\\<rpc xmlns=\\\"urn:ietf:params:xml:ns:netconf:base:1.0\\\"\nmessage-id=\\\"101\\\"\\>\n\n\\<get\\>\n\n\\<source\\>\n\n\\<running/\\>\n\n\\</source\\>\n\n\\<filter type=\\\"xpath\\\"\n\nselect=\\\"/me3gpp:ManagedElement\\[id=\\'me1\\'\\]/\\*/\\*/attributes\\\"/\\>\n\n\\</get\\>\n\n\\</rpc\\>"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Filter",
+      "filters": {},
+      "clause": "12.1.1.4.1a.9",
+      "title": "12.1.1.4.1a.9 Type PatchItem",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.9 Type PatchItem\n\nTable 12.1.1.4.1a.9 -1: Definition of type PatchItem\n\n  ---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---\n  Attribute name   Data type        Description                                                                                                                        S\n  op               PatchOperation   Patch operation.                                                                                                                   M\n  from             string           Present only for \\\"copy\\\" and \\\"move\\\" operations, identifies the value to be copied or moved to the location specified by path.   M\n  path             string           Path specifying the patched value.                                                                                                 M\n  value            any type         New value for the resource identified by \\\"path\\\".                                                                                 M\n  ---------------- ---------------- ---------------------------------------------------------------------------------------------------------------------------------- ---"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Filter",
+      "filters": {},
+      "clause": "12.1.1.4.1a.2",
+      "title": "12.1.1.4.1a.2 Type Scope",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.2 Type Scope\n\nTable 12.1.1.4.1a.2-1: Definition of type Scope\n\n  Attribute name   Data type   Description                                                                                                                                                                                                     S\n  ---------------- ----------- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ---\n  scopeType        ScopeType   Used in the query component of HTTP GET and HTTP DELETE together with scopeLevel to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI   M\n  scopeLevel       integer     Used in the query component of HTTP GET and HTTP DELETE together with scopeType to extend the set of targeted resources beyond the base resource identified with the path component of the URI                  M"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Filter",
+      "filters": {},
+      "clause": "12.1.1.1.3",
+      "title": "12.1.1.1.3 Operation getMOIAttributes",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.3 Operation getMOIAttributes (part 1/2)\n\nThis operation retrieves one or multiple resources representing managed\nobject instances.\n\nTable 12.1.1.1.3-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP GET)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | query        | scope        | Scope        | O     |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | true         |       |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | query        | filter       | Filter       | O     |\n+--------------+--------------+--------------+--------------+-------+\n| att          | query        | attributes   | a            | O     |\n| ributeListIn |              |              | rray(string) |       |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | false        |       |\n+--------------+--------------+--------------+--------------+-------+\n|              |              | fields       | a            | O     |\n|              |              |              | rray(string) |       |\n|              |              |              |              |       |\n|              |              |              | style: form  |       |\n|              |              |              |              |       |\n|              |              |              | explode:     |       |\n|              |              |              | false        |       |\n+--------------+--------------+--------------+--------------+-------+\n\nNote 1: Void.\n\nNote 2: Void.\n\nTable 12.1.1.1.3-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP GET)"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Filter",
+      "filters": {},
+      "clause": "12.1.1.4.4.1",
+      "title": "12.1.1.4.4.1 General",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.4 Simple data types and enumerations\n\n##### 12.1.1.4.4.1 General\n\nThis clause defines simple data types and enumerations that are used by\nthe data structures defined in the previous clauses."
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Definition of type Filter",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter attributes Filter",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.2 Mapping of notifications\n\n##### 12.1.3.2.5 Notification notifyMOIChanges (part 2/3)\n\noperation: remove\n\nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):\n\n\\- operation: add.\n\n\\- path: YANG resource identifier pointing to the\nleaf/leaf-list/container/list representing the attribute. If the\nattribute is represented by a list or leaf-list, then for this last data\nnode the equal sign, the key value(s) or leaf-list value is omitted,\nonly the list/leaf-list name shall be present.\n\n\\- value: the content of the leaf/leaf-list entry(s)/container/list\nentry(s) representing the created attribute encoded according to RFC7951\n\\[50\\]. In case of attribute represented by a container/list the child\ndata nodes are encoded only,the container/list itself is not.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports setting the values of the performanceMetrics simple, multivalue\nattribute:\n\nhref: node1.spandau.de\n\n...\n\nnotificationId: 123456003\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"\n\noperation: add\n\nvalue:\n\n\\- inOctets\n\n\\- inPackets\n\n\\- outPackets\n\nCase 4: Deleting all values of a complete attribute is reported with\n\n\\- operation: remove.\n\n\\- path: Same as in case 3.\n\n\\- value: not present.\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports deleting all values of the performanceMetrics attribute:\n\nhref: node1.pankow.de\n\n...\n\nnotificationId: 123456004\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics\\\"\n\noperation: remove\n\nCase 5: Replacing a (complete) attribute is reported as follows.\n(Removing all previous values of the attribute and setting new\nvalue(s)):\n\n\\- operation: replace.\n\n\\- path: Same as in case 3.\n\n\\- value: Same as in case 3.\n\nCase 6: Adding a new value to a multivalue attribute (an attribute with\nmultiplicity upper bound greater than 1) is reported as follows. (This\ndoes not imply any change to exisiting values):\n\n\\- operation: add/\n\n\\- path: YANG resource identifier pointing to a leaf-list/list entry\nrepresenting an attribute element(value). In case of adding a new\nelement to an attribute with the property isOrdered=True the new\nelement/value is inserted before the pointed element(value), unless the\n\\\"insert\\\" subparameter specifies differently.\n\n\\- value: the leaf-list/list entry representing the new attribute value\nencoded according to RFC7951 \\[50\\]. In case of a list the child data\nnodes are encoded the list-entry itself is not.\n\n\\- insert: an additional input subparameter is added to the moiChange\ninput parameter. This indicates whether the new element/value was added\nbefore or after the element/value specified in path. The subparameter is\nonly valid in case of attributes with the property isOrdered=True. It\ncan take the values \\\"before\\\", \\\"after\\\". If missing it defaults to\n\\\"before\\\".\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports adding a new element/value to the \\\"performanceMetrics\\\"\nattribute before the outPackets element.:\n\nnotificationId: 123456006\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1/attributes/performanceMetrics/performanceMetrics=outPackets\\\"\n\noperation: add\n\ninsert: before\n\nvalue: outOctets\n\nCase 7: Deleting a single element/value from a multivalue attribute is\nreported as follows. (This does not imply any change to any other\nelements):\n\n\\- operation: remove.\n\n\\- path: Same as case 6.\n\n\\- value: not present.\n\nCase 8: Replacement of a single value for a multivalue attribute is\nreported as follows. This implies removing the old value; in case of a\nstructured attribute removal all its subparts. This does not imply any\nchange to any other values:"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter attributes Filter",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 5/5)\n\nNote also that for multi-valued attributes all attribute elements of the\nnew value need to be reported. It is not possible to report only added,\ndeleted, or modified attribute elements. Furthermore, the notification\ndoes not allow reporting of deleted attributes. When this is required\nthe MnS producer needs to include always all attributes of the object in\nthe notification. It is outside the present document how the MnS\nproducer signals to the MnS consumer if all attributes or only the\nchanged ones are included in the attribute value change notification.\nThe notification itself does not include this information."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter attributes Filter",
+      "filters": {},
+      "clause": "12.1.3.1.4",
+      "title": "12.1.3.1.4 Operation modifyMOIAttributes",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.4 Operation modifyMOIAttributes\n\nThis IS operation modifies one or multiple managed object instances. It\nis mapped to the NETCONF \\<edit-config\\> operation. The NETCONF\n\\<edit-config\\> operation can modify attributes in a given MOI or set of\nMOIs but only indirectly supports scope or filtered sets of MOIs that\nare part of the modifyMOIAttributes 3GPP operation specification.\n\\<edit-config\\> needs a config block, containing the explicit config\nchanges to be made for each MOI.\n\nThe default-operation parameter should be set to none.\n\nThe Netconf operation attribute on the list representing modified MOI(s)\nshould be set to create, replace or delete according to the ENUM in the\nmodificationList.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.4-1 and table 12.1.3.1.4-2.\n\nTable 12.1.3.1.4-1: Mapping of IS modifyMOIAttributes input parameters\nto SS equivalents\n\n  IS operation parameter name   SS parameter name   S   Remark\n  ----------------------------- ------------------- --- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  baseObjectInstance            config              M   A sequence of embedded XML elements inside the \\<config\\> element. XML elements for all containing MOIs and their ids(keys) shall be included together with the XML elements representing the to be modified MOI and its key.\n  scope                         config              M   BASE\\_ONLY supported as default. Multiple MOIs can be specified in the same operation, emulating other scopes.\n  filter                        config              M   Multiple MOIs can be specified in the same operation, emulating filtering.\n  modificationList              config              M   The \"attributes container\" and leaf, leaf-list or list entries representing the attributes.\n\nTable 12.1.3.1.4-2: Mapping of IS modifyMOIAttributes output parameters\nto SS equivalents\n\n+-------------------+-------------------+-------+-------------------+\n| **IS operation    | **SS parameter    | **S** | **Remark**        |\n| parameter name**  | name**            |       |                   |\n+===================+===================+=======+===================+\n| mo                | no corresponding  | M     | Not supported.    |\n| dificationListOut | SS parameter      |       |                   |\n|                   |                   |       | (note 1)          |\n+-------------------+-------------------+-------+-------------------+\n| status            | \\-                | M     | rpc-reply or      |\n|                   |                   |       | rpc-error         |\n|                   |                   |       | indicates general |\n|                   |                   |       | status.           |\n|                   |                   |       |                   |\n|                   |                   |       | The following     |\n|                   |                   |       | elements give     |\n|                   |                   |       | detailed error    |\n|                   |                   |       | information:      |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-tag\\>     |\n|                   |                   |       |                   |\n|                   |                   |       | \\<error-path\\>    |\n+-------------------+-------------------+-------+-------------------+\n\n> Note 1: Successful Netconf \\<edit-config\\> operations only return an\n> \\<ok\\> element. Therefore, the attributeListOut can be retrieved via a\n> separate \\<get-config\\> operation."
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter attributes Filter",
+      "filters": {},
+      "clause": "12.1.1.4.1a.7",
+      "title": "12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.7 Type NotifyMoiAttributeValueChanges (part 4/5)\n\nIn the next example \\\"attrA\\\" is a structured attribute with the\nattribute fields \\\"attrFieldAA\\\" and \\\"attrFieldAB\\\". The attribute\nfield \\\"attrFieldAA\\\" changed value, the attribute field \\\"attrFieldAB\\\"\ndid not change value. The attribute value change notification reporting\nthis change may look as follows.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.org                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIAttributeValueChanges\\\",        |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeListValueChanges\\\": \\[                                |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": {                                                     |\n|                                                                  |\n| \\\"attrFieldAA\\\": \\\"newValueAttrFieldAA\\\",                        |\n|                                                                  |\n| \\\"attrFieldAB\\\": \\\"oldValueAttrFieldAB\\\"                         |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| },                                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": {                                                     |\n|                                                                  |\n| \\\"attrFieldAA\\\": \\\"oldValueAttrFieldAA\\\",                        |\n|                                                                  |\n| \\\"attrFieldAB\\\": \\\"oldValueAttrFieldAB\\\"                         |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+"
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "Filter attributes Filter",
+      "filters": {},
+      "clause": "12.1.3.1.3",
+      "title": "12.1.3.1.3 Operation getMOIAttributes",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.1 Mapping of operations\n\n##### 12.1.3.1.3 Operation getMOIAttributes (part 1/4)\n\nThis IS operation is mapped to NETCONF \\<get\\> or \\<get-config\\>\noperation, depending on whether all configuration and state information\nis to be retrieved, or configuration data only. (In the next paragraphs\nonly \\<get\\> operation is mentioned but \\<get-config\\> is always an\nalternative).\n\nThe IS operation patameters baseObjectInstance , (3GPP-)filter, scope,\nlevel and attributeListIn are all combined and mapped into the\nNetconf-filter element. The scopes BASE\\_ONLY and BASE\\_ALL can be\nmapped to both subtree and Xpath filtering. The scopes BASE\\_NTH\\_LEVEL\nand BASE\\_SUBTREE can only be mapped to Xpath filtering.\n\nThe IS operation parameters are mapped to SS equivalents according to\ntable 12.1.3.1.3-1 and table 12.1.3.1.3-2.\n\nTable 12.1.3.1.3-1: Mapping of IS getMOIAttributes input parameters to\nSS equivalents"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Reference Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsParameters\"></a> parameters | Map[`string`, [Parameter Object](#parameter-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Parameter Objects](#parameter-object).\n<a name=\"componentsExamples\"></a> examples | Map[`string`, [Example Object](#example-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Example Objects](#example-object).\n<a name=\"componentsRequestBodies\"></a> requestBodies | Map[`string`, [Request Body Object](#request-body-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Request Body Objects](#request-body-object).\n<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object)."
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Reference Object",
+      "filters": {},
+      "clause": "",
+      "title": "Tag Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Tag Object Example  \n```json\n{\n\"name\": \"pet\",\n\"description\": \"Pets operations\"\n}\n```  \n```yaml\nname: pet\ndescription: Pets operations\n```  \n#### Reference Object  \nA simple object to allow referencing other components in the specification, internally and externally.  \nThe Reference Object is defined by [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03) and follows the same structure, behavior and rules.  \nFor this specification, reference resolution is accomplished as defined by the JSON Reference specification and not by the JSON Schema specification.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"referenceRef\"></a>$ref | `string` | **REQUIRED**. The reference string.  \nThis object cannot be extended with additional properties and any properties added SHALL be ignored.  \n##### Reference Object Example  \n```json\n{"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Reference Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"componentsHeaders\"></a> headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Header Objects](#header-object).\n<a name=\"componentsSecuritySchemes\"></a> securitySchemes| Map[`string`, [Security Scheme Object](#security-scheme-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Security Scheme Objects](#security-scheme-object).\n<a name=\"componentsLinks\"></a> links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Link Objects](#link-object).\n<a name=\"componentsCallbacks\"></a> callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | An object to hold reusable [Callback Objects](#callback-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions)."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Reference Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Alternatively, any time a Schema Object can be used, a [Reference Object](#reference-object) can be used in its place. This allows referencing definitions instead of defining them inline.  \nAdditional properties defined by the JSON Schema specification that are not mentioned here are strictly unsupported.  \nOther than the JSON Schema subset fields, the following fields MAY be used for further schema documentation:  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"schemaNullable\"></a>nullable | `boolean` | Allows sending a `null` value for the defined schema. Default value is `false`.\n<a name=\"schemaDiscriminator\"></a>discriminator | [Discriminator Object](#discriminator-object) | Adds support for polymorphism. The discriminator is an object name that is used to differentiate between other schemas which may satisfy the payload description. See [Composition and Inheritance](#composition-and-inheritance-polymorphism) for more details."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Reference Object",
+      "filters": {},
+      "clause": "",
+      "title": "Relative References in URLs",
+      "text": "### Relative References in URLs  \nUnless specified otherwise, all properties that are URLs MAY be relative references as defined by [RFC3986](https://tools.ietf.org/html/rfc3986#section-4.2).\nRelative references are resolved using the URLs defined in the [`Server Object`](#server-object) as a Base URI.  \nRelative references used in `$ref` are processed as per [JSON Reference](https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-03), using the URL of the current document as the base URI. See also the [Reference Object](#reference-object)."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "$ref to a schema in another document Filter",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in XML\",\n\"externalValue\": \"http://foo.bar/examples/user-example.xml\"\n}\n}\n},\n\"text/plain\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in Plain text\",\n\"externalValue\": \"http://foo.bar/examples/user-example.txt\"\n}\n}\n},\n\"*/*\": {\n\"examples\": {\n\"user\" : {\n\"summary\": \"User example in other format\",\n\"externalValue\": \"http://foo.bar/examples/user-example.whatever\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: user to add to the system\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example\nexternalValue: 'http://foo.bar/examples/user-example.json'\n'application/xml':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example in XML"
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "$ref to a schema in another document Filter",
+      "filters": {},
+      "clause": "",
+      "title": "Path Item Object",
+      "text": "description: A list of pets.\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/pet'\n```  \n#### Path Item Object  \nDescribes the operations available on a single path.\nA Path Item MAY be empty, due to [ACL constraints](#security-filtering).\nThe path itself is still exposed to the documentation viewer but they will not know which operations and parameters are available.  \n##### Fixed Fields  \nField Name | Type | Description\n---|:---:|---\n<a name=\"pathItemRef\"></a>$ref | `string` | Allows for an external definition of this path item. The referenced structure MUST be in the format of a [Path Item Object](#path-item-object). If there are conflicts between the referenced definition and this Path Item's definition, the behavior is *undefined*.\n<a name=\"pathItemSummary\"></a>summary| `string` | An optional, string summary, intended to apply to all operations in this path."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "$ref to a schema in another document Filter",
+      "filters": {},
+      "clause": "",
+      "title": "Document Structure",
+      "text": "### Document Structure  \nAn OpenAPI document MAY be made up of a single document or be divided into multiple, connected parts at the discretion of the user. In the latter case, `$ref` fields MUST be used in the specification to reference those parts as follows from the [JSON Schema](http://json-schema.org) definitions.  \nIt is RECOMMENDED that the root OpenAPI document be named: `openapi.json` or `openapi.yaml`."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "$ref to a schema in another document Filter",
+      "filters": {},
+      "clause": "",
+      "title": "Model with Example",
+      "text": "$ref: '#/components/schemas/ComplexModel'\n```  \n###### Model with Example  \n```json\n{\n\"type\": \"object\",\n\"properties\": {\n\"id\": {\n\"type\": \"integer\",\n\"format\": \"int64\"\n},\n\"name\": {\n\"type\": \"string\"\n}\n},\n\"required\": [\n\"name\"\n],\n\"example\": {\n\"name\": \"Puma\",\n\"id\": 1\n}\n}\n```  \n```yaml\ntype: object\nproperties:\nid:\ntype: integer\nformat: int64\nname:\ntype: string\nrequired:\n- name\nexample:\nname: Puma\nid: 1\n```  \n###### Models with Composition  \n```json\n{\n\"components\": {\n\"schemas\": {\n\"ErrorModel\": {\n\"type\": \"object\",\n\"required\": [\n\"message\",\n\"code\"\n],\n\"properties\": {\n\"message\": {\n\"type\": \"string\"\n},\n\"code\": {\n\"type\": \"integer\",\n\"minimum\": 100,\n\"maximum\": 600\n}\n}\n},\n\"ExtendedErrorModel\": {\n\"allOf\": [\n{\n\"$ref\": \"#/components/schemas/ErrorModel\"\n},\n{\n\"type\": \"object\",\n\"required\": [\n\"rootCause\"\n],\n\"properties\": {\n\"rootCause\": {\n\"type\": \"string\"\n}\n}\n}\n]\n}\n}\n}\n}\n```  \n```yaml\ncomponents:\nschemas:"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "$ref to a schema in another document Filter",
+      "filters": {},
+      "clause": "",
+      "title": "Paths Object",
+      "text": "GeneralError:\ndescription: General Error\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/GeneralError'\nsecuritySchemes:\napi_key:\ntype: apiKey\nname: api_key\nin: header\npetstore_auth:\ntype: oauth2\nflows:\nimplicit:\nauthorizationUrl: http://example.org/api/oauth/dialog\nscopes:\nwrite:pets: modify pets in your account\nread:pets: read your pets\n```  \n#### Paths Object  \nHolds the relative paths to the individual endpoints and their operations.\nThe path is appended to the URL from the [`Server Object`](#server-object) in order to construct the full URL.  The Paths MAY be empty, due to [ACL constraints](#security-filtering).  \n##### Patterned Fields  \nField Pattern | Type | Description\n---|:---:|---"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "45201428ff630d14f12aaeb4a6bf9c3692c91eaa76a1a18ea7a2c1d582d01efa",
+  "judged_at": "2026-10-18T21:11:24-03:00"
+}

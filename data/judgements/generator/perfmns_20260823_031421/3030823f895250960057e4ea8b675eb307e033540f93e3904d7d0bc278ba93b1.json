@@ -1,0 +1,215 @@
+{
+  "part_id": "generator|perfmns_20260823_031421|POST /notificationSink|responses",
+  "evaluation": "generator",
+  "input": "perfmns_20260823_031421",
+  "owner": "POST /notificationSink",
+  "aspect": "responses",
+  "summary": "codes missing ['default']; codes extra ['4XX', '5XX']; 1 absent, 1 differing, 2 extra",
+  "answer": {
+    "why_different": "The generated document uses a more specific response structure based on the 3GPP response-code ranges: it replaces the official generic `default` error response with explicit `4XX` and `5XX` response ranges. The 204 response difference is a wording change only.",
+    "verdict": "improvement",
+    "spec_3gpp": "The 3GPP specification requires a successful `204 No Content` response and `Error-Response` data for `4xx/5xx` failures.",
+    "openapi": "OpenAPI 3.0 permits uppercase wildcard response ranges such as `4XX` and `5XX`; `default` is optional and covers responses not declared individually.",
+    "clearer": "official",
+    "clearer_why": "The official description explicitly names `204 No Content`, states that the notification is successfully delivered, and says the response body is absent. The generated wording is also understandable but slightly less precise about the status code.",
+    "citations": [
+      {
+        "evidence_id": "S1",
+        "quote": "| Error-Response | 4xx/5xx        | In case of failure   | M |"
+      },
+      {
+        "evidence_id": "O5",
+        "quote": "To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`."
+      },
+      {
+        "evidence_id": "O4",
+        "quote": "The `default` MAY be used as a default response object for all HTTP codes that are not covered individually by the specification."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "equivalent",
+        "reason": "The generated description preserves the meaning of the official description: successful notification delivery with no response body. The official wording is clearer because it explicitly identifies `204 No Content`, as shown by C1 and C2."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "improvement",
+        "reason": "Removing the generic `default` response changes the structure, but the 3GPP specification specifically describes failures as `4xx/5xx`, while OpenAPI makes `default` optional; explicit ranges therefore represent the specified error cases more precisely. See S1, O4, and O5."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "improvement",
+        "reason": "Adding the `4XX` response range directly represents the 3GPP-required `4xx` failure responses and is permitted by OpenAPI 3.0 wildcard response-code syntax. See S1 and O5."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "improvement",
+        "reason": "Adding the `5XX` response range directly represents the 3GPP-required `5xx` failure responses and is permitted by OpenAPI 3.0 wildcard response-code syntax. See S1 and O5."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.3.1",
+      "title": "12.3.1.2.3.2.1.3.1 POST",
+      "text": "12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\" › 12.3.1.2.3.2.1.3 HTTP methods\n\n##### 12.3.1.2.3.2.1.3.1 POST\n\nThis method shall support the URI query parameters specified in table\n12.3.1.2.3.2.1.3.1-1.\n\nTable 12.3.1.2.3.2.1.3.1-1: URI query parameters supported by the POST\nmethod on this resource\n\n  Name   Data type   Description   S\n  ------ ----------- ------------- -----\n  n/a    n/a         n/a           n/a\n\nThis method shall support the request data structures specified in table\n12.3.1.2.3.2.1.3.1-2 and the response data structures and response codes\nspecified in table 12.3.1.2.3.2.1.3.1-3.\n\nTable 12.3.1.2.3.2.1.3.1-2: Data structures supported by the POST\nRequest Body on this resource\n\n  Data type                 Description                                                   S\n  ------------------------- ------------------------------------------------------------- ---\n  NotifyThresholdCrossing   Type in case a notifyThresholdCrossing notification is sent   M\n\nTable 12.3.1.2.3.2.1.3.1-3: Data structures supported by the POST\nResponse Body on this resource\n\n+----------------+----------------+--------------------+---+\n| Data type      | Response       | Description        | S |\n|                |                |                    |   |\n|                | codes          |                    |   |\n+================+================+====================+===+\n| n/a            | 204 No Content | In case of success | M |\n|                |                | no message body is |   |\n|                |                | returned           |   |\n+----------------+----------------+--------------------+---+\n| Error-Response | 4xx/5xx        | In case of failure | M |\n|                |                | the error object   |   |\n|                |                | is returned.       |   |\n+----------------+----------------+--------------------+---+"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.1",
+      "title": "12.3.1.2.3.1 Resource structure",
+      "text": "12.3.1.2 Performance threshold monitoring service › 12.3.1.2.3 Resources\n\n###### 12.3.1.2.3.1 Resource structure\n\nTable 12.3.1.2.3.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.3.1.2.3.1-**1**: Resources and methods overview\n\n  Resource name      Resource URI        HTTP method   Description\n  ------------------ ------------------- ------------- --------------------\n  notificationSink   /notificationSink   POST          Send notifications"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.2.1",
+      "title": "12.3.1.2.2.1 Introduction",
+      "text": "12.3.1.2 Performance threshold monitoring service › 12.3.1.2.2 Mapping of notifications\n\n###### 12.3.1.2.2.1 Introduction\n\nThe IS notifications are mapped to SS equivalents according to table\n12.3.1.2.2.1-1.\n\n**Table 12.3.1.2.2.1-1: Mapping of IS notifications to SS equivalents**\n\n  **IS notifications**      **HTTP Method**   **Resource URI**    **S**\n  ------------------------- ----------------- ------------------- -------\n  notifyThresholdCrossing   POST              /notificationSink   M"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.2",
+      "title": "12.3.1.2.3.2.1.2 URI",
+      "text": "12.3.1.2.3.2 Resource definitions › 12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\"\n\n##### 12.3.1.2.3.2.1.2 URI\n\nThe resource URI is provided by the notification subscription."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.1",
+      "title": "12.3.1.2.3.2.1.1 Description",
+      "text": "12.3.1.2.3.2 Resource definitions › 12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\"\n\n##### 12.3.1.2.3.2.1.1 Description\n\nThis resource represents a resource on a MnS consumer to which\nnotifications are sent to."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "The `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"responsesDefault\"></a>default | [Response Object](#response-object) \\| [Reference Object](#reference-object) | The documentation of responses other than the ones declared for specific HTTP response codes. Use this field to cover undeclared responses. A [Reference Object](#reference-object) can link to a response that the [OpenAPI Object's components/responses](#componentsResponses) section defines.  \n##### Patterned Fields\nField Pattern | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object Example",
+      "text": "This object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Responses Object Example  \nA 200 response for a successful operation and a default response for others (implying an error):  \n```json\n{\n\"200\": {\n\"description\": \"a pet to be returned\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/Pet\"\n}\n}\n}\n},\n\"default\": {\n\"description\": \"Unexpected error\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/ErrorModel\"\n}\n}\n}\n}\n}\n```  \n```yaml\n'200':\ndescription: a pet to be returned\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/Pet'\ndefault:\ndescription: Unexpected error\ncontent:\napplication/json:\nschema:\n$ref: '#/components/schemas/ErrorModel'\n```  \n#### Response Object\nDescribes a single response from an API Operation, including design-time, static\n`links` to operations based on the response.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object Examples",
+      "text": "##### Response Object Examples  \nResponse of an array of a complex type:  \n```json\n{\n\"description\": \"A complex object array response\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"$ref\": \"#/components/schemas/VeryComplexType\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: A complex object array response\ncontent:\napplication/json:\nschema:\ntype: array\nitems:\n$ref: '#/components/schemas/VeryComplexType'\n```  \nResponse with a string type:  \n```json\n{\n\"description\": \"A simple string response\",\n\"content\": {\n\"text/plain\": {\n\"schema\": {\n\"type\": \"string\"\n}\n}\n}"
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object",
+      "text": "X-Rate-Limit-Limit:\ndescription: The number of allowed requests in the current period\nschema:\ntype: integer\n```  \n#### Responses Object  \nA container for the expected responses of an operation.\nThe container maps a HTTP response code to the expected response.  \nThe documentation is not necessarily expected to cover all possible HTTP response codes because they may not be known in advance.\nHowever, documentation is expected to cover a successful operation response and any known errors.  \nThe `default` MAY be used as a default response object for all HTTP codes\nthat are not covered individually by the specification.  \nThe `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "---|:---:|---\n<a name=\"responsesCode\"></a>[HTTP Status Code](#http-status-codes) | [Response Object](#response-object) \\| [Reference Object](#reference-object) | Any [HTTP status code](#http-status-codes) can be used as the property name, but only one property per code, to describe the expected response for that HTTP status code.  A [Reference Object](#reference-object) can link to a response that is defined in the [OpenAPI Object's components/responses](#componentsResponses) section. This field MUST be enclosed in quotation marks (for example, \"200\") for compatibility between JSON and YAML. To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`. The following range definitions are allowed: `1XX`, `2XX`, `3XX`, `4XX`, and `5XX`. If a response range is defined using an explicit code, the explicit code definition takes precedence over the range definition for that code."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 204 default 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "HTTP Status Codes",
+      "text": "application/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation.\nThe available status codes are defined by [RFC7231](https://tools.ietf.org/html/rfc7231#section-6) and registered status codes are listed in the [IANA Status Code Registry](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 204 default 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Definitions",
+      "text": "## Definitions  \n##### OpenAPI Document\nA document (or set of documents) that defines or describes an API. An OpenAPI definition uses and conforms to the OpenAPI Specification.  \n##### Path Templating\nPath templating refers to the usage of curly braces ({}) to mark a section of a URL path as replaceable using path parameters.  \n##### Media Types\nMedia type definitions are spread across several resources.\nThe media type definitions SHOULD be in compliance with [RFC6838](https://tools.ietf.org/html/rfc6838).  \nSome examples of possible media type definitions:\n```\ntext/plain; charset=utf-8\napplication/json\napplication/vnd.github+json\napplication/vnd.github.v3+json\napplication/vnd.github.v3.raw+json\napplication/vnd.github.v3.text+json\napplication/vnd.github.v3.html+json\napplication/vnd.github.v3.full+json\napplication/vnd.github.v3.diff\napplication/vnd.github.v3.patch\n```\n##### HTTP Status Codes\nThe HTTP Status Codes are used to indicate the status of the executed operation."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 204 default 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Fixed Fields",
+      "text": "Describes a single response from an API Operation, including design-time, static\n`links` to operations based on the response.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"responseDescription\"></a>description | `string` | **REQUIRED**. A short description of the response. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"responseHeaders\"></a>headers | Map[`string`, [Header Object](#header-object)  \\| [Reference Object](#reference-object)] |  Maps a header name to its definition. [RFC7230](https://tools.ietf.org/html/rfc7230#page-22) states header names are case insensitive. If a response header is defined with the name `\"Content-Type\"`, it SHALL be ignored."
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 204 default 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object Examples",
+      "text": "<a name=\"responseContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | A map containing descriptions of potential response payloads. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For responses that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"responseLinks\"></a>links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | A map of operations links that can be followed from the response. The key of the map is a short name for the link, following the naming constraints of the names for [Component Objects](#components-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Response Object Examples  \nResponse of an array of a complex type:  \n```json\n{\n\"description\": \"A complex object array response\",\n\"content\": {\n\"application/json\": {\n\"schema\": {"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 204 default 4XX 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"operationResponses\"></a>responses | [Responses Object](#responses-object) | **REQUIRED**. The list of possible responses as they are returned from executing this operation.\n<a name=\"operationCallbacks\"></a>callbacks | Map[`string`, [Callback Object](#callback-object) \\| [Reference Object](#reference-object)] | A map of possible out-of band callbacks related to the parent operation. The key is a unique identifier for the Callback Object. Each value in the map is a [Callback Object](#callback-object) that describes a request that may be initiated by the API provider and the expected responses. The key value used to identify the callback object is an expression, evaluated at runtime, that identifies a URL to use for the callback operation.\n<a name=\"operationDeprecated\"></a>deprecated | `boolean` | Declares this operation to be deprecated. Consumers SHOULD refrain from usage of the declared operation. Default value is `false`."
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "3030823f895250960057e4ea8b675eb307e033540f93e3904d7d0bc278ba93b1",
+  "judged_at": "2026-10-18T21:13:03-03:00"
+}

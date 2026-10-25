@@ -1,0 +1,327 @@
+{
+  "part_id": "generator|provmns_20260828_232853|PATCH /{className}={id}|request_body",
+  "evaluation": "generator",
+  "input": "provmns_20260828_232853",
+  "owner": "PATCH /{className}={id}",
+  "aspect": "request_body",
+  "summary": "media types missing ['application/3gpp-json-patch+json', 'application/3gpp-merge-patch+json', 'application/json-patch+json']; 4 absent",
+  "answer": {
+    "why_different": "The generated request body was structurally reduced: its description was omitted and three supported media-type entries were not copied. These are missing values/keys within the requestBody content map, not merely alternate declarations at another address.",
+    "verdict": "error",
+    "spec_3gpp": "The 3GPP specification states that four patch media types are available for the PATCH request body, including the three omitted types, and specifies Resource for merge-patch and array(PatchItem) for JSON Patch. The request body is mandatory for the modification list.",
+    "openapi": "OpenAPI 3.0 requires requestBody content to be a map whose keys are media types and whose values are Media Type Objects; each Media Type Object can define the applicable schema. Thus, omitting supported media-type keys omits those request representations from the API description. A request-body description is also a permitted descriptive field.",
+    "clearer": "official",
+    "clearer_why": "The official version explains the purpose of the patch document and explicitly lists all supported patch media types, while the generated version gives no such explanation and exposes only one of the four supported representations.",
+    "citations": [
+      {
+        "evidence_id": "S2",
+        "quote": "The following patch media types are available:"
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "- \"application/3gpp-merge-patch+json\" (TS 32.158 [15])"
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "- \"application/json-patch+json\" (RFC 6902 [36])"
+      },
+      {
+        "evidence_id": "S2",
+        "quote": "- \"application/3gpp-json-patch+json\" (TS 32.158 [15])"
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "content | Map[`string`, [Media Type Object](#media-type-object)] | **REQUIRED**. The content of the request body. The key is a media type or [media type range]"
+      },
+      {
+        "evidence_id": "O2",
+        "quote": "Each Media Type Object provides schema and examples for the media type identified by its key."
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "error",
+        "reason": "The generated side omits the official explanation and, importantly, its explicit list of four available patch media types. This loses information carried by the official request-body description, as shown by C1 and S2; the generated request body contains no description, as shown by C2. The official wording is also clearer for readers because it explains what the patch body represents and identifies the relevant standards and formats. This is supported by C1 and C2, with S2 confirming the listed media types are specified by 3GPP. The relevant official text is: \"description: \\\"The request body describes changes to be made to the target resources. The following\\\\ patch media types are available...\\\"\"; the generated side shows only \"requestBody:\" followed by \"required: true\"."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "error",
+        "reason": "The generated content map omits application/3gpp-merge-patch+json, although the 3GPP specification lists it as an available PATCH media type and the official side defines its Resource schema. This is a missing content-map key and therefore removes a supported request representation; S2, C1, and O1 support this conclusion."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "error",
+        "reason": "The generated content map omits application/json-patch+json, although 3GPP specifies it as an available PATCH media type with request body type array(PatchItem). The omission removes a supported request representation and its schema, contrary to S2 and the official C1 entry; O1 and O2 establish that media-type keys and their Media Type Objects describe request representations."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "error",
+        "reason": "The generated content map omits application/3gpp-json-patch+json, although 3GPP specifies it as an available PATCH media type with request body type array(PatchItem). This is a missing media-type entry and schema, supported by S2 and C1; O1 and O2 confirm the significance of the missing content key and Media Type Object."
+      }
+    ]
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.2",
+      "title": "12.1.1.1.4.2 Mapping to HTTP PATCH",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.2 Mapping to HTTP PATCH\n\nHTTP PATCH is used to create, update or delete one or multiple\nresources.\n\nTable 12.1.1.1.4.2-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PATCH)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | .../{cla     | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource, or | M     |\n| ficationList |              |              |              |       |\n|              |              |              | arra         |       |\n|              |              |              | y(PatchItem) |       |\n+--------------+--------------+--------------+--------------+-------+\n\nFour patch media types are available for the request message body. They\nare listed below together with their request body data types:\n\n\\- \\\"application/merge-patch+json\\\" (RFC 7396 \\[37\\]), request body\ntype: Resource\n\n\\- \\\"application/vnd.3gpp.merge-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: Resource\n\n\\- \\\"application/json-patch+json\\\" (RFC 6902 \\[36\\]), request body type:\narray(PatchItem)\n\n\\- \\\"application/vnd.3gpp.json-patch+json\\\" (TS 32.158 \\[15\\]), request\nbody type: array(PatchItem)\n\nIf the MnS producer cannot honor a patch request for some reason, such\nas malformed requests or unsupported patch operations, an error response\nwith an appropriate error response code such as \\\"400 Bad Request\\\"\nshall be returned.\n\nThe patch operations \\\"copy\\\" and \\\"move\\\" have no corresponding\ndefinition in stage 2. Support for these operations is optional.\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no SS equivalents in the\npresent document.\n\nTable 12.1.1.1.4.2-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PATCH)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                M\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating resources with HTTP PATCH and JSON Merge\nPatch are provided in TS 32.158 \\[15\\], clause 6.3.2.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nMerge Patch are provided in TS 32.158 \\[15\\], clause 6.4.2.\n\nFurther details on updating resources with HTTP PATCH and JSON Patch are\nprovided in TS 32.158 \\[15\\], clause 6.3.3.\n\nFurther details on updating resources with HTTP PATCH and 3GPP JSON\nPatch are provided in TS 32.158 \\[15\\], clause 6.4.3.\n\nNote 1: Void."
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.3",
+      "title": "12.1.1.3.2.1.3.3 HTTP PATCH",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.3 HTTP PATCH\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.3-1: URI query parameters supported by the PATCH\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following tables.\n\nTable 12.1.1.3.2.1.3.3-2: Data structures supported by the PATCH request\nbody on this resource\n\n+---------------+--------------------------------------------+-------+\n| **Data type** | **Description**                            | **S** |\n+===============+============================================+=======+\n| Resource, or  | Patch document describing the set of       | M     |\n|               | modifications to be applied to the         |       |\n| array(object) | targeted resources.                        |       |\n|               |                                            |       |\n|               | The following patch media types are        |       |\n|               | available:                                 |       |\n|               |                                            |       |\n|               | \\- \\\"application/merge-patch+json\\\" (RFC   |       |\n|               | 7396 \\[37\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-merge-patch+json\\\"   |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n|               |                                            |       |\n|               | \\- \\\"application/json-patch+json\\\" (RFC    |       |\n|               | 6902 \\[36\\])                               |       |\n|               |                                            |       |\n|               | \\- \\\"application/3gpp-json-patch+json\\\"    |       |\n|               | (TS 32.158 \\[15\\])                         |       |\n+---------------+--------------------------------------------+-------+\n\nTable 12.1.1.2.1.1.3.3-3: Data structures supported by the PATCH\nresponse body on this resource\n\n  **Data type**   **Response codes**   **Description**                **S**\n  --------------- -------------------- ------------------------------ -------\n  ErrorResponse   4xx/5xx              Returned in case of an error   M"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.4.1",
+      "title": "12.1.1.1.4.1 Mapping to HTTP PUT",
+      "text": "12.1.1.1 Mapping of operations › 12.1.1.1.4 Operation modifyMOIAttributes\n\n###### 12.1.1.1.4.1 Mapping to HTTP PUT\n\nHTTP PUT is used for a full update of a single resource.\n\nTable 12.1.1.1.4.1-1: Mapping of IS operation input parameters to SS\nequivalents (HTTP PUT)\n\n+--------------+--------------+--------------+--------------+-------+\n| **IS         | **SS         | **SS         | **SS         | **S** |\n| parameter    | parameter    | parameter    | parameter    |       |\n| name**       | location**   | name**       | type**       |       |\n+==============+==============+==============+==============+=======+\n| baseOb       | path         | /{cla        | className:   | M     |\n| jectInstance |              | ssName}={id} | string       |       |\n|              |              |              |              |       |\n|              |              |              | id: string   |       |\n+--------------+--------------+--------------+--------------+-------+\n| scope        | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| filter       | n/a          | n/a          | n/a          | n/a   |\n+--------------+--------------+--------------+--------------+-------+\n| modi         | request body | n/a          | Resource     | M     |\n| ficationList |              |              |              |       |\n+--------------+--------------+--------------+--------------+-------+\n\nThe IS parameters \\\"scope\\\" and \\\"filter\\\" have no meaning when\ntargeting a single resource with the target URI and are not mapped.\n\nTable 12.1.1.1.4.1-2: Mapping of IS operation output parameters to SS\nequivalents (HTTP PUT)\n\n  **IS parameter name**   **SS parameter location**   **SS parameter name**   **SS parameter type**   **S**\n  ----------------------- --------------------------- ----------------------- ----------------------- -------\n  attributeListOut        response body               n/a                     Resource                O\n  status                  response status codes       n/a                     n/a                     M\n                          response body               error                   ErrorResponse           O\n\nFurther details on updating a resource with HTTP PUT are provided in TS\n32.158 \\[15\\], clause 5.3."
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.1.1",
+      "title": "12.1.1.1.1 Introduction",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.1 Mapping of operations\n\n##### 12.1.1.1.1 Introduction\n\nThe IS operations are mapped to SS equivalents according to table\n12.1.1.1.1-1.\n\nTable 12.1.1.1.1-1: Mapping of IS operations to SS equivalents\n\n+-------------------+-----------------+-------------------+-------+\n| **IS operation**  | **HTTP Method** | **Resource URI**  | **S** |\n+===================+=================+===================+=======+\n| createMOI         | PUT             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| getMOIAttributes  | GET             | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| mo                | PUT             | {MnSRoot}/ProvMnS | M     |\n| difyMOIAttributes |                 | /{MnSVersion}/{UR |       |\n|                   | PATCH           | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+\n| deleteMOI         | DELETE          | {MnSRoot}/ProvMnS | M     |\n|                   |                 | /{MnSVersion}/{UR |       |\n|                   |                 | I-LDN-first-part} |       |\n|                   |                 | /{className}={id} |       |\n+-------------------+-----------------+-------------------+-------+"
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH",
+      "filters": {},
+      "clause": "12.1.1.4.1",
+      "title": "12.1.1.4.1 General",
+      "text": "12.1.1 RESTful HTTP-based solution set › 12.1.1.4 Data type definitions\n\n##### 12.1.1.4.1 General\n\nThis clause defines the data types used by the Provisioning MnS. Table\n12.1.1.4.1-1 specifies the data types defined in the present document\nand Table table 12.1.1.4.1-2 the data types imported.\n\nTable 12.1.1.4.1-1: Data types defined in this specification\n\n  Data type                        Reference       Description\n  -------------------------------- --------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n  CmNotificationTypes              12.1.1.4.4.3    Notification type (notifyMOICreation, etc.)\n  SourceIndicator                  12.1.1.4.4.4    Indicates the source of the operation that led to the generation of the notification.\n  ScopeType                        12.1.1.4.4.5    Scope type of a scope\n  Operation                        12.1.1.4.4.6    Enum with \\\"create\\\", \\\"delete\\\" and \\\"replace\\\"\n  Insert                           12.1.1.4.4.8    Enum with \\\"before\\\" and \\\"after\\\"\n  PatchOperation                   12.1.1.4.4.7    Enum with \\\"add\\\", \\\"replace\\\", \\\"remove\\\", \\\"copy\\\", \\\"move\\\" and \\\"test\\\"\n  Resource                         12.1.1.4.1a.1   Used for resource representations\n  Scope                            12.1.1.4.1a.2   Used in the query part of HTTP GET and HTTP DELETE to extend the set of targeted resources beyond the base resource identified with the authority and path component of the URI\n  CorrelatedNotification           12.1.1.4.1a.3   Describes the correlated notifications of a single source\n  MoiChange                        12.1.1.4.1a.4   Single MOI change reported by notifyMOIChanges\n  NotifyMOICreation                12.1.1.4.1a.5   Used in the request body of HTTP POST for the notification type notifyMOICreation\n  NotifyMOIDeletion                12.1.1.4.1a.6   Used in the request body of HTTP POST for the notification type notifyMOIDeletion\n  NotifyMOIAttributeValueChanges   12.1.1.4.1a.7   Used in the request body of HTTP POST for the notification type notifyMOIAttributeValueChanges\n  NotifyMOIChanges                 12.1.1.4.1a.8   Used in the request body of HTTP POST for the notification type notifyMOIChanges\n  PatchItem                        12.1.1.4.1a.9   Specifies a patch item of a patch document\n\nTable 12.1.1.4.1-2: Data types imported\n\n  Data type                   Reference          Description\n  --------------------------- ------------------ ---------------------------------------------------------------------\n  DateTime                    TS 28.623 \\[44\\]   Date and time\n  Dn                          TS 28.623 \\[44\\]   DN type\n  SystemDN                    TS 28.623 \\[44\\]   systemDN type\n  Uri                         TS 28.623 \\[44\\]   URI type\n  AttributeNameValuePairSet   TS 28.623 \\[44\\]   Set of attribute name/value pairs\n  AttributeValueChangeSet     TS 28.623 \\[44\\]   Set of attribute names with their old and new values\n  Filter                      TS 28.623 \\[44\\]   Filter type\n  NotificationId              TS 28.623 \\[44\\]   Notification identifier as defined in ITU-T Rec. X. 733 \\[4\\]\n  NotificationType            TS 28.623 \\[44\\]   Notification type\n  NotificationHeader          TS 28.623 \\[44\\]   Notification header\n  ErrorResponse               TS 28.623 \\[44\\]   Used in the response body of multiple HTTP methods in case of error"
+    },
+    {
+      "id": "S6",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 3/3)\n\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+\n| ErrorResponse | 4xx/5xx            | Returned in case of | O     |\n|               |                    | an error            |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S7",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.1.1",
+      "title": "12.1.1.3.1.1 Resource structure on the MnS producer",
+      "text": "12.1.1.3 Resources › 12.1.1.3.1 Resource structure\n\n##### 12.1.1.3.1.1 Resource structure on the MnS producer\n\nFigure 12.1.1.3.1.1-1 shows the resource structure of the Provisioning\nMnS on the MnS producer.\n\n![](media/image8.emf){width=\"3.529861111111111in\"\nheight=\"0.5597222222222222in\"}\n\nFigure 12.1.1.3.1.1-1: Resource URI structure of the Provisioning MnS on\nthe MnS producer\n\nTable 12.1.1.3.1.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.1.1.3.1-**1**: Resources and methods overview\n\n  Resource name   Resource URI           HTTP method   Description\n  --------------- ---------------------- ------------- --------------------------------------------------------------------------\n  MOI             .../{className}={id}   PUT           Create a resource representing a managed object instance\n  MOI             .../{className}={id}   GET           Retrieve one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   PATCH         Modifiy one or multiple resources representing managed object instances\n  MOI             .../{className}={id}   DELETE        Delete one or multiple resources representing managed object instances"
+    },
+    {
+      "id": "S8",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.2",
+      "title": "12.1.1.3.2.1.3.2 HTTP GET",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.2 HTTP GET (part 2/2)\n\nTable 12.1.1.3.2.1.3.2-3: Data structures supported by the GET response\nbody on this resource\n\n  **Data type**   **Response codes**   **Description**                                                                                                                                                                                                                                                                                      **S**\n  --------------- -------------------- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -------\n  Resource        200 OK               Resources identified in the request for retrieval. In case the attributes or fields query parameters are used, only the selected attributes or sub-attributes are returned. The response message body is constructed according to the hierarchical response construction method (TS 32.158 \\[15\\])   M\n  ErrorResponse   4xx/5xx              Returned in case of an error                                                                                                                                                                                                                                                                         M"
+    },
+    {
+      "id": "S9",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 1/3)\n\nThis method shall support the URI query parameters specified in the\nfollowing table.\n\nTable 12.1.1.3.2.1.3.1-1: URI query parameters supported by the PUT\nmethod on this resource\n\n  **Name**   **Data type**   **Description**   **S**\n  ---------- --------------- ----------------- -------\n  n/a        n/a             n/a               n/a\n\nThis method shall support the request data structures, the response data\nstructures and response codes specified in the following table.\n\nTable 12.1.1.3.2.1.3.1-2: Data structures supported by the PUT request\nbody on this resource\n\n  **Data type**   **Description**                                                     **S**\n  --------------- ------------------------------------------------------------------- -------\n  Resource        Resource representation of the resource to be created or replaced   M\n\nTable 12.1.1.3.2.1.3.1-3: Data structures supported by the PUT Response\nBody on this resource"
+    },
+    {
+      "id": "S10",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH method className id",
+      "filters": {},
+      "clause": "12.1.1.3.2.1.3.1",
+      "title": "12.1.1.3.2.1.3.1 HTTP PUT",
+      "text": "12.1.1.3.2.1 Resource \\\".../{className}={id}\\\" › 12.1.1.3.2.1.3 HTTP methods\n\n##### 12.1.1.3.2.1.3.1 HTTP PUT (part 2/3)\n\n+---------------+--------------------+---------------------+-------+\n| **Data type** | **Response codes** | **Description**     | **S** |\n+===============+====================+=====================+=======+\n| Resource      | 200 OK             | Status code         | M     |\n|               |                    | returned when the   |       |\n|               |                    | resource is         |       |\n|               |                    | replaced, and when  |       |\n|               |                    | the replaced        |       |\n|               |                    | resource            |       |\n|               |                    | representation is   |       |\n|               |                    | not identical to    |       |\n|               |                    | the resource        |       |\n|               |                    | representation in   |       |\n|               |                    | the request.        |       |\n|               |                    |                     |       |\n|               |                    | This status code    |       |\n|               |                    | may be retourned    |       |\n|               |                    | when the resource   |       |\n|               |                    | is updated and when |       |\n|               |                    | the updated         |       |\n|               |                    | resource            |       |\n|               |                    | representation is   |       |\n|               |                    | identical to the    |       |\n|               |                    | resource            |       |\n|               |                    | representation in   |       |\n|               |                    | the request.        |       |\n|               |                    |                     |       |\n|               |                    | The representation  |       |\n|               |                    | of the updated      |       |\n|               |                    | resource is         |       |\n|               |                    | returned in the     |       |\n|               |                    | response message    |       |\n|               |                    | body.               |       |\n+---------------+--------------------+---------------------+-------+\n| Resource      | 201 Created        | Status code         | M     |\n|               |                    | returned when the   |       |\n|               |                    | resource is         |       |\n|               |                    | created. The        |       |\n|               |                    | representation of   |       |\n|               |                    | the created         |       |\n|               |                    | resource is         |       |\n|               |                    | returned in the     |       |\n|               |                    | response message    |       |\n|               |                    | body.               |       |\n+---------------+--------------------+---------------------+-------+\n| n/a           | 204 No Content     | Status code that    | M     |\n|               |                    | may be returned     |       |\n|               |                    | only when the       |       |\n|               |                    | replaced resource   |       |\n|               |                    | representation is   |       |\n|               |                    | identical to the    |       |\n|               |                    | representation in   |       |\n|               |                    | the request. The    |       |\n|               |                    | response has no     |       |\n|               |                    | message body.       |       |\n+---------------+--------------------+---------------------+-------+"
+    },
+    {
+      "id": "S11",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 4/8)\n\nThe properties \\\"op\\\", \\\"path\\\" and \\\"value\\\" shall use the 3GPP JSON\nPatch format (TS 32.158 \\[15\\]) for reporting NRM changes. The \\\"merge\\\"\noperation specified by 3GPP JSON Patch is not supported in\n\\\"notifyMOIChanges\\\". The \\\"move\\\", \\\"copy\\\" and \\\"test\\\" operations\nspecified by JSON Patch are not supported either.\n\nThe \\\"oldValue\\\" is an optional extension for \\\"notifyMOIChanges\\\"\nallowing to report also the value that the attribute had before\nreplacing the value with the new value, that is contained in \\\"value\\\".\n\nThe following example notification (where JSON is expressed in YAML\nnotation) reports an object creation\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\n\nvalue:\n\nid: 1,\n\nobjectClass: ClassA,\n\nattributes:\n\nattrA: 123\n\nattrB:\n\nsubAttrB1: ABC\n\nsubAttrB2: 56\n\nThe following example reports the deletion of that object.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\n\nThe following example reports the addition of a new attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrC\n\nvalue: xyz\n\nThe following example reports the deletion of the attribute \\\"attrC\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\\#/attributes/attrC\n\nThe following example reports a value change for the simple attribute\n\\\"attrA\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\nWhen the old value is reported as well, the notification looks like.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\noldValue: 123\n\nThe following example reports a value change for the complex attribute\n\\\"attrB\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nThe previous two notifications can be combined into a single\nnotification as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA\n\nvalue: 456\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: abc\n\nsubAttrB2: 78\n\nNote the operation \\\"replace\\\" has replace semantics and not merge\nsemantics. The following notification reports the value change of the\nattribute field \\\"attrB:subAttrB1\\\" to \\\"def\\\" and the deletion of the\nattribute field \\\"attrB:subAttrB2\\\".\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrB\n\nvalue:\n\nsubAttrB1: def\n\nThe value change of the attribute field \\\"attrA:subAttrB1\\\" is reported\nas follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: replace\n\npath: /ClassA=1\\#/attributes/attrA/subAttrB1\n\nvalue: def\n\nAssume \\\"attrD\\\" is a JSON array with simple elements, then the creation\nof this multi-valued attribute is reported as follows.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 1\n\n\\- 2\n\n\\- 3\n\nIts deletion is reported by the following notification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: remove\n\npath: /ClassA=1\\#/attributes/attrD\n\nThe complete replacement of the array is reported by the following\nnotification.\n\nhref: https://example.com/3gpp\n\n\\...\n\nmoiChanges\n\n\\- notificationId: 123456789\n\nop: add\n\npath: /ClassA=1\\#/attributes/attrD\n\nvalue:\n\n\\- 11\n\n\\- 21\n\n\\- 31"
+    },
+    {
+      "id": "S12",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.3.2.5",
+      "title": "12.1.3.2.5 Notification notifyMOIChanges",
+      "text": "12.1.3 YANG/Netconf-based solution set › 12.1.3.2 Mapping of notifications\n\n##### 12.1.3.2.5 Notification notifyMOIChanges (part 1/3)\n\nThe NETCONF/YANG solution set uses the same mapping as the RESTful\nHTTP-based solution set as described in clause 12.1.1.2.5 with the\nchanges and additions described below.\n\n\\- Any changes reported are based on the YANG NRM definitions, even\nthough the RESTful notification mapping is reused.\n\n\\- The media type as specified by the \\\"Content-Type\\\" header in the\nHTTP POST request shall be \\\"application/yang-data+json\\\" and not\n\\\"application/json\\\".\n\n\\- The value of \\\"href\\\" shall be set to the FQDN or IP address\nidentifying the NETCONF server.\n\n\\- The value of \\\"path\\\" shall be a RESTCONF data resource identifier\n(RFC 8040 \\[49\\], clause 3.5.3).\n\n\\- The \\\"path\\\" includes the YANG module name.\n\n\\- The \\\"\\#\\\" character before \\\"/attributes\\\" in \\\"path\\\" is not\npresent. NETCONF/YANG does not differentiate between the stage 2\nconcepts of object and attribute, hence there is no need for a\ndelimiter.\n\n\\- The value of \\\"value\\\" shall follow the JSON encoding of YANG (RFC\n7951 \\[50\\]).\n\n\\- Attribute elements are identified by their value (in case of a YANG\n\\\"leaf-list\\\") or by the values of keys (in case of a YANG \\\"list\\\"). In\nJSON Patch, attribute elements are identified based on their index, i.e.\nbased on the position in the array.\n\n\\- In case no key is defined for a YANG \\\"list\\\" it is not possible to\nreport the creation, deletion or replacement of individual list entries.\nIn this case, whenever the list is modified, the replacement of the\ncomplete attribute or attribute field (the complete list with all list\nenties) shall be reported.\n\n\\- Similarly if an attribute(field) is mapped to a YANG leaf-list with\nnon-unique values it is not possible to report the creation, deletion or\nreplacement of an individual value. In this case, whenever the leaf-list\nis modified, the replacement of the complete attribute or attribute\nfield (the complete leaf-list; all values) shall be reported.\n\n\\- YANG default values shall be handled as follows:\n\n\\- Attributes with default values, for which no value is specified in\nthe object creation request, shall be included in the object creation\nreport with their default values.\n\n\\- Attributes with default values, that are deleted and consequently set\nto their default value, shall be included in attribute replacement\nreports.\n\nNote all following use-cases use JSON expressed in YAML notation.\n\nCase 1: Creation of an MOI is reported with:\n\n\\- operation: add\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: a complete MOI representation, represented by the \\\"id\\\" node\nand the \\\"attributes\\\" container but exluding the list entry itself\nencoded according to RFC7951 \\[50\\].\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object creation:\n\nhref: node1.lichtenberg.de\n\n...\n\nnotificationId: 123456001\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: add\n\nvalue:\n\nid: job1\n\n3gpp-common-measurements:PerfMetricJob:attributes:\n\njobId: 9865\n\nfileReportingPeriod: 30\n\nCase 2: Deletion of an MOI is reported with:\n\n\\- operation: remove\n\n\\- path: YANG resource identifier pointing to the list entry\nrepresenting the MOI\n\n\\- value: not present\n\nFor example, the following instance of a \\\"moiChanges\\\" array item\nreports an object deletion:\n\nhref: node1.charlottenburg.de\n\n...\n\nnotificationId: 123456002\n\npath:\n\\\"/3gpp-common-managed-element:ManagedElement=node3/3gpp-common-measurements:PerfMetricJob=job1\\\"\n\noperation: remove\n\nCase 3: Creating a (complete) attribute is reported as follows. (Setting\nthe value(s) of an attribute that had no value before the change):\n\n\\- operation: add."
+    },
+    {
+      "id": "S13",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.4.1a.6",
+      "title": "12.1.1.4.1a.6 Type NotifyMoiDeletion",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.6 Type NotifyMoiDeletion (part 2/2)\n\nThe following example demonstrates the deletion of an object. The\nmessage body includes the name/value pairs representing the attributes\nof the deleted object.\n\n+-----------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1             |\n|                                                                 |\n| Host: example.com                                               |\n|                                                                 |\n| Content-Type: application/json                                  |\n|                                                                 |\n| {                                                               |\n|                                                                 |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\", |\n|                                                                 |\n| \\\"notificationId\\\": 123456789,                                  |\n|                                                                 |\n| \\\"notificationType\\\": \\\"notifyMOIDeletion\\\",                    |\n|                                                                 |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",               |\n|                                                                 |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\" |\n|                                                                 |\n| }                                                               |\n+-----------------------------------------------------------------+\n\nThe message body may include the name/value pairs representing the\nattributes of the deleted object.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOIDeletion\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeList\\\":                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"attrA\\\": \\\"valueAttrA\\\",                                       |\n|                                                                  |\n| \\\"attrB\\\": \\\"valueAttrB\\\"                                        |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+"
+    },
+    {
+      "id": "S14",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.4.1a.4",
+      "title": "12.1.1.4.1a.4 Type MoiChange",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.4 Type MoiChange (part 7/8)\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/3gpp\\\",                           |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOICreation\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"moiChanges\\\": \\[                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"notificationId\\\": 123,                                         |\n|                                                                  |\n| \\\"op\\\": \\\"replace\\\",                                             |\n|                                                                  |\n| \\\"path\\\": \\\"/ClassA=1\\#/attributes\\\",                            |\n|                                                                  |\n| \\\"value\\\": {                                                     |\n|                                                                  |\n| \\\"attrA\\\": \\\"newValueAttrA\\\",                                    |\n|                                                                  |\n| \\\"attrB\\\": \\\"oldValueAttrB\\\"                                     |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| \\]                                                               |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+\n\nTo allow the MnS consumer to understand which attributes have been\nupdated, the MnS producer may decide to send the following notification."
+    },
+    {
+      "id": "S15",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP PATCH request body media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "12.1.1.4.1a.5",
+      "title": "12.1.1.4.1a.5 Type NotifyMoiCreation",
+      "text": "12.1.1.4 Data type definitions › 12.1.1.4.1a Structured data types\n\n###### 12.1.1.4.1a.5 Type NotifyMoiCreation (part 3/3)\n\nThe creation of an empty object not containing any attribute values is\nreported as follows.\n\n+------------------------------------------------------------------+\n| POST /3gpp-management/cm-notification-sink HTTP/1.1              |\n|                                                                  |\n| Host: example.com                                                |\n|                                                                  |\n| Content-Type: application/json                                   |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| \\\"href\\\": \\\"http://example.com/ManagedElement=ME1/ClassA=CA1\\\",  |\n|                                                                  |\n| \\\"notificationId\\\": 123456789,                                   |\n|                                                                  |\n| \\\"notificationType\\\": \\\"notifyMOICreation\\\",                     |\n|                                                                  |\n| \\\"eventTime\\\": \\\"Tue, 06 Aug 2019 16:50:26 GMT\\\",                |\n|                                                                  |\n| \\\"systemDN\\\":\\\"DC=example.com,ManagedElement=ME1,MnsAgent=MA1\\\", |\n|                                                                  |\n| \\\"attributeList\\\":                                               |\n|                                                                  |\n| {                                                                |\n|                                                                  |\n| }                                                                |\n|                                                                  |\n| }                                                                |\n+------------------------------------------------------------------+"
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "Request Body Examples",
+      "text": "<a name=\"requestBodyContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | **REQUIRED**. The content of the request body. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For requests that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"requestBodyRequired\"></a>required | `boolean` | Determines if the request body is required in the request. Defaults to `false`.  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Request Body Examples  \nA request body with a referenced model definition.\n```json\n{\n\"description\": \"user to add to the system\",\n\"content\": {\n\"application/json\": {\n\"schema\": {\n\"$ref\": \"#/components/schemas/User\"\n},\n\"examples\": {\n\"user\" : {\n\"summary\": \"User Example\",\n\"externalValue\": \"http://foo.bar/examples/user-example.json\"\n}\n}\n},\n\"application/xml\": {\n\"schema\": {"
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "text/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"mediaTypeSchema\"></a>schema | [Schema Object](#schema-object) \\| [Reference Object](#reference-object) | The schema defining the type used for the request body.\n<a name=\"mediaTypeExample\"></a>example | Any | Example of the media type.  The example object SHOULD be in the correct format as specified by the media type.  The `example` field is mutually exclusive of the `examples` field.  Furthermore, if referencing a `schema` which contains an example, the `example` value SHALL _override_ the example provided by the schema."
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "---|:---|:---|\nHTTP Method            | `$method`         | The allowable values for the `$method` will be those for the HTTP operation.\nRequested media type | `$request.header.accept`        |\nRequest parameter      | `$request.path.id`        | Request parameters MUST be declared in the `parameters` section of the parent operation or they cannot be evaluated. This includes request headers.\nRequest body property   | `$request.body#/user/uuid`   | In operations which accept payloads, references may be made to portions of the `requestBody` or the entire body.\nRequest URL            | `$url`            |\nResponse value         | `$response.body#/status`       |  In operations which return payloads, references may be made to portions of the response body or the entire body.\nResponse header        | `$response.header.Server` |  Single header values only are available  \nRuntime expressions preserve the type of the referenced value."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "<a name=\"encodingHeaders\"></a>headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | A map allowing additional information to be provided as headers, for example `Content-Disposition`.  `Content-Type` is described separately and SHALL be ignored in this section. This property SHALL be ignored if the request body media type is not a `multipart`.\n<a name=\"encodingStyle\"></a>style | `string` | Describes how a specific property value will be serialized depending on its type.  See [Parameter Object](#parameter-object) for details on the [`style`](#parameterStyle) property. The behavior follows the same values as `query` parameters, including default values. This property SHALL be ignored if the request body media type is not `application/x-www-form-urlencoded`."
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Request Body Object Media Type Object",
+      "filters": {},
+      "clause": "",
+      "title": "any media type is accepted, functionally equivalent to `*/*`",
+      "text": "```yaml\nrequestBody:\ncontent:\napplication/octet-stream:\n# any media type is accepted, functionally equivalent to `*/*`\nschema:\n# a binary file of any type\ntype: string\nformat: binary\n```  \nIn addition, specific media types MAY be specified:  \n```yaml\n# multiple, specific media types may be specified:\nrequestBody:\ncontent:\n# a binary file of type png or jpeg\n'image/jpeg':\nschema:\ntype: string\nformat: binary\n'image/png':\nschema:\ntype: string\nformat: binary\n```  \nTo upload multiple files, a `multipart` media type MUST be used:  \n```yaml\nrequestBody:\ncontent:\nmultipart/form-data:\nschema:\nproperties:\n# The property name 'file' will be used for all files.\nfile:\ntype: array\nitems:\ntype: string\nformat: binary"
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "Example Object",
+      "text": "```yaml\nmyWebhook:\n'http://notificationServer.com?transactionId={$request.body#/id}&email={$request.body#/email}':\npost:\nrequestBody:\ndescription: Callback payload\ncontent:\n'application/json':\nschema:\n$ref: '#/components/schemas/SomePayload'\nresponses:\n'200':\ndescription: webhook successfully processed and no retries will be performed\n```  \n#### Example Object  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"exampleSummary\"></a>summary | `string` | Short description for the example.\n<a name=\"exampleDescription\"></a>description | `string` | Long description for the example. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"exampleValue\"></a>value | Any | Embedded literal example. The `value` field and `externalValue` field are mutually exclusive. To represent examples of media types that cannot naturally represented in JSON or YAML, use a string value to contain the example, escaping where necessary."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "Request Body Object",
+      "text": "\"content\": {\n\"application/json\": {\n\"schema\": {\n\"type\": \"object\",\n\"required\": [\n\"lat\",\n\"long\"\n],\n\"properties\": {\n\"lat\": {\n\"type\": \"number\"\n},\n\"long\": {\n\"type\": \"number\"\n}\n}\n}\n}\n}\n}\n```  \n```yaml\nin: query\nname: coordinates\ncontent:\napplication/json:\nschema:\ntype: object\nrequired:\n- lat\n- long\nproperties:\nlat:\ntype: number\nlong:\ntype: number\n```  \n#### Request Body Object  \nDescribes a single request body.  \n##### Fixed Fields\nField Name | Type | Description\n---|:---:|---\n<a name=\"requestBodyDescription\"></a>description | `string` | A brief description of the request body. This could contain examples of use.  [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation."
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object Examples",
+      "text": "<a name=\"responseContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | A map containing descriptions of potential response payloads. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For responses that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"responseLinks\"></a>links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | A map of operations links that can be followed from the response. The key of the map is a short name for the link, following the naming constraints of the names for [Component Objects](#components-object).  \nThis object MAY be extended with [Specification Extensions](#specification-extensions).  \n##### Response Object Examples  \nResponse of an array of a complex type:  \n```json\n{\n\"description\": \"A complex object array response\",\n\"content\": {\n\"application/json\": {\n\"schema\": {"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "",
+      "text": "This includes accessing any part of a body that a JSON Pointer [RFC6901](https://tools.ietf.org/html/rfc6901) can reference.  \nFor example, given the following HTTP request:  \n```http\nPOST /subscribe/myevent?queryUrl=http://clientdomain.com/stillrunning HTTP/1.1\nHost: example.org\nContent-Type: application/json\nContent-Length: 187"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "request body content media type description application/3gpp-merge-patch+json application/json-patch+json application/3gpp-json-patch+json",
+      "filters": {},
+      "clause": "",
+      "title": "Media Type Object",
+      "text": "user:\nsummary: User Example\nexternalValue: 'http://foo.bar/examples/user-example.json'\n'application/xml':\nschema:\n$ref: '#/components/schemas/User'\nexamples:\nuser:\nsummary: User Example in XML\nexternalValue: 'http://foo.bar/examples/user-example.xml'\n'text/plain':\nexamples:\nuser:\nsummary: User example in text plain format\nexternalValue: 'http://foo.bar/examples/user-example.txt'\n'*/*':\nexamples:\nuser:\nsummary: User example in other format\nexternalValue: 'http://foo.bar/examples/user-example.whatever'\n```  \nA body parameter that is an array of string values:\n```json\n{\n\"description\": \"user to add to the system\",\n\"content\": {\n\"text/plain\": {\n\"schema\": {\n\"type\": \"array\",\n\"items\": {\n\"type\": \"string\"\n}\n}\n}\n}\n}\n```  \n```yaml\ndescription: user to add to the system\nrequired: true\ncontent:\ntext/plain:\nschema:\ntype: array\nitems:\ntype: string\n```  \n#### Media Type Object\nEach Media Type Object provides schema and examples for the media type identified by its key.  \n##### Fixed Fields"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v4",
+  "cache_key": "7887b5df28ed890e7051b7d3bd1297223230aad251114489ae1d65bb37f34886",
+  "judged_at": "2026-10-18T21:06:42-03:00"
+}
