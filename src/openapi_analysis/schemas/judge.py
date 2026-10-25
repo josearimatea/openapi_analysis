@@ -17,6 +17,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field, computed_field
 
 from openapi_analysis.schemas.openapi import ValidityReport
+from openapi_analysis.schemas.rulesbank import SourceInfo
 
 VerdictLabel = Literal["error", "improvement", "equivalent", "uncertain"]
 Clearer = Literal["official", "generated", "same"]
@@ -85,10 +86,11 @@ class Part(BaseModel):
 
 class Citation(BaseModel):
     """A piece of evidence the judge relied on, by the id it was given ("S2", "O1")."""
-    evidence_id: str = Field(description="Id of an evidence block you were given, e.g. 'S2' "
-                                         "(3GPP spec) or 'O1' (OpenAPI reference).")
-    quote: str = Field(description="The short passage of that evidence supporting the "
-                                   "verdict, copied as written.")
+    evidence_id: str = Field(description="Id of what you rely on, as given: 'S2' (3GPP spec), "
+                                         "'O1' (OpenAPI reference), 'C1' (the official side "
+                                         "of the CONTEXT) or 'C2' (the generated side).")
+    quote: str = Field(description="The short passage supporting the verdict, copied as "
+                                   "written (from the CONTEXT: the YAML line).")
 
 
 class DifferenceVerdict(BaseModel):
@@ -110,9 +112,10 @@ class JudgeAnswer(BaseModel):
                                            "structure.")
     verdict: VerdictLabel = Field(description="error: the generated side is wrong. improvement: "
                                               "the generated side is better than the official "
-                                              "one. equivalent: different form, same meaning and "
-                                              "same clarity. uncertain: the evidence does not "
-                                              "decide.")
+                                              "one (needs S or O evidence). equivalent: different "
+                                              "form, same meaning (the CONTEXT may suffice). "
+                                              "uncertain: the meaning changes and nothing given "
+                                              "decides.")
     spec_3gpp: str = Field(description="What the 3GPP spec evidence says about this part.")
     openapi: str = Field(description="What the OpenAPI reference evidence allows or recommends "
                                      "for this part.")
@@ -170,6 +173,7 @@ class JudgeReport(BaseModel):
                                      # values of both documents by region (parts.leaf_census)
     validity_generated: ValidityReport | None = None   # layer 2 (generator)
     validity_official: ValidityReport | None = None
+    official: SourceInfo | None = None   # the official YAML compared against (label, version)
 
     @computed_field
     @property

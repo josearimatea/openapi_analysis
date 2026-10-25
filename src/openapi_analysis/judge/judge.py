@@ -1,11 +1,15 @@
 """Judge one part: retrieve → (cache) → LLM → checks → verdict.
 
-Every verdict rests on retrieval (docs/JUDGE_PLAN.md §3): a part reaches the LLM only
-with evidence from BOTH the 3GPP spec and the OpenAPI reference; without it, the part
-is recorded `uncertain` (decided_by "no_evidence") and the LLM is not called.
+Every part is searched for in the 3GPP spec and the OpenAPI reference (docs/
+JUDGE_PLAN.md §3), and the LLM is always asked: besides the retrieved passages (S, O)
+it may cite the part's CONTEXT — the official side C1, the generated side C2 — which is
+enough to see that two sides mean the same thing (judge-v4). Before judge-v4 a part
+without evidence from both sources was ruled `uncertain` without asking.
 
 After the LLM answers, deterministic checks — recorded in `overrides`:
-  - a verdict must cite at least one evidence id it was given, else → uncertain;
+  - a verdict must cite at least one id it was given (S, O, C1, C2), else → uncertain;
+  - an improvement must cite the spec or the OpenAPI reference: one resting on the
+    CONTEXT alone → uncertain (being different is not being better);
   - a part whose generated side is not valid OpenAPI 3.0 (layer 2) is never an
     improvement or equivalent → error.
 
@@ -28,6 +32,8 @@ from openapi_analysis.schemas.judge import Evidence, JudgeAnswer, Part, Verdict
 from openapi_analysis.schemas.rulesbank import now
 
 Retrieve = Callable[[Part], list[Evidence]]
+# the two sides of the part's CONTEXT, citable as evidence (prompts.py, judge-v4)
+CONTEXT_IDS = {"C1", "C2"}
 AskLLM = Callable[[list[tuple[str, str]]], JudgeAnswer]
 
 
@@ -70,7 +76,7 @@ def _check(part: Part, answer: JudgeAnswer, evidence: list[Evidence]) -> tuple[J
                                                                              list[str]]:
     """Deterministic floors on the LLM's answer."""
     overrides: list[str] = []
-    ids = {e.id for e in evidence}
+    ids = {e.id for e in evidence} | CONTEXT_IDS
     cited = [c for c in answer.citations if c.evidence_id in ids]
     if not cited:
         overrides.append(f"no valid citation (cited {[c.evidence_id for c in answer.citations]}"
@@ -80,6 +86,11 @@ def _check(part: Part, answer: JudgeAnswer, evidence: list[Evidence]) -> tuple[J
         overrides.append(f"dropped citations to ids not given: "
                          f"{[c.evidence_id for c in answer.citations if c.evidence_id not in ids]}")
         answer = answer.model_copy(update={"citations": cited})
+    external = [c for c in answer.citations if c.evidence_id not in CONTEXT_IDS]
+    if answer.verdict == "improvement" and answer.citations and not external:
+        overrides.append("improvement cites only the CONTEXT (C1/C2), no spec or OpenAPI "
+                         "evidence: improvement -> uncertain")
+        answer = answer.model_copy(update={"verdict": "uncertain"})
     if part.invalid_issues and answer.verdict in ("improvement", "equivalent"):
         overrides.append(f"generated side is not valid OpenAPI 3.0: verdict {answer.verdict} "
                          "-> error")
@@ -136,10 +147,8 @@ def judge_part(part: Part, *, retrieve: Retrieve, ask: AskLLM, model: str,
 
 def _judge_part(part: Part, *, retrieve: Retrieve, ask: AskLLM, model: str,
                 cache_dir: Path | None = None) -> Verdict:
-    evidence = number_evidence(retrieve(part))
-    if not (any(e.source == "spec" for e in evidence)
-            and any(e.source == "openapi" for e in evidence)):
-        return _no_evidence(part, evidence, model)
+    evidence = number_evidence(retrieve(part))     # the LLM is asked even with none:
+    # the CONTEXT (C1/C2) can decide equivalence, never an improvement (see _check)
 
     key = cache_key(part, evidence, model)
     path = _cache_file(cache_dir, part, key) if cache_dir else None

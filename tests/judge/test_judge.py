@@ -1,8 +1,9 @@
 """The judge's guarantees — no network: a fake LLM and fake retrieval.
 
-Locks what must hold whatever the LLM answers: every verdict rests on retrieval from
-BOTH sources, cites only evidence it was given, an invalid part is never an
-improvement, and a cached verdict is read back instead of asking again.
+Locks what must hold whatever the LLM answers: every part is searched for and asked
+about, a verdict cites only what it was given (S, O, or the CONTEXT C1/C2), an
+improvement needs the spec or the reference, an invalid part is never an improvement,
+and a cached verdict is read back instead of asking again.
 """
 
 from openapi_analysis.judge.judge import judge_part, number_evidence
@@ -48,13 +49,21 @@ def test_evidence_is_numbered_per_source():
     assert [e.id for e in number_evidence(BOTH)] == ["S1", "S2", "O1"]
 
 
-def test_without_both_sources_the_llm_is_not_asked():
-    for evidence in ([ev("spec")], [ev("openapi")], []):
-        llm = FakeLLM(answer())
-        v = run(part(), evidence, llm)
-        assert v.answer.verdict == "uncertain" and v.decided_by == "no_evidence"
-        assert llm.calls == []
+def test_without_retrieved_evidence_the_llm_is_still_asked_and_may_rest_on_context():
+    """judge-v4: the CONTEXT (C1 official, C2 generated) is citable — enough to rule two
+    sides equivalent, never an improvement."""
+    llm = FakeLLM(answer("equivalent", cite=("C1", "C2")))
+    v = run(part(), [], llm)
+    assert len(llm.calls) == 1 and v.decided_by == "llm"
+    assert v.answer.verdict == "equivalent" and not v.overrides
 
+
+def test_an_improvement_resting_on_the_context_alone_is_uncertain():
+    v = run(part(), BOTH, FakeLLM(answer("improvement", cite=("C2",))))
+    assert v.answer.verdict == "uncertain"
+    assert any("cites only the CONTEXT" in o for o in v.overrides)
+    v = run(part(), BOTH, FakeLLM(answer("improvement", cite=("C2", "O1"))))
+    assert v.answer.verdict == "improvement"                       # with the reference: kept
 
 def test_a_verdict_citing_nothing_given_is_uncertain():
     v = run(part(), BOTH, FakeLLM(answer("improvement", cite=("S9",))))
@@ -93,7 +102,7 @@ def test_new_evidence_is_a_new_verdict(tmp_path):
 def test_the_prompt_shows_both_sides_the_issues_and_the_evidence_ids():
     p = part(invalid_issues=["bad key"])
     text = user_message(p, number_evidence(BOTH))
-    assert "OFFICIAL SIDE:" in text and "GENERATED SIDE:" in text and "4XX" in text
+    assert "OFFICIAL SIDE [C1]:" in text and "GENERATED SIDE [C2]:" in text and "4XX" in text
     assert "NOT VALID OPENAPI 3.0" in text and "bad key" in text
     assert "[S1]" in text and "[S2]" in text and "[O1]" in text
     assert "Answer in English." in SYSTEM
