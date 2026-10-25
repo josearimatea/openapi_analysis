@@ -32,7 +32,7 @@ from openapi_analysis.judge.spec_index import annex_cut, block_of, chunk_clauses
 from openapi_analysis.reporting.final import render_final
 from openapi_analysis.reporting.text import render_judge
 from openapi_analysis.schemas.judge import JudgeReport, Part
-from openapi_analysis.schemas.rulesbank import now
+from openapi_analysis.schemas.rulesbank import SourceInfo, now
 from openapi_analysis.services.inputs import Source, load, manifest, save_report
 from openapi_analysis.services.openapi_service import evaluate_openapi
 from openapi_analysis.services.rulesbank_service import evaluate_rules_bank
@@ -100,7 +100,8 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
            limit: int | None, ask: AskLLM | None, search: Search | None,
            save: bool, owners: list[str] | None = None,
            leaves: dict[str, dict[str, int]] | None = None,
-           validity: tuple | None = None) -> JudgeReport:
+           validity: tuple | None = None,
+           official: SourceInfo | None = None) -> JudgeReport:
     from openapi_analysis.config.llm_config import usage_tracker
 
     collection = _collection(spec_document)
@@ -128,6 +129,7 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
                          leaves=leaves or {},
                          validity_generated=validity[0] if validity else None,
                          validity_official=validity[1] if validity else None,
+                         official=official,
                          owners_equal=[o for o in owners or []
                                        if o not in {p.owner for p in parts}])
     if save:            # ONE report per input and run: for a generated document, the
@@ -160,7 +162,8 @@ def judge_openapi(generated_yaml: Source, official_yaml: Source, *,
                   limit=limit, ask=ask, search=search, save=save,
                   owners=document_owners(report, generated, official),
                   leaves=leaf_census(report, generated, official),
-                  validity=(report.validity_generated, report.validity_official))
+                  validity=(report.validity_generated, report.validity_official),
+                  official=report.official)
 
 
 def judge_rules_bank(rules_bank: Source, official_yaml: Source, *,

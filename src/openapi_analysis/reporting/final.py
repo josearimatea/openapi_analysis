@@ -230,6 +230,8 @@ def render_final(report: JudgeReport) -> str:
         f"FINAL ANALYSIS — {report.service}: the generated document against the official one",
         _RULE,
         f"generated : {report.input}",
+        *([f"official  : {report.official.label}  (v{report.official.version})"]
+          if report.official else []),
         f"evaluated : {_when(report.evaluated_at)}",
         (f"judge     : {report.model}, prompt {report.prompt_version}; 3GPP spec "
          f"{report.spec_collection} (clauses {', '.join(report.scope) or 'all'}) + OpenAPI "
