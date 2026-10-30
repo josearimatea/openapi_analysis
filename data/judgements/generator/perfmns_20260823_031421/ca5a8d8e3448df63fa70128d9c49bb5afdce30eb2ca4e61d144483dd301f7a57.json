@@ -1,0 +1,224 @@
+{
+  "part_id": "generator|perfmns_20260823_031421|response|generated:paths./notificationSink.post.responses.4XX + generated:paths./notificationSink.post.responses.5XX + official:paths./notificationSink.post.responses.default",
+  "evaluation": "generator",
+  "input": "perfmns_20260823_031421",
+  "owner": "response default — POST /notificationSink",
+  "aspect": "response — grouped by llm",
+  "summary": "1 official and 2 generated response block(s) that correspond, grouped by llm — grouper: The official default error response covers responses not otherwise declared, while the generated 4XX and 5XX ranges describe the corresponding client- and server-error cases. They have the same error response purpose and the same ErrorResponse payload, so they are one response represented at different status-code granularity under R10.",
+  "answer": {
+    "why_different": "The generated document uses a more specific response structure: it replaces the official catch-all `default` response with separate `4XX` and `5XX` response ranges. It also replaces the generic error description with client-error and server-error descriptions; the payload and schema remain the same.",
+    "verdict": "improvement",
+    "spec_3gpp": "The specification explicitly defines the failure response as `4xx/5xx` and states that the Error-Response object is returned, so the generated ranges reflect the specified response-code granularity more accurately than a generic default response.",
+    "openapi": "OpenAPI 3.0 permits `4XX` and `5XX` wildcard response-code fields. A `default` response is allowed for codes not covered individually, but the generated ranges are valid and more specific for the documented error cases.",
+    "clearer": "generated",
+    "clearer_why": "Separate 4XX and 5XX responses make the client-versus-server failure distinction explicit, and their descriptions state that an error object is returned. The official `Error case.` description is less informative.",
+    "citations": [
+      {
+        "evidence_id": "S1",
+        "quote": "| Error-Response | 4xx/5xx        | In case of failure |"
+      },
+      {
+        "evidence_id": "S1",
+        "quote": "the error object   is returned."
+      },
+      {
+        "evidence_id": "O1",
+        "quote": "To define a range of response codes, this field MAY contain the uppercase wildcard character `X`."
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "4XX:"
+      },
+      {
+        "evidence_id": "C2",
+        "quote": "5XX:"
+      }
+    ],
+    "differences": [
+      {
+        "difference_id": "D1",
+        "verdict": "improvement",
+        "reason": "The generated response is moved from the catch-all `default` location to the explicitly specified `4XX` range. This is supported by the specification's `4xx/5xx` response definition (S1) and is valid OpenAPI response-range syntax (O1)."
+      },
+      {
+        "difference_id": "D2",
+        "verdict": "improvement",
+        "reason": "The generated description is more precise: it identifies a client error and states that an Error-Response object is returned, matching the failure behavior in S1. The official description is only `Error case.` (C1)."
+      },
+      {
+        "difference_id": "D3",
+        "verdict": "improvement",
+        "reason": "The generated response is moved from the catch-all `default` location to the explicitly specified `5XX` range. This reflects the specification's `4xx/5xx` definition (S1) and uses an allowed OpenAPI response range (O1)."
+      },
+      {
+        "difference_id": "D4",
+        "verdict": "improvement",
+        "reason": "The generated description is more precise: it identifies a server failure and states that an Error-Response object is returned, matching the failure behavior in S1. The official description is only `Error case.` (C1)."
+      }
+    ],
+    "grouping_wrong": false
+  },
+  "focus": [],
+  "differences": [],
+  "difference_verdicts": [],
+  "official_focus": {},
+  "generated_focus": {},
+  "evidence": [
+    {
+      "id": "S1",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.3.1",
+      "title": "12.3.1.2.3.2.1.3.1 POST",
+      "text": "12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\" › 12.3.1.2.3.2.1.3 HTTP methods\n\n##### 12.3.1.2.3.2.1.3.1 POST\n\nThis method shall support the URI query parameters specified in table\n12.3.1.2.3.2.1.3.1-1.\n\nTable 12.3.1.2.3.2.1.3.1-1: URI query parameters supported by the POST\nmethod on this resource\n\n  Name   Data type   Description   S\n  ------ ----------- ------------- -----\n  n/a    n/a         n/a           n/a\n\nThis method shall support the request data structures specified in table\n12.3.1.2.3.2.1.3.1-2 and the response data structures and response codes\nspecified in table 12.3.1.2.3.2.1.3.1-3.\n\nTable 12.3.1.2.3.2.1.3.1-2: Data structures supported by the POST\nRequest Body on this resource\n\n  Data type                 Description                                                   S\n  ------------------------- ------------------------------------------------------------- ---\n  NotifyThresholdCrossing   Type in case a notifyThresholdCrossing notification is sent   M\n\nTable 12.3.1.2.3.2.1.3.1-3: Data structures supported by the POST\nResponse Body on this resource\n\n+----------------+----------------+--------------------+---+\n| Data type      | Response       | Description        | S |\n|                |                |                    |   |\n|                | codes          |                    |   |\n+================+================+====================+===+\n| n/a            | 204 No Content | In case of success | M |\n|                |                | no message body is |   |\n|                |                | returned           |   |\n+----------------+----------------+--------------------+---+\n| Error-Response | 4xx/5xx        | In case of failure | M |\n|                |                | the error object   |   |\n|                |                | is returned.       |   |\n+----------------+----------------+--------------------+---+"
+    },
+    {
+      "id": "S2",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST",
+      "filters": {},
+      "clause": "12.3.1.2.3.1",
+      "title": "12.3.1.2.3.1 Resource structure",
+      "text": "12.3.1.2 Performance threshold monitoring service › 12.3.1.2.3 Resources\n\n###### 12.3.1.2.3.1 Resource structure\n\nTable 12.3.1.2.3.1-1 provides an overview of the resources and\napplicable HTTP methods.\n\nTable 12.3.1.2.3.1-**1**: Resources and methods overview\n\n  Resource name      Resource URI        HTTP method   Description\n  ------------------ ------------------- ------------- --------------------\n  notificationSink   /notificationSink   POST          Send notifications"
+    },
+    {
+      "id": "S3",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.2.1",
+      "title": "12.3.1.2.2.1 Introduction",
+      "text": "12.3.1.2 Performance threshold monitoring service › 12.3.1.2.2 Mapping of notifications\n\n###### 12.3.1.2.2.1 Introduction\n\nThe IS notifications are mapped to SS equivalents according to table\n12.3.1.2.2.1-1.\n\n**Table 12.3.1.2.2.1-1: Mapping of IS notifications to SS equivalents**\n\n  **IS notifications**      **HTTP Method**   **Resource URI**    **S**\n  ------------------------- ----------------- ------------------- -------\n  notifyThresholdCrossing   POST              /notificationSink   M"
+    },
+    {
+      "id": "S4",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.2",
+      "title": "12.3.1.2.3.2.1.2 URI",
+      "text": "12.3.1.2.3.2 Resource definitions › 12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\"\n\n##### 12.3.1.2.3.2.1.2 URI\n\nThe resource URI is provided by the notification subscription."
+    },
+    {
+      "id": "S5",
+      "source": "spec",
+      "collection": "3gpp_rel18_28_28532",
+      "query": "HTTP POST method notificationSink",
+      "filters": {},
+      "clause": "12.3.1.2.3.2.1.1",
+      "title": "12.3.1.2.3.2.1.1 Description",
+      "text": "12.3.1.2.3.2 Resource definitions › 12.3.1.2.3.2.1 Resource \\\"/notificationSink\\\"\n\n##### 12.3.1.2.3.2.1.1 Description\n\nThis resource represents a resource on a MnS consumer to which\nnotifications are sent to."
+    },
+    {
+      "id": "O1",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Responses Object",
+      "text": "OpenAPI Specification › Specification › Schema › Responses Object\n\n#### Responses Object\n\nA container for the expected responses of an operation.\nThe container maps a HTTP response code to the expected response.\n\nThe documentation is not necessarily expected to cover all possible HTTP response codes because they may not be known in advance.\nHowever, documentation is expected to cover a successful operation response and any known errors.\n\nThe `default` MAY be used as a default response object for all HTTP codes\nthat are not covered individually by the specification.\n\nThe `Responses Object` MUST contain at least one response code, and it\nSHOULD be the response for a successful operation call.\n\n##### Fixed Fields\n\nField Name | Type | Description\n---|:---:|---\n<a name=\"responsesDefault\"></a>default | [Response Object](#response-object) \\| [Reference Object](#reference-object) | The documentation of responses other than the ones declared for specific HTTP response codes. Use this field to cover undeclared responses. A [Reference Object](#reference-object) can link to a response that the [OpenAPI Object's components/responses](#componentsResponses) section defines.\n\n##### Patterned Fields\n\nField Pattern | Type | Description\n---|:---:|---\n<a name=\"responsesCode\"></a>[HTTP Status Code](#http-status-codes) | [Response Object](#response-object) \\| [Reference Object](#reference-object) | Any [HTTP status code](#http-status-codes) can be used as the property name, but only one property per code, to describe the expected response for that HTTP status code.  A [Reference Object](#reference-object) can link to a response that is defined in the [OpenAPI Object's components/responses](#componentsResponses) section. This field MUST be enclosed in quotation marks (for example, \"200\") for compatibility between JSON and YAML. To define a range of response codes, this field MAY contain the uppercase wildcard character `X`. For example, `2XX` represents all response codes between `[200-299]`. The following range definitions are allowed: `1XX`, `2XX`, `3XX`, `4XX`, and `5XX`. If a response range is defined using an explicit code, the explicit code definition takes precedence over the range definition for that code.\n\n\nThis object MAY be extended with [Specification Extensions](#specification-extensions).\n\n##### Responses Object Example\n\nA 200 response for a successful operation and a default response for others (implying an error):\n\n```json\n{\n  \"200\": {\n    \"description\": \"a pet to be returned\",\n    \"content\": {\n      \"application/json\": {\n        \"schema\": {\n          \"$ref\": \"#/components/schemas/Pet\"\n        }\n      }\n    }\n  },\n  \"default\": {\n    \"description\": \"Unexpected error\",\n    \"content\": {\n      \"application/json\": {\n        \"schema\": {\n          \"$ref\": \"#/components/schemas/ErrorModel\"\n        }\n      }\n    }\n  }\n}\n```\n\n```yaml\n'200':\n  description: a pet to be returned\n  content:\n    application/json:\n      schema:\n        $ref: '#/components/schemas/Pet'\ndefault:\n  description: Unexpected error\n  content:\n    application/json:\n      schema:\n        $ref: '#/components/schemas/ErrorModel'\n```"
+    },
+    {
+      "id": "O2",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Response Object",
+      "text": "OpenAPI Specification › Specification › Schema › Response Object\n\n#### Response Object\n\nDescribes a single response from an API Operation, including design-time, static\n`links` to operations based on the response.\n\n##### Fixed Fields\n\nField Name | Type | Description\n---|:---:|---\n<a name=\"responseDescription\"></a>description | `string` | **REQUIRED**. A short description of the response. [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"responseHeaders\"></a>headers | Map[`string`, [Header Object](#header-object)  \\| [Reference Object](#reference-object)] |  Maps a header name to its definition. [RFC7230](https://tools.ietf.org/html/rfc7230#page-22) states header names are case insensitive. If a response header is defined with the name `\"Content-Type\"`, it SHALL be ignored.\n<a name=\"responseContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | A map containing descriptions of potential response payloads. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For responses that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"responseLinks\"></a>links | Map[`string`, [Link Object](#link-object) \\| [Reference Object](#reference-object)] | A map of operations links that can be followed from the response. The key of the map is a short name for the link, following the naming constraints of the names for [Component Objects](#components-object).\n\nThis object MAY be extended with [Specification Extensions](#specification-extensions).\n\n##### Response Object Examples\n\nResponse of an array of a complex type:\n\n```json\n{\n  \"description\": \"A complex object array response\",\n  \"content\": {\n    \"application/json\": {\n      \"schema\": {\n        \"type\": \"array\",\n        \"items\": {\n          \"$ref\": \"#/components/schemas/VeryComplexType\"\n        }\n      }\n    }\n  }\n}\n```\n\n```yaml\ndescription: A complex object array response\ncontent:\n  application/json:\n    schema:\n      type: array\n      items:\n        $ref: '#/components/schemas/VeryComplexType'\n```\n\nResponse with a string type:\n\n```json\n{\n  \"description\": \"A simple string response\",\n  \"content\": {\n    \"text/plain\": {\n      \"schema\": {\n        \"type\": \"string\"\n      }\n    }\n  }\n\n}\n```\n\n```yaml\ndescription: A simple string response\ncontent:\n  text/plain:\n    schema:\n      type: string\n```\n\nPlain text response with headers:\n\n```json\n{\n  \"description\": \"A simple string response\",\n  \"content\": {\n    \"text/plain\": {\n      \"schema\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"headers\": {\n    \"X-Rate-Limit-Limit\": {\n      \"description\": \"The number of allowed requests in the current period\",\n      \"schema\": {\n        \"type\": \"integer\"\n      }\n    },\n    \"X-Rate-Limit-Remaining\": {\n      \"description\": \"The number of remaining requests in the current period\",\n      \"schema\": {\n        \"type\": \"integer\"\n      }\n    },\n    \"X-Rate-Limit-Reset\": {\n      \"description\": \"The number of seconds left in the current period\",\n      \"schema\": {\n        \"type\": \"integer\"\n      }\n    }\n  }\n}\n```\n\n```yaml\ndescription: A simple string response\ncontent:\n  text/plain:\n    schema:\n      type: string\n    example: 'whoa!'\nheaders:\n  X-Rate-Limit-Limit:\n    description: The number of allowed requests in the current period\n    schema:\n      type: integer\n  X-Rate-Limit-Remaining:\n    description: The number of remaining requests in the current period\n    schema:\n      type: integer\n  X-Rate-Limit-Reset:\n    description: The number of seconds left in the current period\n    schema:\n      type: integer\n```\n\nResponse with no return value:\n\n```json\n{\n  \"description\": \"object created\"\n}\n```\n\n```yaml\ndescription: object created\n```"
+    },
+    {
+      "id": "O3",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Link Object",
+      "text": "OpenAPI Specification › Specification › Schema › Link Object\n\n#### Link Object\n\nThe `Link object` represents a possible design-time link for a response.\nThe presence of a link does not guarantee the caller's ability to successfully invoke it, rather it provides a known relationship and traversal mechanism between responses and other operations.\n\nUnlike _dynamic_ links (i.e. links provided **in** the response payload), the OAS linking mechanism does not require link information in the runtime response.\n\nFor computing links, and providing instructions to execute them, a [runtime expression](#runtime-expressions) is used for accessing values in an operation and using them as parameters while invoking the linked operation."
+    },
+    {
+      "id": "O4",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Path Item Object Example",
+      "text": "OpenAPI Specification › Specification › Schema › Path Item Object › Path Item Object Example\n\n##### Path Item Object Example\n\n```json\n{\n  \"get\": {\n    \"description\": \"Returns pets based on ID\",\n    \"summary\": \"Find pets by ID\",\n    \"operationId\": \"getPetsById\",\n    \"responses\": {\n      \"200\": {\n        \"description\": \"pet response\",\n        \"content\": {\n          \"*/*\": {\n            \"schema\": {\n              \"type\": \"array\",\n              \"items\": {\n                \"$ref\": \"#/components/schemas/Pet\"\n              }\n            }\n          }\n        }\n      },\n      \"default\": {\n        \"description\": \"error payload\",\n        \"content\": {\n          \"text/html\": {\n            \"schema\": {\n              \"$ref\": \"#/components/schemas/ErrorModel\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"parameters\": [\n    {\n      \"name\": \"id\",\n      \"in\": \"path\",\n      \"description\": \"ID of pet to use\",\n      \"required\": true,\n      \"schema\": {\n        \"type\": \"array\",\n        \"items\": {\n          \"type\": \"string\"\n        }\n      },\n      \"style\": \"simple\"\n    }\n  ]\n}\n```\n\n```yaml\nget:\n  description: Returns pets based on ID\n  summary: Find pets by ID\n  operationId: getPetsById\n  responses:\n    '200':\n      description: pet response\n      content:\n        '*/*' :\n          schema:\n            type: array\n            items:\n              $ref: '#/components/schemas/Pet'\n    default:\n      description: error payload\n      content:\n        'text/html':\n          schema:\n            $ref: '#/components/schemas/ErrorModel'\nparameters:\n- name: id\n  in: path\n  description: ID of pet to use\n  required: true\n  schema:\n    type: array\n    style: simple\n    items:\n      type: string \n```"
+    },
+    {
+      "id": "O5",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "Responses Object Response Object",
+      "filters": {},
+      "clause": "",
+      "title": "Examples",
+      "text": "OpenAPI Specification › Specification › Schema › Link Object › Examples\n\n##### Examples\n\nSource Location | example expression  | notes\n---|:---|:---|\nHTTP Method            | `$method`         | The allowable values for the `$method` will be those for the HTTP operation.\nRequested media type | `$request.header.accept`        | \nRequest parameter      | `$request.path.id`        | Request parameters MUST be declared in the `parameters` section of the parent operation or they cannot be evaluated. This includes request headers.\nRequest body property   | `$request.body#/user/uuid`   | In operations which accept payloads, references may be made to portions of the `requestBody` or the entire body.\nRequest URL            | `$url`            | \nResponse value         | `$response.body#/status`       |  In operations which return payloads, references may be made to portions of the response body or the entire body.\nResponse header        | `$response.header.Server` |  Single header values only are available\n\nRuntime expressions preserve the type of the referenced value.\nExpressions can be embedded into string values by surrounding the expression with `{}` curly braces."
+    },
+    {
+      "id": "O6",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 4XX default description Error case. 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Definitions",
+      "text": "OpenAPI Specification › Definitions\n\n## Definitions\n\n##### OpenAPI Document\n\nA document (or set of documents) that defines or describes an API. An OpenAPI definition uses and conforms to the OpenAPI Specification.\n\n##### Path Templating\n\nPath templating refers to the usage of curly braces ({}) to mark a section of a URL path as replaceable using path parameters.\n\n##### Media Types\n\nMedia type definitions are spread across several resources.\nThe media type definitions SHOULD be in compliance with [RFC6838](https://tools.ietf.org/html/rfc6838).\n\nSome examples of possible media type definitions:\n```\n  text/plain; charset=utf-8\n  application/json\n  application/vnd.github+json\n  application/vnd.github.v3+json\n  application/vnd.github.v3.raw+json\n  application/vnd.github.v3.text+json\n  application/vnd.github.v3.html+json\n  application/vnd.github.v3.full+json\n  application/vnd.github.v3.diff\n  application/vnd.github.v3.patch\n```\n\n##### HTTP Status Codes\n\nThe HTTP Status Codes are used to indicate the status of the executed operation.\nThe available status codes are defined by [RFC7231](https://tools.ietf.org/html/rfc7231#section-6) and registered status codes are listed in the [IANA Status Code Registry](https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml)."
+    },
+    {
+      "id": "O7",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 4XX default description Error case. 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Table of Contents",
+      "text": "OpenAPI Specification › Table of Contents\n\n## Table of Contents\n\n<!-- TOC depthFrom:1 depthTo:3 withLinks:1 updateOnSave:1 orderedList:0 -->\n\n- [Definitions](#definitions)\n\t- [OpenAPI Document](#openapi-document)\n\t- [Path Templating](#path-templating)\n\t- [Media Types](#media-types)\n\t- [HTTP Status Codes](#http-status-codes)\n- [Specification](#specification)\n\t- [Versions](#versions)\n\t- [Format](#format)\n\t- [Document Structure](#document-structure)\n\t- [Data Types](#data-types)\n\t- [Rich Text Formatting](#rich-text-formatting)\n\t- [Relative References In URLs](#relative-references-in-urls)\n\t- [Schema](#schema)\n\t\t- [OpenAPI Object](#openapi-object)\n\t\t- [Info Object](#info-object)\n\t\t- [Contact Object](#contact-object)\n\t\t- [License Object](#license-object)\n\t\t- [Server Object](#server-object)\n\t\t- [Server Variable Object](#server-variable-object)\n\t\t- [Components Object](#components-object)\n\t\t- [Paths Object](#paths-object)\n\t\t- [Path Item Object](#path-item-object)\n\t\t- [Operation Object](#operation-object)\n\t\t- [External Documentation Object](#external-documentation-object)\n\t\t- [Parameter Object](#parameter-object)\n\t\t- [Request Body Object](#request-body-object)\n\t\t- [Media Type Object](#media-type-object)\n\t\t- [Encoding Object](#encoding-object)\n\t\t- [Responses Object](#responses-object)\n\t\t- [Response Object](#response-object)\n\t\t- [Callback Object](#callback-object)\n\t\t- [Example Object](#example-object)\n\t\t- [Link Object](#link-object)\n\t\t- [Header Object](#header-object)\n\t\t- [Tag Object](#tag-object)\n\t\t- [Reference Object](#reference-object)\n\t\t- [Schema Object](#schema-object)\n\t\t- [Discriminator Object](#discriminator-object)\n\t\t- [XML Object](#xml-object)\n\t\t- [Security Scheme Object](#security-scheme-object)\n\t\t- [OAuth Flows Object](#oauth-flows-object)\n\t\t- [OAuth Flow Object](#oauth-flow-object)\n\t\t- [Security Requirement Object](#security-requirement-object)\n\t- [Specification Extensions](#specification-extensions)\n\t- [Security Filtering](#security-filtering)\n- [Appendix A: Revision History](#appendix-a-revision-history)\n\t\n\n<!-- /TOC -->"
+    },
+    {
+      "id": "O8",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 4XX default description Error case. 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Request Body Object",
+      "text": "OpenAPI Specification › Specification › Schema › Request Body Object\n\n#### Request Body Object\n\nDescribes a single request body.\n\n##### Fixed Fields\n\nField Name | Type | Description\n---|:---:|---\n<a name=\"requestBodyDescription\"></a>description | `string` | A brief description of the request body. This could contain examples of use.  [CommonMark syntax](http://spec.commonmark.org/) MAY be used for rich text representation.\n<a name=\"requestBodyContent\"></a>content | Map[`string`, [Media Type Object](#media-type-object)] | **REQUIRED**. The content of the request body. The key is a media type or [media type range](https://tools.ietf.org/html/rfc7231#appendix-D) and the value describes it.  For requests that match multiple keys, only the most specific key is applicable. e.g. text/plain overrides text/*\n<a name=\"requestBodyRequired\"></a>required | `boolean` | Determines if the request body is required in the request. Defaults to `false`.\n\n\nThis object MAY be extended with [Specification Extensions](#specification-extensions).\n\n##### Request Body Examples\n\nA request body with a referenced model definition.\n```json\n{\n  \"description\": \"user to add to the system\",\n  \"content\": {\n    \"application/json\": {\n      \"schema\": {\n        \"$ref\": \"#/components/schemas/User\"\n      },\n      \"examples\": {\n          \"user\" : {\n            \"summary\": \"User Example\",\n            \"externalValue\": \"http://foo.bar/examples/user-example.json\"\n          }\n        }\n    },\n    \"application/xml\": {\n      \"schema\": {\n        \"$ref\": \"#/components/schemas/User\"\n      },\n      \"examples\": {\n          \"user\" : {\n            \"summary\": \"User example in XML\",\n            \"externalValue\": \"http://foo.bar/examples/user-example.xml\"\n          }\n        }\n    },\n    \"text/plain\": {\n      \"examples\": {\n        \"user\" : {\n            \"summary\": \"User example in Plain text\",\n            \"externalValue\": \"http://foo.bar/examples/user-example.txt\"\n        }\n      }\n    },\n    \"*/*\": {\n      \"examples\": {\n        \"user\" : {\n            \"summary\": \"User example in other format\",\n            \"externalValue\": \"http://foo.bar/examples/user-example.whatever\"\n        }\n      }\n    }\n  }\n}\n```\n\n```yaml\ndescription: user to add to the system\ncontent:\n  'application/json':\n    schema:\n      $ref: '#/components/schemas/User'\n    examples:\n      user:\n        summary: User Example\n        externalValue: 'http://foo.bar/examples/user-example.json'\n  'application/xml':\n    schema:\n      $ref: '#/components/schemas/User'\n    examples:\n      user:\n        summary: User Example in XML\n        externalValue: 'http://foo.bar/examples/user-example.xml'\n  'text/plain':\n    examples:\n      user:\n        summary: User example in text plain format\n        externalValue: 'http://foo.bar/examples/user-example.txt'\n  '*/*':\n    examples:\n      user:\n        summary: User example in other format\n        externalValue: 'http://foo.bar/examples/user-example.whatever'\n```\n\nA body parameter that is an array of string values:\n```json\n{\n  \"description\": \"user to add to the system\",\n  \"content\": {\n    \"text/plain\": {\n      \"schema\": {\n        \"type\": \"array\",\n        \"items\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}\n```\n\n```yaml\ndescription: user to add to the system\nrequired: true\ncontent:\n  text/plain:\n    schema:\n      type: array\n      items:\n        type: string\n```"
+    },
+    {
+      "id": "O9",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 4XX default description Error case. 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Encoding Object",
+      "text": "OpenAPI Specification › Specification › Schema › Encoding Object\n\n#### Encoding Object\n\nA single encoding definition applied to a single schema property.\n\n##### Fixed Fields\n\nField Name | Type | Description\n---|:---:|---\n<a name=\"encodingContentType\"></a>contentType | `string` | The Content-Type for encoding a specific property. Default value depends on the property type: for `string` with `format` being `binary` – `application/octet-stream`; for other primitive types – `text/plain`; for `object` - `application/json`; for `array` – the default is defined based on the inner type. The value can be a specific media type (e.g. `application/json`), a wildcard media type (e.g. `image/*`), or a comma-separated list of the two types.\n<a name=\"encodingHeaders\"></a>headers | Map[`string`, [Header Object](#header-object) \\| [Reference Object](#reference-object)] | A map allowing additional information to be provided as headers, for example `Content-Disposition`.  `Content-Type` is described separately and SHALL be ignored in this section. This property SHALL be ignored if the request body media type is not a `multipart`.\n<a name=\"encodingStyle\"></a>style | `string` | Describes how a specific property value will be serialized depending on its type.  See [Parameter Object](#parameter-object) for details on the [`style`](#parameterStyle) property. The behavior follows the same values as `query` parameters, including default values. This property SHALL be ignored if the request body media type is not `application/x-www-form-urlencoded`.\n<a name=\"encodingExplode\"></a>explode | `boolean` | When this is true, property values of type `array` or `object` generate separate parameters for each value of the array, or key-value-pair of the map.  For other types of properties this property has no effect. When [`style`](#encodingStyle) is `form`, the default value is `true`. For all other styles, the default value is `false`. This property SHALL be ignored if the request body media type is not `application/x-www-form-urlencoded`.\n<a name=\"encodingAllowReserved\"></a>allowReserved | `boolean` | Determines whether the parameter value SHOULD allow reserved characters, as defined by [RFC3986](https://tools.ietf.org/html/rfc3986#section-2.2) `:/?#[]@!$&'()*+,;=` to be included without percent-encoding. The default value is `false`. This property SHALL be ignored if the request body media type is not `application/x-www-form-urlencoded`.\n\nThis object MAY be extended with [Specification Extensions](#specification-extensions).\n\n##### Encoding Object Example\n\n```yaml\nrequestBody:\n  content:\n    multipart/mixed:\n      schema:\n        type: object\n        properties:\n          id:\n            # default is text/plain\n            type: string\n            format: uuid\n          address:\n            # default is application/json\n            type: object\n            properties: {}\n          historyMetadata:\n            # need to declare XML format!\n            description: metadata in XML format\n            type: object\n            properties: {}\n          profileImage:\n            # default is application/octet-stream, need to declare an image type only!\n            type: string\n            format: binary\n      encoding:\n        historyMetadata:\n          # require XML Content-Type in utf-8 encoding\n          contentType: application/xml; charset=utf-8\n        profileImage:\n          # only accept png/jpeg\n          contentType: image/png, image/jpeg\n          headers:\n            X-Rate-Limit-Limit:\n              description: The number of allowed requests in the current period\n              schema:\n                type: integer\n```"
+    },
+    {
+      "id": "O10",
+      "source": "openapi",
+      "collection": "openapi_reference",
+      "query": "default response, HTTP status code ranges 4XX 5XX, response code 4XX default description Error case. 5XX",
+      "filters": {},
+      "clause": "",
+      "title": "Runtime Expressions",
+      "text": "OpenAPI Specification › Specification › Schema › Link Object › Runtime Expressions\n\n##### Runtime Expressions\n\nRuntime expressions allow defining values based on information that will only be available within the HTTP message in an actual API call.\nThis mechanism is used by [Link Objects](#link-object) and [Callback Objects](#callback-object).\n\nThe runtime expression is defined by the following [ABNF](https://tools.ietf.org/html/rfc5234) syntax\n\n```\n      expression = ( \"$url\" | \"$method\" | \"$statusCode\" | \"$request.\" source | \"$response.\" source )\n      source = ( header-reference | query-reference | path-reference | body-reference ) \n      header-reference = \"header.\" token\n      query-reference = \"query.\" name \n      path-reference = \"path.\" name\n      body-reference = \"body\" [\"#\" fragment]\n      fragment = a JSON Pointer [RFC 6901](https://tools.ietf.org/html/rfc6901) \n      name = *( char )\n      char = as per RFC [7159](https://tools.ietf.org/html/rfc7159#section-7)\n      token = as per RFC [7230](https://tools.ietf.org/html/rfc7230#section-3.2.6)\n```\n\nThe `name` identifier is case-sensitive, whereas `token` is not.\n\nThe table below provides examples of runtime expressions and examples of their use in a value:"
+    }
+  ],
+  "decided_by": "llm",
+  "overrides": [],
+  "model": "openai/gpt-5.6-luna",
+  "prompt_version": "judge-v5",
+  "cache_key": "ca5a8d8e3448df63fa70128d9c49bb5afdce30eb2ca4e61d144483dd301f7a57",
+  "judged_at": "2026-10-30T00:01:44-03:00"
+}
