@@ -25,6 +25,7 @@ from openapi_analysis.judge.parts import (
     document_owners,
     generator_parts,
     leaf_census,
+    official_view,
     rulesbank_parts,
 )
 from openapi_analysis.judge.retrieval import CorpusLayout, Search, default_search, retrieve_evidence
@@ -95,13 +96,24 @@ def _corpus_layout(collection: str) -> CorpusLayout:
             return CorpusLayout(annex=annex_cut(chunks), clauses=chunk_clauses(chunks))
 
 
+def rulings_of(verdicts: list) -> dict[str, str]:
+    """{difference location: its verdict} over every judged difference."""
+    out: dict[str, str] = {}
+    for v in verdicts:
+        per = v.difference_verdicts or [v.answer.verdict] * len(v.differences)
+        for d, verdict in zip(v.differences, per, strict=True):
+            out[d.location] = verdict
+    return out
+
+
 def _judge(parts: list[Part], evaluation: str, label: str, service: str,
            spec_document: Path, scope: tuple[str, ...], *, select: Select | None,
            limit: int | None, ask: AskLLM | None, search: Search | None,
            save: bool, owners: list[str] | None = None,
            leaves: dict[str, dict[str, int]] | None = None,
            validity: tuple | None = None,
-           official: SourceInfo | None = None) -> JudgeReport:
+           official: SourceInfo | None = None,
+           view: Callable[[list], dict] | None = None) -> JudgeReport:
     from openapi_analysis.config.llm_config import usage_tracker
 
     collection = _collection(spec_document)
@@ -130,6 +142,7 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
                          validity_generated=validity[0] if validity else None,
                          validity_official=validity[1] if validity else None,
                          official=official,
+                         official_view=view(verdicts) if view else {},
                          owners_equal=[o for o in owners or []
                                        if o not in {p.owner for p in parts}])
     if save:            # ONE report per input and run: for a generated document, the
@@ -163,7 +176,9 @@ def judge_openapi(generated_yaml: Source, official_yaml: Source, *,
                   owners=document_owners(report, generated, official),
                   leaves=leaf_census(report, generated, official),
                   validity=(report.validity_generated, report.validity_official),
-                  official=report.official)
+                  official=report.official,
+                  view=lambda verdicts: official_view(report, generated, official,
+                                                      rulings_of(verdicts)))
 
 
 def judge_rules_bank(rules_bank: Source, official_yaml: Source, *,

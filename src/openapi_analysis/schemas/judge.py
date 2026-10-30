@@ -174,6 +174,8 @@ class JudgeReport(BaseModel):
     validity_generated: ValidityReport | None = None   # layer 2 (generator)
     validity_official: ValidityReport | None = None
     official: SourceInfo | None = None   # the official YAML compared against (label, version)
+    official_view: dict[str, dict[str, int]] = Field(default_factory=dict)  # generator:
+                                     # the official's values by region (parts.official_view)
 
     @computed_field
     @property

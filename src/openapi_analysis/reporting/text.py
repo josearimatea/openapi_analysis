@@ -287,10 +287,17 @@ def _analysed(v) -> list[str]:
 def _judge_summary(report) -> list[str]:
     """The result first (reporting/final.py): validity, every value of the API by
     verdict, the score, then the same by region."""
-    from openapi_analysis.reporting.final import _result, _result2, census, differences
+    from openapi_analysis.reporting.final import (
+        _official_coverage,
+        _result,
+        _result2,
+        census,
+        differences,
+    )
 
     rows, total = census(report)
-    return [*_result(report, total, differences(report)), "", *_result2(rows, total)]
+    return [*_result(report, total, differences(report)), "", *_official_coverage(report),
+            "", *_result2(rows, total)]
 
 
 def render_judge(report, max_text: int = 400) -> str:

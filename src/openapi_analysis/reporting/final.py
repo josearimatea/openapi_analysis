@@ -3,6 +3,9 @@
     RESULT     everything at once: valid OpenAPI or not, every value of the API —
                equal, or changed / missing / extra with the judge's verdicts — and the
                score (correct = equal + equivalent + improvement), improvements apart
+    COVERAGE   the same from the official's side: of the official's values, how many the
+               generated reproduces correctly (equal, or another way judged equivalent /
+               improvement), how many wrong (changed / missing), how many undecided
     RESULT 1   OpenAPI validation (openapi-spec-validator): syntax and structure only
     RESULT 2   value by value, by region: the deterministic agreement with the official,
                and the semantic review — an LLM judge that read each part whole and
@@ -194,6 +197,50 @@ def _result(report: JudgeReport, total: dict[str, int],
     return lines
 
 
+def _official_coverage(report: JudgeReport) -> list[str]:
+    """How much of the OFFICIAL document the generated one reproduces correctly: the
+    base is the official's values only (the generated side's extras are not in it)."""
+    view = {r: c for r, c in report.official_view.items() if c.get("official")}
+    if not view:
+        return []
+    cols = ("official", "equal", "accepted", "wrong_changed", "wrong_missing", "uncertain",
+            "not_judged")
+    names = ("official", "equal", "accepted", "wrong:chg", "wrong:miss", "uncertain",
+             "not judged")
+    w = 11
+    api = {r: c for r, c in view.items() if r != HEADER}
+    total = {k: sum(c.get(k, 0) for c in api.values()) for k in cols}
+
+    def line(name: str, c: dict[str, int]) -> str:
+        ok = c.get("equal", 0) + c.get("accepted", 0)
+        return (f"  {name:18}" + "".join(f"{c.get(k, 0):>{w}}" for k in cols)
+                + f"{_share(ok, c.get('official', 0)):>{w}}")
+
+    t = total["official"]
+    ok = total["equal"] + total["accepted"]
+    wrong = total["wrong_changed"] + total["wrong_missing"]
+    lines = ["COVERAGE OF THE OFFICIAL — how much of the official document the generated one",
+             "reproduces correctly (the base is the official's values only; the generated",
+             "side's extras are not in it)", "",
+             (f"  COVERED CORRECTLY  {_share(ok, t):>6}   {ok} of the official's {t} API values: "
+              f"{total['equal']} equal + {total['accepted']} reproduced another way "
+              "(equivalent / improvement)"),
+             (f"  WRONG              {_share(wrong, t):>6}   {total['wrong_changed']} changed "
+              f"to a wrong value + {total['wrong_missing']} missing"),
+             (f"  UNDECIDED          {_share(total['uncertain'] + total['not_judged'], t):>6}"
+              f"   {total['uncertain']} uncertain"
+              + (f" + {total['not_judged']} not judged" if total["not_judged"] else "")),
+             "", f"  {'region':18}" + "".join(f"{n:>{w}}" for n in names) + f"{'COVERED':>{w}}"]
+    lines += [line(r, c) for r, c in api.items()]
+    lines += ["  " + "-" * (18 + w * 8), line("TOTAL (API)", total)]
+    if HEADER in view:
+        lines.append(line("document header", view[HEADER]) + "   (NOT scored)")
+    lines += ["  accepted: the generated changed or left it out, and the judge ruled that",
+              "  equivalent or better (e.g. default covered by 4XX/5XX).",
+              "  wrong:chg = present with a wrong value; wrong:miss = missing."]
+    return lines
+
+
 def _result2(rows: dict[str, dict[str, int]], total: dict[str, int]) -> list[str]:
     """Result 2 by region: the deterministic agreement and the judge's verdicts."""
     cols = ("total", "equal", "changed", "only_official", "only_generated", *VERDICTS)
@@ -240,6 +287,7 @@ def render_final(report: JudgeReport) -> str:
          " this run (cached verdicts cost nothing)"),
         "",
         _RULE, *_result(report, total, diffs), "",
+        *([_RULE, *_official_coverage(report), ""] if report.official_view else []),
         _RULE, *_listing("IMPROVEMENTS — the generated is better than the official",
                          [x for x in api if x[3] == "improvement"]), "",
         _RULE, *_step2(report), "",

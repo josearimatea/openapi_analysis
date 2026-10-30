@@ -50,3 +50,27 @@ def test_the_final_analysis_renders_and_adds_up():
                  "RESULT 1 — OPENAPI VALIDATION", "RESULT 2 — VALUE BY VALUE",
                  "IMPROVEMENTS", "DETAIL, PART BY PART"):
         assert step in text
+
+
+def test_the_official_coverage_counts_every_official_value_once():
+    """Coverage of the official: base = the official's values only; each one is equal,
+    or takes the verdict of the difference holding it — the sum closes."""
+    import yaml
+
+    from openapi_analysis.judge.parts import OFFICIAL_VIEW, generator_parts, official_view
+    from openapi_analysis.openapi.comparison import flatten_parts
+
+    gen = yaml.safe_load((ROOT / "data/inputs/generated/ProvMnS/"
+                          "provmns_20260828_232853.yaml").read_text(encoding="utf-8"))
+    off = yaml.safe_load(OFFICIAL.read_text(encoding="utf-8"))
+    report = evaluate_openapi(gen, off)
+    parts = generator_parts(report, gen, off, "g")
+    rulings = {d.location: "equivalent" for p in parts for d in p.differences
+               if d.kind == "absent"}                    # every omission ruled acceptable
+    view = official_view(report, gen, off, rulings)
+    assert sum(c["official"] for c in view.values()) == len(flatten_parts(off))
+    for c in view.values():
+        assert c["official"] == sum(c[k] for k in OFFICIAL_VIEW[1:])
+    total = {k: sum(c[k] for c in view.values()) for k in OFFICIAL_VIEW}
+    assert total["wrong_missing"] == 0 and total["accepted"] > 0   # missing → accepted
+    assert total["not_judged"] > 0                       # the changed ones had no ruling

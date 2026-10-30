@@ -494,6 +494,45 @@ def leaf_census(report: OpenAPIEvaluation, generated: dict,
     return out
 
 
+OFFICIAL_VIEW = ("official", "equal", "accepted", "wrong_changed", "wrong_missing",
+                 "uncertain", "not_judged")
+
+
+def official_view(report: OpenAPIEvaluation, generated: dict, official: dict,
+                  rulings: dict[str, str]) -> dict[str, dict[str, int]]:
+    """{region: counts} over the VALUES OF THE OFFICIAL document only — how much of it
+    the generated one reproduces. A value equal in the generated is `equal`; any other
+    takes the verdict of the difference that holds it (`rulings`: difference location
+    → verdict): equivalent / improvement → `accepted` (reproduced another way, e.g.
+    `default` covered by 4XX/5XX), error → `wrong_changed` (the generated has it, with
+    another value) or `wrong_missing` (it does not), uncertain → `uncertain`, no ruling
+    → `not_judged`. official = equal + accepted + wrong_* + uncertain + not_judged."""
+    misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
+                 if s.status == "misplaced"}
+    o, g = flatten_parts(official), flatten_parts(generated)
+    locs = sorted(rulings, key=len, reverse=True)
+    out = {r: dict.fromkeys(OFFICIAL_VIEW, 0) for r in REGIONS}
+    for p, value in o.items():
+        c = out[region(_unit(p, official, generated, misplaced)[0])]
+        c["official"] += 1
+        if p in g and g[p] == value:
+            c["equal"] += 1
+            continue
+        leaf = join(p)
+        loc = next((x for x in locs
+                    if leaf == x or leaf.startswith((x + ".", x + "["))), None)
+        verdict = rulings.get(loc) if loc is not None else None
+        if verdict in ("equivalent", "improvement"):
+            c["accepted"] += 1
+        elif verdict == "error":
+            c["wrong_changed" if p in g else "wrong_missing"] += 1
+        elif verdict == "uncertain":
+            c["uncertain"] += 1
+        else:
+            c["not_judged"] += 1
+    return out
+
+
 def nature(part: Part) -> str:
     """missing: all it differs by is absent from the generated side; extra: all of it
     is added by the generated side; changed: anything else."""
