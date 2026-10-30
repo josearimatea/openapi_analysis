@@ -1,22 +1,13 @@
-"""Cut the divergences between two documents into PARTS for the judge.
+"""Cut the divergences into PARTS for the judge.
 
 Deterministic, no LLM, no retrieval: it only reads the evaluation reports and the
 documents they were computed from. A part is small enough to aim a retrieval at it
 (docs/JUDGE_PLAN.md §3) — what is equal to the official YAML never becomes a part.
 
-Generator (both documents) — every difference, contract, metadata and prose alike,
-lands in exactly one part, given to the owner it sits in:
-    operation  owner "PATCH /x"   aspects: parameters | request_body | responses |
-                                           callback <name> | operation
-    path item  owner "PATH /x"    aspects: parameters | path_item | unexpected_keys | path
-    schema     owner "SCHEMA N"   aspects: definition | placement | missing | extra
-    component  owner "COMPONENT parameters.N" (other components sections): definition
-    block      owner "COMPONENTS k" (a key in components that is no section),
-               "DOCUMENT info" / "DOCUMENT x-..." (metadata) and other top-level keys
-The part holds the WHOLE owner on both sides as context — the whole operation (with
-the path item's parameters for a parameters part), the whole callback with the
-identity of the operation that registers it, the whole schema, the whole block —
-and its focus: the exact differences, computed here as layer 1 computes leaves.
+Generator (both documents) — the parts come from the alignment of the two documents
+(judge/group_parts.py); this module gives them the difference of two subtrees
+(diff_documents, the same leaf identity as layer 1), node_at and the attachment of
+layer-2 issues.
 
 Rules bank (RulesBankEvaluation + the bank) — one part per rule:
     different  a bank rule on an official address, with another value
@@ -32,27 +23,20 @@ already invalid can be ruled an error without asking the LLM.
 from __future__ import annotations
 
 import re
-from collections import defaultdict
 from typing import Any
 
 from openapi_analysis.judge.spec_index import clause_of
 from openapi_analysis.openapi.comparison import (
-    METADATA_ROOTS,
     SET_KEYWORDS,
     Parts,
     _item_label,
-    element,
     flatten_parts,
     join,
 )
 from openapi_analysis.rulesbank.rule_types import HTTP_METHODS, rule_key
-from openapi_analysis.schemas.judge import Difference, Part, SearchHints
-from openapi_analysis.schemas.openapi import OpenAPIEvaluation, OperationScore, SchemaScore
+from openapi_analysis.schemas.judge import Part, SearchHints
 from openapi_analysis.schemas.rulesbank import RulesBankEvaluation
 
-# operation key in the document → aspect name
-_OP_ASPECTS = {"parameters": "parameters", "requestBody": "request_body",
-               "responses": "responses", "callbacks": "callbacks"}
 _REF = re.compile(r"(?:([A-Za-z0-9_.\-]+\.ya?ml))?#/components/[A-Za-z]+/([A-Za-z0-9_.\-]+)")
 
 
@@ -94,27 +78,11 @@ def _ref_hints_in_text(*texts: str) -> tuple[list[str], list[str]]:
     return names, external
 
 
-def _get(doc: Any, *keys: str) -> Any:
-    for k in keys:
-        if not isinstance(doc, dict):
-            return None
-        doc = doc.get(k)
-    return doc
-
-
-def _codes(node: Any) -> list[str]:
-    return sorted(map(str, node)) if isinstance(node, dict) else []
-
-
-# ── generator ────────────────────────────────────────────────────────────────
-
 _MISSING = object()
 Diff = tuple[str, Parts, Any, Any]      # (kind, path, official, generated)
 # components sections whose entries are named, reusable objects (OAS 3.0)
 _COMPONENT_SECTIONS = ("schemas", "responses", "parameters", "examples", "requestBodies",
                        "headers", "securitySchemes", "links", "callbacks")
-# path item keys that are not operations but are allowed there
-_PATH_ITEM_FIELDS = ("summary", "description", "servers", "$ref")
 
 
 def _keys(element: str) -> list[str]:
@@ -178,234 +146,6 @@ def diff_documents(official: Any, generated: Any, at: Parts = ()) -> list[Diff]:
     return [] if official == generated else [("differing", at, official, generated)]
 
 
-def _unit(p: Parts, official: dict, generated: dict,
-          misplaced: dict[Parts, str]) -> tuple[str, str, Parts]:
-    """(owner, aspect, anchor) of a difference — the anchor is the whole piece the
-    judge gets as context: the operation, the callback, the schema, the block."""
-    def both(*keys: str) -> bool:
-        return isinstance(_get(official, *keys), dict) and isinstance(_get(generated, *keys), dict)
-
-    root = p[0] if p else ""
-    if root == "paths" and len(p) >= 2:
-        path = p[1]
-        if len(p) == 2 or not both("paths", path):
-            return f"PATH {path}", "path", p[:2]
-        key = p[2]
-        if key in HTTP_METHODS:
-            owner, anchor = f"{key.upper()} {path}", p[:3]
-            if len(p) == 3 or not both("paths", path, key):
-                return owner, "operation", anchor
-            if p[3] == "callbacks" and len(p) > 4:
-                return owner, f"callback {p[4]}", (*anchor, "callbacks", p[4])
-            return owner, _OP_ASPECTS.get(p[3], "operation"), anchor
-        aspect = ("parameters" if key == "parameters" else
-                  "path_item" if key in _PATH_ITEM_FIELDS else "unexpected_keys")
-        return f"PATH {path}", aspect, p[:2]
-    if root == "components" and len(p) >= 2:
-        for n in (3, 2):
-            if p[:n] in misplaced:
-                return f"SCHEMA {misplaced[p[:n]]}", "placement", ("components", "schemas",
-                                                                   misplaced[p[:n]])
-        if p[1] == "schemas" and len(p) >= 3:
-            name = p[2]
-            if name in misplaced.values():
-                return f"SCHEMA {name}", "placement", p[:3]
-            off = _get(official, "components", "schemas", name)
-            gen = _get(generated, "components", "schemas", name)
-            aspect = ("missing" if gen is None else "extra" if off is None else "definition")
-            return f"SCHEMA {name}", aspect, p[:3]
-        if p[1] in _COMPONENT_SECTIONS and len(p) >= 3:
-            return f"COMPONENT {p[1]}.{p[2]}", "definition", p[:3]
-        if p[1] not in _COMPONENT_SECTIONS and any(            # a copy of a schema,
-                _get(doc, "components", "schemas", p[1]) is not None   # outside its place
-                for doc in (official, generated)):
-            return f"SCHEMA {p[1]}", "placement", ("components", "schemas", p[1])
-        return f"COMPONENTS {p[1]}", "block", p[:2]
-    if root in METADATA_ROOTS or root.startswith("x-"):
-        return f"DOCUMENT {root}", "metadata", p[:1]
-    return f"DOCUMENT {root or '(root)'}", "block", p[:1]
-
-
-def _path_item_view(item: Any) -> Any:
-    """A path item as context for its own keys: every non-operation key whole, each
-    operation by its identity and parameters (each operation has its own parts)."""
-    if not isinstance(item, dict):
-        return item
-    out: dict[str, Any] = {}
-    for k, v in _str_keys(item).items():
-        if k in HTTP_METHODS and isinstance(v, dict):
-            out[k] = {f: v[f] for f in ("operationId", "summary", "parameters") if f in v}
-        else:
-            out[k] = v
-    return out
-
-
-def _identity(doc: dict, path: str, method: str) -> str:
-    op = _get(doc, "paths", path, method) or {}
-    bits = [f"{method.upper()} {path}"] + [f"{f}: {op[f]}" for f in ("operationId", "summary")
-                                            if isinstance(op, dict) and op.get(f)]
-    return " — ".join(bits)
-
-
-def _context(doc: dict, aspect: str, anchor: Parts, ats: list[Parts]) -> dict[str, Any] | None:
-    """The whole owner on one side, keyed by where it is in the document; None if the
-    side has none of it. `ats`: where this side holds the piece — a schema also
-    defined outside components.schemas is shown at every place."""
-    ctx: dict[str, Any] = {}
-    for at in ats:
-        node = _get(doc, *at)
-        if node is None:
-            continue
-        if anchor[0] == "paths" and len(anchor) == 2 and aspect != "path":
-            ctx[join(at) + " (operations: identity and parameters only — each is judged "
-                "in its own part)"] = _path_item_view(node)
-        else:
-            ctx[join(at)] = node
-    if aspect == "parameters" and len(anchor) == 3:           # an operation's parameters
-        shared = _get(doc, "paths", anchor[1], "parameters")
-        if shared is not None:
-            ctx[join(("paths", anchor[1], "parameters"))] = shared
-    if aspect.startswith("callback ") and ctx:
-        ctx = {"registered by": _identity(doc, anchor[1], anchor[2]), **ctx}
-    return ctx or None
-
-
-def _leaf_count(p: Parts, official: Any, generated: Any) -> int:
-    """How many layer-1 leaves a difference spans: the union of both sides' leaves
-    under it (one side only for absent / extra), keyed as layer 1 keys them."""
-    key = p[-1] if p else ""
-    sides = [flatten_parts({key: v}) for v in (official, generated) if v is not None]
-    return len(set().union(*sides)) or 1
-
-
-def _where(p: Parts, aspect: str, anchor: Parts, misplaced: dict[Parts, str]) -> Parts:
-    """The location a difference is judged at: the aspect's key in an operation or a
-    path item, each field of an operation, the copy of a schema, else the owner."""
-    if p[:len(anchor)] != anchor:                               # placement: elsewhere
-        return next((at for at in misplaced if p[:len(at)] == at), p[:2])
-    if anchor[0] == "paths" and len(anchor) == 3 and aspect == "operation":
-        return p
-    in_item = anchor[0] == "paths" and len(anchor) in (2, 3) and aspect not in (
-        "path", "operation")
-    return p[:len(anchor) + 1] if in_item and len(p) > len(anchor) else anchor
-
-
-def _term(rel: Parts, fallback: str) -> str:
-    """The element a difference is about, named: a code, a parameter, a media type,
-    a property — read through comparison.element."""
-    keys = [k for k in (element(rel) if rel else ()) if not re.fullmatch(r"\[\d+\]", k)]
-    key = keys[-1] if keys else fallback
-    m = re.fullmatch(r"\[in=[^,]*,name=(.*)\]", key)
-    return m.group(1) if m else key
-
-
-def _facts(aspect: str, op: OperationScore | None, schema: SchemaScore | None) -> list[str]:
-    """What layer 1 already says about this aspect, in words."""
-    if op is not None:
-        facts = {
-            "parameters": [op.params_missing and f"parameters missing {op.params_missing}",
-                           op.params_extra and f"parameters extra {op.params_extra}",
-                           op.params_at_path_level and
-                           f"declared on the path item, not on this operation: "
-                           f"{op.params_at_path_level}"],
-            "request_body": [op.media_missing and f"media types missing {op.media_missing}",
-                             op.media_extra and f"media types extra {op.media_extra}"],
-            "responses": [op.responses_missing and f"codes missing {op.responses_missing}",
-                          op.responses_extra and f"codes extra {op.responses_extra}"],
-            "operation": [op.status != "present" and
-                          f"operation {op.status} in the generated document"],
-            "path": [op.status != "present" and
-                     f"path item {op.status} in the generated document"],
-        }.get(aspect, [])
-        return [f for f in facts if f]
-    if schema is not None:
-        return [f for f in [
-            f"schema {schema.status}" + (f" (at {schema.found_at})" if schema.found_at else ""),
-            schema.shape_official != schema.shape_generated and
-            f"shape official {schema.shape_official or '—'} vs generated "
-            f"{schema.shape_generated or '—'}",
-            schema.note] if f]
-    return []
-
-
-def generator_parts(report: OpenAPIEvaluation, generated: dict, official: dict,
-                    input_label: str = "") -> list[Part]:
-    """The divergent parts of a generated document — every difference in exactly one.
-
-    Each difference between the two documents (contract, metadata and prose alike) is
-    given to the owner it sits in; the part carries that whole owner on both sides,
-    and the differences as its focus. Nothing that differs is left out.
-    """
-    label = input_label or report.generated.label
-    misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
-                 if s.status == "misplaced"}
-    ops = {o.operation: o for o in report.operations}
-    schemas = {s.name: s for s in report.schemas}
-
-    units: dict[tuple[str, str], tuple[Parts, list[Diff]]] = {}
-    for kind, p, o_val, g_val in diff_documents(official, generated):
-        owner, aspect, anchor = _unit(p, official, generated, misplaced)
-        units.setdefault((owner, aspect), (anchor, []))[1].append((kind, p, o_val, g_val))
-
-    parts: list[Part] = []
-    locations: dict[str, list[str]] = {}       # part id → document locations it judges
-    for (owner, aspect), (anchor, diffs) in units.items():
-        g_ats = [anchor]
-        if aspect == "placement":                # where else the generated side defines it
-            g_ats += list(dict.fromkeys(
-                next((at for at in misplaced if p[:len(at)] == at), p[:2])
-                for _, p, _, _ in diffs if p[:len(anchor)] != anchor))
-        focus = list(dict.fromkeys(join(_where(p, aspect, anchor, misplaced))
-                                   for _, p, _, _ in diffs))
-
-        differences = [
-            Difference(kind=k, location=join(p), leaves=_leaf_count(p, o_val, g_val),
-                       official=o_val if k == "differing" else None,
-                       generated=g_val if k == "differing" else None)
-            for k, p, o_val, g_val in diffs]
-        terms = list(dict.fromkeys(
-            [_term(p[len(anchor):], anchor[-1]) for _, p, _, _ in diffs] +
-            [str(v) for k, _, o_val, g_val in diffs if k == "differing" for v in (o_val, g_val)
-             if v is not None and not isinstance(v, (dict, list)) and len(str(v)) <= 60]))
-        kinds = defaultdict(int)
-        for d in differences:
-            kinds[d.kind] += 1
-        counts = ", ".join(f"{n} {k}" for k, n in sorted(kinds.items()))
-        op_score = ops.get(owner)
-        schema_score = schemas.get(owner.split(" ", 1)[1]) if owner.startswith("SCHEMA ") \
-            else None
-        facts = _facts(aspect, op_score, schema_score)
-        if aspect == "placement":
-            facts.append("generated defines it at " + ", ".join(
-                join(at) for at in g_ats if _get(generated, *at) is not None))
-        summary = "; ".join(facts + [counts])
-
-        path = anchor[1] if anchor[0] == "paths" else ""
-        method = anchor[2] if anchor[0] == "paths" and len(anchor) > 2 else ""
-        names, external = _ref_hints(*[v for _, _, o_val, g_val in diffs
-                                       for v in (o_val, g_val)])
-        if owner.startswith("SCHEMA "):
-            names = [owner.split(" ", 1)[1], *names]
-        terms_hint = ([aspect.split(" ", 1)[1]] if aspect.startswith("callback ") else
-                      [t for t in (_get(official, "paths", path, method, "operationId"),
-                                   _get(official, "paths", path, method, "summary"))
-                       if isinstance(t, str)] if method else [])
-        part = Part(
-            id=f"generator|{label}|{owner}|{aspect}", evaluation="generator", input=label,
-            owner=owner, aspect=aspect, summary=summary, focus=focus,
-            differences=differences, diff_terms=terms,
-            official=_context(official, aspect, anchor, [anchor]),
-            generated=_context(generated, aspect, anchor, g_ats),
-            hints=SearchHints(path=path, method=method, schemas=list(dict.fromkeys(names)),
-                              external_refs=external, terms=terms_hint))
-        parts.append(part)
-        locations[part.id] = focus
-
-    _attach_issues(parts, locations, [f"{i.location}: {i.message}"
-                                      for i in report.validity_generated.issues])
-    return parts
-
-
 def node_at(context: Any, location: str) -> Any:
     """The node at a display location ("paths./x.get.parameters[in=query,name=s]")
     inside a part's context ({display location of a whole piece: node}); None if the
@@ -436,129 +176,28 @@ def _parent_key(name: str) -> Parts:
     return (name,) if name else ()
 
 
-def document_owners(report: OpenAPIEvaluation, generated: dict, official: dict) -> list[str]:
-    """Every owner of either document — operation, path item, schema, component,
-    block — as generator_parts names them; an owner with no part is equal."""
-    misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
-                 if s.status == "misplaced"}
-    owners: dict[str, None] = {}
-    for doc in (official, generated):
-        for p in flatten_parts(doc):
-            owners[_unit(p, official, generated, misplaced)[0]] = None
-    return list(owners)
-
-
-REGIONS = ("endpoints", "data types", "other components", "document header")
-
-
-def region(owner: str) -> str:
-    """The region of the document an owner sits in:
-      endpoints         paths — each operation (method + path) and its parameters,
-                        request body, responses and callbacks
-      data types        components.schemas — the data models the endpoints use
-      other components  the rest of components, and blocks outside their place
-      document header   info, servers, externalDocs, openapi, tags, security, x-*
-                        — about the document, not the API (never scored)"""
-    head = owner.split(" ", 1)[0]
-    if head == "SCHEMA":
-        return "data types"
-    if head in ("COMPONENT", "COMPONENTS"):
-        return "other components"
-    if head == "DOCUMENT":
-        return "document header"
-    return "endpoints"
-
-
-def leaf_census(report: OpenAPIEvaluation, generated: dict,
-                official: dict) -> dict[str, dict[str, int]]:
-    """{region: counts} over the VALUES of both documents — a value is one leaf, a field
-    holding a final value (info.title, ...responses.200.description), as layer 1 counts
-    them. Per region: official / generated (values in each), total (distinct values in
-    either), equal, changed (both have it, other value), only_official, only_generated.
-    total = equal + changed + only_official + only_generated."""
-    misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
-                 if s.status == "misplaced"}
-    o, g = flatten_parts(official), flatten_parts(generated)
-    keys = ("official", "generated", "total", "equal", "changed", "only_official",
-            "only_generated")
-    out = {r: dict.fromkeys(keys, 0) for r in REGIONS}
-    for p in {*o, *g}:
-        c = out[region(_unit(p, official, generated, misplaced)[0])]
-        c["total"] += 1
-        c["official"] += p in o
-        c["generated"] += p in g
-        if p in o and p in g:
-            c["equal" if o[p] == g[p] else "changed"] += 1
-        else:
-            c["only_official" if p in o else "only_generated"] += 1
-    return out
-
-
-OFFICIAL_VIEW = ("official", "equal", "accepted", "wrong_changed", "wrong_missing",
-                 "uncertain", "not_judged")
-
-
-def official_view(report: OpenAPIEvaluation, generated: dict, official: dict,
-                  rulings: dict[str, str]) -> dict[str, dict[str, int]]:
-    """{region: counts} over the VALUES OF THE OFFICIAL document only — how much of it
-    the generated one reproduces. A value equal in the generated is `equal`; any other
-    takes the verdict of the difference that holds it (`rulings`: difference location
-    → verdict): equivalent / improvement → `accepted` (reproduced another way, e.g.
-    `default` covered by 4XX/5XX), error → `wrong_changed` (the generated has it, with
-    another value) or `wrong_missing` (it does not), uncertain → `uncertain`, no ruling
-    → `not_judged`. official = equal + accepted + wrong_* + uncertain + not_judged."""
-    misplaced = {tuple(_keys(s.found_at)): s.name for s in report.schemas
-                 if s.status == "misplaced"}
-    o, g = flatten_parts(official), flatten_parts(generated)
-    locs = sorted(rulings, key=len, reverse=True)
-    out = {r: dict.fromkeys(OFFICIAL_VIEW, 0) for r in REGIONS}
-    for p, value in o.items():
-        c = out[region(_unit(p, official, generated, misplaced)[0])]
-        c["official"] += 1
-        if p in g and g[p] == value:
-            c["equal"] += 1
-            continue
-        leaf = join(p)
-        loc = next((x for x in locs
-                    if leaf == x or leaf.startswith((x + ".", x + "["))), None)
-        verdict = rulings.get(loc) if loc is not None else None
-        if verdict in ("equivalent", "improvement"):
-            c["accepted"] += 1
-        elif verdict == "error":
-            c["wrong_changed" if p in g else "wrong_missing"] += 1
-        elif verdict == "uncertain":
-            c["uncertain"] += 1
-        else:
-            c["not_judged"] += 1
-    return out
-
-
-def nature(part: Part) -> str:
-    """missing: all it differs by is absent from the generated side; extra: all of it
-    is added by the generated side; changed: anything else."""
-    kinds = {d.kind for d in part.differences}
-    return "missing" if kinds == {"absent"} else "extra" if kinds == {"extra"} else "changed"
-
-
 def _attach_issues(parts: list[Part], locations: dict[str, list[str]],
-                   issues: list[str]) -> None:
+                   issues: list[str], containers: dict[str, list[str]] | None = None) -> None:
     """Give each layer-2 issue to the most specific part that holds it.
 
     An issue belongs to a part when it sits inside the part's location, or sits on
     the part's DIRECT parent and names the part's key ("components: 'MoiChange' ...
     unexpected") — a deeper descendant with the same key name is another thing.
+    `containers`: locations that hold a part's blocks without being a part (a path
+    key holding a schema copy) — an issue naming one goes to that part too.
     """
     for issue in issues:
         where, _, message = issue.partition(": ")
         named: list[Part] = []                 # parts the issue names (direct children)
         best, best_len = None, -1               # else: the most specific part holding it
         for part in parts:
-            for loc in locations[part.id]:
+            own = locations[part.id]
+            for loc in [*own, *(containers or {}).get(part.id, [])]:
                 key = _keys(loc)[-1]
                 if loc == f"{where}.{join((key,))}" and f"'{key}'" in message:
                     if part not in named:
                         named.append(part)
-                elif (where == loc or where.startswith((loc + ".", loc + "["))) \
+                elif loc in own and (where == loc or where.startswith((loc + ".", loc + "["))) \
                         and len(loc) > best_len:
                     best, best_len = part, len(loc)
         for part in named or ([best] if best is not None else []):

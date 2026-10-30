@@ -9,22 +9,29 @@ import yaml
 
 from openapi_analysis.schemas.judge import Difference, Evidence, Part
 
-PROMPT_VERSION = "judge-v4"
+PROMPT_VERSION = "judge-v5"
 
 SYSTEM = """\
 You are a reviewer of OpenAPI 3.0 documents derived from 3GPP specifications. You judge
-ONE part of a document at a time: a place where the generated side differs from the
-official 3GPP OpenAPI document.
+ONE part of a document at a time. A part is either:
+- a GROUP: blocks of the two documents found to CORRESPOND — they play the same role in
+  the API (an operation, a parameter, a response, a schema...), maybe at other
+  locations or in another form; how they were grouped is in SUMMARY. You judge how
+  the generated side differs from the official one;
+- a LEFTOVER: a block present in one document only, with no counterpart in the other.
 
 You are given:
-- CONTEXT: the whole owner of the part — the whole operation, callback, schema or block —
-  on the official side (id C1) and on the generated side (id C2), exactly as in the
+- CONTEXT: the blocks of the part — or the whole operation that holds them — on the
+  official side (id C1) and on the generated side (id C2), exactly as in the
   documents. It is there so you understand the part, and it is evidence you may cite.
-- FOCUS: what you judge — the locations inside the owner, and the exact list of
+- FOCUS: what you judge — the locations inside the context, and the exact list of
   differences, computed deterministically:
     "- location"  present in the official document only (absent from the generated one)
     "+ location"  present in the generated document only (extra)
     "~ location"  present in both, with another value (both values given)
+    "> location"  the same block at another location or under another key (official
+                  and generated locations given): judge the move itself — a parameter
+                  at another level, default replaced by 4XX / 5XX, a duplicated endpoint
   Every other line of the context is equal on both sides, or is judged in another part.
 - evidence: passages of the 3GPP specification (ids S1, S2, ...) and of the OpenAPI 3.0
   reference (ids O1, O2, ...), retrieved for this part.
@@ -73,6 +80,11 @@ Rules:
   you believe 3GPP usually does.
 - A side reported as "not valid OpenAPI 3.0" breaks the OpenAPI format: that side is in
   error, whatever else is true.
+- A leftover present in the official only is an error when the generated document loses
+  what it carries; one present in the generated only is an improvement only with S or O
+  evidence, an error when it is wrong, redundant or a duplicate of what exists elsewhere.
+- If the blocks of a GROUP do not play the same role at all, set grouping_wrong and say
+  why; judge the differences all the same.
 - Answer in English.
 """
 
@@ -96,10 +108,15 @@ def _evidence_block(e: Evidence, limit: int = 2500) -> str:
 def difference_line(d: Difference) -> str:
     """One difference as the judge and the report show it."""
     if d.kind == "differing":
-        return (f"~ {d.location}\n    official:  {_inline(d.official)}"
+        where = (f"  (official at {d.official_location})"
+                 if d.official_location and d.official_location != d.location else "")
+        return (f"~ {d.location}{where}\n    official:  {_inline(d.official)}"
                 f"\n    generated: {_inline(d.generated)}")
+    if d.kind == "moved":
+        return f"> {d.location}\n    official at:  {d.official}\n    generated at: {d.generated}"
     mark = "-" if d.kind == "absent" else "+"
-    return f"{mark} {d.location}" + (f"  ({d.leaves} leaves)" if d.leaves > 1 else "")
+    where = d.official_location if d.kind == "absent" and d.official_location else d.location
+    return f"{mark} {where}" + (f"  ({d.leaves} leaves)" if d.leaves > 1 else "")
 
 
 def _inline(value: object, limit: int = 300) -> str:

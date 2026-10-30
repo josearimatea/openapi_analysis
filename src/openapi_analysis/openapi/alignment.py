@@ -480,19 +480,22 @@ class Aligner:
     def owned(self) -> dict[str, int]:
         """block id → how many values it owns: each leaf goes to the deepest active
         block holding it — the invariant that no value is counted twice or lost."""
+        out: dict[str, int] = defaultdict(int)
+        for (side, _), bid in self.leaf_owners().items():
+            out[bid or f"{side}:(no block)"] += 1
+        return dict(out)
+
+    def leaf_owners(self) -> dict[tuple[str, Parts], str | None]:
+        """(side, leaf) → the deepest active block holding it (None: no block)."""
         active = {(b.side, tuple(b.loc)): b.id for b in self.blocks.values()
                   if self.active(b.id)}
-        out: dict[str, int] = defaultdict(int)
+        out: dict[tuple[str, Parts], str | None] = {}
         for side, leaves in self.leaves.items():
             for leaf in leaves:
-                for n in range(len(leaf), 0, -1):
-                    bid = active.get((side, leaf[:n]))
-                    if bid is not None:
-                        out[bid] += 1
-                        break
-                else:
-                    out[f"{side}:(no block)"] += 1
-        return dict(out)
+                out[(side, leaf)] = next((active[(side, leaf[:n])]
+                                          for n in range(len(leaf), 0, -1)
+                                          if (side, leaf[:n]) in active), None)
+        return out
 
     def leftovers(self, owned: dict[str, int] | None = None) -> list[str]:
         owned = self.owned() if owned is None else owned

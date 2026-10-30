@@ -49,13 +49,17 @@ class Difference(BaseModel):
     """One place where the two sides differ, located in the document.
 
     absent / extra: a whole subtree on one side only (`leaves` counts its leaves);
-    differing: both sides have it with another value (both values given).
+    differing: both sides have it with another value (both values given);
+    moved: a block grouped with one at another location (official / generated hold
+    the two locations) — the change of place, judged as any other difference.
     """
-    kind: Literal["absent", "differing", "extra"]
+    kind: Literal["absent", "differing", "extra", "moved"]
     location: str                    # display path in the document ("paths./x.patch.responses.200")
     leaves: int = 1
-    official: Any = None             # differing only
+    official: Any = None             # differing, moved
     generated: Any = None
+    official_location: str = ""      # where it is in the official document, when that
+                                     # differs from `location` (a block grouped elsewhere)
 
 
 class Part(BaseModel):
@@ -128,6 +132,11 @@ class JudgeAnswer(BaseModel):
         default_factory=list,
         description="One ruling per difference listed under DIFFERENCES (D1, D2, ...): every "
                     "difference, once each, in the order given.")
+    grouping_wrong: bool = Field(
+        default=False,
+        description="True only if the blocks put together in this part do NOT play the same "
+                    "role in the API (they were grouped as corresponding by mistake). Say why in "
+                    "why_different. False when they correspond, right or wrong.")
 
 
 class Verdict(BaseModel):
@@ -174,8 +183,12 @@ class JudgeReport(BaseModel):
     validity_generated: ValidityReport | None = None   # layer 2 (generator)
     validity_official: ValidityReport | None = None
     official: SourceInfo | None = None   # the official YAML compared against (label, version)
-    official_view: dict[str, dict[str, int]] = Field(default_factory=dict)  # generator:
-                                     # the official's values by region (parts.official_view)
+    official_view: dict[str, dict[str, int]] = Field(default_factory=dict)  # (old reports)
+    views: dict[str, dict[str, int]] = Field(default_factory=dict)  # generator: the fields
+                                     # of each document by outcome (judge/group_parts.views):
+                                     # "official", "generated", and the "header" apart
+    grouping: dict[str, int] = Field(default_factory=dict)  # generator: block memberships
+                                     # by how they were grouped (address, key, llm)
 
     @computed_field
     @property

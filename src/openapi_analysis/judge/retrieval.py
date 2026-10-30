@@ -67,6 +67,14 @@ _OPENAPI = {
     "extra": ("Reference Object", "$ref to a schema in another document"),
 }
 _IDENTIFIER = re.compile(r"^[A-Za-z][A-Za-z0-9_-]*$")
+# a generator part's block kind (judge/group_parts.py: aspect "<kind> — ...") → topic
+_KIND_TOPIC = {"response": "responses", "parameter": "parameters", "media_type": "request_body",
+               "callback": "callback", "operation": "operation", "schema": "definition",
+               "header": "metadata", "path": "path", "component": "block", "block": "block"}
+
+
+def _kind(part: Part) -> str:
+    return part.aspect.split(" — ", 1)[0] if " — " in part.aspect else ""
 
 
 # ── what a part is about ─────────────────────────────────────────────────────
@@ -80,11 +88,20 @@ def topic(part: Part) -> str:
     if part.evaluation == "rulesbank":
         rule = part.official or _bank_rule(part)
         return _RULE_TYPE_TOPIC.get(rule.get("rule_type", ""), "operation")
+    if _kind(part) in _KIND_TOPIC:
+        return _KIND_TOPIC[_kind(part)]
     return part.aspect.split(" ", 1)[0]
 
 
 def subject(part: Part) -> str:
     """The thing the part is about, as a spec names it."""
+    kind = _kind(part)
+    if kind == "schema" and part.hints.schemas:
+        return part.hints.schemas[0]
+    if kind == "callback":                       # "callback notifyX — POST ... — registered by"
+        return part.owner.split(" — ", 1)[0].removeprefix("callback ").strip()
+    if kind in ("header", "component", "block"):
+        return part.owner.split(" — ", 1)[0]
     if part.aspect.startswith("callback "):
         return part.aspect.split(" ", 1)[1]
     if part.owner.startswith(("SCHEMA ", "DOCUMENT ", "COMPONENTS ")):

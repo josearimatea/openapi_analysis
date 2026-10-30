@@ -3,7 +3,9 @@
     judge_openapi(generated_yaml, official_yaml)  -> JudgeReport
     judge_rules_bank(rules_bank, official_yaml)   -> JudgeReport
 
-Flow per input: layer 1/2 report → parts (judge/parts.py) → for each part, retrieval
+Flow per input: layer 1/2 report → parts — for a generated document, from the
+alignment of the two documents (openapi/alignment.py, judge/grouping.py,
+judge/group_parts.py); for a rules bank, one per rule (judge/parts.py) → for each part, retrieval
 from the spec and the OpenAPI reference (judge/retrieval.py) → the LLM (judge/judge.py,
 cached under data/judgements/) → a JudgeReport, saved as ONE report under
 data/outputs/reports/<service>/<evaluation>/YYYY-MM-DD_HH-MM-SS.txt|.json.
@@ -20,16 +22,13 @@ from pathlib import Path
 
 from openapi_analysis.config import judge_settings as s
 from openapi_analysis.config.paths import JUDGEMENTS_DIR, ROOT
+from openapi_analysis.judge.group_parts import group_parts, grouping_counts, views
+from openapi_analysis.judge.grouping import AskGrouping, run_grouping
 from openapi_analysis.judge.judge import AskLLM, default_ask, judge_part
-from openapi_analysis.judge.parts import (
-    document_owners,
-    generator_parts,
-    leaf_census,
-    official_view,
-    rulesbank_parts,
-)
+from openapi_analysis.judge.parts import rulesbank_parts
 from openapi_analysis.judge.retrieval import CorpusLayout, Search, default_search, retrieve_evidence
 from openapi_analysis.judge.spec_index import annex_cut, block_of, chunk_clauses, clause_of
+from openapi_analysis.openapi.alignment import Aligner
 from openapi_analysis.reporting.final import render_final
 from openapi_analysis.reporting.text import render_judge
 from openapi_analysis.schemas.judge import JudgeReport, Part
@@ -96,31 +95,21 @@ def _corpus_layout(collection: str) -> CorpusLayout:
             return CorpusLayout(annex=annex_cut(chunks), clauses=chunk_clauses(chunks))
 
 
-def rulings_of(verdicts: list) -> dict[str, str]:
-    """{difference location: its verdict} over every judged difference."""
-    out: dict[str, str] = {}
-    for v in verdicts:
-        per = v.difference_verdicts or [v.answer.verdict] * len(v.differences)
-        for d, verdict in zip(v.differences, per, strict=True):
-            out[d.location] = verdict
-    return out
-
-
 def _judge(parts: list[Part], evaluation: str, label: str, service: str,
            spec_document: Path, scope: tuple[str, ...], *, select: Select | None,
            limit: int | None, ask: AskLLM | None, search: Search | None,
-           save: bool, owners: list[str] | None = None,
-           leaves: dict[str, dict[str, int]] | None = None,
-           validity: tuple | None = None,
+           save: bool, validity: tuple | None = None,
            official: SourceInfo | None = None,
-           view: Callable[[list], dict] | None = None) -> JudgeReport:
+           view: Callable[[list], dict] | None = None,
+           grouping: dict[str, int] | None = None,
+           since: dict | None = None) -> JudgeReport:
     from openapi_analysis.config.llm_config import usage_tracker
 
     collection = _collection(spec_document)
     search = search or default_search()
     ask = ask or default_ask()
     chosen = [p for p in parts if select is None or select(p)][:limit]
-    before = usage_tracker.as_dict()
+    before = since or usage_tracker.as_dict()      # since: the grouping's calls count too
 
     layout = _corpus_layout(collection)
 
@@ -137,16 +126,13 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
                          service=service, scope=list(scope), model=s.MODEL,
                          prompt_version=verdicts[0].prompt_version if verdicts else "",
                          evaluated_at=now(), verdicts=verdicts, usage=usage,
-                         parts_total=len(parts), owners_total=len(owners or []),
-                         leaves=leaves or {},
+                         parts_total=len(parts),
                          validity_generated=validity[0] if validity else None,
                          validity_official=validity[1] if validity else None,
-                         official=official,
-                         official_view=view(verdicts) if view else {},
-                         owners_equal=[o for o in owners or []
-                                       if o not in {p.owner for p in parts}])
+                         official=official, views=view(verdicts) if view else {},
+                         grouping=grouping or {})
     if save:            # ONE report per input and run: for a generated document, the
-        # final analysis (validation, value-by-value agreement and review, detail)
+        # final analysis (validation, the two views of the fields, the detail)
         text = render_final(report) if evaluation == "generator" else render_judge(report)
         save_report(report, service, evaluation, Path(label).stem, text)
     return report
@@ -157,11 +143,16 @@ def judge_openapi(generated_yaml: Source, official_yaml: Source, *,
                   scope: tuple[str, ...] | None = None,
                   select: Select | None = None, limit: int | None = None,
                   ask: AskLLM | None = None, search: Search | None = None,
+                  group_ask: AskGrouping | None = None,
                   save: bool = True) -> JudgeReport:
-    """Judge the divergent parts of a generated OpenAPI document.
+    """Judge a generated OpenAPI document against the official one: align the two
+    documents (exact steps, then the LLM grouper), judge every group that differs and
+    every leftover, and count each document's fields by outcome.
 
     The scope comes from the bank the document was built from (manifest), unless given.
     """
+    from openapi_analysis.config.llm_config import usage_tracker
+
     generated, label = load(generated_yaml)
     official, _ = load(official_yaml)
     if service is None or spec_document is None or scope is None:
@@ -169,16 +160,22 @@ def judge_openapi(generated_yaml: Source, official_yaml: Source, *,
         service, spec_document = service or service_m, spec_document or spec_m
         if scope is None:
             scope = scope_of_bank(load(bank_path)[0])
-    report = evaluate_openapi(generated, official)
-    parts = generator_parts(report, generated, official, Path(label).stem)
+    report = evaluate_openapi(generated_yaml, official_yaml)     # sources: keeps their labels
+    since = usage_tracker.as_dict()
+    stem = Path(label).stem
+    aligner = Aligner(official, generated, generated_label=stem,
+                      official_label=f"{service} v{report.official.version}")
+    aligner.deterministic()
+    run_grouping(aligner, ask=group_ask, model="" if group_ask else s.MODEL,
+                 cache_dir=None if group_ask else JUDGEMENTS_DIR)
+    parts, part_of = group_parts(aligner, stem, [f"{i.location}: {i.message}"
+                                                 for i in report.validity_generated.issues])
     return _judge(parts, "generator", label, service, spec_document, scope, select=select,
                   limit=limit, ask=ask, search=search, save=save,
-                  owners=document_owners(report, generated, official),
-                  leaves=leaf_census(report, generated, official),
                   validity=(report.validity_generated, report.validity_official),
                   official=report.official,
-                  view=lambda verdicts: official_view(report, generated, official,
-                                                      rulings_of(verdicts)))
+                  view=lambda verdicts: views(aligner, parts, part_of, verdicts),
+                  grouping=grouping_counts(aligner), since=since)
 
 
 def judge_rules_bank(rules_bank: Source, official_yaml: Source, *,
