@@ -14,63 +14,42 @@ def test_layer_1_and_2_reports_render():
     assert "%" in render_rulesbank(evaluate_rules_bank(bank, OFFICIAL))
 
 
-def test_the_final_analysis_renders_and_adds_up():
+def test_the_final_analysis_renders_the_two_views():
     import yaml
 
-    from openapi_analysis.judge.parts import document_owners, generator_parts, leaf_census
-    from openapi_analysis.reporting.final import census, render_final
+    from openapi_analysis.judge.group_parts import group_parts, grouping_counts, views
+    from openapi_analysis.openapi.alignment import Aligner
+    from openapi_analysis.reporting.final import correct, render_final
     from openapi_analysis.schemas.judge import JudgeAnswer, JudgeReport, Verdict
-
-    gen = yaml.safe_load((ROOT / "data/inputs/generated/ProvMnS/"
-                          "provmns_20260920_194130.yaml").read_text(encoding="utf-8"))
-    off = yaml.safe_load(OFFICIAL.read_text(encoding="utf-8"))
-    report = evaluate_openapi(gen, off)
-    parts = generator_parts(report, gen, off, "g")
-    answer = JudgeAnswer(why_different="w", verdict="error", spec_3gpp="", openapi="",
-                         clearer="official", clearer_why="c", citations=[])
-    verdicts = [Verdict(part_id=p.id, evaluation="generator", input="g", owner=p.owner,
-                        aspect=p.aspect, summary=p.summary, answer=answer, evidence=[],
-                        decided_by="llm", focus=p.focus, differences=p.differences)
-                for p in parts]
-    jr = JudgeReport(evaluation="generator", input="g", spec_collection="c", service="ProvMnS",
-                     model="m", prompt_version="v", evaluated_at="2026-10-06T00:00:00-03:00",
-                     verdicts=verdicts, parts_total=len(parts),
-                     owners_total=len(document_owners(report, gen, off)),
-                     leaves=leaf_census(report, gen, off),
-                     validity_generated=report.validity_generated,
-                     validity_official=report.validity_official)
-    rows, total = census(jr)
-    # the API only — the header (29 values) apart; every value counted once
-    assert (total["total"], total["equal"], total["error"], total["not judged"]) == (553, 38, 515, 0)
-    assert total["total"] == (total["equal"] + total["changed"] + total["only_official"]
-                              + total["only_generated"])
-    assert rows["document header"]["total"] == 29
-    text = render_final(jr)
-    for step in ("RESULT\n", "Valid OpenAPI 3.0 (result 1): NO — 18 issue(s)",
-                 "RESULT 1 — OPENAPI VALIDATION", "RESULT 2 — VALUE BY VALUE",
-                 "IMPROVEMENTS", "DETAIL, PART BY PART"):
-        assert step in text
-
-
-def test_the_official_coverage_counts_every_official_value_once():
-    """Coverage of the official: base = the official's values only; each one is equal,
-    or takes the verdict of the difference holding it — the sum closes."""
-    import yaml
-
-    from openapi_analysis.judge.parts import OFFICIAL_VIEW, generator_parts, official_view
-    from openapi_analysis.openapi.comparison import flatten_parts
 
     gen = yaml.safe_load((ROOT / "data/inputs/generated/ProvMnS/"
                           "provmns_20260828_232853.yaml").read_text(encoding="utf-8"))
     off = yaml.safe_load(OFFICIAL.read_text(encoding="utf-8"))
     report = evaluate_openapi(gen, off)
-    parts = generator_parts(report, gen, off, "g")
-    rulings = {d.location: "equivalent" for p in parts for d in p.differences
-               if d.kind == "absent"}                    # every omission ruled acceptable
-    view = official_view(report, gen, off, rulings)
-    assert sum(c["official"] for c in view.values()) == len(flatten_parts(off))
-    for c in view.values():
-        assert c["official"] == sum(c[k] for k in OFFICIAL_VIEW[1:])
-    total = {k: sum(c[k] for c in view.values()) for k in OFFICIAL_VIEW}
-    assert total["wrong_missing"] == 0 and total["accepted"] > 0   # missing → accepted
-    assert total["not_judged"] > 0                       # the changed ones had no ruling
+    a = Aligner(off, gen)
+    a.deterministic()
+    parts, part_of = group_parts(a, "g")
+    answer = JudgeAnswer(why_different="w", verdict="error", spec_3gpp="", openapi="",
+                         clearer="official", clearer_why="c", citations=[])
+    verdicts = [Verdict(part_id=p.id, evaluation="generator", input="g", owner=p.owner,
+                        aspect=p.aspect, summary=p.summary, answer=answer, evidence=[],
+                        decided_by="llm", focus=p.focus, differences=p.differences,
+                        difference_verdicts=["error"] * len(p.differences))
+                for p in parts]
+    jr = JudgeReport(evaluation="generator", input="g", spec_collection="c", service="ProvMnS",
+                     model="m", prompt_version="v", evaluated_at="2026-10-29T00:00:00-03:00",
+                     verdicts=verdicts, parts_total=len(parts),
+                     validity_generated=report.validity_generated,
+                     validity_official=report.validity_official,
+                     views=views(a, parts, part_of, verdicts), grouping=grouping_counts(a))
+    # every difference ruled an error: what is right is only what is the same
+    o, g = jr.views["official"], jr.views["generated"]
+    assert correct(o, "official") == o["same"] and correct(g, "generated") == g["same"]
+    assert o["missing"] > 0 and g["extra wrong"] > 0 and o["undecided"] == 0
+    text = render_final(jr)
+    for step in ("RESULT\n", "Valid OpenAPI 3.0: YES",
+                 "1. HOW MUCH OF THE OFFICIAL THE GENERATED REPRODUCES",
+                 "2. HOW MUCH OF THE GENERATED IS RIGHT", "REPRODUCED CORRECTLY",
+                 "IMPROVEMENTS", "RESULT 1 — OPENAPI VALIDATION", "GROUPINGS THE JUDGE DISPUTED",
+                 "DETAIL, PART BY PART"):
+        assert step in text

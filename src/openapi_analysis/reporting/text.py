@@ -285,19 +285,13 @@ def _analysed(v) -> list[str]:
 
 
 def _judge_summary(report) -> list[str]:
-    """The result first (reporting/final.py): validity, every value of the API by
-    verdict, the score, then the same by region."""
-    from openapi_analysis.reporting.final import (
-        _official_coverage,
-        _result,
-        _result2,
-        census,
-        differences,
-    )
+    """The result first (reporting/final.py): validity and the two views of the fields
+    for a generated document; the verdict counts for a rules bank."""
+    from openapi_analysis.reporting.final import result_views
 
-    rows, total = census(report)
-    return [*_result(report, total, differences(report)), "", *_official_coverage(report),
-            "", *_result2(rows, total)]
+    if report.views:
+        return result_views(report)
+    return ["VERDICTS: " + ", ".join(f"{k} {n}" for k, n in sorted(report.counts.items()))]
 
 
 def render_judge(report, max_text: int = 400) -> str:

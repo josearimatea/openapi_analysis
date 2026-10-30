@@ -103,15 +103,15 @@ def main(argv: list[str] | None = None) -> int:
             print(f"openapi    {r.generated.label:72} contract {c.exact:4}/{c.total:<4} "
                   f"absent {len(c.absent)} differing {len(c.differing)}  {valid}")
         if not args.no_judge:
-            from openapi_analysis.reporting.final import census
+            from openapi_analysis.reporting.final import correct
             from openapi_analysis.services.judge_service import judge_all_generated
 
             for j in judge_all_generated():
-                _, total = census(j)
-                ok = 100 * total.get("correct", 0) / total["total"] if total.get("total") else 0
-                print(f"review     {j.input:72} correct {ok:5.1f}%  "
-                      + "  ".join(f"{k} {n}" for k, n in sorted(j.counts.items()))
-                      + f"  (US$ {j.usage.get('cost_usd', 0)})")
+                share = {side: 100 * correct(j.views.get(side, {}), side)
+                         / max(1, sum(j.views.get(side, {}).values()))
+                         for side in ("official", "generated")}
+                print(f"review     {j.input:72} reproduced {share['official']:5.1f}%  "
+                      f"right {share['generated']:5.1f}%  (US$ {j.usage.get('cost_usd', 0)})")
     return 0
 
 
