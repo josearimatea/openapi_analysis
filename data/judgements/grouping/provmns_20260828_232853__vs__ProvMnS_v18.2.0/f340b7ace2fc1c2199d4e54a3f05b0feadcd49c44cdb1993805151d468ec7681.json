@@ -1,0 +1,14 @@
+{
+  "groups": [],
+  "joins": [],
+  "ungrouped": [
+    {
+      "block": "A1",
+      "reason": "No generated parameter has the same identity and role. A1 is the query parameter named dataNodeSelector on GET, while the generated GET has no parameter with that name; the nearby filter and scope parameters are different query parameters under R4."
+    },
+    {
+      "block": "B1",
+      "reason": "No official parameter has the same identity and operation role. B1 is query parameter scope on DELETE, whereas G26 is scope on GET; parameters are identified by name, location, and the operation they belong to, so B1 is not the same object as G26 under R4."
+    }
+  ]
+}

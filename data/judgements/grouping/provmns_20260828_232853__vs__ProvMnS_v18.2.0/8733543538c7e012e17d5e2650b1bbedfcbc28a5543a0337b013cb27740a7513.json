@@ -1,0 +1,34 @@
+{
+  "groups": [],
+  "joins": [],
+  "ungrouped": [
+    {
+      "block": "A1",
+      "reason": "The official document declares a servers header, but the generated document declares no servers object. No generated header block plays the same role under R1."
+    },
+    {
+      "block": "A2",
+      "reason": "CmNotificationTypes is an official enum schema for notification-type values. No generated schema defines that data type; the similarly shaped enum schemas are different component objects under R13."
+    },
+    {
+      "block": "A3",
+      "reason": "NotifyEvent is a distinct notification payload schema, with a specificProblem property and its own role. The generated document has no corresponding NotifyEvent schema or notification delivery; similar notification schemas are different data types under R13 and R16."
+    },
+    {
+      "block": "B1",
+      "reason": "Filter is a generated component schema, but the official document only references an external Filter schema and defines no corresponding local block. Under R13 and R14, the external reference is not any of the supplied official schema blocks."
+    },
+    {
+      "block": "B2",
+      "reason": "ErrorResponse is a generated component schema, while the official document references externally defined ErrorResponse variants and supplies no corresponding local schema block. Under R13 and R14, it cannot be grouped with an unrelated response or schema block."
+    },
+    {
+      "block": "B3",
+      "reason": "AttributeNameValuePairSet is a generated component schema. The official document references an externally defined schema of that name but does not contain it as a supplied block; it is not the same data type as the notification schemas in G18 or G19 under R13 and R14."
+    },
+    {
+      "block": "B4",
+      "reason": "AttributeValueChangeSet is a generated component schema. The official document references an externally defined schema but supplies no corresponding official schema block; it is not the same data type as NotifyMoiAttributeValueChanges in G20 under R13 and R14."
+    }
+  ]
+}

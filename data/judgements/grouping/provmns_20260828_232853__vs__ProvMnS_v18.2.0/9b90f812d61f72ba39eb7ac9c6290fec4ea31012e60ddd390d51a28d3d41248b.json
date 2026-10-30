@@ -1,0 +1,49 @@
+{
+  "groups": [
+    {
+      "official": [
+        "A3"
+      ],
+      "generated": [
+        "B2",
+        "B5"
+      ],
+      "reason": "Both generated POST operations deliver a NotifyMoiAttributeValueChanges payload to a notification target, matching the official notifyMOIAttributeValueChanges callback. The generated operationId says notifyMoiCreation, but correspondence follows the delivery payload and callback purpose under R11 and R12; B2 and B5 are duplicate generated declarations of that delivery."
+    }
+  ],
+  "joins": [
+    {
+      "block": "B1",
+      "group": "G7",
+      "reason": "This is another generated DELETE operation for deleting a resource, corresponding to the official DELETE role despite its malformed or differently split address and parameter set. Operation purpose survives the address discrepancy under R1-R3."
+    },
+    {
+      "block": "B3",
+      "group": "G6",
+      "reason": "This is a generated PUT operation that creates or replaces a resource and has the same Resource request body and success responses as the official PUT operation. Its expanded path is an alternate or malformed address for the same operation role under R1-R3."
+    },
+    {
+      "block": "B4",
+      "group": "G7",
+      "reason": "This is another generated DELETE operation for deleting the managed resource, with the same resource-deletion responses as G7. The path/address form differs, but the operation role corresponds under R1-R3."
+    }
+  ],
+  "ungrouped": [
+    {
+      "block": "A1",
+      "reason": "The official creation-notification callback has no generated operation with a NotifyMoiCreation request body; B2 and B5 instead deliver NotifyMoiAttributeValueChanges."
+    },
+    {
+      "block": "A2",
+      "reason": "The official deletion-notification callback has no generated operation with a NotifyMoiDeletion request body or the corresponding delivery purpose."
+    },
+    {
+      "block": "A4",
+      "reason": "The official event-notification callback has no generated operation with a NotifyEvent request body or matching delivery purpose."
+    },
+    {
+      "block": "A5",
+      "reason": "The official MOI-changes callback has no generated operation with a NotifyMoiChanges request body or matching delivery purpose."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "groups": [
+    {
+      "official": [
+        "A1"
+      ],
+      "generated": [
+        "B1",
+        "B2"
+      ],
+      "reason": "The official default error response covers responses not otherwise declared, while the generated 4XX and 5XX ranges describe the corresponding client- and server-error cases. They have the same error response purpose and the same ErrorResponse payload, so they are one response represented at different status-code granularity under R10."
+    }
+  ],
+  "joins": [],
+  "ungrouped": []
+}
