@@ -91,6 +91,36 @@ def _keys(element: str) -> list[str]:
     return [a or b for a, b in re.findall(r"'([^']*)'|([^.]+)", element)]
 
 
+# OpenAPI maps whose keys are names (a property may well be called "title"); what is under
+# a data key is data, whatever its keys are called
+_NAMED_MAPS = frozenset({"paths", "schemas", "properties", "patternProperties", "responses",
+                         "parameters", "examples", "requestBodies", "headers", "securitySchemes",
+                         "links", "callbacks", "variables", "content", "encoding", "mapping",
+                         "scopes"})
+_DATA_KEYS = frozenset({"example", "default", "enum", "value", "const"})
+PROSE_KEYS = frozenset({"description", "summary", "title"})
+
+
+def is_prose(location: str) -> bool:
+    """Whether a location ends in text for a reader: the OpenAPI keyword description, summary
+    or title, never a property or another named entry that happens to be called so."""
+    keys = _keys(location)
+    name = False
+    for i, key in enumerate(keys):
+        last = i == len(keys) - 1
+        if name:                         # this key is a name in a map, not a keyword
+            name = False
+            if last:
+                return False
+            continue
+        if last:
+            return key in PROSE_KEYS
+        if key in _DATA_KEYS or key.startswith("x-"):
+            return False
+        name = key in _NAMED_MAPS
+    return False
+
+
 def _splittable(at: Parts) -> bool:
     """Above an owner: a subtree present on one side only is split into its children
     here, so one part never swallows several owners (all of paths, all schemas)."""
@@ -136,6 +166,8 @@ def diff_documents(official: Any, generated: Any, at: Parts = ()) -> list[Diff]:
         return [] if same else [("differing", at, official, generated)]
     pair = None
     if isinstance(official, dict) and isinstance(generated, dict):
+        if at and ("$ref" in official) != ("$ref" in generated):
+            return [("differing", at, official, generated)]    # one field written two ways
         pair = _str_keys(official), _str_keys(generated)
     elif isinstance(official, list) and isinstance(generated, list):
         pair = _labelled(at, official), _labelled(at, generated)

@@ -116,11 +116,15 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
     chosen = [p for p in parts if select is None or select(p)][:limit]
     before = since or usage_tracker.as_dict()      # since: the grouping's calls count too
 
+    release_notes: list[str] = []
+
     def retrieve(part: Part):
         return retrieve_evidence(part, collection, search=search, scope=scope,
                                  per_query=s.PER_QUERY, per_definition=s.PER_DEFINITION,
                                  openapi_collection=s.OPENAPI_COLLECTION,
-                                 external_collection=s.EXTERNAL_COLLECTION)
+                                 external_collection=s.EXTERNAL_COLLECTION,
+                                 release=spec_document.stem.partition("-")[2][:1],
+                                 notes=release_notes)
 
     def judge_all(chosen: list[Part]) -> list:
         return [judge_part(p, retrieve=retrieve, ask=ask, model=s.MODEL,
@@ -145,7 +149,8 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
                          validity_official=validity[1] if validity else None,
                          official=official, views=view(verdicts) if view else {},
                          grouping=grouping() if grouping else {}, regrouped=taken,
-                         version_notes=version_notes or [])
+                         version_notes=[*(version_notes or []),
+                                        *dict.fromkeys(release_notes)])
     if save:            # ONE report per input and run: for a generated document, the
         # final analysis (validation, the two views of the fields, the detail)
         text = render_final(report) if evaluation == "generator" else render_judge(report)

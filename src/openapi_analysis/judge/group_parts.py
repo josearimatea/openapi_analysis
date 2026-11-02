@@ -17,6 +17,8 @@ each document on its own base:
                but right, better, wrong, missing, undecided
     generated  how much of the generated is right: same, different but right, better,
                wrong, extra useful, extra wrong, undecided
+Text only the official has (a description the generated omits) is counted apart and never
+scored: it is not part of the contract, and it cannot be right or wrong in the generated.
 The document header (info, servers, tags, ...) is counted apart, never scored.
 """
 
@@ -27,7 +29,13 @@ import re
 from collections import Counter
 from typing import Any
 
-from openapi_analysis.judge.parts import _attach_issues, _keys, _ref_hints, diff_documents
+from openapi_analysis.judge.parts import (
+    _attach_issues,
+    _keys,
+    _ref_hints,
+    diff_documents,
+    is_prose,
+)
 from openapi_analysis.openapi.alignment import METHODS, Aligner, node_at_loc, similarity
 from openapi_analysis.openapi.comparison import _all_refs, _item_label, flatten_parts, join
 from openapi_analysis.schemas.alignment import Group
@@ -118,71 +126,155 @@ def own(a: Aligner, bid: str) -> Any:
     return node
 
 
-def _flattened_member(composed: Any, flat: Any) -> tuple[int, list[str]] | None:
-    """(position, keys) when the last allOf member of `composed` is written at the root of
-    `flat`: an inline member past the allOf items `flat` has, whose keys `flat` holds at
-    its root and `composed` does not. The same schema in another form (OpenAPI: allOf
-    combines its members), so it is compared field by field. `type` alone proves nothing."""
+def _shared_keys(member: Any, composed: dict, flat: dict) -> list[str]:
+    """The keys of an inline member that `flat` holds at its root and `composed` does not;
+    none when only `type` is shared, which proves nothing."""
+    if not isinstance(member, dict) or "$ref" in member:
+        return []
+    keys = [k for k in member if k in flat and k not in composed]
+    return keys if set(keys) - {"type"} else []
+
+
+def _flattened_member(composed: Any, flat: Any) -> tuple[str, int, list[str]] | None:
+    """(keyword, position, keys) when a member of a composition in `composed` is written at
+    the root of `flat`, so it is compared field by field:
+      allOf          the last member, past the items `flat` has: the same schema in another
+                     form, since allOf combines its members;
+      oneOf / anyOf  the only member sharing keys, when `flat` has no such keyword: one
+                     alternative kept, the others remain absent."""
     if not (isinstance(composed, dict) and isinstance(flat, dict)):
         return None
-    items, others = composed.get("allOf"), flat.get("allOf", [])
-    if not (isinstance(items, list) and isinstance(others, list)
-            and len(items) == len(others) + 1):
-        return None
-    member = items[-1]
-    if not isinstance(member, dict) or "$ref" in member:
-        return None
-    keys = [k for k in member if k in flat and k not in composed]
-    return (len(items) - 1, keys) if set(keys) - {"type"} else None
+    for keyword in ("allOf", "oneOf", "anyOf"):
+        items, others = composed.get(keyword), flat.get(keyword, [])
+        if not (isinstance(items, list) and isinstance(others, list)):
+            continue
+        if keyword == "allOf":
+            found = ([len(items) - 1] if len(items) == len(others) + 1
+                     and _shared_keys(items[-1], composed, flat) else [])
+        else:
+            found = [] if others else [i for i, m in enumerate(items)
+                                       if _shared_keys(m, composed, flat)]
+        if len(found) == 1:
+            return keyword, found[0], _shared_keys(items[found[0]], composed, flat)
+    return None
 
 
 def _unflattened(o_node: Any, g_node: Any) -> tuple[Any, Any, list[Any]]:
-    """The two nodes without what a flattened allOf member holds, and (official relative
-    location, generated relative location, official value, generated value) per key of it."""
+    """The two nodes without what a flattened member holds, and (official relative location,
+    generated relative location, official value, generated value) per key of it."""
     for composed, flat, member_is_official in ((o_node, g_node, True), (g_node, o_node, False)):
         found = _flattened_member(composed, flat)
         if found is None:
             continue
-        i, keys = found
-        member = composed["allOf"][i]
-        rest = {**composed, "allOf": [*composed["allOf"][:i],
-                                      {k: v for k, v in member.items() if k not in keys}]}
+        keyword, i, keys = found
+        member = composed[keyword][i]
+        rest = {**composed, keyword: [{k: v for k, v in m.items() if k not in keys}
+                                      if j == i else m for j, m in enumerate(composed[keyword])]}
         root = {k: v for k, v in flat.items() if k not in keys}
-        moved = [(("allOf", f"[{i}]", k), (k,), member[k], flat[k]) for k in keys]
+        moved = [((keyword, f"[{i}]", k), (k,), member[k], flat[k]) for k in keys]
         if member_is_official:
             return rest, root, moved
         return root, rest, [(g_rel, o_rel, g_val, o_val) for o_rel, g_rel, o_val, g_val in moved]
     return o_node, g_node, []
 
 
+def _required_hint(rel: tuple[str, ...], official: Any, generated: Any) -> str:
+    """What to ask of a `required` naming more than the official: the decision is per field,
+    on whether the spec accepts a message without it."""
+    if rel[-1:] != ("required",) or not isinstance(generated, list):
+        return ""
+    added = [x for x in generated if x not in (official if isinstance(official, list) else [])]
+    if not added:
+        return ""
+    return (f"this requires {', '.join(map(str, added))}. For each, does the spec accept a message "
+            "without it? Look at its description, at the enumeration values of a related field and "
+            "at the examples. In a resource representation (NRM), attributes may be absent unless "
+            "always present like \"id\" (TS 32.160, 6.1.10). In any other type, if nothing shows "
+            "such a message, this is not an error.")
+
+
+def _delivery(callback: Any) -> tuple[tuple[str, str], Any] | None:
+    """((expression, method), its operation) of a callback with a single request."""
+    if not isinstance(callback, dict) or len(callback) != 1:
+        return None
+    expression, item = next(iter(callback.items()))
+    methods = [m for m in METHODS if isinstance(item, dict) and m in item]
+    return ((str(expression), methods[0]), item[methods[0]]) if len(methods) == 1 else None
+
+
+def _shared_operation_keys(o_node: dict, g_node: dict) -> tuple[Any, Any, list[Any]]:
+    """As _unflattened, for the two operations of a callback and an endpoint in one group:
+    what both hold is compared field by field."""
+    keys = [k for k in o_node if k in g_node]
+    return ({k: v for k, v in o_node.items() if k not in keys},
+            {k: v for k, v in g_node.items() if k not in keys},
+            [((k,), (k,), o_node[k], g_node[k]) for k in keys])
+
+
 def _pair_differences(a: Aligner, o: str, g: str) -> list[Difference]:
     ob, gb = a.blocks[o], a.blocks[g]
-    o_node, g_node, flattened = _unflattened(own(a, o), own(a, g))
+    o_node, g_node = own(a, o), own(a, g)
+    o_base: tuple[str, ...] = ()
+    g_base: tuple[str, ...] = ()
+    across = {ob.kind, gb.kind} == {"callback", "operation"}
+    if across:           # a request declared as a callback on one side, an endpoint on the other
+        found = _delivery(o_node if ob.kind == "callback" else g_node)
+        if found is None:
+            across = False
+        elif ob.kind == "callback":
+            o_base, o_node = found
+        else:
+            g_base, g_node = found
+    whole = g_node
+    o_node, g_node, flattened = (_shared_operation_keys(o_node, g_node) if across
+                                 else _unflattened(o_node, g_node))
     out = []
     if ob.loc != gb.loc:
         out.append(Difference(kind="moved", location=gb.location, official=ob.location,
                               generated=gb.location, official_location=ob.location,
-                              leaves=_leaves(gb.loc[-1], g_node)))
+                              known="callback_to_path" if across and ob.kind == "callback" else "",
+                              leaves=_leaves(gb.loc[-1], whole)))
     found = [(kind, rel, rel, o_val, g_val)
              for kind, rel, o_val, g_val in diff_documents(o_node, g_node)]
     for o_at, g_at, o_val, g_val in flattened:
-        o_loc, g_loc = join((*ob.loc, *o_at)), join((*gb.loc, *g_at))
-        out.append(Difference(kind="moved", location=g_loc, official=o_loc, generated=g_loc,
-                              official_location=o_loc, leaves=_leaves(g_at[-1], g_val)))
-        found += [(kind, (*o_at, *rel[1:]), (*g_at, *rel[1:]), o_v, g_v)
-                  for kind, rel, o_v, g_v in diff_documents(o_val, g_val, (g_at[-1],))]
+        o_loc, g_loc = join((*ob.loc, *o_base, *o_at)), join((*gb.loc, *g_base, *g_at))
+        inside = diff_documents(o_val, g_val, (g_at[-1],))
+        if not any(len(rel) == 1 for _, rel, _, _ in inside):   # a value changed as a whole
+            # has its own line: a second one on the same field would compete for its verdict
+            out.append(Difference(kind="moved", location=g_loc, official=o_loc, generated=g_loc,
+                                  official_location=o_loc, leaves=_leaves(g_at[-1], g_val),
+                                  known="same_content" if o_val == g_val else ""))
+        for kind, rel, o_v, g_v in inside:
+            if across and g_at[-1] == "responses" and kind in ("absent", "extra"):
+                # no response of a callback is aligned with one of an endpoint: field by field
+                node = o_v if kind == "absent" else g_v
+                found += [(kind, (*o_at, *leaf[1:]), (*g_at, *leaf[1:]),
+                           value if kind == "absent" else None,
+                           value if kind == "extra" else None)
+                          for leaf, value in flatten_parts(node, rel).items()]
+                continue
+            found.append((kind, (*o_at, *rel[1:]), (*g_at, *rel[1:]), o_v, g_v))
     for kind, o_rel, g_rel, o_val, g_val in found:
-        o_loc, g_loc = join((*ob.loc, *o_rel)), join((*gb.loc, *g_rel))
+        o_loc = join((*ob.loc, *o_base, *o_rel))
+        g_loc = join((*gb.loc, *g_base, *g_rel))
         rel = g_rel if kind == "extra" else o_rel
         key = rel[-1] if rel else gb.loc[-1]
         if kind == "absent":
+            holder = node_at_loc(a.nodes[g], (*g_base, *g_rel[:-1])) if g_rel else None
             out.append(Difference(kind="absent", location=o_loc, official_location=o_loc,
-                                  leaves=_leaves(key, o_val)))
+                                  leaves=_leaves(key, o_val),
+                                  known="empty_schema" if o_rel[-1:] == ("nullable",)
+                                  and holder == {} else ""))
         elif kind == "extra":
-            out.append(Difference(kind="extra", location=g_loc, leaves=_leaves(key, g_val)))
+            holder = node_at_loc(a.nodes[g], (*g_base, *g_rel[:-1]))
+            out.append(Difference(kind="extra", location=g_loc, leaves=_leaves(key, g_val),
+                                  known="beside_ref" if isinstance(holder, dict) and "$ref" in holder
+                                  and g_rel[-1:] != ("$ref",) else "",
+                                  hint=_required_hint(g_rel, None, g_val)))
         else:
             out.append(Difference(kind="differing", location=g_loc, official_location=o_loc,
-                                  official=o_val, generated=g_val))
+                                  official=o_val, generated=g_val,
+                                  hint=_required_hint(g_rel, o_val, g_val)))
     return out
 
 
@@ -204,6 +296,13 @@ def diff_terms(differences: list[Difference]) -> list[str]:
             terms += [str(v) for v in (d.official, d.generated)
                       if v is not None and not isinstance(v, (dict, list)) and len(str(v)) <= 60]
     return [t for t in dict.fromkeys(terms) if t]
+
+
+def _without_tags(reason: str) -> str:
+    """A grouper's reason without the sentences naming the tags of its own call (B2, A1):
+    they mean nothing outside it, and may name a block taken out since."""
+    return " ".join(s for s in re.split(r"(?<=[.!?])\s+", reason)
+                    if not re.search(r"\b[AB]\d+\b", s))
 
 
 def _context(a: Aligner, bids: list[str]) -> dict[str, Any] | None:
@@ -270,7 +369,10 @@ def _hints(a: Aligner, bids: list[str], replaced: dict[str, list[str]]) -> Searc
     names, external = _ref_hints(*[a.nodes[b] for b in bids])
     schemas = [a.blocks[b].loc[-1] for b in bids if a.blocks[b].kind == "schema"]
     external = list(dict.fromkeys([*external, *(r for refs in replaced.values() for r in refs)]))
+    elsewhere = [a.blocks[b].loc[1] for b in bids
+                 if a.blocks[b].loc[0] == "paths" and a.blocks[b].loc[1] != path]
     return SearchHints(path=path, method=method, schemas=list(dict.fromkeys(schemas + names)),
+                       other_paths=list(dict.fromkeys(elsewhere)),
                        external_refs=external,
                        terms=list(dict.fromkeys(a.blocks[b].identity.split(" — ")[0]
                                                 for b in bids)))
@@ -303,7 +405,8 @@ def group_parts(a: Aligner, label: str, issues: list[str] = ()
         how = ", ".join(sorted(set(g.how.values())))
         summary = (f"{len(g.official)} official and {len(g.generated)} generated "
                    f"{g.kind} block(s) that correspond, grouped by {how}"
-                   + (f" — grouper: {' / '.join(g.reasons)}" if g.reasons else ""))
+                   + (f" — grouper: {' / '.join(map(_without_tags, g.reasons))}"
+                      if g.reasons else ""))
         replaced = replaced_definitions(a, members, external)
         part = Part(
             id=f"generator|{label}|{g.kind}|" + " + ".join(sorted(members)),
@@ -374,24 +477,27 @@ def _outcome(side: str, kind: str | None, verdict: str | None) -> str:
         return {"equivalent": "different but right", "improvement": "better"}.get(
             verdict, "missing")
     if side == "generated" and kind in ("extra", "duplicate"):
-        return "extra wrong" if verdict == "error" else "extra useful"
+        return {"error": "extra wrong", "improvement": "better"}.get(verdict, "extra useful")
     return {"equivalent": "different but right", "improvement": "better",
             "error": "wrong"}[verdict]
 
 
 def views(a: Aligner, parts: list[Part], part_of: dict[str, str],
           verdicts: list[Verdict]) -> dict[str, dict[str, int]]:
-    """{"official": rows, "generated": rows, "header": counts}: every field of each
-    document by outcome — the verdict of the most specific difference holding it."""
+    """{"official": rows, "generated": rows, "header": counts, "text": counts, "duplicates":
+    counts}: every field of each document by outcome — the verdict of the most specific
+    difference holding it. "duplicates" says how many extra wrong fields, already counted, are
+    in duplicate declarations."""
     by_id = {p.id: p for p in parts}
     judged = {v.part_id: v for v in verdicts}
-    out = {"official": Counter(), "generated": Counter(), "header": Counter()}
+    out = {"official": Counter(), "generated": Counter(), "header": Counter(),
+           "text": Counter(), "duplicates": Counter()}
     for (side, leaf), bid in a.leaf_owners().items():
         if bid is None or a.blocks[bid].kind == "header":
             out["header"][side] += 1
             continue
         part = by_id.get(part_of.get(bid, ""))
-        kind, verdict = None, None
+        kind, verdict, holder = None, None, None
         if part is not None:
             where = join(leaf)
             v = judged.get(part.id)
@@ -400,10 +506,16 @@ def views(a: Aligner, parts: list[Part], part_of: dict[str, str],
                 loc = _covering(d, side)
                 if loc is not None and _under(where, loc) and len(loc) > best:
                     best = len(loc)
-                    kind = d.kind
+                    kind, holder = d.kind, d
                     verdict = (v.difference_verdicts[i] if v and v.difference_verdicts
                                else v.answer.verdict if v else None)
-        out[side][_outcome(side, kind, verdict)] += 1
+        if kind == "absent" and verdict == "equivalent" and is_prose(holder.location):
+            out["text"][side] += 1                 # only the official has it: not scored
+            continue
+        outcome = _outcome(side, kind, verdict)
+        out[side][outcome] += 1
+        if kind == "duplicate" and outcome == "extra wrong":
+            out["duplicates"][side] += 1
     rows = {"official": OFFICIAL_ROWS, "generated": GENERATED_ROWS}
     return {side: ({r: out[side].get(r, 0) for r in rows[side]} if side in rows
                    else dict(out[side])) for side in out}
@@ -434,7 +546,8 @@ def regroup(a: Aligner, parts: list[Part], part_of: dict[str, str], verdicts: li
         for bid in by_part.get(v.part_id, []):
             if a.blocks[bid].location in named and a.ungroup(bid):
                 taken.append(f"{a.blocks[bid].location}: taken out of {v.owner} — "
-                             + " ".join(v.answer.why_different.split()))
+                             + " ".join((v.answer.wrongly_grouped_why
+                                         or v.answer.why_different).split()))
     if not taken:
         return None
     new_parts, new_part_of = group_parts(a, label, issues)

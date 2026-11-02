@@ -9,7 +9,7 @@ import yaml
 
 from openapi_analysis.schemas.judge import Difference, Evidence, Part
 
-PROMPT_VERSION = "judge-v15"
+PROMPT_VERSION = "judge-v24"
 
 SYSTEM = """\
 You are a reviewer of OpenAPI 3.0 documents derived from 3GPP specifications. You judge
@@ -31,8 +31,10 @@ You are given:
     "~ location"  present in both, with another value (both values given)
     "> location"  the same block at another location or under another key (official
                   and generated locations given): judge the move itself — a parameter
-                  at another level, default replaced by 4XX / 5XX, an allOf member
-                  written at the root of its schema
+                  at another level, default replaced by 4XX / 5XX, an allOf member or
+                  a oneOf alternative written at the root of its schema, a callback's
+                  request declared as an endpoint. A ">" on a key inside a moved block
+                  judges that key's content only: the move of the block has its own line
     "x location"  a DUPLICATE: the generated document declares again, there, what it
                   already declares at the location given (the original declaration,
                   judged through the other differences). Judge the duplicate whole,
@@ -58,8 +60,10 @@ CONTEXT and the evidence):
      a response, a constraint, a type). Prose never counts (see the rules).
    - improvement: the generated side is better than the official one — the spec or the
      reference supports it more, or the official side is the one in error.
-   - equivalent: a different form with the same meaning — even if less clear or less
-     detailed (that goes in question 3, never in the verdict).
+   - equivalent: a different form with the same meaning, present on BOTH sides — even if
+     less clear or less detailed (that goes in question 3, never in the verdict).
+   - useful: present only on the generated side, not called for by the spec or the reference
+     and contradicted by nothing.
    - uncertain: the difference changes the meaning and nothing you were given decides
      which side is right. Prefer uncertain to a guess, and say why: "not in the
      evidence" (the spec or reference passages do not cover it) or "the spec leaves it
@@ -68,13 +72,28 @@ CONTEXT and the evidence):
 3. Which version is easier to understand for a reader of the API: official, generated,
    or same — and why.
 
+Think before you rule. For each difference write the reason first: which passage decides
+it, what that passage says, and what follows from it. Only then give the verdict that the
+reason leads to, and the verdict of the part last.
+
 Rules:
 - Give one ruling per difference, by its id, for every difference listed. The verdict of
   the part as a whole is the most serious one among them that matters to a reader of the
   API (an error in one difference makes the part an error).
+- The verdicts that apply depend on where the difference is:
+    "~" and ">" (on both sides): equivalent, improvement, error or uncertain.
+    "+" (only on the generated side): improvement, useful, error or uncertain — never
+    equivalent. Improvement when the spec or the reference calls for it and the official
+    side lacks it; useful when nothing calls for it and nothing contradicts it.
+    "-" (only on the official side): error when the generated side loses it; improvement
+    when the official side is the one in error; equivalent only when the generated side
+    says the same under another key, or the official value is the one OpenAPI assumes when
+    the key is absent. An entry of a map (a media type, a response code, a property) that
+    the official lists and the generated lacks is lost, even if another entry could carry
+    the same content.
 - A difference in prose only (a description, summary or title, changed, missing or added)
-  is always equivalent: prose is not part of the contract, so it is never an error or
-  an improvement. Say what is clearer in "clearer" (question 3).
+  never counts: rule it equivalent ("+": useful), never an error or an improvement. Say
+  what is clearer in "clearer" (question 3).
 - What each verdict needs:
   - equivalent may rest on the CONTEXT alone (cite C1 and/or C2): the generated side
     keeps the official meaning — the same constraint written another way, prose that
@@ -86,6 +105,7 @@ Rules:
     an error against the 3GPP spec or the OpenAPI format needs that evidence (S, O).
   - improvement always needs the spec or the OpenAPI reference (S or O): being
     different from the official is not being better than it.
+  - useful may rest on the CONTEXT alone.
 - Cite the ids you rely on (at least one), quoting the short passage — from the
   CONTEXT, quote the YAML line. Never cite an id you were not given.
 - If the spec evidence does not address the part, say so; do not fill the gap with what
@@ -103,10 +123,12 @@ Rules:
   OpenAPI objects are unordered maps, and how a key is quoted is not shown.
 - A leftover present in the official only is an error when the generated document loses
   what it carries; one present in the generated only is an improvement only with S or O
-  evidence, an error when it is wrong, redundant or a duplicate of what exists elsewhere.
+  evidence, an error when it is wrong, redundant or a duplicate of what exists elsewhere,
+  and useful otherwise.
 - If some blocks of a GROUP do not play the same role as the rest (another endpoint,
   another solution set, another data type), set grouping_wrong, list their locations
-  in wrongly_grouped exactly as under FOCUS, and say why: they are taken out and judged
+  in wrongly_grouped exactly as under FOCUS, and say why in wrongly_grouped_why: they are
+  taken out and judged
   again on their own. Judge every difference all the same.
 - Before ruling on each difference: read every S passage and find the one that addresses
   THIS difference for THIS operation or type (e.g. the response-code table of this
@@ -122,7 +144,8 @@ Rules:
 - CITED SCHEMAS holds what the local $refs of the context point to, one level; cite them as
   C1 (official) and C2 (generated). A $ref to another file is defined by an S passage
   titled "definition of ..." when it was found. If none is given for it, its content
-  was not available: do not presume it, and say so.
+  was not available: do not presume it, and say so. A passage titled "cited as ..." is
+  the clause of another spec that a passage of this spec refers to.
 - LOCAL SCHEMAS IN PLACE OF EXTERNAL DEFINITIONS, when given, lists what the generated
   document defines locally under the name of a definition the official document takes
   from another file. Judge the local schema, and any $ref changed to point to it,
@@ -131,11 +154,60 @@ Rules:
   keeps the contract is equivalent; it is never an improvement, as it only restates what
   existed. If the definition was not given, rule uncertain.
 - When one official block corresponds to several generated blocks in a GROUP (default
-  replaced by 400, 4XX and 5XX), judge what the generated blocks cover TOGETHER. A block
-  is not an error for being narrower than the official one: it is an error only if the
-  set loses coverage or the block itself contradicts the spec.
+  replaced by 400, 4XX and 5XX), judge what the generated blocks cover TOGETHER, measured
+  by the codes or cases the spec lists for this operation, not by codes nobody declared.
+  A block is not an error for being narrower than the official one: it is an error only
+  if the set loses what the spec lists or the block itself contradicts the spec. Replacing
+  default by the codes or ranges the spec names for this operation is an improvement, since
+  it states what the spec states; by others the spec does not name, equivalent.
+- In a 3GPP table the column S is the support qualifier (TS 32.156, clause 6): M means the
+  capability shall be supported, a requirement on the producer. It does not say a field is
+  in every message. For the attributes of an NRM, TS 32.160 (6.1.10) adds that they may or
+  may not be present in a JSON document whatever their qualifier, and only what is always
+  present, like "id", goes in `required`. So M alone neither justifies nor condemns `required`. A `required` the official
+  side lacks is an error when it rejects a message the spec accepts: look for a condition
+  in the field's description, in the enumeration values of a related field and in the
+  examples. For a resource representation, that sentence of TS 32.160 already shows it: a
+  representation without them is accepted. In any other type, if nothing shows such a
+  message it is useful ("~": equivalent), never an
+  improvement on M alone. Read the whole row, description first, before the column S.
+- A name or identifier saying something other than what its block does (an operationId
+  naming another notification) is contradicted by that block: it is an error, not useful.
+- That OpenAPI allows something shows it is valid, not better. An improvement needs a
+  passage calling for what the generated side does and the official side lacks or gets
+  wrong. Read what a passage recommends: on operationId, OpenAPI recommends following
+  naming conventions, not having one.
+- Facts of OpenAPI 3.0.1 (no passage needed; name the object in the reason):
+  - Reference Object: it "cannot be extended with additional properties and any properties
+    added SHALL be ignored". Keys beside a $ref change nothing in the contract, so never
+    reason as if they applied; the rule of the Reference Object does not allow them, so they
+    are an error. Do not call the document or the schema invalid, anywhere in your answer: a
+    validator may accept it.
+  - Path Item: parameters there apply to all its operations; repeating them on each
+    operation is the same contract.
+  - allOf combines its members: a member written at the root of the schema is equivalent.
+  - OpenAPI Object: with no `servers`, the server is `/`.
+  - Paths are on the document's server. A request the official side declares as a callback
+    (sent to an address given at runtime) and the generated side as a path is an error on
+    the move itself; what the operation holds is judged on its own lines.
+- Quote whole rows and sentences, never cutting with "...": what you leave out may decide.
+- If passages disagree, say so in the reason and state which one decides and why. Before
+  ruling an improvement, look for a passage that applies to the same operation and says the
+  opposite. If there is one and no passage says which prevails, rule uncertain ("the spec
+  leaves it open"): a passage that another one contradicts does not call for anything.
 - Answer in English.
 """
+
+
+# what is known of a difference without reading it, told on its own line
+KNOWN = {
+    "same_content": "the content is identical on both sides; only its place differs",
+    "callback_to_path": ("the official declares this request as a callback, sent to an address "
+                         "given at runtime; the generated declares it as a path, on its own server"),
+    "empty_schema": "the generated schema here is {}, which places no restriction on the value",
+    "beside_ref": ("this key is beside a $ref: OpenAPI (Reference Object) says it SHALL be ignored, "
+                   "so it does not change the contract, and it is not allowed by that rule"),
+}
 
 
 def _dump(node: object) -> str:
@@ -158,19 +230,22 @@ def _evidence_block(e: Evidence) -> str:
 
 def difference_line(d: Difference) -> str:
     """One difference as the judge and the report show it."""
+    known = f"\n    known: {KNOWN[d.known]}" if d.known else ""
+    known += f"\n    ask: {d.hint}" if d.hint else ""
     if d.kind == "differing":
         where = (f"  (official at {d.official_location})"
                  if d.official_location and d.official_location != d.location else "")
         return (f"~ {d.location}{where}\n    official:  {_inline(d.official)}"
-                f"\n    generated: {_inline(d.generated)}")
+                f"\n    generated: {_inline(d.generated)}" + known)
     if d.kind == "duplicate":
         return (f"x {d.location}\n    a further declaration of what the generated document "
                 f"already declares at: {d.official}")
     if d.kind == "moved":
-        return f"> {d.location}\n    official at:  {d.official}\n    generated at: {d.generated}"
+        return (f"> {d.location}\n    official at:  {d.official}\n    generated at: {d.generated}"
+                + known)
     mark = "-" if d.kind == "absent" else "+"
     where = d.official_location if d.kind == "absent" and d.official_location else d.location
-    return f"{mark} {where}" + (f"  ({d.leaves} leaves)" if d.leaves > 1 else "")
+    return f"{mark} {where}" + (f"  ({d.leaves} leaves)" if d.leaves > 1 else "") + known
 
 
 def _inline(value: object) -> str:

@@ -19,7 +19,7 @@ from pydantic import BaseModel, Field, computed_field
 from openapi_analysis.schemas.openapi import ValidityReport
 from openapi_analysis.schemas.rulesbank import SourceInfo
 
-VerdictLabel = Literal["error", "improvement", "equivalent", "uncertain"]
+VerdictLabel = Literal["error", "improvement", "equivalent", "useful", "uncertain"]
 Clearer = Literal["official", "generated", "same"]
 
 
@@ -29,6 +29,7 @@ class SearchHints(BaseModel):
     path: str = ""                   # "/{className}={id}"
     method: str = ""                 # "patch"
     schemas: list[str] = Field(default_factory=list)       # schema names involved
+    other_paths: list[str] = Field(default_factory=list)  # paths of the part's blocks elsewhere
     external_refs: list[str] = Field(default_factory=list)  # "TS28623_ComDefs.yaml#/…"
     terms: list[str] = Field(default_factory=list)          # extra words (operation, field)
 
@@ -57,6 +58,11 @@ class Difference(BaseModel):
     declares (official: where the original declaration is) — judged whole, once.
     """
     kind: Literal["absent", "differing", "extra", "moved", "duplicate"]
+    # what is known without reading it (judge/prompts.py KNOWN): the same content under
+    # another key, a request the official declares as a callback and the generated as a
+    # path, a key beside a $ref
+    known: Literal["", "same_content", "callback_to_path", "beside_ref", "empty_schema"] = ""
+    hint: str = ""                   # what to ask of this difference, told on its own line
     location: str                    # display path in the document ("paths./x.patch.responses.200")
     leaves: int = 1
     official: Any = None             # differing, moved
@@ -111,11 +117,13 @@ class DifferenceVerdict(BaseModel):
     """The judge's ruling on ONE difference of the part (structured output)."""
     difference_id: str = Field(description="Id of the difference you rule on, e.g. 'D1', "
                                            "exactly as given.")
-    verdict: VerdictLabel = Field(description="error | improvement | equivalent | uncertain, "
-                                              "for THIS difference alone, with the same "
-                                              "meanings as the part's verdict.")
-    reason: str = Field(description="One or two sentences: why this verdict, naming the "
-                                    "evidence ids it rests on.")
+    reason: str = Field(description="Think first, before the verdict: which passage decides "
+                                    "this difference, what it says, and what follows, naming "
+                                    "the evidence ids it rests on.")
+    verdict: VerdictLabel = Field(description="What the reason leads to: error | improvement | "
+                                              "equivalent | useful | uncertain, for THIS "
+                                              "difference alone, with the same meanings as the "
+                                              "part's verdict.")
 
 
 class JudgeAnswer(BaseModel):
@@ -124,34 +132,38 @@ class JudgeAnswer(BaseModel):
                                            "one: the probable cause, whether the difference is "
                                            "in a value, an address (level, location) or a "
                                            "structure.")
-    verdict: VerdictLabel = Field(description="error: the generated side is wrong. improvement: "
-                                              "the generated side is better than the official "
-                                              "one (needs S or O evidence). equivalent: different "
-                                              "form, same meaning (the CONTEXT may suffice). "
-                                              "uncertain: the meaning changes and nothing given "
-                                              "decides.")
     spec_3gpp: str = Field(description="What the 3GPP spec evidence says about this part.")
     openapi: str = Field(description="What the OpenAPI reference evidence allows or recommends "
                                      "for this part.")
-    clearer: Clearer = Field(description="Which version is easier to understand: official, "
-                                         "generated, or same.")
-    clearer_why: str = Field(description="Why that version is easier to understand.")
     citations: list[Citation] = Field(description="The evidence the verdict rests on: at least "
                                                   "one, and only ids you were given.")
     differences: list[DifferenceVerdict] = Field(
         default_factory=list,
         description="One ruling per difference listed under DIFFERENCES (D1, D2, ...): every "
                     "difference, once each, in the order given.")
+    clearer: Clearer = Field(description="Which version is easier to understand: official, "
+                                         "generated, or same.")
+    clearer_why: str = Field(description="Why that version is easier to understand.")
     grouping_wrong: bool = Field(
         default=False,
         description="True only if some blocks put together in this part do NOT play the same "
-                    "role in the API (they were grouped as corresponding by mistake). Say why in "
-                    "why_different. False when they correspond, right or wrong.")
+                    "role in the API (they were grouped as corresponding by mistake). False when "
+                    "they correspond, right or wrong.")
     wrongly_grouped: list[str] = Field(
         default_factory=list,
         description="When grouping_wrong: the locations of the blocks that do not belong with "
                     "the rest, exactly as listed under FOCUS. They are taken out and judged on "
                     "their own.")
+    wrongly_grouped_why: str = Field(
+        default="", description="When grouping_wrong: why those blocks do not belong.")
+    verdict: VerdictLabel = Field(description="Last, after the differences: error: the generated "
+                                              "side is wrong. improvement: the generated side is "
+                                              "better than the official one (needs S or O "
+                                              "evidence). equivalent: different form, same "
+                                              "meaning, on both sides (the CONTEXT may suffice). "
+                                              "useful: only on the generated side, not called for "
+                                              "and contradicted by nothing. uncertain: the meaning "
+                                              "changes and nothing given decides.")
 
 
 class Verdict(BaseModel):

@@ -15,6 +15,11 @@ alone ranked it 1st):
     3. difference the subject with what concretely differs: response codes,
                   parameter names, media types, property names
 
+    4. elsewhere  for a block found on another path, the names of that path
+    then the clauses of other specs the passages found refer to ("TS 32.158 [15], clause
+    6.1"), and the definitions of $refs to other files, in the corpus of all specs. A spec
+    of a later Release than the evaluated one is left out; an earlier one, reported.
+
   OpenAPI reference (the OpenAPI 3.0.1 collection), 2 queries:
     1. object     the OpenAPI Object(s) the aspect is about: "Responses Object"
     2. concept    the concept in play, with the concrete values: "default response,
@@ -158,7 +163,9 @@ def spec_queries(part: Part) -> list[str]:
     else:
         definition = f"Definition of type {name}"
     difference = " ".join([name, _ASPECT_WORDS.get(t, ""), *differing_terms(part)])
-    return [q[:400] for q in dict.fromkeys([name, definition, difference]) if q.strip()]
+    elsewhere = [" ".join(w for w in re.split(r"[{}=/]+", p) if w) + " resource URI"
+                 for p in part.hints.other_paths]
+    return [q[:400] for q in dict.fromkeys([name, definition, difference, *elsewhere]) if q.strip()]
 
 
 def openapi_queries(part: Part) -> list[str]:
@@ -209,6 +216,22 @@ def defined_names(part: Part) -> list[str]:
 _EXTERNAL = re.compile(r"^TS(?P<spec>\d+)_[^#]*#/components/[A-Za-z]+/(?P<name>[^/]+)$")
 
 
+# "TS 32.158 [15], clause 6.1" as a spec writes it, the brackets escaped in Markdown
+_CITED = re.compile(r"TS\s+(?P<a>\d\d)\.(?P<b>\d{3})\s*(?:\\?\[\d+\\?\])?\s*,?\s*"
+                    r"clause\s+(?P<clause>\d[\dA-Za-z.]*[\dA-Za-z])")
+
+
+def cited_clauses(texts: list[str]) -> list[tuple[str, str]]:
+    """(spec number, clause) of each clause of another spec the passages refer to."""
+    return list(dict.fromkeys((m["a"] + m["b"], m["clause"])
+                              for text in texts for m in _CITED.finditer(text)))
+
+
+def _release_of(meta: dict[str, Any]) -> str:
+    """The Release letter of a chunk ('28623-i40' -> 'i'), '' when not recorded."""
+    return str(meta.get("spec", "")).partition("-")[2][:1]
+
+
 def external_targets(part: Part) -> list[tuple[str, str, str]]:
     """(reference, spec number, schema name) of each $ref to another 3GPP file."""
     found = ((r, _EXTERNAL.match(r)) for r in part.hints.external_refs)
@@ -219,7 +242,8 @@ def retrieve_evidence(part: Part, spec_collection: str, *, search: Search,
                       scope: tuple[str, ...] = (), per_query: int = 5,
                       per_definition: int = 3,
                       openapi_collection: str = "openapi_reference",
-                      external_collection: str = "") -> list[Evidence]:
+                      external_collection: str = "", release: str = "",
+                      notes: list[str] | None = None) -> list[Evidence]:
     """The evidence for one part, none repeated: the sections that define its subject,
     then each spec query's chunks, then each reference query's.
 
@@ -242,6 +266,23 @@ def retrieve_evidence(part: Part, spec_collection: str, *, search: Search,
                                      clause=str(meta.get("clause", "")), title=title,
                                      path=str(meta.get("path", "")), text=text))
 
+    def take_external(title: str, query: str, hits: list[tuple[str, dict[str, Any]]],
+                      f: dict[str, Any]) -> None:
+        """Of another spec, the same Release or an earlier one: a non-specific reference is
+        to the latest version in the same Release, and a later one did not exist yet."""
+        for text, meta in hits:
+            other, spec = _release_of(meta), str(meta.get("spec", ""))
+            if release and other and other > release:
+                if notes is not None:
+                    notes.append(f"{spec} left out: later than Release '{release}'")
+                continue
+            if release and other and other < release and notes is not None:
+                notes.append(f"{spec} used: earlier than Release '{release}', no later one found")
+            before = len(evidence)
+            take("spec", external_collection, query, [(text, meta)], f)
+            for e in evidence[before:]:
+                e.title = f"{title}{f' ({spec})' if spec else ''} — {e.title}"
+
     filters = spec_filters(scope)
     for name in defined_names(part):
         for f in filters:
@@ -254,10 +295,15 @@ def retrieve_evidence(part: Part, spec_collection: str, *, search: Search,
         # the definition itself, in the spec the file belongs to — annexes included: for a
         # common schema, that is where the definition is
         f = {"spec_number": spec, "defines": name}
-        before = len(evidence)
-        take("spec", external_collection, ref, search(name, external_collection, per_definition, f), f)
-        for e in evidence[before:]:
-            e.title = f"definition of {ref} — {e.title}"
+        take_external(f"definition of {ref}", ref,
+                      search(name, external_collection, per_definition, f), f)
+    # a referred clause may be long: searched by the part's subject and by what differs
+    asked = list(dict.fromkeys([subject(part), *spec_queries(part)[2:]]))
+    for spec, clause in (cited_clauses([e.text for e in evidence]) if external_collection else ()):
+        f = {"spec_number": spec, "clause_ancestors": clause}
+        for q in asked:
+            take_external(f"cited as TS {spec} clause {clause}", q,
+                          search(q, external_collection, per_definition, f), f)
     for q in openapi_queries(part):
         take("openapi", openapi_collection, q, search(q, openapi_collection, per_query, None))
     return evidence

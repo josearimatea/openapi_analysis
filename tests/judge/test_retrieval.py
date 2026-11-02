@@ -148,6 +148,54 @@ def test_a_ref_to_another_file_is_looked_for_in_its_spec_by_defined_name():
     assert len([c for c in search.calls if c[1] == "all"]) == 1       # not a 3GPP file name
 
 
+def _external(spec, clause="C.4"):
+    return (f"text of {spec}", {"clause": clause, "title": "t", "spec": spec})
+
+
+def test_a_definition_shows_its_version_and_a_later_release_is_left_out():
+    ref = "TS28623_ComDefs.yaml#/components/schemas/Header"
+    notes = []
+    search = FakeSearch({"all": [_external("28623-i40"), _external("28623-j00")]})
+    ev = retrieve_evidence(part(external_refs=[ref]), "spec", search=search, scope=("12.1",),
+                           external_collection="all", release="i", notes=notes)
+    external = [e for e in ev if e.collection == "all"]
+    assert [e.text for e in external] == ["text of 28623-i40"]
+    assert external[0].title.startswith(f"definition of {ref} (28623-i40)")
+    assert notes == ["28623-j00 left out: later than Release 'i'"]
+
+
+def test_an_earlier_release_is_used_and_reported():
+    ref = "TS28623_ComDefs.yaml#/components/schemas/Header"
+    notes = []
+    search = FakeSearch({"all": [_external("28623-h60")]})
+    ev = retrieve_evidence(part(external_refs=[ref]), "spec", search=search, scope=("12.1",),
+                           external_collection="all", release="i", notes=notes)
+    assert any(e.text == "text of 28623-h60" for e in ev)
+    assert notes == ["28623-h60 used: earlier than Release 'i', no later one found"]
+
+
+def test_a_clause_of_another_spec_a_passage_refers_to_is_followed():
+    from openapi_analysis.judge.retrieval import cited_clauses
+
+    assert cited_clauses(["provided in TS 32.158 \\[15\\], clause 6.1.",
+                          "see TS\n28.622 [11] clause 4.3.22"]) == [("32158", "6.1"), ("28622", "4.3.22")]
+    hits = [("details in TS 32.158 \\[15\\], clause 6.1.", {"clause": "12.1.1"})]
+    search = FakeSearch({"spec": hits, "all": [_external("32158-h60", "6.1")]})
+    ev = retrieve_evidence(part(), "spec", search=search, scope=("12.1",), external_collection="all",
+                           release="i")
+    call = next(c for c in search.calls if c[1] == "all")
+    assert call[3] == {"spec_number": "32158", "clause_ancestors": "6.1"}
+    assert any(e.title.startswith("cited as TS 32158 clause 6.1 (32158-h60)") for e in ev)
+    asked = [c[0] for c in search.calls if c[1] == "all"]
+    assert asked == [subject(part()), spec_queries(part())[2]]   # by subject, and by what differs
+
+
+def test_a_block_found_on_another_path_is_searched_by_its_names():
+    p = part(other_paths=["/{notificationTarget}"])
+    assert "notificationTarget resource URI" in spec_queries(p)
+    assert len(spec_queries(part())) == 3
+
+
 def test_the_judge_sees_where_each_spec_passage_sits():
     from openapi_analysis.judge.prompts import user_message
 

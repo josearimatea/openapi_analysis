@@ -53,3 +53,47 @@ def test_the_final_analysis_renders_the_two_views():
                  "IMPROVEMENTS", "RESULT 1 — OPENAPI VALIDATION", "GROUPINGS THE JUDGE DISPUTED",
                  "DETAIL, PART BY PART"):
         assert step in text
+
+
+def test_a_ruling_decided_by_a_rule_shows_the_rule_not_the_judges_text():
+    from openapi_analysis.reporting.final import _reasons
+    from openapi_analysis.schemas.judge import DifferenceVerdict, JudgeAnswer, Verdict
+
+    answer = JudgeAnswer(why_different="-", verdict="error", spec_3gpp="", openapi="", clearer="same",
+                         clearer_why="-", citations=[], differences=[
+        DifferenceVerdict(difference_id="D1", verdict="error", reason="this loses the contract"),
+        DifferenceVerdict(difference_id="D2", verdict="error", reason="kept")])
+    v = Verdict(part_id="p", evaluation="generator", input="i", owner="o", aspect="a", summary="s",
+                answer=answer, evidence=[], decided_by="llm",
+                overrides=["D1 same_content: error -> equivalent"])
+    why = _reasons(v)
+    assert "identical" in why["D1"] and "loses" not in why["D1"] and why["D2"] == "kept"
+
+
+def test_what_a_rule_decides_shows_the_rule_even_when_the_judge_agreed():
+    from openapi_analysis.reporting.final import _reasons
+    from openapi_analysis.schemas.judge import Difference, DifferenceVerdict, JudgeAnswer, Verdict
+
+    answer = JudgeAnswer(why_different="-", verdict="error", spec_3gpp="", openapi="", clearer="same",
+                         clearer_why="-", citations=[], differences=[
+        DifferenceVerdict(difference_id="D1", verdict="error", reason="makes the document invalid")])
+    v = Verdict(part_id="p", evaluation="generator", input="i", owner="o", aspect="a", summary="s",
+                answer=answer, evidence=[], decided_by="llm",
+                differences=[Difference(kind="extra", location="a.type", known="beside_ref")])
+    assert "not allowed by that rule" in _reasons(v)["D1"]
+    assert "invalid" not in _reasons(v)["D1"]
+
+
+def test_a_reason_names_what_its_ids_stand_for():
+    from openapi_analysis.reporting.final import _named, _sources
+    from openapi_analysis.schemas.judge import Citation, Evidence, JudgeAnswer, Verdict
+
+    answer = JudgeAnswer(why_different="-", verdict="error", spec_3gpp="", openapi="", clearer="same",
+                         clearer_why="-", citations=[Citation(evidence_id="S1", quote="the row")])
+    evidence = [Evidence(id="S1", source="spec", collection="c", query="q", text="t", clause="12.1.1"),
+                Evidence(id="O1", source="openapi", collection="c", query="q", text="t", title="Schema Object")]
+    v = Verdict(part_id="p", evaluation="generator", input="i", owner="o", aspect="a", summary="s",
+                answer=answer, evidence=evidence, decided_by="llm")
+    assert _named(v, "see S1, O1 and C2; S9") == (
+        "see S1 [clause 12.1.1], O1 [Schema Object] and C2 [generated]; S9")
+    assert any("S1 [clause 12.1.1]: the row" in line for line in _sources(v))

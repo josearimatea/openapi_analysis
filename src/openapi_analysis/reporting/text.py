@@ -243,7 +243,7 @@ LEGEND
   The judge (an LLM) read only the evidence retrieved for that part — 3GPP spec passages
   (S1, S2, ...) and OpenAPI 3.0 reference passages (O1, O2, ...) — and answered:
     why        why the evaluated side differs
-    verdict    error | improvement | equivalent | uncertain   (of the evaluated side)
+    verdict    error | improvement | equivalent | useful | uncertain   (of the evaluated side)
     clearer    which version is easier to understand: official | generated | same
   These verdicts are the judge's reading, NOT measurements: they are reported apart
   from the agreement numbers, and are uncalibrated until reviewed by a person."""

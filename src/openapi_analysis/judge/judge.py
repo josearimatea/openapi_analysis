@@ -26,7 +26,7 @@ import re
 from collections.abc import Callable
 from pathlib import Path
 
-from openapi_analysis.judge.parts import _keys, node_at
+from openapi_analysis.judge.parts import _keys, is_prose, node_at
 from openapi_analysis.judge.prompts import PROMPT_VERSION, messages
 from openapi_analysis.schemas.judge import Difference, Evidence, JudgeAnswer, Part, Verdict
 from openapi_analysis.schemas.rulesbank import now
@@ -34,9 +34,10 @@ from openapi_analysis.schemas.rulesbank import now
 Retrieve = Callable[[Part], list[Evidence]]
 # the two sides of the part's CONTEXT, citable as evidence (prompts.py, judge-v4)
 CONTEXT_IDS = {"C1", "C2"}
-# keys whose value is text for a reader — operationId is an identifier, and it is judged
-PROSE_ONLY = ("description", "summary", "title")
-_SEVERITY = ("error", "uncertain", "improvement", "equivalent")
+# what is known of a difference without reading it (Difference.known)
+KNOWN_VERDICT = {"same_content": "equivalent", "callback_to_path": "error", "beside_ref": "error",
+                 "empty_schema": "equivalent"}
+_SEVERITY = ("error", "uncertain", "improvement", "useful", "equivalent")
 AskLLM = Callable[[list[tuple[str, str]]], JudgeAnswer]
 
 
@@ -94,15 +95,22 @@ def _check(part: Part, answer: JudgeAnswer, evidence: list[Evidence]) -> tuple[J
         overrides.append("improvement cites only the CONTEXT (C1/C2), no spec or OpenAPI "
                          "evidence: improvement -> uncertain")
         answer = answer.model_copy(update={"verdict": "uncertain"})
-    if part.invalid_issues and answer.verdict in ("improvement", "equivalent"):
+    if part.invalid_issues and answer.verdict in ("improvement", "equivalent", "useful"):
         overrides.append(f"generated side is not valid OpenAPI 3.0: verdict {answer.verdict} "
                          "-> error")
         answer = answer.model_copy(update={"verdict": "error"})
     return answer, overrides
 
 
-def _is_prose(d: Difference) -> bool:
-    return _keys(d.location)[-1] in PROSE_ONLY
+def _of_callback_path(part: Part, d: Difference) -> bool:
+    """Whether this extra holds only the path parameters of a callback declared as a path."""
+    if d.kind != "extra" or not any(c.known == "callback_to_path"
+                                    and d.location == f"{c.location}.parameters"
+                                    for c in part.differences):
+        return False
+    held = node_at(part.generated, d.location)
+    return isinstance(held, list) and all(isinstance(p, dict) and p.get("in") == "path"
+                                          for p in held)
 
 
 def difference_verdicts(part: Part, answer: JudgeAnswer) -> tuple[list[str], list[str]]:
@@ -114,6 +122,14 @@ def difference_verdicts(part: Part, answer: JudgeAnswer) -> tuple[list[str], lis
         to every difference;
       - a difference in prose only (description, summary, title) is always equivalent:
         not part of the contract, never an error or an improvement;
+      - what only the generated side has cannot be equivalent, which needs both sides:
+        equivalent there is useful;
+      - what is known without reading it (KNOWN_VERDICT) takes its verdict: the same
+        content under another key, a callback declared as a path, a key beside a $ref;
+      - an operationId the official lacks is never an improvement: OpenAPI makes it
+        optional, so nothing calls for it;
+      - the path parameters of a callback declared as a path are never an improvement: they
+        exist only because of that move, already an error;
       - a duplicate (a further declaration of what the generated document already
         declares) is never improvement / equivalent -> error, unless the judge says it
         does not belong to the group (it is then judged again on its own)."""
@@ -128,15 +144,32 @@ def difference_verdicts(part: Part, answer: JudgeAnswer) -> tuple[list[str], lis
             v = "uncertain"
         if answer.verdict == "uncertain" and v != "uncertain" and not answer.citations:
             v = "uncertain"
-        if v in ("improvement", "equivalent") and any(
+        fixed = KNOWN_VERDICT.get(d.known)
+        if fixed and v != fixed:
+            notes.append(f"D{i} {d.known}: {v} -> {fixed}")
+            v = fixed
+        if d.kind == "extra" and _keys(d.location)[-1] == "operationId" and v == "improvement":
+            notes.append(f"D{i} operationId: improvement -> useful")
+            v = "useful"
+        if v == "improvement" and _of_callback_path(part, d):
+            notes.append(f"D{i} path parameters of a callback declared as a path: "
+                         "improvement -> useful")
+            v = "useful"
+        if v in ("improvement", "equivalent", "useful") and any(
                 w == d.location or w.startswith((d.location + ".", d.location + "["))
                 or d.location.startswith((w + ".", w + "[")) for w in issues):
             notes.append(f"D{i} inside a location not valid OpenAPI 3.0: {v} -> error")
             v = "error"
-        if _is_prose(d) and d.kind != "duplicate" and v != "equivalent":
+        if is_prose(d.location) and d.kind != "duplicate" and v not in ("equivalent", "useful"):
             notes.append(f"D{i} prose only: {v} -> equivalent")
             v = "equivalent"
-        if d.kind == "duplicate" and v in ("improvement", "equivalent") \
+        if d.kind != "extra" and v == "useful":
+            notes.append(f"D{i} on the official side too: useful -> equivalent")
+            v = "equivalent"
+        if d.kind == "extra" and v == "equivalent":
+            notes.append(f"D{i} only in the generated: equivalent -> useful")
+            v = "useful"
+        if d.kind == "duplicate" and v in ("improvement", "equivalent", "useful") \
                 and d.location not in answer.wrongly_grouped:
             notes.append(f"D{i} a second declaration of the same object: {v} -> error")
             v = "error"
@@ -149,8 +182,8 @@ def _analysed(part: Part, verdict: Verdict) -> Verdict:
     the focus as it is on each side — so a reader compares it with the documents.
     Taken from the part, not the cache (it is not part of the judge's answer)."""
     per_difference, notes = difference_verdicts(part, verdict.answer)
-    if per_difference and any("prose only" in n for n in notes):   # it may have set the
-        worst = next(v for v in _SEVERITY if v in per_difference)  # part's own verdict
+    if per_difference:                                     # the part's verdict follows them
+        worst = next(v for v in _SEVERITY if v in per_difference)
         verdict = verdict.model_copy(update={
             "answer": verdict.answer.model_copy(update={"verdict": worst})})
     return verdict.model_copy(update={

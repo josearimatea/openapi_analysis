@@ -63,7 +63,8 @@ def test_each_view_adds_up_to_its_own_document(service, name, version):
     parts, part_of = group_parts(a, name)
     v = views(a, parts, part_of, [_verdict(p, "equivalent") for p in parts])
     header = v["header"]
-    assert sum(v["official"].values()) + header.get("official", 0) == len(flatten_parts(off))
+    text = v["text"].get("official", 0)
+    assert sum(v["official"].values()) + header.get("official", 0) + text == len(flatten_parts(off))
     assert sum(v["generated"].values()) + header.get("generated", 0) == len(flatten_parts(gen))
     assert v["official"]["undecided"] == v["generated"]["undecided"] == 0
 
@@ -110,11 +111,33 @@ def test_a_field_takes_the_outcome_of_its_difference():
     assert _outcome("official", "absent", "error") == "missing"
     assert _outcome("official", "absent", "equivalent") == "different but right"
     assert _outcome("official", "moved", "error") == "wrong"
-    assert _outcome("generated", "extra", "improvement") == "extra useful"
+    assert _outcome("generated", "extra", "improvement") == "better"
+    assert _outcome("generated", "extra", "useful") == "extra useful"
     assert _outcome("generated", "extra", "error") == "extra wrong"
     assert _outcome("generated", "differing", "improvement") == "better"
     assert _outcome("generated", "differing", "uncertain") == "undecided"
     assert _outcome("generated", "differing", None) == "undecided"          # not judged
+
+
+def test_text_only_the_official_has_is_counted_apart_and_not_scored():
+    op = {"summary": "s", "responses": {"200": {"description": "OK"}}}
+    off = {"openapi": "3.0.1", "paths": {"/a": {"get": op}}}
+    gen = {"openapi": "3.0.1", "paths": {"/a": {"get": {"responses": op["responses"]}}}}
+    a = _aligned(off, gen)
+    parts, part_of = group_parts(a, "g")
+    v = views(a, parts, part_of, [_verdict(p, "equivalent") for p in parts])
+    assert v["text"] == {"official": 1}
+    assert v["official"]["different but right"] == 0 and v["official"]["same"] == 1
+
+
+def test_a_field_only_the_official_has_that_is_not_text_stays_in_the_view():
+    response = {"200": {"description": "OK"}}
+    off = {"openapi": "3.0.1", "paths": {"/a": {"get": {"deprecated": True, "responses": response}}}}
+    gen = {"openapi": "3.0.1", "paths": {"/a": {"get": {"responses": response}}}}
+    a = _aligned(off, gen)
+    parts, part_of = group_parts(a, "g")
+    v = views(a, parts, part_of, [_verdict(p, "error") for p in parts])
+    assert v["official"]["missing"] == 1 and not v["text"]
 
 
 def test_a_second_declaration_is_one_duplicate_judged_whole():
@@ -135,6 +158,7 @@ def test_a_second_declaration_is_one_duplicate_judged_whole():
     assert part.headers["official"] == {"openapi": "3.0.1"}
     v = views(a, parts, part_of, [_verdict(p, "error") for p in parts])
     assert v["generated"]["extra wrong"] == 3            # operationId, 200.description, summary
+    assert v["duplicates"] == {"generated": 2}           # already among them: not counted twice
 
 
 def _disputing(part, *locations):
@@ -288,6 +312,121 @@ def test_what_is_not_a_flattened_member_stays_a_plain_difference(member, root):
     gen = {"openapi": "3.0.1", "components": {"schemas": {"N": root}}}
     part = group_parts(_aligned(off, gen), "g")[0][0]
     assert not any(d.kind == "moved" for d in part.differences)
+
+
+def test_the_one_oneof_alternative_kept_at_the_root_is_compared_field_by_field():
+    generic = {"type": "object", "properties": {"id": {"type": "string"}}, "required": ["id"]}
+    nrm = {"anyOf": [{"$ref": "Ext.yaml#/components/schemas/A"},
+                     {"$ref": "Ext.yaml#/components/schemas/B"}]}
+    off = {"openapi": "3.0.1", "components": {"schemas": {"R": {"oneOf": [generic, nrm]}}}}
+    gen = {"openapi": "3.0.1", "components": {"schemas": {"R": {
+        **generic, "required": ["id", "attributes"]}}}}
+    a = _aligned(off, gen)
+    parts, part_of = group_parts(a, "g")
+    root = "components.schemas.R"
+    assert [(d.kind, d.location) for d in parts[0].differences] == [
+        ("moved", f"{root}.type"), ("moved", f"{root}.properties"),
+        ("absent", f"{root}.oneOf"), ("differing", f"{root}.required")]     # one line per field
+    assert parts[0].differences[2].leaves == 2                      # only the alternative lost
+    v = views(a, parts, part_of, [_verdict(parts[0], "equivalent")])
+    assert sum(v["official"].values()) == len(flatten_parts(off["components"]))
+    assert v["official"]["different but right"] == 5
+    wrong = _verdict(parts[0], "equivalent")
+    wrong.difference_verdicts = ["equivalent", "equivalent", "error", "error"]
+    w = views(a, parts, part_of, [wrong])
+    assert w["official"]["missing"] == 2 and w["official"]["wrong"] == 1   # required, by its own line
+    assert w["generated"]["wrong"] == 1
+
+
+def test_two_alternatives_sharing_keys_with_the_root_stay_a_plain_difference():
+    alt = {"properties": {"a": {"type": "string"}}}
+    off = {"openapi": "3.0.1", "components": {"schemas": {"R": {"oneOf": [alt, dict(alt)]}}}}
+    gen = {"openapi": "3.0.1", "components": {"schemas": {"R": dict(alt)}}}
+    assert not any(d.kind == "moved" for d in group_parts(_aligned(off, gen), "g")[0][0].differences)
+
+
+def _across():
+    """The same notification as a callback (official) and as an endpoint (generated)."""
+    body = {"required": True, "content": {"application/json": {"schema": {"$ref": "#/components/schemas/N"}}}}
+    off = {"openapi": "3.0.1", "paths": {"/x": {"put": {
+        "responses": {"200": {"description": "OK"}},
+        "callbacks": {"onN": {"{$request.body#/u}": {"post": {
+            "requestBody": body,
+            "responses": {"204": {"description": "ok"}, "default": {"description": "Error"}}}}}}}}}}
+    gen = {"openapi": "3.0.1", "paths": {"/x": {"put": {"responses": {"200": {"description": "OK"}}}},
+                                         "/sink": {"post": {
+        "operationId": "notify", "requestBody": body,
+        "responses": {"204": {"description": "No Content"}, "4XX": {"description": "Error"}}}}}}
+    a = _aligned(off, gen)
+    a.new_group(["official:paths./x.put.callbacks.onN"], ["generated:paths./sink.post"], "llm",
+                primary=False)
+    return a
+
+
+def test_a_callback_and_an_endpoint_are_compared_field_by_field():
+    a = _across()
+    part = next(p for p in group_parts(a, "g")[0] if p.aspect.startswith("callback"))
+    cb = "paths./x.put.callbacks.onN.{$request.body#/u}.post"
+    found = {(d.kind, d.location) for d in part.differences}
+    assert ("moved", "paths./sink.post") in found
+    assert ("extra", "paths./sink.post.operationId") in found
+    assert ("moved", "paths./sink.post.requestBody") in found
+    assert ("differing", "paths./sink.post.responses.204.description") in found
+    assert ("extra", "paths./sink.post.responses.4XX.description") in found
+    quoted = cb.replace("{$request.body#/u}", "'{$request.body#/u}'")
+    assert ("absent", f"{quoted}.responses.default.description") in found
+    assert not any(d.kind == "absent" and d.location.endswith(".requestBody") for d in part.differences)
+
+
+def test_a_callback_as_a_path_and_the_same_content_are_marked():
+    part = next(p for p in group_parts(_across(), "g")[0] if p.aspect.startswith("callback"))
+    by = {d.location: d.known for d in part.differences}
+    assert by["paths./sink.post"] == "callback_to_path"
+    assert by["paths./sink.post.requestBody"] == "same_content"
+    assert by["paths./sink.post.responses"] == ""
+
+
+def test_a_key_beside_a_ref_is_marked_and_a_groupers_tags_are_dropped():
+    from openapi_analysis.judge.group_parts import _without_tags
+
+    def doc(schema):
+        return {"openapi": "3.0.1", "paths": {"/x": {"get": {"responses": {"200": {
+            "description": "d", "content": {"application/json": {"schema": schema}}}}}}}}
+    ref = {"$ref": "#/components/schemas/R"}
+    part = group_parts(_aligned(doc(ref), doc({**ref, "type": "array"})), "g")[0][0]
+    assert [d.known for d in part.differences] == ["beside_ref"]
+    assert _without_tags("Same delivery (R12). B2 and B5 are copies.") == "Same delivery (R12)."
+
+
+def test_a_required_naming_more_tells_what_to_ask_per_field():
+    def doc(required):
+        schema = {"type": "object", "properties": {"a": {"type": "string"}, "b": {"type": "string"}}}
+        return {"openapi": "3.0.1", "components": {"schemas": {"N": {**schema, **required}}}}
+    part = group_parts(_aligned(doc({"required": ["a"]}), doc({"required": ["a", "b"]})), "g")[0][0]
+    assert "this requires b." in part.differences[0].hint
+    extra = group_parts(_aligned(doc({}), doc({"required": ["a", "b"]})), "g")[0][0]
+    assert "this requires a, b." in extra.differences[0].hint
+    fewer = group_parts(_aligned(doc({"required": ["a", "b"]}), doc({"required": ["a"]})), "g")[0][0]
+    assert fewer.differences[0].hint == ""
+
+
+def test_nullable_missing_on_an_empty_schema_is_known():
+    def doc(value):
+        return {"openapi": "3.0.1", "components": {"schemas": {"N": {"properties": {"v": value}}}}}
+    part = group_parts(_aligned(doc({"nullable": True}), doc({})), "g")[0][0]
+    assert [d.known for d in part.differences] == ["empty_schema"]
+    typed = group_parts(_aligned(doc({"type": "string", "nullable": True}), doc({"type": "string"})),
+                        "g")[0][0]
+    assert [d.known for d in typed.differences] == [""]            # a type restricts: judged
+
+
+def test_a_field_written_as_a_ref_on_one_side_is_one_difference():
+    def doc(path):
+        return {"openapi": "3.0.1", "components": {"schemas": {"M": {"properties": {"path": path}}}}}
+    part = group_parts(_aligned(doc({"$ref": "Ext.yaml#/components/schemas/Uri"}),
+                                doc({"type": "string"})), "g")[0][0]
+    assert [(d.kind, d.location) for d in part.differences] == [
+        ("differing", "components.schemas.M.properties.path")]
 
 
 def test_real_flattened_notifications_differ_only_where_they_really_differ():

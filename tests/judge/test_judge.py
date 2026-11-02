@@ -8,7 +8,13 @@ and a cached verdict is read back instead of asking again.
 
 from openapi_analysis.judge.judge import judge_part, number_evidence
 from openapi_analysis.judge.prompts import PROMPT_VERSION, SYSTEM, user_message
-from openapi_analysis.schemas.judge import Citation, Evidence, JudgeAnswer, Part
+from openapi_analysis.schemas.judge import (
+    Citation,
+    DifferenceVerdict,
+    Evidence,
+    JudgeAnswer,
+    Part,
+)
 
 
 def part(**kw):
@@ -140,6 +146,128 @@ def test_a_difference_inside_an_invalid_location_is_never_an_improvement():
              invalid_issues=["paths./x.patch.responses.4XX: 'x' is not allowed"])
     assert run(p, BOTH, FakeLLM(reply)).difference_verdicts == [
         "equivalent", "improvement", "error"]        # D1 is a description: prose never counts
+
+
+def _ruling(kind, location, verdict):
+    from openapi_analysis.schemas.judge import Difference, DifferenceVerdict
+
+    d = Difference(kind=kind, location=location, official="a", generated="b")
+    return d, answer(verdict).model_copy(update={"differences": [
+        DifferenceVerdict(difference_id="D1", verdict=verdict, reason="r")]})
+
+
+def test_what_only_the_generated_has_is_never_equivalent():
+    for location, given, final in (("paths./x.get.operationId", "equivalent", "useful"),
+                                   ("paths./x.get.operationId", "useful", "useful"),
+                                   ("paths./x.get.operationId", "improvement", "useful"),
+                                   ("paths./x.get.responses.204", "improvement", "improvement"),
+                                   ("paths./x.get.operationId", "error", "error"),
+                                   ("paths./x.get.description", "error", "useful")):
+        d, reply = _ruling("extra", location, given)
+        assert run(part(differences=[d]), BOTH, FakeLLM(reply)).difference_verdicts == [final]
+
+
+def test_the_part_follows_a_ruling_changed_to_useful():
+    d, reply = _ruling("extra", "paths./x.get.operationId", "equivalent")
+    reply = reply.model_copy(update={"verdict": "equivalent"})
+    assert run(part(differences=[d]), BOTH, FakeLLM(reply)).answer.verdict == "useful"
+
+
+def test_a_duplicate_is_never_useful():
+    d, reply = _ruling("duplicate", "paths./copy.get", "useful")
+    assert run(part(differences=[d]), BOTH, FakeLLM(reply)).difference_verdicts == ["error"]
+
+
+def test_useful_inside_an_invalid_location_is_an_error():
+    d, reply = _ruling("extra", "paths./x.get.operationId", "useful")
+    p = part(differences=[d], invalid_issues=["paths./x.get.operationId: bad"])
+    assert run(p, BOTH, FakeLLM(reply)).difference_verdicts == ["error"]
+
+
+def test_a_prose_difference_on_both_sides_stays_equivalent():
+    d, reply = _ruling("differing", "paths./x.get.description", "error")
+    assert run(part(differences=[d]), BOTH, FakeLLM(reply)).difference_verdicts == ["equivalent"]
+
+
+def test_what_is_known_of_a_move_is_not_left_to_the_llm():
+    from openapi_analysis.schemas.judge import Difference, DifferenceVerdict
+
+    for known, given, final in (("same_content", "improvement", "equivalent"),
+                               ("same_content", "error", "equivalent"),
+                               ("same_content", "uncertain", "equivalent"),
+                               ("callback_to_path", "improvement", "error"),
+                               ("beside_ref", "equivalent", "error"),
+                               ("empty_schema", "error", "equivalent"),
+                               ("", "improvement", "improvement")):
+        d = Difference(kind="moved", location="paths./a.post", official="o", generated="g", known=known)
+        reply = answer(given).model_copy(update={"differences": [
+            DifferenceVerdict(difference_id="D1", verdict=given, reason="r")]})
+        v = run(part(differences=[d]), BOTH, FakeLLM(reply))
+        assert v.difference_verdicts == [final] and v.answer.verdict == final
+
+
+def test_the_path_parameters_of_a_callback_declared_as_a_path_are_no_improvement():
+    from openapi_analysis.schemas.judge import Difference, DifferenceVerdict
+
+    for where, final in (("path", "useful"), ("query", "improvement")):
+        generated = {"paths": {"/a": {"post": {"parameters": [{"name": "a", "in": where}]}}}}
+        move = Difference(kind="moved", location="paths./a.post", official="o", generated="g",
+                          known="callback_to_path")
+        extra = Difference(kind="extra", location="paths./a.post.parameters", generated="g")
+        reply = answer("improvement").model_copy(update={"differences": [
+            DifferenceVerdict(difference_id="D1", verdict="error", reason="r"),
+            DifferenceVerdict(difference_id="D2", verdict="improvement", reason="r")]})
+        p = part(differences=[move, extra]).model_copy(update={"generated": generated})
+        assert run(p, BOTH, FakeLLM(reply)).difference_verdicts == ["error", final]
+
+
+def test_a_property_named_like_prose_is_not_prose():
+    from openapi_analysis.judge.parts import is_prose
+    from openapi_analysis.schemas.judge import Difference
+
+    for text in ("paths./x.get.summary", "info.title", "servers[0].description",
+                 "paths./x.get.responses.default.description",
+                 "components.schemas.N.properties.title.description",
+                 "paths./x.get.parameters[in=query,name=f].description"):
+        assert is_prose(text), text
+    for field in ("components.schemas.N.properties.title",
+                  "components.schemas.N.properties.description",
+                  "components.schemas.description", "paths./x.get.operationId",
+                  "servers[0].variables.description", "components.schemas.N.example.title",
+                  "components.schemas.N.properties.properties.properties.summary"):
+        assert not is_prose(field), field
+    d = Difference(kind="absent", location="components.schemas.N.properties.title")
+    reply = answer("error").model_copy(update={"differences": [
+        DifferenceVerdict(difference_id="D1", verdict="error", reason="r")]})
+    assert run(part(differences=[d]), BOTH, FakeLLM(reply)).difference_verdicts == ["error"]
+
+
+def test_the_reason_comes_before_the_verdict():
+    fields = list(DifferenceVerdict.model_fields)
+    assert fields.index("reason") < fields.index("verdict")
+    fields = list(JudgeAnswer.model_fields)
+    assert fields.index("differences") < fields.index("verdict") and fields[-1] == "verdict"
+    assert "Think before you rule" in SYSTEM
+
+
+def test_a_known_fact_is_told_on_the_line_of_its_difference():
+    from openapi_analysis.schemas.judge import Difference
+
+    d = Difference(kind="extra", location="paths./x.schema.type", known="beside_ref")
+    assert "known: this key is beside a $ref" in user_message(part(differences=[d]), BOTH)
+
+
+def test_the_part_follows_its_differences():
+    d, reply = _ruling("differing", "paths./x.get.required", "error")
+    reply = reply.model_copy(update={"verdict": "improvement"})
+    assert run(part(differences=[d]), BOTH, FakeLLM(reply)).answer.verdict == "error"
+
+
+def test_the_rules_of_required_and_of_oas_facts_are_in_the_prompt():
+    assert "M alone neither justifies nor condemns" in SYSTEM
+    assert "SHALL be ignored" in SYSTEM
+    assert "not by codes nobody declared" in SYSTEM
+    assert "never cutting" in SYSTEM
 
 
 def test_the_prompt_numbers_the_differences():
