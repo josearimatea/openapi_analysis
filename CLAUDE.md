@@ -134,7 +134,7 @@ Pontos que já foram fonte de bug e estão resolvidos em `rulesbank/extraction.p
 
 ```
 src/openapi_analysis/
-  config/        paths, settings (OFFICIAL_REFERENCE por serviço), logging
+  config/        paths, settings (OFFICIAL_BY_SPEC: o oficial de cada versão da spec), logging
   rulesbank/     avaliação 1: rule_types.py (A DEFINIÇÃO + rule_key), extraction.py,
                  comparison.py (cobertura + fidelidade regra a regra)
   openapi/       avaliação 2: comparison.py (folhas contract/metadata/prose, por operação

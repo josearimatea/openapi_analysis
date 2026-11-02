@@ -23,6 +23,17 @@ Registro de atualizações:
   pendente.
 - 2026-10-06 — camada 3, etapas 2 e 3: as partes, e a busca dirigida por parte (título
   que define o assunto, cláusula da regra, similaridade — tudo dentro do serviço).
+- 2026-10-07 a 2026-10-18 — o juiz rodando: partes com o dono inteiro como contexto, um
+  veredito por diferença, o contexto citável (judge-v4), a coleção compartilhada por
+  seção; o relatório final com o resultado primeiro, um relatório por execução.
+- 2026-10-29 e 30 — o alinhamento dos dois documentos: agrupar antes de julgar (só o
+  exato no determinístico, o resto com um LLM sobre os documentos inteiros); o juiz
+  julga grupos e sobras; o relatório em duas visões, cada uma na sua base; prosa só é
+  erro quando é falsa (judge-v6).
+- 2026-11-01 — a spec como entrada obrigatória: cada documento só é comparado na sua
+  versão; os números anteriores eram de versões trocadas. Prosa nunca conta; sem a
+  segunda passada; stubs julgados contra a definição externa; `allOf` achatado comparado
+  campo a campo (judge-v15).
 
 ---
 
@@ -273,3 +284,209 @@ acha esse tipo. E os `$ref` externos ficaram sem fonte: a TS 28.623 define os ti
 o ProvMnS importa (`Uri`, `NotificationHeader`, `ErrorResponse`…) só no anexo C, que é o
 próprio `TS28623_ComDefs.yaml`; com a regra de nenhum anexo, não há texto de spec sobre
 eles — decisão em aberto no plano.
+
+## Camada 3 — o juiz em uso e o relatório final (07 a 18/out/2026)
+
+Com a busca pronta, as partes do generator mudaram de forma: cada uma passou a levar o
+**dono inteiro** — a operação, o callback, o schema — dos dois lados, como contexto, e a
+lista exata de diferenças como foco, com um veredito por diferença. Nenhuma linha que
+diverge fica de fora, e um teste trava isso. O contexto passou a ser citável (C1 o
+oficial, C2 o gerado, no judge-v4): o juiz pode concluir "equivalente" só lendo os dois
+lados — duas frases que dizem a mesma coisa não precisam da spec —, enquanto melhoria
+continua exigindo a spec ou a referência OpenAPI. Antes disso, as partes sem evidência
+viravam "indeciso" sem consultar ninguém, e o PerfMnS, praticamente igual ao oficial,
+saía com muitos indecisos.
+
+A busca falhava por motivos que só apareceram olhando os trechos: tabelas cortadas,
+janelas de 2 000 caracteres que partiam a seção, o limite de 256 tokens do modelo de
+embeddings. A correção foi no repositório compartilhado (`qdrant_3gpp_rag`): trechos por
+seção, sem anexo, metadados de cláusula, busca híbrida (densa + BM25) e um modelo maior
+— e as coleções foram reindexadas. O juiz passou a ler a coleção compartilhada da série
+28, em vez de uma coleção própria.
+
+O relatório final foi reescrito a pedido, para ser lido por alguém de fora: o resultado
+primeiro (validade, depois cada valor por veredito, e a porcentagem correta, com as
+melhorias destacadas), depois o detalhe. Um relatório por execução, com a data no nome,
+nunca sobrescrito, em `data/outputs/reports/<Serviço>/{generator,rulesbank}/`, para
+comparar antes e depois.
+
+## Camada 3 — alinhar os documentos antes de julgar (29 e 30/out/2026)
+
+**O problema.** Ao separar a cobertura do oficial da correção do gerado, a conta não
+fechava: o gerado tinha 58% "certo", mas só 48% do oficial estava coberto, e havia 148
+"extras aprovados". A causa estava no instrumento: o diff percorria os dois documentos
+pelo **mesmo endereço**. O mesmo conteúdo em outro lugar — o parâmetro levado do path
+para cada operação, o `default` trocado por `4XX`/`5XX`, um schema copiado para dentro de
+um callback — virava um "faltando" de um lado e um "extra" do outro, julgados em
+separado, às vezes com vereditos contraditórios. Medido: 26% dos valores "faltando" do
+ProvMnS de 28/08 reaparecem em outro endereço do gerado, e 41% no de 20/09. A base dos
+números também misturava os dois documentos (os 423 valores eram a união dos dois).
+
+**A ideia: agrupar não é julgar.** Antes de julgar, cada bloco do oficial (operação,
+parâmetro, media type, resposta, callback, schema) é ligado ao bloco do gerado que faz o
+mesmo papel. O agrupamento nunca diz que algo está certo: a mudança de lugar ou de forma
+vira uma diferença do grupo, e o juiz decide. O plano está em `docs/ALIGNMENT_PLAN.md`.
+
+**Só o exato é determinístico.** A primeira versão agrupava também pelo `servers` (a URL
+completa), por conteúdo igual e pela entrega de um callback contra uma operação. Os
+testes mostraram que tudo isso podia errar: conteúdo igual juntou `default` e `4XX` só
+porque os dois tinham `{description: Error}`, e cinco schemas vazios
+(`{type: object}`) entraram no grupo do `Resource`. A regra decidida foi: no
+determinístico fica só a igualdade exata definida pela OpenAPI — o mesmo endereço, o
+mesmo path com outros nomes de template, o mesmo `operationId`, o mesmo nome de schema
+(inclusive as cópias fora do lugar), o mesmo parâmetro (`in` + `name`) em qualquer
+nível, o callback renomeado com a mesma entrega —, e uma chave que dois blocos do
+oficial compartilham não decide nada. O `servers` é cabeçalho e nunca serve para
+alinhar. O que pede interpretação vai para o LLM. Cada valor de cada documento pertence
+a exatamente um bloco, e isso é travado em teste. O teste de generalidade, sem outra
+spec à mão: um documento contra ele mesmo dá tudo por endereço; o ProvMnS v17.5 contra o
+v18.2 sobra exatamente o que a v18.2 acrescentou (`dataNodeSelector`, o callback
+`notifyEvent`, o schema `NotifyEvent`).
+
+**O LLM que agrupa.** Um agrupador separado do juiz, que só diz o que corresponde. Ele
+não usa RAG: as 17 regras de identidade da OpenAPI 3.0.1 (R1–R17, cada uma com a seção
+de onde saiu) foram extraídas uma vez e fixadas no prompt, e o agrupador cita a regra em
+cada decisão. O formato chegou à versão 8 depois de testes reais, e cada erro virou uma
+mudança: por área, ele decidia cedo com visão parcial e não podia rever; com só pedaços
+dos documentos, inventava conteúdo ("o PUT gerado contém esses callbacks" — não
+continha); numa chamada só com tudo, a mensagem ficava 3 vezes maior que os próprios
+documentos. A forma final: uma chamada por família de bloco (endpoints, parâmetros,
+corpos e respostas, schemas e cabeçalho), em ordem, cada uma com **os dois YAMLs
+inteiros** como base. As regras estruturais não ficaram no prompt, ficaram em checagens
+de código — o LLM tentou duas vezes juntar dois media types num grupo, apesar do prompt
+proibir: um tipo só de cada lado do grupo, um media type por lado, operação × callback só
+em lados opostos. Uma resposta recusada não agrupa nada. No ProvMnS de 28/08, todas as
+decisões da versão final conferiram com os documentos: o `default` com `4XX`/`5XX`, o
+path duplicado com o prefixo do `servers`, o DELETE de URL quebrada, o callback
+declarado como path; e as sobras que ficaram (13 faltando, 6 extras) são reais.
+
+**O juiz sobre grupos (judge-v5).** Cada grupo que difere vira uma parte; cada sobra,
+outra. Um bloco é comparado só pelo que é dele — a operação sem os parâmetros e as
+respostas, que têm parte própria —, para nada ser julgado duas vezes; o juiz continua
+vendo a operação inteira como contexto. Um bloco em outro lugar vira uma diferença
+"moved", julgada uma vez. O juiz pode marcar que um grupo está errado. Ao rodar o
+PerfMnS, apareceu que a busca do juiz ainda lia os rótulos das partes antigas: a
+consulta do schema saía vazia e o `required` do `NotifyThresholdCrossing`, antes
+melhoria pela tabela da spec, virou indeciso. Corrigida a busca, voltou a melhoria.
+
+**O relatório em duas visões.** Cada documento na sua base, sem mistura: quanto do
+oficial o gerado reproduz (igual, diferente mas certo, melhor, errado, faltando,
+indeciso) e quanto do gerado está certo (os mesmos, com extra útil e extra errado). Um
+campo que só mudou de lugar conta uma vez, no seu grupo. O cabeçalho fica à parte. Os
+termos foram escolhidos para serem entendidos sem explicação — "changed", "equivalent" e
+"values" confundiam.
+
+**Prosa só é erro quando é falsa (judge-v6).** No PerfMnS, o veredito sobre a
+`description` da operação oscilou entre duas rodadas: erro numa, equivalente na outra. O
+texto gerado é verdadeiro, só mais genérico (não cita `notifyThresholdCrossing`). A
+decisão: menos claro não é erro. Prosa só é erro quando diz algo falso; mais curta ou
+menos precisa é "diferente, mas certo", e o que perdeu vai só na comparação de clareza.
+É o mesmo princípio da camada 1, onde prosa nunca conta como defeito. Na rodada do
+judge-v5 com a busca corrigida, o PerfMnS ficou em 100% nas duas visões — o gerado
+reproduz todo o oficial, e o que muda (`4XX`/`5XX` no lugar do `default`, o `required`
+explícito, o `operationId`) foi julgado melhoria com evidência; a regra do judge-v6
+tira a oscilação que dava esse resultado ou 95,5% conforme a rodada. A rodada com o
+judge-v6 ainda está por fazer.
+
+**Duplicatas, o corte escondido e a busca medida (30/out a 01/nov/2026).** A primeira
+rodada completa do ProvMnS deu 86,9% do gerado "certo", com 140 extras úteis: as
+duplicatas (o PUT e o DELETE do path longo) entravam no grupo da operação oficial e cada
+resposta delas era julgada sozinha. Passaram a ser marcadas e julgadas inteiras, e uma
+duplicata nunca sai melhoria nem equivalente. O juiz também julgava melhoria o path
+longo porque não via o `servers` do oficial; o cabeçalho dos dois documentos passou a ir
+como contexto, e os paths são comparados como escritos. Com isso, o gerado certo foi a
+55,7%.
+
+Restava a mesma mudança (`default` → `4XX`/`5XX`) julgada diferente em cada operação.
+Primeiro culpei a busca; a medida sobre 16 partes reais, com a cláusula esperada de cada
+uma, mostrou que ela já achava 15. Depois culpei o juiz. A causa era minha: cada trecho
+de evidência era cortado em 2.500 caracteres antes de ir a ele, e o `4xx` estava no
+caractere 2.982 da tabela do DELETE e no 2.521 da do PATCH. No PUT, no 278; no GET, no
+1.247. Sem o corte, a mudança saiu melhoria nas quatro. Um teste agora garante que nada
+do que o juiz lê é cortado. A lição é a do início deste caderno: quando dois números se
+contradizem, o instrumento é o suspeito — vale também para o que ele mostra ao LLM.
+
+A busca ficou com o que a medida sustentou: filtro no servidor (sem anexo, dentro do
+escopo) e as seções que definem o assunto primeiro. Achou as mesmas 15 de 16, com cerca
+de 20% menos trechos. Aumentar o k para 8 ou 10 só trouxe ruído, e os anexos também, na
+medida possível (as cláusulas esperadas são todas do corpo da spec). A parte que falta é
+o `notifyEvent`: a coleção indexava a i00, onde essa cláusula não existe, e na i20 o
+título dela está sem estilo de título no próprio Word da 3GPP. A troca para a i20 e o
+reconhecimento desses títulos ficaram com o `qdrant_3gpp_rag`.
+
+Para a variação que sobra, o juiz recebeu regras (o trecho da spec que trata desta
+operação decide antes do argumento genérico da OpenAPI) e uma segunda passada: cada
+parte é julgada sozinha, e só onde o mesmo tipo de mudança recebeu vereditos diferentes
+elas são julgadas de novo, vendo todos os vereditos e motivos. Isso evita que um erro
+inicial se propague, porque qualquer uma pode mudar. No teste, a segunda passada
+corrigiu o `$ref` do PUT, mas também mudou o que ninguém disputava (o `oneOf` perdido do
+PATCH, de erro para indeciso). Por isso só valem dela os vereditos das diferenças em
+conflito. Onde todas concordam no erro, ela não corrige; isso segue para a revisão humana.
+
+## Camada 3 — a versão errada, e a correção do juiz (01/nov/2026)
+
+**O erro de medição.** O ProvMnS de 28/08 e o PerfMnS vêm da i00, mas vinham sendo
+comparados com os oficiais v18.2.0 e v18.1.0 e com a spec i20. Os números da seção
+anterior medidos assim (86,9%, 55,7%) e os 57,4% / 55,7% do judge-v13 não medem o
+gerador: parte das "faltas" era diferença entre versões. Pior, atribuí à reindexação uma
+solução que não existia, e isso custou uma troca de coleção à toa. A correção é
+estrutural: a spec passou a ser **entrada obrigatória** (`--spec`), a versão do documento
+e do oficial é conferida contra ela e a divergência é erro, salvo com
+`--allow-other-version`, que fica registrado no relatório. Se nenhuma coleção tem aquela
+versão exata, ela é indexada na hora (`analysis_spec_28532_i00`). O oficial de cada
+versão fica em `OFFICIAL_BY_SPEC`, conferido nos anexos: i00 → ProvMnS 17.5.0 e PerfMnS
+17.1.0; i20 → 18.2.0 e 18.1.0.
+
+**Decisões que substituem as anteriores.** Prosa (`description`, `summary`, `title`)
+nunca é erro nem melhoria, nem quando parece falsa: não faz parte do contrato, e há um
+piso em código. A cópia de um bloco é erro; a original é julgada normalmente. Nada do que
+o juiz lê é cortado (retorno do RAG, YAMLs, diferenças); só os termos de busca têm
+limite, porque viram uma consulta só. O `x-*` da raiz saiu do contexto: o registro de
+como o documento foi gerado não diz nada da API e poderia influenciar o veredito.
+
+**A busca não era reproduzível.** Na busca híbrida, empates da fusão RRF mudavam a ordem
+entre execuções: a densa repetia em 39/39 consultas, a híbrida só em 6/39. Eu havia
+tratado uma variação de 14 para 15 como ruído. A correção foi no `qdrant_3gpp_rag`
+(commit `3c7403b`). Depois dela, com cada documento na sua versão, a evidência veio
+idêntica em 4 repetições nas 119 partes, e 14 de 14 cláusulas esperadas ficaram no top 3
+(das 16 medidas antes, duas partes não existem na v17.5.0).
+
+**Primeira rodada com as versões certas (judge-v13).** PerfMnS × i00 / v17.1.0: 22/22 do
+oficial e 26/26 do gerado. ProvMnS 28/08 × i00 / v17.5.0: 118/177 (66,7%) e 163/291
+(56,0%). Conferidos nos documentos: os erros de enum, `PatchItem`, PATCH sem 2xx e media
+types faltando, e as melhorias do `attributes` opcional e do DELETE (`scope`, 204,
+`array(Uri)`), que estão na spec e faltam no oficial. A rodada também mostrou os três
+problemas abaixo.
+
+**Sem a segunda passada.** Ela consumiu 19 das 66 chamadas da ProvMnS (cerca de 29%) e só
+alinhou dois vereditos do PUT, sem mudar a nota. Também não enxergava a incoerência que
+importava, porque só compara diferenças do mesmo tipo. Foi removida. O preço é que
+`default` → `4XX`/`5XX` pode variar entre equivalente e melhoria, e os dois contam como
+certo.
+
+**Stubs locais.** O oficial cita `TS28623_ComDefs.yaml#/components/schemas/ErrorResponse`;
+o gerado cria um `ErrorResponse: {type: object}` local. A mesma troca saía erro nas
+respostas, melhoria na definição do stub e equivalente nos `NotifyMoi*`: a parte do
+schema extra não sabia que ele substituía uma definição externa. Agora, quando o nome é
+exatamente o de uma definição externa do oficial, a parte recebe essa ligação e busca a
+definição, e o juiz compara: perde contrato é erro, preserva é equivalente, melhoria
+nunca. Com nome diferente não há ligação, de propósito: agrupar errado é pior do que
+deixar de ligar. No teste das partes afetadas, os stubs viraram erro e `Filter` saiu de
+indeciso para erro (`string` × `object`). O `400` junto de `4XX`/`5XX` deixou de ser erro
+com outra regra: um bloco oficial que vira vários é avaliado pela cobertura do conjunto.
+
+**`allOf` achatado.** Com os stubs certos, um `$ref` errado marcava os 5 campos de
+`properties` como errados, porque o gerado escreveu na raiz o que o oficial tem em
+`allOf[1]` e a diferença virava um bloco só. E as visões se contradiziam: o oficial dizia
+"diferente mas certo", o gerado "errado". Pela regra deste caderno, o suspeito era o
+instrumento. Como `allOf` combina seus membros, as duas formas são o mesmo schema: agora
+são comparadas campo a campo, nos dois sentidos, e só o `$ref` trocado conta como erro.
+
+**Definição externa de outra versão.** Os stubs são julgados contra a TS 28.623 i40, e o
+documento vem da TS 28.532 i00. Não é o erro de versão acima: a cláusula de referências da
+própria spec diz que uma referência sem versão vale pela última versão da mesma Release,
+e as duas são da Release 18. Não verifiquei se a i40 é a última da Release 18.
+
+Ainda sem rodada completa com o judge-v15: os números acima são do judge-v13, e o efeito
+estimado na ProvMnS é de cerca de 65,0% e 53,3%. As partes afetadas foram testadas em
+separado.
