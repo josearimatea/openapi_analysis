@@ -1,388 +1,188 @@
-# Plano — alinhamento dos dois documentos (gerado × oficial)
-
-Estado: **proposta**, 29/out/2026. Revisada no mesmo dia: agrupar ≠ julgar; as
-sobras são agrupadas numa chamada com a visão geral do documento, e só depois o
-juiz julga cada bloco. Vale para a avaliação 2 (generator). Liga-se à camada 3
-(`docs/JUDGE_PLAN.md`) e às duas visões do relatório.
-
----
-
-## 1. O problema
-
-Hoje `judge/parts.py::diff_documents` percorre os dois documentos **pelo mesmo
-endereço**. Se a chave existe só no oficial, é *absent*; se existe só no gerado, é
-*extra*. Listas são comparadas por posição, exceto parâmetros (`in` + `name`) e
-`enum`/`required` (comparados como conjunto). Ninguém procura o correspondente em
-outro lugar.
-
-Por isso, o mesmo conteúdo em outro endereço vira **duas** coisas: um *faltando* no
-oficial e um *extra* no gerado. As duas são julgadas separadamente, sem que o juiz
-saiba que são a mesma, e às vezes recebem vereditos contraditórios. Medido com
-`scratchpad/relocations.py`: valor igual, mesmas 3 últimas chaves, outro endereço.
-
-| documento        | valores só no oficial | reaparecem em outro lugar | valores só no gerado |
-|------------------|----------------------:|--------------------------:|---------------------:|
-| ProvMnS 28/08    | 139 | 36 (26%) | 228 |
-| ProvMnS 20/09    | 145 | 60 (41%) | 365 |
-| PerfMnS 23/08    |   4 |  1 (25%) |  20 |
-
-Padrões vistos:
-
-- **parâmetro mudou de nível**: path → operação e operação → path;
-- **chave renomeada**:
-  - media type (`application/json-patch+json` → `application/vnd.3gpp.json-patch+json`);
-  - nome do callback;
-  - expressão do callback (`{$request.body#/notificationRecipientAddress}` →
-    `{notificationTarget}`);
-  - `default` → `4XX`/`5XX`;
-- **composição reorganizada**: `type: object` subiu de dentro do `allOf`, e membros
-  de `allOf`/`oneOf` foram reordenados;
-- **cópia fora do lugar**: schemas dentro de `callbacks.components` do PUT;
-- **path duplicado** com o prefixo do `servers`: em ProvMnS 28/08,
-  `/{MnSRoot}/ProvMnS/{MnSVersion}/{URI-LDN-first-part}/{className}={id}` repete
-  `/{className}={id}`. São 62 valores, julgados como "melhoria" porque o juiz não via
-  o `servers` nem os outros paths.
-
-A escala do efeito: em ProvMnS 28/08, dos 148 extras julgados OK, cerca de 63 eram
-relocações e cerca de 70 eram lixo mal julgado.
-
-## 2. Princípio: agrupar não é julgar
-
-São duas fases, feitas por partes diferentes do instrumento, **nesta ordem**:
-
-1. **Agrupar** responde *"qual bloco do gerado corresponde a qual bloco do
-   oficial?"*. Serve para que o mesmo conteúdo seja olhado **uma vez, junto**, e não
-   como um faltando mais um extra. Termina **antes** de qualquer julgamento.
-2. **Julgar** responde *"essa correspondência está certa?"*, para cada grupo e
-   cada sobra. É sempre o juiz, com a spec 3GPP e a referência OpenAPI. O juiz não
-   agrupa.
-
-O agrupamento **nunca decide** que algo está certo. Um parâmetro levado do path para
-a operação, um schema com o mesmo nome em `callbacks.components`, um path que repete
-outro via `servers`, um media type com outro nome e o mesmo schema: todos formam um
-grupo, mas a mudança vira uma **diferença do grupo** (`moved`, `renamed`, `level`,
-`duplicate`). Essa diferença vai ao juiz, que pode achar equivalente, erro (o
-`$ref` não acha a cópia; query no path é o §3.22; outro media type muda o contrato)
-ou melhoria.
-
-**A única coisa que vira "igual" sem consulta** é uma diferença que a própria
-especificação OpenAPI / JSON Schema diz que não tem significado. Na prática, só a
-**ordem**:
-
-- a ordem das chaves de um mapa (`paths`, `properties`, `responses`…);
-- a ordem dos membros de `allOf`, `anyOf` e `oneOf` (`allOf` exige todos, e
-  `anyOf`/`oneOf` testam cada um, então a ordem não muda o resultado);
-- a ordem de `enum`, de `required` e da lista de `parameters` (identificados por
-  `in` + `name`).
-
-Ou seja, um grupo é **igual** só se os dois lados estão no **mesmo endereço** e são
-idênticos a menos dessa ordem. Todo o resto é julgado.
-
-## 3. A ideia
-
-Percorrer o oficial em blocos e procurar no gerado o correspondente de cada um:
-
-- o que corresponde com certeza é agrupado de forma determinística;
-- o que é apenas *parecido* dentro de uma área, o LLM agrupa;
-- o que ainda sobra vai a **uma chamada com a visão geral do documento**, que liga
-  o que as etapas anteriores deixaram passar (algo que corresponde a um bloco já
-  agrupado, ou a algo que parece faltando em outro lugar).
-
-Só então o juiz julga **cada bloco**: cada grupo e cada sobra que ficou de um lado
-só.
-
-```
- AGRUPAR (nunca julga)                                  JULGAR (nunca agrupa)
- ─────────────────────                                  ─────────────────────
- 1. mesmo endereço ──┐
- 2. chave equivalente├─ grupos certos ─┐
- 3. conteúdo sem ordem┘                │
- 4. candidatos ─ 5. LLM agrupa (área) ─┼─ grupos ──────── 7. diff de cada grupo
-                                       │                  8. juiz julga cada grupo
- sobras de todas as áreas ─ 6. LLM revê│com visão geral      e cada sobra
-                            liga → grupo┘                 9. duas visões
-                            não liga → sobra ───────────┘
-```
-
-## 4. Os blocos
+# Plano — corrigir a classificação, o juiz, a busca e o relatório
+
+Estado em 02/nov/2026: **quase tudo aplicado, ainda sem commit**. Cada item da seção 3 está
+marcado como `[feito]`, `[parcial]` ou `[falta]`, e o que falta está reunido na seção 8.
+Substitui o plano de alinhamento de 29/out, já
+implementado. A versão anterior, com as etapas 1–9 citadas nos docstrings do código, está
+no histórico do Git (`git show 0d9487a:docs/ALIGNMENT_PLAN.md`). A história das decisões
+fica em `docs/RASTREIO.md`.
+
+## 1. De onde vem este plano
+
+Revisei as 137 diferenças das últimas rodadas, cada uma contra os YAMLs e as fontes:
+
+| Documento | Spec / oficial | Prompt | Diferenças | Iguais | Só muda o rótulo | Muda certo/errado |
+|---|---|---|---|---|---|---|
+| ProvMnS 28/08 | i00 / v17.5.0 | `judge-v15` | 120 | 107 | 6 | 7 |
+| PerfMnS 23/08 | i00 / v17.1.0 | `judge-v13` | 17 | 15 | 2 | 0 |
+
+A revisão está em `data/outputs/reviews/2026-11-02_revisao_vereditos.md` (pasta ignorada
+pelo Git) e ainda é provisória: só vira gabarito depois da revisão humana.
+
+A auditoria da evidência mostrou que o problema principal é o prompt, não a busca: nos
+erros de `required`, o trecho decisivo chegou ao juiz e ele parou no `M`.
+
+## 2. Regras decididas
+
+**Classificação, pelo lugar da diferença:**
+
+| Onde está | Vereditos possíveis |
+|---|---|
+| Nos dois, mas diferente | equivalente, melhoria ou errado |
+| Só no gerado | melhoria, extra útil ou extra errado |
+| Só no oficial | faltando |
+
+- Melhoria exige que a spec ou a referência peça o que o gerado fez. A OpenAPI permitir algo
+  só mostra que é válido.
+- Prosa nunca é erro nem melhoria. Prosa só no oficial é contada à parte, fora da
+  porcentagem; o resto do bloco é julgado normalmente.
+- **`required` a mais:** é erro quando rejeita uma mensagem que a spec aceita. Quando não
+  rejeita nada que ela aceite, é extra útil. `M` sozinho não decide: é requisito de suporte
+  para o produtor (TS 32.156 cl. 6; TS 32.160 6.1.10).
+
+## 3. O que mudar
+
+### A. Classificação (juiz e contagem)
+
+- **A1.** `[feito]` Nova opção `useful`. O que só existe no gerado nunca é equivalente.
+- **A2.** `[feito]` Melhoria em extra conta como melhoria, não como extra útil (ex.: 204 e
+  `scope` do DELETE).
+- **A3.** `[feito]` Prosa só no oficial ganha contagem separada, abaixo da visão do oficial.
+- **A4.** `[feito]` Prosa só no gerado é extra útil.
+
+### B. Comparador
+
+- **B1.** `[feito]` `Resource.oneOf`: comparar o ramo genérico com a raiz, campo a campo. Eram
+  17 faltando, e só os 9 `$ref` de NRM faltam de fato.
+- **B2.** `[feito]` Callback × path: comparar a operação do callback com a do path. Eram 5
+  faltando, e 4 existem no path.
+- **B3.** `[feito]` `responses` desse path: com o B2, os campos contam nas linhas de dentro do
+  bloco. O veredito da linha do bloco ainda varia, sem efeito na nota (seção 8).
+- **B4.** `[feito]` `$ref` trocado por `type` no mesmo campo é uma única diferença, não
+  "faltando" mais "extra" (ex.: `MoiChange.path`).
+
+### C. Prompt do juiz
 
-Um **bloco** é a unidade de agrupamento. Os blocos são hierárquicos, e o
-alinhamento desce de cima para baixo: primeiro as operações; depois, **dentro** de
-um grupo de operações, os blocos dela.
-
-Um **grupo** liga um ou mais blocos do oficial a um ou mais do gerado (1 para 1,
-1 para n, n para 1). Uma **sobra** é um bloco que terminou o agrupamento sem grupo:
-um faltando (só no oficial) ou um extra (só no gerado).
-
-| tipo                | onde está                                     | identidade (etapa 1)  | chave de correspondência (etapa 2) |
-|---------------------|-----------------------------------------------|-----------------------|------------------------------------|
-| operação            | `paths.<p>.<método>`                          | path + método         | método + path com os nomes de template apagados (R2); ou `operationId` (R3) |
-| parâmetro           | `paths.<p>.parameters` ou `.<método>.parameters` | nível + `in` + `name` | operação + `in` + `name`, **em qualquer nível** (parâmetro efetivo); `$ref` local resolvido; header sem diferenciar maiúsculas |
-| request body (media type) | `….requestBody.content.<mt>`            | media type            | — (renomeado → candidatos) |
-| resposta            | `….responses.<código>`                        | código                | — (`default` × `4XX` → candidatos) |
-| callback            | `….callbacks.<nome>`                          | nome                  | a entrega (método + `$ref` do corpo), só entre callbacks e só se for única no oficial; callback × operação em `paths` fica para o LLM |
-| schema              | `components.schemas.<N>` ou cópia fora do lugar | endereço            | **nome**, em qualquer lugar do documento |
-| outro componente    | `components.<seção>.<N>`                      | endereço              | seção + nome |
-| cabeçalho           | `info`, `servers`, `tags`, `x-*` …             | endereço              | — (não pontua; e **nunca** é usado para alinhar outra coisa) |
-
-As chaves da etapa 2 vêm da semântica OpenAPI. Elas dizem **o que corresponde**, e
-**não** que está certo:
-
-- **Parâmetro efetivo.** Um parâmetro no nível do path vale para todas as operações
-  dele, e o da operação sobrepõe o do path com o mesmo `in` + `name` (OAS 3.0,
-  *Path Item Object*). O `id` no path do oficial e o `id` em cada uma das 4
-  operações do gerado formam **um grupo 1 para n**, com a diferença `level`. O juiz
-  decide se essa diferença é equivalente ou erro (o §3.22 é exatamente esse caso).
-- **Só o exato é determinístico** (decidido em 29/out/2026). O que precisa de
-  interpretação e pode errar às vezes vai para o LLM, nas sobras:
-  - um path que repete o prefixo do `servers` (o `servers` é cabeçalho e não entra);
-  - `default` × `4XX`/`5XX` (decidir que um código "é de erro" é interpretação);
-  - um media type renomeado;
-  - um callback de um lado e uma operação em `paths` do outro com a mesma entrega
-    (a API pode receber de verdade o que um callback envia);
-  - uma chave que dois blocos do oficial compartilham (qual dos dois?);
-  - o mesmo conteúdo sob outra chave: dois códigos com o mesmo corpo são duas
-    respostas, dois media types com o mesmo schema são duas representações (R9).
-  O conteúdo igual aparece ao LLM como candidato com similaridade 1,0.
-
-## 5. Agrupar (etapas 1–6)
-
-### Etapa 1 — mesmo endereço (determinística)
-
-A mesma chave nos dois lados forma um grupo, como hoje.
-
-### Etapa 2 — mesma chave de correspondência (determinística)
-
-Para os blocos sem grupo na etapa 1, aplicar a chave da tabela da §4. O grupo pode
-ser 1 para 1 (um schema com o mesmo nome em outro lugar), 1 para n (um parâmetro do
-path casado com o mesmo parâmetro em cada operação) ou n para 1. O grupo registra
-**como** foi formado, e a mudança de endereço vira a diferença `moved` ou `level`.
-
-### Etapa 3 — mesmo conteúdo (retirada)
-
-Retirada em 29/out/2026: conteúdo igual sob outra chave não é correspondência exata
-(ver §4). As cópias de um schema continuam no grupo dele pela etapa 2 (o nome).
-
-### Etapa 4 — candidatos (determinística, só ordena)
-
-Para cada bloco ainda sem grupo, listar os candidatos **do mesmo tipo** no outro
-lado, primeiro no mesmo pai (a mesma operação, o mesmo schema). Cada candidato
-recebe uma pontuação de semelhança:
+- **C1.** `[feito]` Regra fixa do `M` e do `required` (seção 2).
+- **C2.** `[feito]` Regra: permitido não é melhor. Corrige os `operationId`, também por regra
+  no código.
+- **C3.** `[feito]` Cobertura se mede pelos códigos que a spec lista para o método, não por
+  códigos que ninguém declarou. Corrige `4XX`/`5XX` do GET. No `judge-v24`, `default` trocado
+  pelos códigos que a spec nomeia é melhoria.
+- **C4.** `[feito]` Regras fixas da OpenAPI 3.0.1: chaves ao lado de `$ref`, parâmetro no path,
+  `allOf`, `servers`. O `nullable` saiu do prompt e virou caso decidido (seção 4).
+- **C5.** `[feito]` Citar a linha inteira, sem `...`, e ler a descrição antes da coluna `S`.
+- **C6.** `[parcial]` Quando trechos divergem, apontar o conflito e dizer qual decide (ex.:
+  `scope` no DELETE é `n/a` em uma tabela e `O` em outra). O juiz já aponta a divergência dentro
+  da TS 28.532, mas não cita a TS 32.158 (seção 8).
+
+### D. Busca
+
+- **D1.** `[feito]` Um bloco que mudou de lugar também busca pelos nomes do path gerado.
+- **D2.** `[parcial]` TS 32.158: indexada no `qdrant_3gpp_rag`, e as referências no texto já
+  são consultadas, não só as de `$ref`. Reconferidos os vereditos de patch e `Scope`; no `scope`
+  do DELETE, a busca não traz a 6.1.2: os trechos lidos nessa parte não citam essa cláusula
+  (seção 8).
+- **D3.** `[feito]` Trecho externo de Release posterior não entra, e trecho de Release anterior
+  entra com aviso no relatório.
+
+Nada do que o juiz lê é cortado; essa regra continua valendo.
+
+### E. Relatório
+
+- **E1.** `[feito]` Trocar `S2`, `C1` etc. pela cláusula e listar as citações em cada parte.
+- **E2.** `[feito]` Corrigir o rodapé, que promete YAMLs e evidência que não estão lá.
+- **E3.** `[feito]` Listas separadas de melhorias e extras úteis, com a unidade escrita
+  (diferenças ou campos).
+- **E4.** `[feito]` Mostrar o resumo da parte, como "1 certa, 1 errada", em vez de um rótulo
+  único.
+- **E5.** `[falta]` Trocar o aviso "uncalibrated" pelo acerto medido contra o gabarito. Depende
+  do F1.
+
+### F. Medição
 
-- fração de folhas iguais (caminho relativo + valor);
-- `$ref`s em comum;
-- chaves em comum.
-
-A pontuação **não agrupa nada**. Ela só ordena e corta: no máximo K candidatos por
-bloco (K = 5), e os de pontuação zero são descartados.
-
-### Etapa 5 — o LLM agrupa os parecidos, por área
+- **F1.** `[falta]` Levar o gabarito revisado para um arquivo versionado e travá-lo em teste.
+  Depende da revisão humana.
+- **F2.** `[feito]` Medir a variação real do juiz, repetindo a mesma entrada. Medida com 3
+  repetições na ProvMnS, com o `judge-v24`: 1,6% das diferenças variam e a nota não muda (RASTREIO).
+- **F3.** `[falta]` Corrigir no RASTREIO os vereditos que foram dados como conferidos e não
+  estavam certos (`PatchItem`, `required`).
 
-Uma chamada **por área com sobras**: a operação, o callback, ou a seção de schemas.
-O LLM de agrupamento é **separado** do juiz. Ele só diz o que corresponde a quê; não
-diz se está certo, e o prompt diz isso explicitamente.
+## 4. Casos decididos
 
-**Entrada:**
+Três casos em que as fontes não fecham. Decisão de 02/nov/2026: **erro** nos casos 2 e 3 e
+**equivalente** no caso 1.
 
-- os blocos do oficial sem grupo, cada um com id (`A1`, `A2` …), endereço e
-  conteúdo;
-- os candidatos do gerado (`B1`, `B2` …), com endereço, conteúdo e pontuação;
-- o contexto mínimo da área: a identidade da operação e o `servers`.
+1. **`PatchItem.value` sem `nullable`:** a OpenAPI 3.0.1 diz que `nullable` tem padrão `false`,
+   mas o esquema da TS 32.158 (6.3.3) escreve `"value": {}`, igual ao gerado. Equivalente.
+2. **Chaves ao lado de `$ref`** (200 do GET): a OpenAPI manda ignorá-las, então o contrato não
+   muda, mas o objeto não pode ter outras chaves.
+3. **Notificação como path:** neste documento o oficial usa callback e o alvo fica no
+   consumidor, mas o oficial da PerfMnS usa path (`/notificationSink`).
 
-**Saída estruturada (`GroupingAnswer`):**
+## 5. Ordem
 
-```
-groups:     [{official: [A1], generated: [B2, B3], reason: "…"}]
-ungrouped:  {official: [A4], generated: [B1]}       # com o motivo de cada
-```
+1. **A** — classificação e contagem, sem LLM.
+2. **B** — comparador, sem LLM.
+3. **C e D** — prompt e busca.
+4. **E** — relatório.
+5. **Teste só das partes afetadas**, contra a revisão, antes de qualquer rodada completa.
+6. **F** — gabarito, rodada completa da ProvMnS, repetição sem cache e RASTREIO.
 
-### Etapa 6 — o LLM revê as sobras com a visão geral
+A PerfMnS só roda de novo se o teste de partes afetadas mudar algum veredito dela.
 
-As etapas 1–5 olham **por área**, então o que mudou de dono escapa: um schema
-copiado dentro de um callback, um path duplicado, um parâmetro que foi parar em
-outra operação. Esta etapa é **uma** chamada (ou poucas, se não couber) com **todas**
-as sobras do documento, dos dois lados, e uma visão geral de tudo.
+Cada etapa só avança com os testes passando. Toda contagem nova é travada em teste.
 
-**Entrada:**
+## 6. Efeito esperado (estimativas, a confirmar na rodada)
 
-- **as sobras**, inteiras: os faltando do oficial (`A…`) e os extras do gerado
-  (`B…`), cada uma com tipo, endereço e conteúdo;
-- **o índice dos dois documentos**: todos os blocos, inclusive os já agrupados, cada
-  um com tipo, endereço, identidade (método + path + `operationId`, nome do schema,
-  código, media type, nome do callback) e o grupo a que pertence. É curto: sem o
-  conteúdo, só o suficiente para reconhecer;
-- o `servers` dos dois documentos.
+| Visão | Última rodada | Com a revisão e o comparador corrigido |
+|---|---|---|
+| ProvMnS, oficial | 116/177 (65,5%) | cerca de 111/164 (67,7%), sem a prosa só no oficial |
+| ProvMnS, gerado | 160/291 (55,0%) | cerca de 159/291 (54,6%) |
+| PerfMnS, nas duas visões | 100% | 100% |
 
-**Saída:** a mesma forma da etapa 5, mais uma opção: uma sobra pode ser **acrescentada
-a um grupo que já existe** (`join: {block: B7, group: G12, reason}`). É o caso de uma
-segunda cópia de um schema já agrupado, ou de um path que duplica uma operação já
-agrupada.
+## 7. Fora deste plano
 
-O que esta etapa não liga é sobra de verdade e vai assim ao juiz.
+- A ProvMnS de 20/09 (i20), até ser pedida.
+- Apagar os vereditos antigos em `data/judgements/`, até haver confirmação.
+- Registrar os defeitos do gerador no repositório `openapi_generator`.
 
-### O prompt do agrupador (etapas 5 e 6)
+## 8. O que falta na análise de YAML (a verificar depois)
 
-O agrupador **não usa RAG**. O que a OpenAPI diz sobre a identidade de cada objeto
-foi extraído uma vez da referência OpenAPI 3.0.1, a mesma que alimenta a coleção
-`openapi_reference`, e fixado em `judge/grouping_prompts.py`. São 17 regras (R1–R17),
-cada uma com a seção da referência de onde veio:
+Medido no `judge-v24` (RASTREIO, "variação do LLM"): ProvMnS 111/163 (68,1%) no oficial e
+159/291 (54,6%) no gerado. O último relatório, `2026-11-02_18-58-59`, é do `judge-v23` e ainda
+mostra 112/163.
 
-- endpoints: URL efetiva = `servers` + path, com `/` quando não há `servers`;
-  templates com nomes diferentes são o mesmo path; `operationId` é único;
-- parâmetros: identidade `name` + `in`; os do path valem para todas as operações;
-  `schema` × `content`; header;
-- request body e respostas: media type e faixa; `default` × `1XX`–`5XX`; o código
-  explícito tem precedência;
-- callbacks: o nome não tem significado; a expressão de runtime; a correspondência
-  pela entrega (método + corpo);
-- componentes e schemas: seção + nome; `$ref` = o objeto apontado, resolvido só no
-  endereço exato; `allOf` composto ou achatado; `oneOf`/`anyOf`; `enum`/`required`
-  como conjunto.
-
-O agrupador cita os ids das regras no `reason` de cada grupo. A regra central do
-prompt: agrupar é dizer *qual bloco faz o papel de qual*, e nunca que está certo.
-"Parecido" não basta.
+**Decisão pendente**
 
-O texto é versionado (`GROUPING_VERSION`). Um teste confere que os ids das regras
-estão em ordem e que toda regra citada nas instruções existe.
-
-### Checagens, cache e versão (etapas 5 e 6)
-
-**Checagens determinísticas** (`_check`, como no juiz):
-
-- só ids recebidos (de bloco e de grupo);
-- grupo só entre blocos do mesmo tipo;
-- cada bloco em no máximo um grupo;
-- todo id de sobra recebido aparece em `groups`, `join` ou `ungrouped`.
-
-Uma resposta inválida **não forma grupo**: na etapa 5, os blocos seguem para a
-etapa 6; na etapa 6, ficam como sobras.
-
-**Cache:** a chave é o conteúdo da entrada + o modelo + `GROUPING_VERSION`, em
-`data/judgements/`, ao lado dos vereditos. Mesma entrada, mesmo agrupamento.
-
-Ao fim da etapa 6, o agrupamento está **fechado**: cada bloco de cada documento está
-em exatamente um grupo ou é uma sobra. Nada é reagrupado depois.
-
-## 6. Julgar (etapas 7–9)
-
-### Etapa 7 — o diff de cada grupo
-
-Cada grupo é comparado com o `diff_documents` de hoje, aplicado **ao grupo** (os
-subárvores dos dois lados) e não mais ao documento, ignorando só a ordem sem
-significado da §2. Saem as diferenças internas (*differing*, *absent*, *extra*) e as
-do agrupamento (`moved`, `renamed`, `level`, `duplicate`).
-
-Um grupo **sem nenhuma diferença** (mesmo endereço, idêntico a menos da ordem) é
-**igual** e não vai ao juiz. Todo grupo com alguma diferença, inclusive só a do
-agrupamento, vai.
-
-### Etapa 8 — o juiz julga cada bloco
-
-**Cada grupo com diferença** é uma `Part`:
-
-- o contexto traz o bloco do oficial e **todos** os blocos do gerado do grupo,
-  inteiros, cada um com o seu endereço;
-- o juiz recebe **como** o grupo foi formado (endereço, chave, conteúdo, LLM por
-  área, LLM com visão geral) e o `reason` do agrupamento;
-- as diferenças D1..Dn, incluindo as do agrupamento, com um veredito por diferença,
-  como hoje.
-
-Se o juiz achar que os blocos **não correspondem**, ele diz isso
-(`grouping_wrong: true`, com o motivo). O grupo **não** é refeito, porque o
-agrupamento já fechou. Fica registrado e listado no relatório para a revisão humana,
-e as diferenças do grupo recebem o veredito que o juiz der.
-
-**Cada sobra** também é uma `Part`:
-
-- o contexto traz a sobra inteira, o `servers` e a identidade das outras operações
-  (o que faltava para pegar o path duplicado do ProvMnS);
-- um extra pode ser melhoria, erro ou incerto; um faltando é erro ou incerto.
-
-### Etapa 9 — as duas visões (sem mistura)
-
-Cada folha conta **uma vez** em cada visão, pelo grupo a que pertence, com o
-veredito do grupo.
-
-| visão              | base                     | categorias |
-|--------------------|--------------------------|------------|
-| **do gerado**      | só os valores do gerado  | igual · agrupado-aceito · agrupado-errado · extra-aceito · extra-errado · incerto · não julgado |
-| **do oficial**     | só os valores do oficial | igual · agrupado-aceito · agrupado-errado · faltando · incerto · não julgado |
-
-- "Aceito" junta `equivalent` e `improvement`; as melhorias continuam destacadas à
-  parte.
-- Um valor que só mudou de lugar conta no grupo dele, julgado, e nunca como
-  faltando + extra.
-- A base mista (a união de 423 valores) sai do relatório.
-
-## 7. O que o relatório mostra a mais
-
-- **Como cada grupo foi formado**: `endereço | chave | conteúdo | LLM por área | LLM
-  com visão geral`, com a contagem de cada. Mostra quanto do agrupamento veio de
-  decisão do LLM.
-- **Os grupos que o juiz achou errados** (`grouping_wrong`), com o motivo. São os
-  casos para a revisão humana.
-- As duplicatas, mostradas junto do original.
-
-## 8. Onde fica no código
-
-| arquivo                        | o quê |
-|--------------------------------|-------|
-| `openapi/alignment.py` (novo)  | blocos, etapas 1–4, o índice, `Group` / `Alignment`. Determinístico: é instrumento, como `comparison.py` |
-| `judge/grouping.py` (novo)     | etapas 5 e 6: prompts, chamadas, checagens, cache (`GROUPING_VERSION`) |
-| `schemas/alignment.py` (novo)  | `Block`, `Group`, `GroupingAnswer` |
-| `judge/parts.py`               | `generator_parts` monta as partes a partir dos grupos e das sobras; `official_view` e `leaf_census` viram as duas visões |
-| `judge/prompts.py`, `judge.py` | a etapa 8: o grupo no contexto, `grouping_wrong`, o contexto das sobras |
-| `reporting/final.py`           | as duas visões e a seção "como foi agrupado" |
-
-A **camada 1** (concordância, `openapi/comparison.py`) **não muda**: continua estrita
-por endereço. Ela é a medida "diverge do oficial?" e seus números travados seguem
-valendo. O alinhamento alimenta a camada 3 e as visões.
-
-## 9. Testes
-
-- **Documentos sintéticos pequenos, um por caso**, verificando o grupo **e** a
-  diferença que ele leva ao juiz:
-  - parâmetro path → operação: 1 para n, diferença `level`;
-  - schema copiado em `callbacks.components`: `moved`/`duplicate`;
-  - media type renomeado com o mesmo schema: `renamed`;
-  - `allOf` reordenado no mesmo endereço: **igual**, sem juiz (a única exceção);
-  - `type: object` subindo do `allOf`: candidato, vai ao LLM por área;
-  - `default` × `4XX`: vai ao LLM por área;
-  - path duplicado via `servers`: `duplicate`;
-  - um bloco que mudou de dono e escapa da área: chega à etapa 6.
-- **Invariantes:**
-  - ao fim da etapa 6, cada bloco de cada documento está em exatamente um grupo ou é
-    uma sobra;
-  - nenhum grupo com diferença e nenhuma sobra fica sem ir ao juiz;
-  - visão do gerado: soma = valores do gerado; visão do oficial: soma = valores do
-    oficial.
-- **Agrupamento LLM** com resposta simulada: ids inválidos, tipos diferentes e bloco
-  repetido viram "sem grupo"; `join` num grupo válido acrescenta o bloco; `join` num
-  grupo inexistente é recusado.
-- **Travar** em `tests/services/test_results.py`: grupos por etapa e sobras por
-  documento, para os três documentos.
-
-## 10. Ordem de implementação
-
-1. Os blocos e as etapas 1–3, com os testes sintéticos e os invariantes.
-2. A etapa 4, mais um relatório só de contagem: quantas sobras restam por documento
-   e por área. **Parar aqui e olhar os números** antes de ligar o LLM.
-3. As etapas 5 e 6 (o LLM de agrupamento por área e com visão geral), com cache.
-4. As etapas 7–8: as partes vêm dos grupos e das sobras; `grouping_wrong`.
-5. A etapa 9 e o relatório. Regerar os três relatórios (precisa do Qdrant) e
-   comparar o antes e o depois.
-6. Registrar no `docs/RASTREIO.md` e atualizar `CLAUDE.md` / `JUDGE_PLAN.md`.
-
-## 11. Decisões a confirmar
-
-1. **A camada 1 fica estrita** (§8)? Recomendo que sim: ela é a concordância literal,
-   e o alinhamento é interpretação.
-2. **K = 5 candidatos** por bloco e o LLM chamado por área: dá para ajustar depois de
-   ver as sobras no passo 2.
-3. **O modelo do agrupamento** é o mesmo do juiz? Recomendo que sim, para começar,
-   com cache separado pela versão.
-4. **A etapa 5 é necessária**, ou a etapa 6 (visão geral) basta sozinha? Recomendo
-   manter as duas: a 5 vê poucos blocos com o conteúdo inteiro e erra menos; a 6 vê
-   tudo, mas resumido. Dá para decidir com os números do passo 2: se as sobras forem
-   poucas, só a 6 já cabe.
+- **DELETE com `scope` e corpo no `200` (9 campos):** melhoria ou indeciso. A tabela do método
+  na TS 28.532 pede esses campos; a de mapeamento diz `n/a`, e a TS 32.158 diz o contrário em
+  5.4, 6.1.2 e A.4.2. Como indeciso, o gerado cai para 150/291 (51,5%).
+
+**Problemas conhecidos do juiz, sem efeito na nota**
+
+- O juiz não cita a TS 32.158 no `scope` do DELETE, e a busca não traz a 6.1.2 para essa parte.
+- `/{notificationTarget}.post.responses` varia entre erro e melhoria; o esperado é equivalente.
+- O resumo de um bloco é texto livre: o aviso contra "invalid" reduz o problema, não o garante.
+
+**A fazer**
+
+- **F1 e E5:** gabarito versionado e travado em teste, depois da revisão humana. A revisão em
+  `data/outputs/reviews/` já tem as 125 linhas atuais da ProvMnS; a PerfMnS não foi remapeada.
+- **F3:** corrigir o RASTREIO.
+- **Rodada completa da ProvMnS com o `judge-v24`,** quando for preciso um relatório novo.
+- **PerfMnS com o `judge-v24`:** não foi repetida; só o `NotifyThresholdCrossing` foi testado,
+  no `judge-v23`.
+- **Travar em teste** os números finais.
+- **Atualizar** `README`, `JUDGE_PLAN` (rótulo `useful`) e `CLAUDE.md`.
+- **Decidir** o destino dos vereditos antigos, sem commit, em `data/judgements/`.
+- **Commit** de tudo o que está aplicado, quando for pedido.
+
+**Limites a declarar na dissertação**
+
+- O instrumento só vê o que difere do oficial: o que falta nos dois fica invisível (ex.: `filter`
+  no DELETE, que está na tabela da spec e em nenhum dos dois documentos).
+- A variação foi medida com 3 repetições em um documento: não mostra casos raros (`scope` no
+  DELETE variou em 1 de 5 tentativas) e não dá margem estatística.
+- A TS 32.158 h60 é da Release 17 e entra com aviso: não confirmei se há versão na Release 18.
+  Também não confirmei se a TS 28.623 i40 é a última da Release 18.

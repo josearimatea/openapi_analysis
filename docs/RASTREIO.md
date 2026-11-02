@@ -490,3 +490,85 @@ e as duas são da Release 18. Não verifiquei se a i40 é a última da Release 1
 Ainda sem rodada completa com o judge-v15: os números acima são do judge-v13, e o efeito
 estimado na ProvMnS é de cerca de 65,0% e 53,3%. As partes afetadas foram testadas em
 separado.
+
+## Camada 3 — variação do LLM para a mesma entrada (02/nov/2026)
+
+Medição isolada, sem relatório: ProvMnS 28/08 contra a v17.5.0, spec 28532-i00, judge-v24,
+`gpt-5.6-luna` com temperatura 0 e sem semente. O mesmo modelo, prompt, parte e evidência
+foram enviados 3 vezes. A busca rodou uma vez e, conferida, devolveu o mesmo nas 47 partes.
+Dados em `data/outputs/reviews/2026-11-02_variacao_llm_judge-v24.json`.
+
+| Etapa | Repetições | Variou |
+|---|---:|---|
+| Agrupador | 3 (12 chamadas, US$ 0,029) | 0: os mesmos 47 grupos |
+| Juiz, resposta do LLM | 3 × 47 partes (141 chamadas, US$ 0,364) | 3 de 125 diferenças (2,4%) |
+| Juiz, depois das regras do código | idem | 2 de 125 diferenças (1,6%) |
+| Nota do oficial | 3 | 0: 111/163 (68,1%) nas 3 |
+| Nota do gerado | 3 | 0: 159/291 (54,6%) nas 3, com `/eventListener` separado |
+
+As 3 diferenças que variaram, nenhuma com efeito na nota:
+
+| Diferença | Vereditos | Observação |
+|---|---|---|
+| `/{notificationTarget}.post.responses` | erro, erro, melhoria | Os campos contam nas linhas de dentro do bloco |
+| `...default.description` | equivalente, equivalente, melhoria | Prosa: o código fixa em equivalente, e por isso não varia no final |
+| `/eventListener.post` | melhoria, indeciso, indeciso | Nas 3 o juiz diz que não pertence ao grupo |
+
+O `/eventListener`, separado do grupo como faz o fluxo real, saiu erro nas 3 repetições. A
+medição não refaz esse passo: sem ele, uma das repetições conta 167/291, o que não é nota.
+
+**Limites.** Três repetições não mostram variação rara: no teste das partes afetadas, com o
+mesmo prompt, `scope` no DELETE saiu indeciso em 1 de 2 tentativas, e na medição saiu melhoria
+nas 3; somando, 1 de 5. Vale para um documento (a ProvMnS), e a amostra não dá margem
+estatística.
+
+## Camada 3 — mudança dos vereditos entre versões do prompt (02/nov/2026)
+
+Não é variação do LLM: aqui o prompt também muda. Duas rodadas completas da ProvMnS 28/08
+contra a v17.5.0, com a spec 28532-i00 e sem cache do juiz nem do agrupador:
+`2026-11-02_17-27-05` (judge-v18) e `2026-11-02_18-58-59` (judge-v23). Têm 124 diferenças em
+comum, e 10 mudaram de veredito.
+
+| Causa | Diferenças | Campos | Quais |
+|---|---:|---:|---|
+| Mudança de propósito (regra ou prompt) | 3 | 3 | `Resource.required`, `PatchItem...nullable`, `delete.operationId` |
+| Sem mudança feita para isso | 7 | 15 | abaixo |
+
+As 7 sem mudança feita para isso, de 121 comparáveis (5,8%):
+
+| Diferença | v18 | v23 | Campos | Efeito na nota |
+|---|---|---|---:|---|
+| `object-tree-hierarchical` no GET 200 | erro | equivalente | 1 | oficial +1 campo certo |
+| `/{notificationTarget}.post.parameters` | útil | melhoria | 4 | nenhum |
+| PUT `4XX`, PUT `5XX`, PATCH `4XX`, PATCH `5XX` | melhoria | equivalente | 8 | nenhum |
+| PATCH `400` | melhoria | equivalente | 2 | nenhum |
+
+Na mesma rodada e com o mesmo prompt, a v23 também diverge consigo mesma: das 8 linhas de
+`default` → `4XX`/`5XX`, 4 saíram melhoria (GET, DELETE) e 4 equivalente (PUT, PATCH).
+
+No agrupamento, os 47 grupos da v23 são iguais aos das respostas em cache. A variação foi
+no juiz: na v18 ele tirou `/eventListener` do grupo do callback, na v23 não. A nota não
+muda, porque os 8 campos são errados nos dois casos, mas as duplicatas passam de 94 para
+102.
+
+Em testes menores, repetindo as mesmas partes: no judge-v21, `NotifyThresholdCrossing` deu
+útil em uma tentativa e erro na outra; no judge-v23, nada variou (4 partes da ProvMnS
+2 vezes, 1 da PerfMnS 3 vezes).
+
+**O que estes números não são.** Entre as duas rodadas o prompt mudou, então os 5,8% não
+medem o acaso do LLM; essa medida é a da seção anterior. O único caso com efeito na nota é o
+`object-tree-hierarchical`, que no judge-v24 saiu erro nas 3 repetições.
+
+**Correções do judge-v24**, depois destas rodadas: entrada de mapa só no oficial é perdida
+mesmo que outra entrada possa levar o conteúdo; `default` trocado pelos códigos que a spec
+nomeia é melhoria (as 9 linhas saíram melhoria nas 3 repetições); parâmetro de caminho de um
+callback declarado como caminho nunca é melhoria (regra no código). Não virou regra fixa que
+"campo só no oficial nunca é equivalente", porque não vale sempre: `style: form` só no oficial
+é o valor padrão do OpenAPI.
+
+**Em aberto: DELETE com `scope` e corpo no `200`.** A TS 28.532 i00 diverge de si mesma: a
+tabela do método (12.1.1.3.2.1.3.4) lista `scope` e `array(Uri)`, e a de mapeamento
+(12.1.1.1.5) diz `n/a`. A TS 32.158 h60 acompanha o mapeamento: 5.4 ("no query", corpo vazio),
+6.1.2 (scoping "not supported by any other method") e A.4.2 (a requisição com scope é
+inválida). O juiz decide pela tabela do método, como a mais específica, sem citar a TS 32.158.
+São 9 campos contados como melhoria; se forem indecisos, o gerado cai para 150/291 (51,5%).
