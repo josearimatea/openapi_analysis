@@ -1,0 +1,30 @@
+{
+  "groups": [],
+  "joins": [],
+  "ungrouped": [
+    {
+      "block": "A1",
+      "reason": "The official document declares a top-level server URL, but the generated document has no servers object. No generated block plays the same server role under R1."
+    },
+    {
+      "block": "A2",
+      "reason": "CmNotificationTypes is a string enum naming notification types. No generated schema defines that data type; the superficially similar enum schemas in G9\u0018G13 represent different values and roles, so they do not correspond under R13 and R17."
+    },
+    {
+      "block": "B1",
+      "reason": "Filter is a generated component schema referenced by the generated GET parameter, while the official document references an external Filter schema and has no corresponding local schema block. The similar local schemas are different data types, so no correspondence follows from R13 or R14."
+    },
+    {
+      "block": "B2",
+      "reason": "ErrorResponse is a generated local component schema used by generated error responses. The official error responses reference an external ErrorResponse schema, but no official schema block for it is supplied; it cannot be joined to response groups because it is a distinct schema object, not a response (R13, R14)."
+    },
+    {
+      "block": "B3",
+      "reason": "AttributeNameValuePairSet is a generated component schema used by NotifyMoiCreation. The official notification schema references an external schema of that name, but no corresponding official schema block is present; it cannot be joined to G18 because that group contains the distinct NotifyMoiCreation schema (R13, R14)."
+    },
+    {
+      "block": "B4",
+      "reason": "AttributeValueChangeSet is a generated component schema used by NotifyMoiAttributeValueChanges. The official notification schema references an external schema of that name, but no corresponding official schema block is present; it cannot be joined to G20 because that group contains the distinct NotifyMoiAttributeValueChanges schema (R13, R14)."
+    }
+  ]
+}

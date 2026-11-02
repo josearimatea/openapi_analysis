@@ -1,0 +1,10 @@
+{
+  "groups": [],
+  "joins": [],
+  "ungrouped": [
+    {
+      "block": "B1",
+      "reason": "The generated DELETE operation declares a query parameter named scope, but the official scope parameter in G26 belongs only to the GET operation. Under R4, parameters are identified in the context of the operations they serve; R5 would allow a path-level parameter to apply to every operation, but the official parameter is not declared at path level. Therefore B1 has no corresponding official parameter."
+    }
+  ]
+}

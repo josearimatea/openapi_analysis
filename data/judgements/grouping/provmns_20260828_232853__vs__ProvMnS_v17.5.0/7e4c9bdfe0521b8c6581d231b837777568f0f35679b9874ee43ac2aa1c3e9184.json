@@ -1,0 +1,45 @@
+{
+  "groups": [
+    {
+      "official": [
+        "A3"
+      ],
+      "generated": [
+        "B2",
+        "B5"
+      ],
+      "reason": "The official callback delivers a POST notification with the NotifyMoiAttributeValueChanges request-body schema. Both generated POST operations deliver that same schema, so they correspond to the callback delivery under the operation/callback exception in R11-R12. Although their operationId is notifyMoiCreation, the body identifies the attribute-value-change delivery; correspondence follows the delivery rather than the misleading name."
+    }
+  ],
+  "joins": [
+    {
+      "block": "B1",
+      "group": "G7",
+      "reason": "This generated DELETE operation plays the role of the official DELETE resource operation: it has the same delete purpose, path parameters/scope, and success/error response roles. Its path is malformed or partial relative to the official full URL, but R1 permits correspondence for a broken copy when the operation role is otherwise the same; R3 identifies the operation by method and endpoint role."
+    },
+    {
+      "block": "B3",
+      "group": "G6",
+      "reason": "This generated PUT is a duplicate form of the official PUT operation, with the same Resource request body and 200/201/204 response roles. The generated path incorporates the official server components into the path; under R1, appending the official server URL to its path yields the same endpoint address, and R3 preserves the PUT operation identity despite the changed location and operationId."
+    },
+    {
+      "block": "B4",
+      "group": "G7",
+      "reason": "This generated DELETE is another form of the official DELETE operation, with the same resource-deletion purpose, path parameters, and 200/204 plus error response roles. Its server components are written in the path rather than separated as in the official document; R1 allows that URL split, and R3 identifies the same DELETE operation."
+    }
+  ],
+  "ungrouped": [
+    {
+      "block": "A1",
+      "reason": "No generated leftover delivers the NotifyMoiCreation callback body and notification role. The generated operations B2 and B5 instead carry NotifyMoiAttributeValueChanges, so R11-R12 do not establish a callback correspondence."
+    },
+    {
+      "block": "A2",
+      "reason": "No generated leftover delivers the NotifyMoiDeletion callback body and notification role. The available generated notification operations carry NotifyMoiAttributeValueChanges, which is a different delivery under R11-R12."
+    },
+    {
+      "block": "A4",
+      "reason": "No generated leftover delivers the NotifyMoiChanges callback body and notification role. Its NotifyMoiChanges request body is distinct from the generated notification operations under R11-R12."
+    }
+  ]
+}

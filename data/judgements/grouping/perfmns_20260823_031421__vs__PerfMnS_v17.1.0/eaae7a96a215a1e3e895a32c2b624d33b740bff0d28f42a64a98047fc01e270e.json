@@ -1,0 +1,16 @@
+{
+  "groups": [
+    {
+      "official": [
+        "A1"
+      ],
+      "generated": [
+        "B1",
+        "B2"
+      ],
+      "reason": "The official default response is explicitly an error response and therefore covers the generated 4XX and 5XX error responses. Under R10 (Responses Object), a default response may correspond to error ranges covering the otherwise applicable error status codes; both generated ranges carry the same ErrorResponse payload and error purpose. It does not correspond to the separate successful 204 response in G12."
+    }
+  ],
+  "joins": [],
+  "ungrouped": []
+}

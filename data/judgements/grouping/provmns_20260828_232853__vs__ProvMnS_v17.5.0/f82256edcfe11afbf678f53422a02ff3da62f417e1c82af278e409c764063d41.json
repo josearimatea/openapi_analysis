@@ -1,0 +1,70 @@
+{
+  "groups": [
+    {
+      "official": [
+        "A1"
+      ],
+      "generated": [
+        "B1",
+        "B2"
+      ],
+      "reason": "The official GET default error response covers the generated GET 4XX and 5XX error ranges. Under R10, a default response may correspond to multiple explicit error ranges covering the same error-response role; the operation context is the same GET /{className}={id}."
+    },
+    {
+      "official": [
+        "A2"
+      ],
+      "generated": [
+        "B3",
+        "B4"
+      ],
+      "reason": "The official PUT default error response corresponds to the generated PUT 4XX and 5XX error responses. R10 permits one default error response to cover multiple explicit error ranges, and both blocks belong to PUT /{className}={id}."
+    },
+    {
+      "official": [
+        "A3"
+      ],
+      "generated": [
+        "B6",
+        "B7"
+      ],
+      "reason": "The official DELETE default error response corresponds to the generated DELETE 4XX and 5XX error responses. Under R10, the default can represent the error ranges for the same DELETE operation."
+    },
+    {
+      "official": [
+        "A9"
+      ],
+      "generated": [
+        "B8",
+        "B9",
+        "B10"
+      ],
+      "reason": "The official PATCH default is an error response, while the generated PATCH declares explicit error responses for 400, 4XX and 5XX. Under R10, a default error response may correspond to explicit error codes and ranges serving that error role; all belong to PATCH /{className}={id}."
+    }
+  ],
+  "joins": [
+    {
+      "block": "A4",
+      "group": "G35",
+      "reason": "The official PATCH request media type application/3gpp-merge-patch+json uses the same merge-patch JSON payload and purpose as generated application/merge-patch+json in G35. Under R9, differently named media types for the same representation correspond."
+    }
+  ],
+  "ungrouped": [
+    {
+      "block": "A5",
+      "reason": "The official PATCH request media type application/json-patch+json has no generated PATCH media type for the JSON Patch representation; the generated document provides only application/merge-patch+json."
+    },
+    {
+      "block": "A6",
+      "reason": "The official PATCH request media type application/3gpp-json-patch+json has no generated counterpart. It is a JSON Patch representation distinct from the generated merge-patch media type under R9."
+    },
+    {
+      "block": "A7",
+      "reason": "The official PATCH 200 success response has no generated PATCH success response. Generated PATCH responses are error responses, and a success response cannot correspond to an error response under R10."
+    },
+    {
+      "block": "A8",
+      "reason": "The official PATCH 204 response has no generated PATCH 204 response. The generated DELETE 204 response is for a different operation and therefore a different response object, despite sharing the status code."
+    }
+  ]
+}
