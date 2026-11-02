@@ -139,7 +139,7 @@ def test_a_difference_inside_an_invalid_location_is_never_an_improvement():
     p = part(differences=_diffs(),
              invalid_issues=["paths./x.patch.responses.4XX: 'x' is not allowed"])
     assert run(p, BOTH, FakeLLM(reply)).difference_verdicts == [
-        "improvement", "improvement", "error"]
+        "equivalent", "improvement", "error"]        # D1 is a description: prose never counts
 
 
 def test_the_prompt_numbers_the_differences():

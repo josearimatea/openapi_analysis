@@ -26,14 +26,17 @@ import re
 from collections.abc import Callable
 from pathlib import Path
 
-from openapi_analysis.judge.parts import node_at
+from openapi_analysis.judge.parts import _keys, node_at
 from openapi_analysis.judge.prompts import PROMPT_VERSION, messages
-from openapi_analysis.schemas.judge import Evidence, JudgeAnswer, Part, Verdict
+from openapi_analysis.schemas.judge import Difference, Evidence, JudgeAnswer, Part, Verdict
 from openapi_analysis.schemas.rulesbank import now
 
 Retrieve = Callable[[Part], list[Evidence]]
 # the two sides of the part's CONTEXT, citable as evidence (prompts.py, judge-v4)
 CONTEXT_IDS = {"C1", "C2"}
+# keys whose value is text for a reader — operationId is an identifier, and it is judged
+PROSE_ONLY = ("description", "summary", "title")
+_SEVERITY = ("error", "uncertain", "improvement", "equivalent")
 AskLLM = Callable[[list[tuple[str, str]]], JudgeAnswer]
 
 
@@ -98,13 +101,22 @@ def _check(part: Part, answer: JudgeAnswer, evidence: list[Evidence]) -> tuple[J
     return answer, overrides
 
 
+def _is_prose(d: Difference) -> bool:
+    return _keys(d.location)[-1] in PROSE_ONLY
+
+
 def difference_verdicts(part: Part, answer: JudgeAnswer) -> tuple[list[str], list[str]]:
     """The verdict of each difference, in order, after deterministic floors:
       - a difference the judge did not rule on takes `uncertain`;
       - a difference inside a location reported not valid OpenAPI 3.0 (layer 2), or
         holding one, is never improvement / equivalent -> error;
       - the part's own verdict, when forced to uncertain (no valid citation), applies
-        to every difference."""
+        to every difference;
+      - a difference in prose only (description, summary, title) is always equivalent:
+        not part of the contract, never an error or an improvement;
+      - a duplicate (a further declaration of what the generated document already
+        declares) is never improvement / equivalent -> error, unless the judge says it
+        does not belong to the group (it is then judged again on its own)."""
     notes: list[str] = []
     given = {d.difference_id.strip().upper(): d.verdict for d in answer.differences}
     issues = [i.partition(": ")[0] for i in part.invalid_issues]
@@ -121,6 +133,13 @@ def difference_verdicts(part: Part, answer: JudgeAnswer) -> tuple[list[str], lis
                 or d.location.startswith((w + ".", w + "[")) for w in issues):
             notes.append(f"D{i} inside a location not valid OpenAPI 3.0: {v} -> error")
             v = "error"
+        if _is_prose(d) and d.kind != "duplicate" and v != "equivalent":
+            notes.append(f"D{i} prose only: {v} -> equivalent")
+            v = "equivalent"
+        if d.kind == "duplicate" and v in ("improvement", "equivalent") \
+                and d.location not in answer.wrongly_grouped:
+            notes.append(f"D{i} a second declaration of the same object: {v} -> error")
+            v = "error"
         out.append(v)
     return out, notes
 
@@ -130,6 +149,10 @@ def _analysed(part: Part, verdict: Verdict) -> Verdict:
     the focus as it is on each side — so a reader compares it with the documents.
     Taken from the part, not the cache (it is not part of the judge's answer)."""
     per_difference, notes = difference_verdicts(part, verdict.answer)
+    if per_difference and any("prose only" in n for n in notes):   # it may have set the
+        worst = next(v for v in _SEVERITY if v in per_difference)  # part's own verdict
+        verdict = verdict.model_copy(update={
+            "answer": verdict.answer.model_copy(update={"verdict": worst})})
     return verdict.model_copy(update={
         "focus": part.focus, "differences": part.differences,
         "difference_verdicts": per_difference,

@@ -1,8 +1,8 @@
 """Aiming the judge's retrieval at a part — no Qdrant: a fake search records the calls.
 
 Locks the scheme (docs/JUDGE_PLAN.md §4.4): 3 focused queries on the spec and 2 on the
-OpenAPI reference, PER_QUERY new chunks each, spec chunks kept in the service's scope,
-no annex clause ever handed to the judge. Whether the real hits are pertinent is
+OpenAPI reference, PER_QUERY chunks each, the spec filtered on the server to the
+service's scope and no annex, the defining sections first. Whether the real hits are pertinent is
 checked by hand on the pilot parts (docs/RASTREIO.md).
 """
 
@@ -93,28 +93,66 @@ def test_three_spec_queries_and_two_reference_queries():
 
 # ── the search ───────────────────────────────────────────────────────────────
 
-def test_each_query_brings_its_own_new_chunks_and_both_sources_are_searched():
-    spec_hits = [chunk(f"12.1.{i}", i) for i in range(20)]
-    ref_hits = [chunk("", i) for i in range(20)]
-    search = FakeSearch({"spec": spec_hits, "openapi_reference": ref_hits})
+def test_each_query_is_searched_and_nothing_is_repeated():
+    search = FakeSearch({"spec": [chunk(f"12.1.{i}", i) for i in range(20)],
+                         "openapi_reference": [chunk("", i) for i in range(20)]})
     p = part(official={"200": {}}, generated={"4XX": {}})
-    ev = retrieve_evidence(p, "spec", search=search, scope=("12.1",), per_query=5, pool=25)
+    ev = retrieve_evidence(p, "spec", search=search, scope=("12.1",), per_query=5)
     assert [c[1] for c in search.calls] == ["spec"] * 3 + ["openapi_reference"] * 2
-    assert sum(e.source == "spec" for e in ev) == 15         # 3 queries × 5, none repeated
-    assert sum(e.source == "openapi" for e in ev) == 10      # 2 queries × 5
+    assert all(c[2] == 5 for c in search.calls)
     assert len({e.text for e in ev}) == len(ev)
-    assert {e.query for e in ev if e.source == "spec"} == set(spec_queries(p))
 
 
-def test_spec_chunks_out_of_scope_or_from_an_annex_are_never_evidence():
-    hits = [chunk("12.3.1", 0), chunk("A.1.1", 1), chunk("12.1.1.2", 2), chunk("11.1.1", 3)]
-    search = FakeSearch({"spec": hits, "openapi_reference": [chunk("", 9)]})
-    ev = retrieve_evidence(part(), "spec", search=search, scope=("12.1",))
-    assert {e.clause for e in ev if e.source == "spec"} == {"12.1.1.2"}
+def test_the_spec_is_filtered_on_the_server_per_block_of_the_scope():
+    search = FakeSearch({"spec": [chunk("12.1.1", 0)], "openapi_reference": [chunk("", 1)]})
+    ev = retrieve_evidence(part(), "spec", search=search, scope=("11.1", "12.1"))
+    spec = [c[3] for c in search.calls if c[1] == "spec"]
+    assert {"annex": False, "clause_ancestors": "11.1"} in spec
+    assert {"annex": False, "clause_ancestors": "12.1"} in spec
+    assert all(c[3] is None for c in search.calls if c[1] == "openapi_reference")
+    assert next(e for e in ev if e.source == "spec").filters["clause_ancestors"] == "11.1"
 
 
-def test_no_scope_keeps_every_normative_clause():
-    hits = [chunk("12.3.1", 0), chunk("12.1.1", 1), chunk("A.2", 2)]
-    search = FakeSearch({"spec": hits, "openapi_reference": []})
-    ev = retrieve_evidence(part(), "spec", search=search, scope=())
-    assert {e.clause for e in ev} == {"12.3.1", "12.1.1"}
+def test_no_scope_still_keeps_annexes_out():
+    search = FakeSearch({"spec": [], "openapi_reference": []})
+    retrieve_evidence(part(), "spec", search=search, scope=())
+    assert all(c[3] == {"annex": False} for c in search.calls if c[1] == "spec")
+
+
+def test_a_type_or_a_notification_asks_first_for_the_sections_that_define_it():
+    search = FakeSearch({"spec": [chunk("12.1.1.4", i) for i in range(9)]})
+    p = part(owner="MoiChange", aspect="schema — grouped by address", schemas=["MoiChange"])
+    retrieve_evidence(p, "spec", search=search, scope=("12.1",), per_definition=3)
+    assert search.calls[0] == ("MoiChange", "spec", 3, {"annex": False,
+                                                        "clause_ancestors": "12.1",
+                                                        "defines": "MoiChange"})
+    search = FakeSearch({"spec": []})
+    p = part(owner="callback notifyEvent — POST x — registered by PUT /x",
+             aspect="callback — missing in the generated")
+    retrieve_evidence(p, "spec", search=search, scope=("12.1",))
+    assert search.calls[0][3]["defines"] == "notifyEvent"
+    search = FakeSearch({"spec": []})
+    retrieve_evidence(part(), "spec", search=search, scope=("12.1",))
+    assert "defines" not in search.calls[0][3]                # an operation defines nothing
+
+
+def test_a_ref_to_another_file_is_looked_for_in_its_spec_by_defined_name():
+    ref = "TS28623_ComDefs.yaml#/components/schemas/NotificationHeader"
+    search = FakeSearch({"all": [chunk("C.4.2a", 0)], "spec": [], "openapi_reference": []})
+    p = part(external_refs=[ref, "Other.yaml#/x"])
+    ev = retrieve_evidence(p, "spec", search=search, scope=("12.1",), external_collection="all")
+    call = next(c for c in search.calls if c[1] == "all")
+    assert call[0] == "NotificationHeader"
+    assert call[3] == {"spec_number": "28623", "defines": "NotificationHeader"}
+    assert ev[0].title.startswith(f"definition of {ref}") and ev[0].clause == "C.4.2a"
+    assert len([c for c in search.calls if c[1] == "all"]) == 1       # not a 3GPP file name
+
+
+def test_the_judge_sees_where_each_spec_passage_sits():
+    from openapi_analysis.judge.prompts import user_message
+
+    where = "12.1 Provisioning › 12.1.2 Solution set for ONAP VES › 12.1.2.2.6 Notification"
+    hits = [("text", {"clause": "12.1.2.2.6", "title": "Notification", "path": where})]
+    ev = retrieve_evidence(part(), "spec", search=FakeSearch({"spec": hits}), scope=("12.1",))
+    assert ev[0].path == where
+    assert f"in: {where}" in user_message(part(), [ev[0].model_copy(update={"id": "S1"})])

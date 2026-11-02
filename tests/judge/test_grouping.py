@@ -163,3 +163,12 @@ def test_a_callback_never_joins_the_group_of_an_operation_on_its_own_side():
     assert apply_answer(a, GroupingAnswer(groups=[ProposedGroup(
         official=[tag["paths./x.put.callbacks.onN"]], generated=[tag["paths./sink.post"]],
         reason="R12")]), ids) == []
+
+
+def test_a_very_large_document_is_still_given_whole():
+    huge = {**OFFICIAL, "info": {"title": "t", "version": "1", "description": "d" * 400_000}}
+    a = Aligner(huge, GENERATED)
+    a.deterministic()
+    owned = a.owned()
+    msgs, _ = grouping_messages(a, "all", a.leftovers(owned), owned)
+    assert "d" * 400_000 in msgs[1][1].replace("\n", "").replace(" ", "")

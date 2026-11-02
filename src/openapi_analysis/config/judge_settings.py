@@ -57,17 +57,14 @@ EMBEDDING_DEVICE = "cpu"       # the [judge] extra installs CPU-only torch
 OPENAPI_COLLECTION = "openapi_reference"
 
 # The main spec is read from the SHARED 3GPP corpus (qdrant_3gpp_rag), one collection
-# per spec — decided 06/out: no collection of our own. That corpus indexes whole specs
-# (annexes included) at one version, with no clause in the metadata; the retrieval cuts
-# the annexes out itself (judge/spec_index.annex_cut) and reads the clause from the
-# chunk's heading. Version: 28532-i00, while the banks judged come from i20.
+# per spec — decided 06/out: no collection of our own. Its chunks carry the clause, the
+# clauses above it and whether they are an annex, so the search filters on them. Which
+# version of the spec is there is decided by that repo.
 SPEC_CORPUS = {"28532": "3gpp_rel18_28_28532"}
 
-# The old per-version collection of our own (scripts/index_specs.py), no longer used.
+# A version of the spec the shared corpus does not hold is indexed here, in its own
+# collection (judge/spec_index.index_spec) — never read from another version.
 SPEC_COLLECTION_PREFIX = "analysis_spec_"
-SPEC_CHUNK_SIZE = 3000         # as openapi_rulesbank's spec RAG
-SPEC_CHUNK_OVERLAP = 200
-JUDGE_SPEC_CODES = ("i20",)
 
 # A spec usually holds several services side by side; the judge reads only the
 # evaluated service's clauses. That scope is not a table written for one spec: it is
@@ -75,11 +72,12 @@ JUDGE_SPEC_CODES = ("i20",)
 # rules were extracted from (services/judge_service.scope_of_bank).
 
 # Retrieval per part (judge/retrieval.py): 3 queries on the spec and 2 on the OpenAPI
-# reference, each keeping its best PER_QUERY chunks. A spec query takes them, in
-# scope, from the top SEARCH_POOL hits of an unfiltered search — the shared retriever
-# filters on one exact value only, and a scope has several blocks.
+# reference, PER_QUERY chunks each (per block of the scope, on the spec); first, for a
+# type or a notification, PER_DEFINITION chunks from the sections that define it.
 PER_QUERY = 5
-SEARCH_POOL = 50            # more hits dropped (annex, out of scope) in the corpus
+PER_DEFINITION = 3
+# Where a $ref to another 3GPP file is looked for, by spec number and defined name.
+EXTERNAL_COLLECTION = "3gpp_rel18_all"
 
 
 def spec_collection(spec: str, code: str) -> str:

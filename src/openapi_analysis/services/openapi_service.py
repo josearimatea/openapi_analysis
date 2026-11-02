@@ -9,13 +9,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from openapi_analysis.config.paths import ROOT, reference_yaml
-from openapi_analysis.config.settings import OFFICIAL_REFERENCE
+from openapi_analysis.config.paths import ROOT
 from openapi_analysis.openapi.comparison import compare_documents
 from openapi_analysis.reporting.text import render_openapi
 from openapi_analysis.schemas.openapi import OpenAPIEvaluation
 from openapi_analysis.schemas.rulesbank import SourceInfo
-from openapi_analysis.services.inputs import Source, load, manifest, save_report
+from openapi_analysis.services.inputs import Source, load, manifest, official_of, save_report
 
 
 def _generated_info(doc: dict, label: str) -> SourceInfo:
@@ -46,14 +45,14 @@ def evaluate_openapi(generated_yaml: Source, official_yaml: Source, *,
 
 
 def evaluate_all_generated(save: bool = True) -> list[OpenAPIEvaluation]:
-    """Every generated document in data/inputs (per the manifest), against its service's
-    official YAML."""
+    """Every generated document in data/inputs (per the manifest), against the official YAML
+    of the spec version it came from."""
     reports = []
     for entry in manifest()["generated"]:
         service = entry["service"]
-        if service not in OFFICIAL_REFERENCE:
+        official = official_of(entry)
+        if official is None:
             continue
-        official = reference_yaml(service, OFFICIAL_REFERENCE[service])
         name = Path(entry["path"]).stem
         reports.append(evaluate_openapi(ROOT / entry["path"], official,
                                         save_as=(service, name) if save else None))

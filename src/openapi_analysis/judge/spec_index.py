@@ -1,8 +1,8 @@
 """Split a 3GPP spec (markdown) into sections and index it for the judge's RAG.
 
-One collection per spec version (config.judge_settings.spec_collection), built once
-by scripts/index_specs.py and kept — the same question always searches the same
-index. Every chunk carries the section it came from:
+A spec version missing from the shared corpus gets a collection of its own here
+(config.judge_settings.spec_collection), kept — the same question always searches the
+same index. Every chunk carries the section it came from:
 
     spec    "28532"            code   "i20"
     clause  "12.1.1.1.1"       title  "12.1.1.1.1 Introduction"
@@ -122,29 +122,24 @@ def segments(path: Path, spec: str, code: str) -> list[dict]:
             for s in split_sections(path.read_text(encoding="utf-8"))]
 
 
-def index_spec(path: Path, spec: str, code: str, *, force: bool = False) -> tuple[str, int]:
-    """Index one spec version into its fixed collection. Returns (collection, chunks).
-
-    Skips (returns its current size) when the collection already holds vectors,
-    unless force=True.
-    """
+def index_spec(path: Path, collection: str) -> int:
+    """Index one spec version here, the way the shared corpus is indexed (qdrant_3gpp_rag:
+    same sections and metadata, so the same search works on it). A re-run embeds only
+    what changed. Returns the chunks written."""
     from qdrant_3gpp_rag import QdrantFactory, index_segments
+    from qdrant_3gpp_rag.index_3gpp_all import _clean_markdown, build_3gpp_segments
 
     from openapi_analysis.config import judge_settings as s
 
     factory = QdrantFactory.get_instance(host=s.QDRANT_HOST, port=s.QDRANT_PORT,
                                          model_name=s.EMBEDDING_MODEL,
                                          device=s.EMBEDDING_DEVICE)
-    collection = s.spec_collection(spec, code)
-    if not force and factory.client.collection_exists(collection):
-        count = factory.client.count(collection).count
-        if count:
-            return collection, count
-    chunks = index_segments(segments(path, spec, code), factory=factory,
-                            collection_name=collection, chunk_size=s.SPEC_CHUNK_SIZE,
-                            chunk_overlap=s.SPEC_CHUNK_OVERLAP,
-                            embedding_dim=s.EMBEDDING_DIM, recreate=True)
-    return collection, chunks
+    doc = {"release": "", "series": "", "spec": path.stem, "file": path.name,
+           "processed_text": _clean_markdown(path.read_text(encoding="utf-8"))}
+    exists = factory.client.collection_exists(collection)
+    return index_segments(build_3gpp_segments([doc]), factory=factory,
+                          collection_name=collection, chunk_size=None,
+                          embedding_dim=s.EMBEDDING_DIM, recreate=not exists, prune=exists)
 
 
 # ── the shared corpus (qdrant_3gpp_rag): cut its annexes out at retrieval ─────

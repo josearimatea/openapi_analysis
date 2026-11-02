@@ -75,7 +75,7 @@ def _estimate(covered: int, equal: int, different: int, expected: int) -> list[s
              "errors")]
 
 
-def render_rulesbank(ev: RulesBankEvaluation, max_items: int = 20) -> str:
+def render_rulesbank(ev: RulesBankEvaluation) -> str:
     t = ev.totals
     lines = [
         _RULE, "RULES BANK × OFFICIAL YAML — rule by rule", _RULE,
@@ -110,25 +110,25 @@ def render_rulesbank(ev: RulesBankEvaluation, max_items: int = 20) -> str:
 
     if ev.missing:
         lines += ["", f"MISSING — official rules with no bank rule ({len(ev.missing)}):"]
-        lines += [f"  - {_mapping_line(r)}" for r in ev.missing[:max_items]]
+        lines += [f"  - {_mapping_line(r)}" for r in ev.missing]
     different = [m for m in ev.matches if m.value_status == "different"]
     if different:
         lines += ["", f"WRONG VALUE — on the right address ({len(different)}):"]
-        for m in different[:max_items]:
+        for m in different:
             lines.append(f"  ! {_mapping_line(m.expected)}")
-            lines.append(f"      official: {m.expected['openapi_mapping']['openapi_value'][:90]}")
-            lines.append(f"      bank    : {m.bank[0].openapi_value[:90]}")
-            lines.append(f"      why     : {m.note[:110]}")
+            lines.append(f"      official: {m.expected['openapi_mapping']['openapi_value']}")
+            lines.append(f"      bank    : {m.bank[0].openapi_value}")
+            lines.append(f"      why     : {m.note}")
     if ev.shared_addresses:
         lines += ["", (f"DUPLICATES — one official address, several bank rules "
                        f"({len(ev.shared_addresses)} addresses):")]
-        for m in ev.shared_addresses[:max_items]:
+        for m in ev.shared_addresses:
             lines.append(f"  = {_mapping_line(m.expected)}")
             for b in m.bank:
-                lines.append(f"      [{b.index}] {b.openapi_value[:90]}")
+                lines.append(f"      [{b.index}] {b.openapi_value}")
     if ev.extra:
         lines += ["", f"EXTRA — bank rules on no official address ({len(ev.extra)}):"]
-        for x in ev.extra[:max_items]:
+        for x in ev.extra:
             r = x.rule
             lines.append(f"  + [{r.index}] {r.rule_type:15} {r.openapi_object}  ·  "
                          f"{r.openapi_field}   ({x.reason})")
@@ -157,7 +157,7 @@ def _leaves(c: LeafCounts) -> str:
     return f"{c.exact:3}/{c.total:<3} exact  {c.absent:3} abs {c.differing:2} diff {c.extra:3} extra"
 
 
-def render_openapi(ev: OpenAPIEvaluation, max_items: int = 20) -> str:
+def render_openapi(ev: OpenAPIEvaluation) -> str:
     lines = [
         _RULE, "GENERATED OPENAPI × OFFICIAL YAML — document against document", _RULE,
         f"evaluated : {_when(ev.evaluated_at)}",
@@ -185,7 +185,7 @@ def render_openapi(ev: OpenAPIEvaluation, max_items: int = 20) -> str:
             continue
         lines += ["", _THIN, f"VALIDITY — the {label} document is not valid OpenAPI 3.0", _THIN,
                   f"  checks: {', '.join(v.checks_run)}  ({v.validator})"]
-        for i in v.issues[:max_items]:
+        for i in v.issues:
             lines.append(f"  x [{i.check}] {i.location}\n        {i.message}")
 
     # operations
@@ -223,17 +223,15 @@ def render_openapi(ev: OpenAPIEvaluation, max_items: int = 20) -> str:
     for d in ev.details:
         line = f"{sign[d.kind]} {d.element}" + (f"   ({d.leaves} leaves)" if d.leaves > 1 else "")
         if d.kind == "differing":
-            line += (f"\n        generated: {str(d.generated)[:80]}"
-                     f"\n        official : {str(d.official)[:80]}")
+            line += (f"\n        generated: {d.generated!s}"
+                     f"\n        official : {d.official!s}")
         grouped[d.owner].append(line)
     if grouped:
         lines += ["", _THIN, "CONTRACT DETAILS by owner   (- absent  ! differing  + extra)",
                   _THIN]
         for own, items in grouped.items():
             lines.append(own)
-            lines += [f"    {item}" for item in items[:max_items]]
-            if len(items) > max_items:
-                lines.append(f"    … {len(items) - max_items} more")
+            lines += [f"    {item}" for item in items]
     return "\n".join(lines)
 
 
@@ -280,7 +278,7 @@ def _analysed(v) -> list[str]:
         lines.append(f"    D{i} {verdict.upper():12}" + difference_line(d).replace(
             "\n", "\n" + " " * 20))
         if reasons.get(f"D{i}"):
-            lines.append(" " * 20 + "why: " + " ".join(reasons[f"D{i}"].split())[:300])
+            lines.append(" " * 20 + "why: " + " ".join(reasons[f"D{i}"].split()))
     return lines
 
 
@@ -294,10 +292,9 @@ def _judge_summary(report) -> list[str]:
     return ["VERDICTS: " + ", ".join(f"{k} {n}" for k, n in sorted(report.counts.items()))]
 
 
-def render_judge(report, max_text: int = 400) -> str:
+def render_judge(report) -> str:
     def cut(text: str) -> str:
-        text = " ".join(str(text).split())
-        return text if len(text) <= max_text else text[:max_text] + " …"
+        return " ".join(str(text).split())
 
     usage = report.usage
     lines = [
@@ -330,10 +327,10 @@ def render_judge(report, max_text: int = 400) -> str:
             e = by_id.get(c.evidence_id)
             where = (f"clause {e.clause} {e.title}" if e and e.source == "spec"
                      else f"OpenAPI ref. {e.title}" if e else "?")
-            lines.append(f"  cites {c.evidence_id:3} {cut(where)[:70]}\n"
-                         f"            \"{cut(c.quote)[:200]}\"")
+            lines.append(f"  cites {c.evidence_id:3} {cut(where)}\n"
+                         f"            \"{cut(c.quote)}\"")
         for o in v.overrides:
             lines.append(f"  override: {o}")
         lines.append("  read    : " + ", ".join(
-            f"{e.id} {e.clause or e.title[:25]}" for e in v.evidence))
+            f"{e.id} {e.clause or e.title}" for e in v.evidence))
     return "\n".join(lines)

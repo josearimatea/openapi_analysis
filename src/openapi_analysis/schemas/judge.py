@@ -41,6 +41,7 @@ class Evidence(BaseModel):
     query: str
     filters: dict[str, str] = Field(default_factory=dict)
     clause: str = ""                 # spec chunks: the clause it comes from
+    path: str = ""                   # spec chunks: the headings above it, down to the clause
     title: str = ""
     text: str
 
@@ -51,9 +52,11 @@ class Difference(BaseModel):
     absent / extra: a whole subtree on one side only (`leaves` counts its leaves);
     differing: both sides have it with another value (both values given);
     moved: a block grouped with one at another location (official / generated hold
-    the two locations) — the change of place, judged as any other difference.
+    the two locations) — the change of place, judged as any other difference;
+    duplicate: a further declaration, in the generated document, of what it already
+    declares (official: where the original declaration is) — judged whole, once.
     """
-    kind: Literal["absent", "differing", "extra", "moved"]
+    kind: Literal["absent", "differing", "extra", "moved", "duplicate"]
     location: str                    # display path in the document ("paths./x.patch.responses.200")
     leaves: int = 1
     official: Any = None             # differing, moved
@@ -82,6 +85,13 @@ class Part(BaseModel):
     official: Any = None             # the whole owner, official side (None: absent there)
     generated: Any = None            # the whole owner, generated / bank side
     hints: SearchHints = Field(default_factory=SearchHints)
+    cited: dict[str, dict[str, Any]] = Field(default_factory=dict)  # generator: side → the
+                                     # local $ref the context cites → what it points to
+    replaced: dict[str, list[str]] = Field(default_factory=dict)  # generator: a local schema
+                                     # of the part → the official's $refs to another file
+                                     # with the same name (judge/group_parts.py)
+    headers: dict[str, Any] = Field(default_factory=dict)  # generator: the document
+                                     # header of each side (servers, info...) — context only
     invalid_issues: list[str] = Field(default_factory=list)  # layer-2 issues inside it:
                                      # not valid OpenAPI 3.0
 
@@ -134,9 +144,14 @@ class JudgeAnswer(BaseModel):
                     "difference, once each, in the order given.")
     grouping_wrong: bool = Field(
         default=False,
-        description="True only if the blocks put together in this part do NOT play the same "
+        description="True only if some blocks put together in this part do NOT play the same "
                     "role in the API (they were grouped as corresponding by mistake). Say why in "
                     "why_different. False when they correspond, right or wrong.")
+    wrongly_grouped: list[str] = Field(
+        default_factory=list,
+        description="When grouping_wrong: the locations of the blocks that do not belong with "
+                    "the rest, exactly as listed under FOCUS. They are taken out and judged on "
+                    "their own.")
 
 
 class Verdict(BaseModel):
@@ -168,6 +183,9 @@ class JudgeReport(BaseModel):
     evaluation: Literal["rulesbank", "generator"]
     input: str
     spec_collection: str
+    spec: str = ""                   # the spec version the analysis is based on
+    version_notes: list[str] = Field(default_factory=list)  # what differs from that version
+                                     # (allow_other_version), or could not be checked
     service: str
     scope: list[str] = Field(default_factory=list)   # spec blocks searched ("11.1", "12.1")
     model: str
@@ -189,6 +207,8 @@ class JudgeReport(BaseModel):
                                      # "official", "generated", and the "header" apart
     grouping: dict[str, int] = Field(default_factory=dict)  # generator: block memberships
                                      # by how they were grouped (address, key, llm)
+    regrouped: list[str] = Field(default_factory=list)  # generator: blocks the judge took
+                                     # out of a group, judged again on their own (why)
 
     @computed_field
     @property

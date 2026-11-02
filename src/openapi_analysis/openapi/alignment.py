@@ -290,6 +290,26 @@ class Aligner:
         if reason:
             g.reasons.append(reason)
 
+    def ungroup(self, bid: str) -> bool:
+        """Take a block out of its group (the judge found it does not correspond); a
+        group left with one side only is dissolved — its blocks become leftovers. The
+        primary pair is never taken out: its insides were aligned through it. Returns
+        whether the block was taken out."""
+        g = self.group_of.get(bid)
+        if g is None or bid in g.primary:
+            return False
+        (g.official if self.blocks[bid].side == "official" else g.generated).remove(bid)
+        g.how.pop(bid, None)
+        del self.group_of[bid]
+        if not g.official or not g.generated:
+            for m in [*g.official, *g.generated]:
+                g.how.pop(m, None)
+                del self.group_of[m]
+            g.official.clear()
+            g.generated.clear()
+            self.groups.remove(g)
+        return True
+
     # which blocks take part
     def active(self, bid: str) -> bool:
         """A global block always; an inner block when its owner is the primary pair of

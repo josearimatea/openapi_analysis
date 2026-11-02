@@ -27,6 +27,12 @@ from openapi_analysis.services import (
     evaluate_rules_bank,
     extract_official_rules,
 )
+from openapi_analysis.services.inputs import (
+    VersionMismatch,
+    check_versions,
+    load,
+    spec_document,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -35,15 +41,24 @@ def main(argv: list[str] | None = None) -> int:
                                              "documents against the official YAML.")
     sub = ap.add_subparsers(dest="command", required=True)
 
+    def versioned(p: argparse.ArgumentParser) -> None:
+        p.add_argument("--spec", required=True,
+                       help="the spec version the analysis is based on, e.g. 28532-i00: the "
+                            "input and the official YAML must be of that version")
+        p.add_argument("--allow-other-version", action="store_true",
+                       help="compare even if they are not (the report states it)")
+
     p = sub.add_parser("rulesbank", help="rules bank × official YAML, rule by rule")
     p.add_argument("rules_bank", type=Path)
     p.add_argument("official", type=Path)
     p.add_argument("--json", action="store_true")
+    versioned(p)
 
     p = sub.add_parser("openapi", help="generated YAML × official YAML")
     p.add_argument("generated", type=Path)
     p.add_argument("official", type=Path)
     p.add_argument("--json", action="store_true")
+    versioned(p)
 
     p = sub.add_parser("extract", help="official YAML → its rules in the rules-bank format")
     p.add_argument("official", type=Path)
@@ -62,6 +77,7 @@ def main(argv: list[str] | None = None) -> int:
                    help="judge only this part (repeatable), e.g. "
                         "'PATCH /{className}={id}::responses'")
     p.add_argument("--limit", type=int, help="judge at most N parts")
+    versioned(p)
 
     args = ap.parse_args(argv)
     for name in ("rules_bank", "generated", "official", "input"):
@@ -70,10 +86,28 @@ def main(argv: list[str] | None = None) -> int:
             print(f"error: {path} does not exist", file=sys.stderr)
             return 2
 
+    try:
+        return _run(args)
+    except (VersionMismatch, FileNotFoundError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return 2
+
+
+def _checked(args: argparse.Namespace, source: Path, kind: str) -> None:
+    """Layers 1-2 read no spec, but compare the same versions: check them first."""
+    official, official_label = load(args.official)
+    for note in check_versions(spec_document(args.spec), load(source)[1], kind, official,
+                               official_label, allow_other_version=args.allow_other_version):
+        print(f"warning: {note}", file=sys.stderr)
+
+
+def _run(args: argparse.Namespace) -> int:
     if args.command == "rulesbank":
+        _checked(args, args.rules_bank, "rulesbank")
         report = evaluate_rules_bank(args.rules_bank, args.official)
         print(report.model_dump_json(indent=2) if args.json else render_rulesbank(report))
     elif args.command == "openapi":
+        _checked(args, args.generated, "generated")
         report = evaluate_openapi(args.generated, args.official)
         print(report.model_dump_json(indent=2) if args.json else render_openapi(report))
     elif args.command == "extract":
@@ -89,7 +123,9 @@ def main(argv: list[str] | None = None) -> int:
         wanted = {tuple(s.split("::", 1)) for s in args.part}
         select = (lambda part: (part.owner, part.aspect) in wanted) if wanted else None
         judge = judge_openapi if args.evaluation == "generator" else judge_rules_bank
-        print(render_judge(judge(args.input, args.official, select=select, limit=args.limit)))
+        print(render_judge(judge(args.input, args.official, args.spec, select=select,
+                                 limit=args.limit,
+                                 allow_other_version=args.allow_other_version)))
     else:
         for r in evaluate_all_rules_banks():
             t = r.totals

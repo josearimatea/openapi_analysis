@@ -28,8 +28,8 @@ from collections import Counter
 from typing import Any
 
 from openapi_analysis.judge.parts import _attach_issues, _keys, _ref_hints, diff_documents
-from openapi_analysis.openapi.alignment import METHODS, Aligner, similarity
-from openapi_analysis.openapi.comparison import _item_label, flatten_parts, join
+from openapi_analysis.openapi.alignment import METHODS, Aligner, node_at_loc, similarity
+from openapi_analysis.openapi.comparison import _all_refs, _item_label, flatten_parts, join
 from openapi_analysis.schemas.alignment import Group
 from openapi_analysis.schemas.judge import Difference, Part, SearchHints, Verdict
 
@@ -37,16 +37,37 @@ OFFICIAL_ROWS = ("same", "different but right", "better", "wrong", "missing", "u
 GENERATED_ROWS = ("same", "different but right", "better", "wrong", "extra useful",
                   "extra wrong", "undecided")
 INNER_OF_OPERATION = ("media_type", "response", "callback")
+# kinds where several generated blocks in one group are the same object declared again
+# (a duplicated endpoint, a copied schema) — unlike a default split into 4XX / 5XX
+DUPLICABLE = ("operation", "path", "schema", "callback", "component")
 
 
 def _leaves(key: str, node: Any) -> int:
     return len(flatten_parts({key or "x": node})) or 1
 
 
-def _pairs(a: Aligner, g: Group) -> list[tuple[str, str]]:
+def duplicates(a: Aligner, g: Group) -> tuple[list[str], list[tuple[str, str]]]:
+    """(the generated members compared field by field, [(duplicate, original)]).
+
+    When the generated side declares the same operation, path, schema... more than once,
+    ONE declaration is the original — the one at the official's place, else the pair
+    whose insides were aligned, else the most alike — and every other one is a
+    duplicate, judged whole."""
+    if g.kind not in DUPLICABLE or len(g.generated) < 2:
+        return g.generated, []
+    places = {tuple(a.blocks[o].loc) for o in g.official}
+    at_place = [x for x in g.generated if tuple(a.blocks[x].loc) in places]
+    ref = g.official[0] if g.official else g.generated[0]
+    original = (at_place[0] if at_place else
+                g.primary[1] if len(g.primary) == 2 else
+                max(g.generated, key=lambda x: similarity(a.nodes[ref], a.nodes[x])))
+    return [original], [(x, original) for x in g.generated if x != original]
+
+
+def _pairs(a: Aligner, g: Group, generated: list[str]) -> list[tuple[str, str]]:
     """(official, generated) pairs to compare inside a group: each block with its
     counterpart — the most alike one when both sides hold several."""
-    o, gen = g.official, g.generated
+    o, gen = g.official, generated
     if len(o) == 1:
         return [(o[0], x) for x in gen]
     if len(gen) == 1:
@@ -97,16 +118,62 @@ def own(a: Aligner, bid: str) -> Any:
     return node
 
 
+def _flattened_member(composed: Any, flat: Any) -> tuple[int, list[str]] | None:
+    """(position, keys) when the last allOf member of `composed` is written at the root of
+    `flat`: an inline member past the allOf items `flat` has, whose keys `flat` holds at
+    its root and `composed` does not. The same schema in another form (OpenAPI: allOf
+    combines its members), so it is compared field by field. `type` alone proves nothing."""
+    if not (isinstance(composed, dict) and isinstance(flat, dict)):
+        return None
+    items, others = composed.get("allOf"), flat.get("allOf", [])
+    if not (isinstance(items, list) and isinstance(others, list)
+            and len(items) == len(others) + 1):
+        return None
+    member = items[-1]
+    if not isinstance(member, dict) or "$ref" in member:
+        return None
+    keys = [k for k in member if k in flat and k not in composed]
+    return (len(items) - 1, keys) if set(keys) - {"type"} else None
+
+
+def _unflattened(o_node: Any, g_node: Any) -> tuple[Any, Any, list[Any]]:
+    """The two nodes without what a flattened allOf member holds, and (official relative
+    location, generated relative location, official value, generated value) per key of it."""
+    for composed, flat, member_is_official in ((o_node, g_node, True), (g_node, o_node, False)):
+        found = _flattened_member(composed, flat)
+        if found is None:
+            continue
+        i, keys = found
+        member = composed["allOf"][i]
+        rest = {**composed, "allOf": [*composed["allOf"][:i],
+                                      {k: v for k, v in member.items() if k not in keys}]}
+        root = {k: v for k, v in flat.items() if k not in keys}
+        moved = [(("allOf", f"[{i}]", k), (k,), member[k], flat[k]) for k in keys]
+        if member_is_official:
+            return rest, root, moved
+        return root, rest, [(g_rel, o_rel, g_val, o_val) for o_rel, g_rel, o_val, g_val in moved]
+    return o_node, g_node, []
+
+
 def _pair_differences(a: Aligner, o: str, g: str) -> list[Difference]:
     ob, gb = a.blocks[o], a.blocks[g]
-    o_node, g_node = own(a, o), own(a, g)
+    o_node, g_node, flattened = _unflattened(own(a, o), own(a, g))
     out = []
     if ob.loc != gb.loc:
         out.append(Difference(kind="moved", location=gb.location, official=ob.location,
                               generated=gb.location, official_location=ob.location,
                               leaves=_leaves(gb.loc[-1], g_node)))
-    for kind, rel, o_val, g_val in diff_documents(o_node, g_node):
-        o_loc, g_loc = join((*ob.loc, *rel)), join((*gb.loc, *rel))
+    found = [(kind, rel, rel, o_val, g_val)
+             for kind, rel, o_val, g_val in diff_documents(o_node, g_node)]
+    for o_at, g_at, o_val, g_val in flattened:
+        o_loc, g_loc = join((*ob.loc, *o_at)), join((*gb.loc, *g_at))
+        out.append(Difference(kind="moved", location=g_loc, official=o_loc, generated=g_loc,
+                              official_location=o_loc, leaves=_leaves(g_at[-1], g_val)))
+        found += [(kind, (*o_at, *rel[1:]), (*g_at, *rel[1:]), o_v, g_v)
+                  for kind, rel, o_v, g_v in diff_documents(o_val, g_val, (g_at[-1],))]
+    for kind, o_rel, g_rel, o_val, g_val in found:
+        o_loc, g_loc = join((*ob.loc, *o_rel)), join((*gb.loc, *g_rel))
+        rel = g_rel if kind == "extra" else o_rel
         key = rel[-1] if rel else gb.loc[-1]
         if kind == "absent":
             out.append(Difference(kind="absent", location=o_loc, official_location=o_loc,
@@ -154,12 +221,55 @@ def _context(a: Aligner, bids: list[str]) -> dict[str, Any] | None:
     return ctx or None
 
 
-def _hints(a: Aligner, bids: list[str]) -> SearchHints:
+def cited_definitions(a: Aligner, bids: list[str]) -> dict[str, dict[str, Any]]:
+    """What the $refs of the blocks point to in their own document, per side — direct
+    references only, one level. A local $ref pointing nowhere is shown as such; a $ref
+    to another file is searched for in that spec (judge/retrieval.py)."""
+    out: dict[str, dict[str, Any]] = {}
+    for bid in bids:
+        b = a.blocks[bid]
+        for ref in _all_refs(a.nodes[bid]):
+            if ref.startswith("#/"):
+                node = node_at_loc(a.docs[b.side], ref[2:].split("/"))
+                out.setdefault(b.side, {})[ref] = (
+                    "(not defined in this document)" if node is None else node)
+    return out
+
+
+def external_definitions(a: Aligner) -> dict[str, list[str]]:
+    """The official's $refs to another file, by the local $ref of the same name
+    ("#/components/schemas/X" → ["TS..._ComDefs.yaml#/components/schemas/X"]), when the
+    official does not define that name itself."""
+    official = a.docs["official"]
+    out: dict[str, list[str]] = {}
+    for ref in sorted(_all_refs(official)):
+        file, _, target = ref.partition("#/")
+        if file and target.startswith("components/") and (
+                node_at_loc(official, target.split("/")) is None):
+            out.setdefault(f"#/{target}", []).append(ref)
+    return out
+
+
+def replaced_definitions(a: Aligner, bids: list[str], external: dict[str, list[str]]
+                         ) -> dict[str, list[str]]:
+    """What the generated blocks define or cite locally under the exact name of a
+    definition the official takes from another file. A different name is no link: an
+    unrelated schema told it replaces a definition would be judged against the wrong one."""
+    local: set[str] = set()
+    for bid in bids:
+        b = a.blocks[bid]
+        if b.side == "generated":
+            local |= set(_all_refs(a.nodes[bid])) | {"#/" + "/".join(b.loc)}
+    return {ref: external[ref] for ref in sorted(local & set(external))}
+
+
+def _hints(a: Aligner, bids: list[str], replaced: dict[str, list[str]]) -> SearchHints:
     first = a.blocks[bids[0]]
     path = first.loc[1] if first.loc[0] == "paths" and len(first.loc) > 1 else ""
     method = first.loc[2] if path and len(first.loc) > 2 and first.loc[2] in METHODS else ""
     names, external = _ref_hints(*[a.nodes[b] for b in bids])
     schemas = [a.blocks[b].loc[-1] for b in bids if a.blocks[b].kind == "schema"]
+    external = list(dict.fromkeys([*external, *(r for refs in replaced.values() for r in refs)]))
     return SearchHints(path=path, method=method, schemas=list(dict.fromkeys(schemas + names)),
                        external_refs=external,
                        terms=list(dict.fromkeys(a.blocks[b].identity.split(" — ")[0]
@@ -172,8 +282,21 @@ def group_parts(a: Aligner, label: str, issues: list[str] = ()
     one per leftover."""
     parts: list[Part] = []
     part_of: dict[str, str] = {}
+    # the document header of each side, as context (judged in its own parts only) — not
+    # the root x-*: a record of the generator's run says nothing about the API, and being
+    # told in every part how a document was generated could sway the verdict
+    headers = {side: {k: v for k, v in doc.items()
+                      if k not in ("paths", "components") and not str(k).startswith("x-")}
+               for side, doc in a.docs.items()}
+    external = external_definitions(a)
     for g in a.groups:
-        diffs = [d for o, gen in _pairs(a, g) for d in _pair_differences(a, o, gen)]
+        compared, dups = duplicates(a, g)
+        diffs = [d for o, gen in _pairs(a, g, compared) for d in _pair_differences(a, o, gen)]
+        diffs += [Difference(kind="duplicate", location=a.blocks[dup].location,
+                             official=a.blocks[orig].location,
+                             generated=a.blocks[dup].location,
+                             leaves=_leaves(a.blocks[dup].loc[-1], a.nodes[dup]))
+                  for dup, orig in dups]
         if not diffs:
             continue
         members = [*g.official, *g.generated]
@@ -181,6 +304,7 @@ def group_parts(a: Aligner, label: str, issues: list[str] = ()
         summary = (f"{len(g.official)} official and {len(g.generated)} generated "
                    f"{g.kind} block(s) that correspond, grouped by {how}"
                    + (f" — grouper: {' / '.join(g.reasons)}" if g.reasons else ""))
+        replaced = replaced_definitions(a, members, external)
         part = Part(
             id=f"generator|{label}|{g.kind}|" + " + ".join(sorted(members)),
             evaluation="generator", input=label,
@@ -189,12 +313,14 @@ def group_parts(a: Aligner, label: str, issues: list[str] = ()
             focus=[a.blocks[b].location for b in members], differences=diffs,
             diff_terms=diff_terms(diffs),
             official=_context(a, g.official), generated=_context(a, g.generated),
-            hints=_hints(a, members))
+            hints=_hints(a, members, replaced), headers=headers,
+            cited=cited_definitions(a, members), replaced=replaced)
         parts.append(part)
         part_of.update(dict.fromkeys(members, part.id))
     for bid in a.leftovers():
         b = a.blocks[bid]
         official = b.side == "official"
+        replaced = replaced_definitions(a, [bid], external)
         part = Part(
             id=f"generator|{label}|{b.kind}|{bid}", evaluation="generator", input=label,
             owner=b.identity,
@@ -208,7 +334,8 @@ def group_parts(a: Aligner, label: str, issues: list[str] = ()
                                     leaves=_leaves(b.loc[-1], own(a, bid)))],
             official=_context(a, [bid]) if official else None,
             generated=None if official else _context(a, [bid]),
-            hints=_hints(a, [bid]))
+            hints=_hints(a, [bid], replaced), headers=headers,
+            cited=cited_definitions(a, [bid]), replaced=replaced)
         parts.append(part)
         part_of[bid] = part.id
     members: dict[str, list[str]] = {}
@@ -230,7 +357,7 @@ def _under(leaf: str, loc: str) -> bool:
 def _covering(d: Difference, side: str) -> str | None:
     """The location a difference covers on one side (None: it covers nothing there)."""
     if side == "official":
-        if d.kind == "extra":
+        if d.kind in ("extra", "duplicate"):
             return None
         if d.kind == "moved":
             return str(d.official)
@@ -246,7 +373,7 @@ def _outcome(side: str, kind: str | None, verdict: str | None) -> str:
     if side == "official" and kind == "absent":
         return {"equivalent": "different but right", "improvement": "better"}.get(
             verdict, "missing")
-    if side == "generated" and kind == "extra":
+    if side == "generated" and kind in ("extra", "duplicate"):
         return "extra wrong" if verdict == "error" else "extra useful"
     return {"equivalent": "different but right", "improvement": "better",
             "error": "wrong"}[verdict]
@@ -289,3 +416,26 @@ def grouping_counts(a: Aligner) -> dict[str, int]:
     counts["leftover"] = len(a.leftovers())
     return dict(counts)
 
+
+
+def regroup(a: Aligner, parts: list[Part], part_of: dict[str, str], verdicts: list[Verdict],
+            label: str, issues: list[str] = ()
+            ) -> tuple[list[Part], dict[str, str], list[str]] | None:
+    """Take out of their groups the blocks the judge found not to correspond
+    (`wrongly_grouped`), and cut the parts again — those blocks become leftovers, judged
+    on their own. None when the judge disputed nothing that can be taken out. Returns
+    (parts, part_of, what was taken out and why)."""
+    by_part: dict[str, list[str]] = {}
+    for bid, pid in part_of.items():
+        by_part.setdefault(pid, []).append(bid)
+    taken: list[str] = []
+    for v in verdicts:
+        named = {loc.strip() for loc in v.answer.wrongly_grouped}
+        for bid in by_part.get(v.part_id, []):
+            if a.blocks[bid].location in named and a.ungroup(bid):
+                taken.append(f"{a.blocks[bid].location}: taken out of {v.owner} — "
+                             + " ".join(v.answer.why_different.split()))
+    if not taken:
+        return None
+    new_parts, new_part_of = group_parts(a, label, issues)
+    return new_parts, new_part_of, taken

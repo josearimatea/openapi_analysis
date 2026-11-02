@@ -38,9 +38,8 @@ def _when(iso: str) -> str:
     return when(iso)
 
 
-def _short(value: object, limit: int) -> str:
-    text = " ".join(str(value).split())
-    return text if len(text) <= limit else text[:limit - 1] + "…"
+def _flat(value: object) -> str:
+    return " ".join(str(value).split())
 
 
 def _wrap(text: str, indent: str, width: int = 100) -> list[str]:
@@ -146,18 +145,18 @@ def _step2(report: JudgeReport) -> list[str]:
             continue
         lines.append(f"  {name:10} {'VALID' if v.valid else 'NOT VALID'}"
                      + (f" — {len(v.issues)} issue(s)" if v.issues else ""))
-        for i in v.issues[:12]:
+        for i in v.issues:
             lines += _wrap(f"{i.location}: {i.message}", "      - ")
-        if len(v.issues) > 12:
-            lines.append(f"      … and {len(v.issues) - 12} more (full report: .txt)")
     return lines
 
 
 def _change(d: Difference) -> str:
     if d.kind == "differing":
-        return f"{_short(d.official, 45)!r} → {_short(d.generated, 45)!r}"
+        return f"{_flat(d.official)!r} → {_flat(d.generated)!r}"
     if d.kind == "moved":
         return f"moved: official at {d.official} → generated at {d.generated}"
+    if d.kind == "duplicate":
+        return f"declared again — the original declaration is at {d.official}"
     return "missing in the generated" if d.kind == "absent" else "added by the generated"
 
 
@@ -172,13 +171,17 @@ def _listing(title: str, items: list[tuple[Verdict, int, Difference, str, str]])
 
 
 def _disputed(report: JudgeReport) -> list[str]:
+    """Blocks the judge took out of a group (judged again on their own), and groups it
+    still disputes (a primary pair is never taken out) — for review."""
     items = [v for v in report.verdicts if v.answer.grouping_wrong]
-    lines = [(f"GROUPINGS THE JUDGE DISPUTED — blocks put together that do not correspond "
-             f"({len(items)})")]
-    if not items:
+    lines = [("GROUPINGS THE JUDGE DISPUTED — blocks put together that do not correspond "
+              f"({len(report.regrouped) + len(items)})")]
+    if not report.regrouped and not items:
         return lines + ["  none"]
+    for taken in report.regrouped:
+        lines += _wrap(f"• {taken}  → judged again on its own", "  ")
     for v in items:
-        lines.append(f"  • {v.owner} — {v.aspect}")
+        lines.append(f"  • {v.owner} — {v.aspect}  (still disputed)")
         lines += _wrap(v.answer.why_different, "      ")
     return lines
 
@@ -192,12 +195,15 @@ def _part(i: int, v: Verdict) -> list[str]:
     per = v.difference_verdicts or [v.answer.verdict] * len(v.differences)
     why = {d.difference_id.strip().upper(): d.reason for d in v.answer.differences}
     for n, (d, verdict) in enumerate(zip(v.differences, per, strict=True), 1):
-        mark = {"absent": "-", "extra": "+", "differing": "~", "moved": ">"}[d.kind]
+        mark = {"absent": "-", "extra": "+", "differing": "~", "moved": ">",
+                "duplicate": "x"}[d.kind]
         where = d.official_location if d.kind == "absent" else d.location
         lines.append(f"  D{n} {VERDICT_NAME.get(verdict, verdict).upper():20}{mark} {where}")
-        if d.kind in ("differing", "moved"):
-            lines.append(f"{'':27}official : {_short(d.official, 68)}")
-            lines.append(f"{'':27}generated: {_short(d.generated, 68)}")
+        if d.kind == "duplicate":
+            lines.append(f"{'':27}original : {_flat(d.official)}  (in the generated)")
+        elif d.kind in ("differing", "moved"):
+            lines.append(f"{'':27}official : {_flat(d.official)}")
+            lines.append(f"{'':27}generated: {_flat(d.generated)}")
         if why.get(f"D{n}"):
             lines += _wrap(why[f"D{n}"], " " * 27)
     lines += _wrap(f"clearer: {v.answer.clearer} — {v.answer.clearer_why}", "  ")
@@ -216,6 +222,9 @@ def render_final(report: JudgeReport) -> str:
         f"generated : {report.input}",
         *([f"official  : {report.official.label}  (v{report.official.version})"]
           if report.official else []),
+        *([f"spec      : {report.spec}  (the version this analysis is based on)"]
+          if report.spec else []),
+        *[f"WARNING   : {note}" for note in report.version_notes],
         f"evaluated : {_when(report.evaluated_at)}",
         (f"judge     : {report.model}, prompt {report.prompt_version}; 3GPP spec "
          f"{report.spec_collection} (clauses {', '.join(report.scope) or 'all'}) + OpenAPI "
@@ -246,7 +255,8 @@ def render_final(report: JudgeReport) -> str:
          "document only;"),
         ("                       D1, D2 …: its differences, each with its verdict.  - missing "
          "in the"),
-        "                       generated, + added by the generated, ~ changed, > moved)",
+        ("                       generated, + added by the generated, ~ changed, > moved, "
+         "x duplicate)"),
     ]
     for i, v in enumerate(report.verdicts, 1):
         lines += _part(i, v)

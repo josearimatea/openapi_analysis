@@ -3,22 +3,22 @@
 Several focused queries per part — never one query mixing everything (measured: a
 query carrying the part's name together with every schema it references and generic
 aspect words ranked the part's own definition 6th, behind look-alike types; the name
-alone ranked it 1st). Each query keeps its best PER_QUERY chunks not already taken:
+alone ranked it 1st):
 
-  spec (the main spec's fixed collection — normative text only, no annex), 3 queries:
-    1. subject     the part's subject alone: "NotifyEvent", "HTTP PATCH"
-    2. definition  how a spec states it: "Definition of type NotifyEvent",
-                   "Notification notifyEvent"; for a bank rule, its own rule_text (a
-                   sentence of the spec)
-    3. difference  the subject with what concretely differs: response codes,
-                   parameter names, media types, property names
-    Spec hits are kept only inside the evaluated service's scope (two-level clause
-    blocks read from the bank, e.g. ("11.1", "12.1")).
+  spec (the main spec's collection — normative text of the evaluated service only,
+  filtered on the server: no annex, clause inside the scope read from the bank):
+    0. defining   for a type or a notification, the sections whose `defines` holds it
+    1. subject    the part's subject alone: "NotifyEvent", "HTTP PATCH"
+    2. definition how a spec states it: "Definition of type NotifyEvent",
+                  "Notification notifyEvent"; for a bank rule, its own rule_text (a
+                  sentence of the spec)
+    3. difference the subject with what concretely differs: response codes,
+                  parameter names, media types, property names
 
   OpenAPI reference (the OpenAPI 3.0.1 collection), 2 queries:
-    1. object      the OpenAPI Object(s) the aspect is about: "Responses Object"
-    2. concept     the concept in play, with the concrete values: "default response,
-                   HTTP status code ranges 4XX 5XX, 200 204"
+    1. object     the OpenAPI Object(s) the aspect is about: "Responses Object"
+    2. concept    the concept in play, with the concrete values: "default response,
+                  HTTP status code ranges 4XX 5XX, 200 204"
 
 Building the queries is pure and tested without Qdrant; the search goes through a
 `Search` callable, injectable for tests. Every chunk is kept as Evidence with the
@@ -29,10 +29,8 @@ from __future__ import annotations
 
 import re
 from collections.abc import Callable
-from dataclasses import dataclass, field
 from typing import Any
 
-from openapi_analysis.judge.spec_index import corpus_text, in_scope, split_by_heading
 from openapi_analysis.schemas.judge import Evidence, Part
 
 # (text, metadata) of each hit, best first
@@ -119,6 +117,8 @@ def subject(part: Part) -> str:
     return " ".join(w for w in re.split(r"[{}=/]+", part.hints.path) if w)
 
 
+# Only what is SEARCHED WITH is limited, never what the judge reads: the query becomes one
+# vector, and the more it mixes the less it points to the right section (see the docstring).
 def differing_terms(part: Part) -> list[str]:
     """The concrete values in play — what differs, not the whole context.
 
@@ -189,68 +189,75 @@ def default_search() -> Search:
     return search
 
 
-def _is_annex(clause: str) -> bool:
-    """A clause of an annex ('A', 'A.1.1'). The index holds none; checked anyway."""
-    return bool(re.match(r"^[A-Z](\.|$)", clause or ""))
-
-
 _HEADING = re.compile(r"^#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 
 
-@dataclass(frozen=True)
-class CorpusLayout:
-    """What the shared corpus does not say in its metadata, read from its chunks:
-    where the annexes begin, and the clause each chunk belongs to."""
-    annex: tuple[int, int] | None = None
-    clauses: dict[int, tuple[str, str]] = field(default_factory=dict)
+def spec_filters(scope: tuple[str, ...]) -> list[dict[str, Any]]:
+    """The filters of a spec search, one per block of the scope: no annex, inside the
+    block. Applied by the server, so every chunk returned counts."""
+    return [{"annex": False, "clause_ancestors": b} for b in scope] or [{"annex": False}]
+
+
+def defined_names(part: Part) -> list[str]:
+    """What a section may DEFINE for this part: a type, or a notification."""
+    t = topic(part)
+    if t == "definition":
+        return part.hints.schemas[:1]
+    return [subject(part)] if t == "callback" else []
+
+
+_EXTERNAL = re.compile(r"^TS(?P<spec>\d+)_[^#]*#/components/[A-Za-z]+/(?P<name>[^/]+)$")
+
+
+def external_targets(part: Part) -> list[tuple[str, str, str]]:
+    """(reference, spec number, schema name) of each $ref to another 3GPP file."""
+    found = ((r, _EXTERNAL.match(r)) for r in part.hints.external_refs)
+    return [(r, m["spec"], m["name"]) for r, m in found if m]
 
 
 def retrieve_evidence(part: Part, spec_collection: str, *, search: Search,
-                      scope: tuple[str, ...] = (), per_query: int = 5, pool: int = 50,
+                      scope: tuple[str, ...] = (), per_query: int = 5,
+                      per_definition: int = 3,
                       openapi_collection: str = "openapi_reference",
-                      layout: CorpusLayout | None = None) -> list[Evidence]:
-    """The evidence for one part: each spec query's best chunks, then each reference
-    query's — PER_QUERY new chunks per query, none repeated.
+                      external_collection: str = "") -> list[Evidence]:
+    """The evidence for one part, none repeated: the sections that define its subject,
+    then each spec query's chunks, then each reference query's.
 
-    A spec chunk is kept only as normative text (spec_index.corpus_text: no annex, no
-    contents listing, no piece of an OpenAPI document). The shared corpus cuts by size,
-    so one chunk may end a section and begin the next: it is split at its headings
-    and each piece is evidence of its own clause — the piece before the first heading
-    belongs to the section the chunk begins in (the layout). Only pieces inside the
-    scope are kept; with a scope, a piece whose clause cannot be told is dropped."""
-    layout = layout or CorpusLayout()
+    Measured on real parts (docs/RASTREIO.md): filtering on the server and asking for
+    the defining sections first finds the same clauses as searching unfiltered and
+    cutting afterwards, higher up and with about 20% fewer chunks; a larger k, only
+    more noise. Annexes stay out: the annex of a spec holds the official YAML itself."""
     evidence: list[Evidence] = []
     seen: set[str] = set()
 
-    def take(source: str, collection: str, query: str,
-             hits: list[tuple[str, dict[str, Any]]]) -> None:
-        taken = 0
+    def take(source: str, collection: str, query: str, hits: list[tuple[str, dict[str, Any]]],
+             filters: dict[str, Any] | None = None) -> None:
         for text, meta in hits:
-            if taken >= per_query:
-                return
-            if source == "spec" and not meta.get("clause"):
-                idx = meta.get("chunk_index")
-                text = corpus_text(text, idx, layout.annex)
-                begins_in = layout.clauses.get(idx) or ("", "")
-                pieces = split_by_heading(text, begins_in) if text else []
-            else:
-                pieces = [(str(meta.get("clause", "")), str(meta.get("title", "")), text)]
-            kept = 0
-            for clause, title, piece in pieces:
-                if source == "spec" and (_is_annex(clause) or not in_scope(clause, scope)
-                                         or (scope and not clause)):
-                    continue
-                if piece in seen:
-                    continue
-                seen.add(piece)
-                kept += 1
-                title = title or next(iter(_HEADING.findall(piece)), "")
-                evidence.append(Evidence(source=source, collection=collection, query=query,
-                                         clause=clause, title=title, text=piece))
-            taken += bool(kept)
+            if text in seen:
+                continue
+            seen.add(text)
+            title = str(meta.get("title", "")) or next(iter(_HEADING.findall(text)), "")
+            evidence.append(Evidence(source=source, collection=collection, query=query,
+                                     filters={k: str(v) for k, v in (filters or {}).items()},
+                                     clause=str(meta.get("clause", "")), title=title,
+                                     path=str(meta.get("path", "")), text=text))
 
+    filters = spec_filters(scope)
+    for name in defined_names(part):
+        for f in filters:
+            f = {**f, "defines": name}
+            take("spec", spec_collection, name, search(name, spec_collection, per_definition, f), f)
     for q in spec_queries(part):
-        take("spec", spec_collection, q, search(q, spec_collection, pool, None))
+        for f in filters:
+            take("spec", spec_collection, q, search(q, spec_collection, per_query, f), f)
+    for ref, spec, name in external_targets(part) if external_collection else ():
+        # the definition itself, in the spec the file belongs to — annexes included: for a
+        # common schema, that is where the definition is
+        f = {"spec_number": spec, "defines": name}
+        before = len(evidence)
+        take("spec", external_collection, ref, search(name, external_collection, per_definition, f), f)
+        for e in evidence[before:]:
+            e.title = f"definition of {ref} — {e.title}"
     for q in openapi_queries(part):
-        take("openapi", openapi_collection, q, search(q, openapi_collection, pool, None))
+        take("openapi", openapi_collection, q, search(q, openapi_collection, per_query, None))
     return evidence

@@ -9,7 +9,7 @@ import yaml
 
 from openapi_analysis.schemas.judge import Difference, Evidence, Part
 
-PROMPT_VERSION = "judge-v5"
+PROMPT_VERSION = "judge-v15"
 
 SYSTEM = """\
 You are a reviewer of OpenAPI 3.0 documents derived from 3GPP specifications. You judge
@@ -31,8 +31,17 @@ You are given:
     "~ location"  present in both, with another value (both values given)
     "> location"  the same block at another location or under another key (official
                   and generated locations given): judge the move itself — a parameter
-                  at another level, default replaced by 4XX / 5XX, a duplicated endpoint
+                  at another level, default replaced by 4XX / 5XX, an allOf member
+                  written at the root of its schema
+    "x location"  a DUPLICATE: the generated document declares again, there, what it
+                  already declares at the location given (the original declaration,
+                  judged through the other differences). Judge the duplicate whole,
+                  once: it is an error — the same endpoint or schema declared twice —
+                  unless it does not correspond at all (then wrongly_grouped)
   Every other line of the context is equal on both sides, or is judged in another part.
+- DOCUMENT HEADERS: the header of each document (openapi, info, servers, tags,
+  security, externalDocs), for context — cite them as C1 (official) and C2
+  (generated). The header is judged in its own parts, never through another part.
 - evidence: passages of the 3GPP specification (ids S1, S2, ...) and of the OpenAPI 3.0
   reference (ids O1, O2, ...), retrieved for this part.
 
@@ -45,10 +54,12 @@ CONTEXT and the evidence):
    different structure (a composition flattened, a block moved, a key that is not allowed).
 2. Is the difference an error or an improvement?
    - error: the generated side is wrong — it contradicts the 3GPP spec, breaks the OpenAPI
-     reference, or loses information the official side carries.
+     reference, or loses part of the API contract the official side carries (a parameter,
+     a response, a constraint, a type). Prose never counts (see the rules).
    - improvement: the generated side is better than the official one — the spec or the
      reference supports it more, or the official side is the one in error.
-   - equivalent: a different form with the same meaning and the same clarity.
+   - equivalent: a different form with the same meaning — even if less clear or less
+     detailed (that goes in question 3, never in the verdict).
    - uncertain: the difference changes the meaning and nothing you were given decides
      which side is right. Prefer uncertain to a guess, and say why: "not in the
      evidence" (the spec or reference passages do not cover it) or "the spec leaves it
@@ -61,16 +72,17 @@ Rules:
 - Give one ruling per difference, by its id, for every difference listed. The verdict of
   the part as a whole is the most serious one among them that matters to a reader of the
   API (an error in one difference makes the part an error).
-- A difference in prose only (a description, summary or title worded differently) is
-  equivalent when it says the same thing, improvement when it is clearer or more precise,
-  error when it says something false or loses information.
+- A difference in prose only (a description, summary or title, changed, missing or added)
+  is always equivalent: prose is not part of the contract, so it is never an error or
+  an improvement. Say what is clearer in "clearer" (question 3).
 - What each verdict needs:
   - equivalent may rest on the CONTEXT alone (cite C1 and/or C2): the generated side
     keeps the official meaning — the same constraint written another way, prose that
     says the same thing, a value that only restates what the official side already
     implies. You do not need the spec to see that two texts say the same thing.
   - error may rest on the CONTEXT alone when the generated side visibly loses or
-    contradicts what the official side carries (a qualifier dropped, a code removed);
+    contradicts the contract the official side carries (a code removed, a constraint
+    dropped);
     an error against the 3GPP spec or the OpenAPI format needs that evidence (S, O).
   - improvement always needs the spec or the OpenAPI reference (S or O): being
     different from the official is not being better than it.
@@ -80,11 +92,48 @@ Rules:
   you believe 3GPP usually does.
 - A side reported as "not valid OpenAPI 3.0" breaks the OpenAPI format: that side is in
   error, whatever else is true.
+- Paths are compared as written, relative to each document's servers: the full URL of
+  an endpoint is the server url with the path appended (OpenAPI Paths Object). A
+  missing or different servers block is judged in the header, never as a reason to
+  prefer one path over another. Moving part of the server url into the path is not an
+  improvement: it turns the server's variables into path parameters of every
+  operation, changing the operations' parameters.
+- The CONTEXT is each document parsed and written back as YAML by this tool: quoting,
+  key order, indentation and comments are not the documents' own. Never judge them —
+  OpenAPI objects are unordered maps, and how a key is quoted is not shown.
 - A leftover present in the official only is an error when the generated document loses
   what it carries; one present in the generated only is an improvement only with S or O
   evidence, an error when it is wrong, redundant or a duplicate of what exists elsewhere.
-- If the blocks of a GROUP do not play the same role at all, set grouping_wrong and say
-  why; judge the differences all the same.
+- If some blocks of a GROUP do not play the same role as the rest (another endpoint,
+  another solution set, another data type), set grouping_wrong, list their locations
+  in wrongly_grouped exactly as under FOCUS, and say why: they are taken out and judged
+  again on their own. Judge every difference all the same.
+- Before ruling on each difference: read every S passage and find the one that addresses
+  THIS difference for THIS operation or type (e.g. the response-code table of this
+  method). The 3GPP passage decides what is right for this API; the OpenAPI reference
+  decides what is valid. A generic OpenAPI argument never overrides a 3GPP passage that
+  addresses the difference, unless the generated side breaks the format. State in the
+  reason which passage decides it, or that none addresses it.
+- Each S passage shows where it sits in the spec ("in: ..."). A spec may hold several
+  solution sets for one service, and the evaluated API is the one the official document
+  implements. A passage of another solution set does not define this API: it neither
+  supports nor refutes a difference, except to show that a generated block comes from
+  that other solution set — then say so.
+- CITED SCHEMAS holds what the local $refs of the context point to, one level; cite them as
+  C1 (official) and C2 (generated). A $ref to another file is defined by an S passage
+  titled "definition of ..." when it was found. If none is given for it, its content
+  was not available: do not presume it, and say so.
+- LOCAL SCHEMAS IN PLACE OF EXTERNAL DEFINITIONS, when given, lists what the generated
+  document defines locally under the name of a definition the official document takes
+  from another file. Judge the local schema, and any $ref changed to point to it,
+  against that definition (the S passage titled "definition of ..."): it loses a
+  property, constraint or type of the definition, or contradicts it, is an error; it
+  keeps the contract is equivalent; it is never an improvement, as it only restates what
+  existed. If the definition was not given, rule uncertain.
+- When one official block corresponds to several generated blocks in a GROUP (default
+  replaced by 400, 4XX and 5XX), judge what the generated blocks cover TOGETHER. A block
+  is not an error for being narrower than the official one: it is an error only if the
+  set loses coverage or the block itself contradicts the spec.
 - Answer in English.
 """
 
@@ -96,13 +145,15 @@ def _dump(node: object) -> str:
     return yaml.safe_dump(node, sort_keys=False, allow_unicode=True, width=100)
 
 
-def _evidence_block(e: Evidence, limit: int = 2500) -> str:
+def _evidence_block(e: Evidence) -> str:
+    """A piece of evidence, whole — never truncated, as the context."""
     if e.source == "spec":
         head = f"[{e.id}] 3GPP spec, clause {e.clause or '?'} — {e.title}"
+        if e.path:
+            head += f"\n    in: {e.path}"
     else:
         head = f"[{e.id}] OpenAPI 3.0 reference — {e.title or 'passage'}"
-    text = e.text if len(e.text) <= limit else e.text[:limit] + " ... (truncated)"
-    return f"{head}\n{text}"
+    return f"{head}\n{e.text}"
 
 
 def difference_line(d: Difference) -> str:
@@ -112,6 +163,9 @@ def difference_line(d: Difference) -> str:
                  if d.official_location and d.official_location != d.location else "")
         return (f"~ {d.location}{where}\n    official:  {_inline(d.official)}"
                 f"\n    generated: {_inline(d.generated)}")
+    if d.kind == "duplicate":
+        return (f"x {d.location}\n    a further declaration of what the generated document "
+                f"already declares at: {d.official}")
     if d.kind == "moved":
         return f"> {d.location}\n    official at:  {d.official}\n    generated at: {d.generated}"
     mark = "-" if d.kind == "absent" else "+"
@@ -119,10 +173,10 @@ def difference_line(d: Difference) -> str:
     return f"{mark} {where}" + (f"  ({d.leaves} leaves)" if d.leaves > 1 else "")
 
 
-def _inline(value: object, limit: int = 300) -> str:
+def _inline(value: object) -> str:
     text = yaml.safe_dump(value, default_flow_style=True, width=10_000).strip()
     text = text.removesuffix("\n...").strip()
-    return text if len(text) <= limit else text[:limit] + " ..."
+    return text
 
 
 def user_message(part: Part, evidence: list[Evidence]) -> str:
@@ -134,6 +188,9 @@ def user_message(part: Part, evidence: list[Evidence]) -> str:
         f"EVALUATED: {what} — {part.input}",
         f"PART: {part.owner} — {part.aspect}",
         f"SUMMARY: {part.summary}",
+        *([""] + [f"DOCUMENT HEADER — {side.upper()} [{tag}]:\n{_dump(part.headers[side])}"
+                  for side, tag in (("official", "C1"), ("generated", "C2"))
+                  if side in part.headers] if part.headers else []),
         "",
         "CONTEXT — OFFICIAL SIDE [C1]:",
         _dump(part.official),
@@ -150,6 +207,15 @@ def user_message(part: Part, evidence: list[Evidence]) -> str:
     if part.invalid_issues:
         lines += ["", f"THE {other} SIDE IS NOT VALID OPENAPI 3.0 (layer-2 validation):",
                   *[f"- {i}" for i in part.invalid_issues]]
+    if part.cited:
+        lines += ["", "CITED SCHEMAS:"]
+        lines += [f"{side.upper()} [{tag}]:\n{_dump(part.cited[side])}"
+                  for side, tag in (("official", "C1"), ("generated", "C2"))
+                  if side in part.cited]
+    if part.replaced:
+        lines += ["", "LOCAL SCHEMAS IN PLACE OF EXTERNAL DEFINITIONS:"]
+        lines += [f"- {local} (generated) — the official document uses: {', '.join(refs)}"
+                  for local, refs in part.replaced.items()]
     lines += ["", "EVIDENCE:", *(_evidence_block(e) + "\n" for e in evidence)]
     return "\n".join(lines)
 

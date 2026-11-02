@@ -6,8 +6,7 @@ callbacks: an operation and a callback may correspond, so they share a call), th
 parameters, then request bodies and responses, then schemas, components and the header.
 Blocks of different families never correspond, so no correspondence is lost by the
 split; each call sees the groups the previous ones formed. Every call gets:
-  - the two documents, WHOLE, as YAML — the ground for every decision (when they are
-    too large, beyond MAX_DOCUMENTS_CHARS, each block's content is given instead);
+  - the two documents, WHOLE, as YAML — the ground for every decision, never cut;
   - the index of every group formed;
   - the leftovers of its family, and under each the blocks of the other side most
     alike it, free or ALREADY GROUPED — so an extra is set beside what it most
@@ -59,7 +58,6 @@ FAMILIES: tuple[tuple[str, frozenset[BlockKind]], ...] = (
      frozenset({"schema", "component", "block", "header"})),
 )
 CANDIDATES = 5                       # per leftover, the most alike of the other side
-MAX_DOCUMENTS_CHARS = 300_000        # beyond it, block contents instead of the documents
 
 
 def _kinds_agree(a: Aligner, official: list[str], generated: list[str]) -> bool:
@@ -104,17 +102,9 @@ def grouping_messages(a: Aligner, family: str, leftovers: list[str], owned: dict
     tag_of = {bid: t for t, bid in ids.items()}
     ids.update({g.id: g.id for g in a.groups})
 
-    texts = {side: _yaml(doc) for side, doc in a.docs.items()}
-    whole = sum(map(len, texts.values())) <= MAX_DOCUMENTS_CHARS
     lines: list[str] = []
-    if whole:
-        for side, text in texts.items():
-            lines += [f"{side.upper()} DOCUMENT (YAML):", "```yaml", text, "```", ""]
-    else:
-        lines += [("THE DOCUMENTS ARE TOO LARGE TO BE GIVEN WHOLE: the content of each "
-                  "block is given with it instead."), ""]
-        lines += [f"{side} servers: {json.dumps(doc.get('servers') or '(none)')}"
-                  for side, doc in a.docs.items()]
+    for side, doc in a.docs.items():
+        lines += [f"{side.upper()} DOCUMENT (YAML):", "```yaml", _yaml(doc), "```", ""]
     lines += ["INDEX — GROUPS ALREADY FORMED (fixed):"]
     for g in a.groups:
         members = [f"{a.blocks[b].side} {a.blocks[b].location} ({a.blocks[b].identity})"
@@ -127,8 +117,6 @@ def grouping_messages(a: Aligner, family: str, leftovers: list[str], owned: dict
         for bid in [b for b in leftovers if a.blocks[b].side == side]:
             b = a.blocks[bid]
             lines.append(f"[{tag_of[bid]}] {b.kind} at {b.location} — {b.identity}")
-            if not whole:
-                lines += ["    content:", _yaml(a.nodes[bid], "      ")]
             cands = candidates_anywhere(a, bid, owned)
             if cands:
                 lines.append("    most alike on the other side (similarity orders only):")
@@ -138,8 +126,6 @@ def grouping_messages(a: Aligner, family: str, leftovers: list[str], owned: dict
                          f"in group {a.group_of[c].id}" if c in a.group_of else "free")
                 lines.append(f"      - {where}: {cb.kind} at {cb.location} "
                              f"(similarity {score})")
-                if not whole and c not in tag_of:
-                    lines.append(_yaml(a.nodes[c], "          "))
     return [("system", GROUPING_SYSTEM), ("human", "\n".join(lines))], ids
 
 

@@ -11,13 +11,13 @@ import re
 from pathlib import Path
 from typing import Any
 
-from openapi_analysis.config.paths import ROOT, reference_yaml
-from openapi_analysis.config.settings import OFFICIAL_REFERENCE, SPEC_VERSIONS
+from openapi_analysis.config.paths import ROOT
+from openapi_analysis.config.settings import SPEC_VERSIONS
 from openapi_analysis.reporting.text import render_rulesbank
 from openapi_analysis.rulesbank.comparison import compare_rules
 from openapi_analysis.rulesbank.extraction import rules_from_yaml, summarize
 from openapi_analysis.schemas.rulesbank import RulesBankEvaluation, SourceInfo
-from openapi_analysis.services.inputs import Source, load, manifest, save_report
+from openapi_analysis.services.inputs import Source, load, manifest, official_of, save_report
 
 _BANK_SPEC = re.compile(r"rules_bank_\d+-(i\d\d)_")
 
@@ -69,13 +69,13 @@ def evaluate_rules_bank(rules_bank: Source, official_yaml: Source, *,
 
 
 def evaluate_all_rules_banks(save: bool = True) -> list[RulesBankEvaluation]:
-    """Every bank in data/inputs (per the manifest), against its service's official YAML."""
+    """Every bank in data/inputs (per the manifest), against the official YAML of its spec version."""
     reports = []
     for entry in manifest()["rulesbank"]:
         service = entry["service"]
-        if service not in OFFICIAL_REFERENCE:
+        official = official_of(entry)
+        if official is None:
             continue
-        official = reference_yaml(service, OFFICIAL_REFERENCE[service])
         name = Path(entry["path"]).stem
         reports.append(evaluate_rules_bank(ROOT / entry["path"], official,
                                            save_as=(service, name) if save else None))

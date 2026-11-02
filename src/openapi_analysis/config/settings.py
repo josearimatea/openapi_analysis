@@ -30,13 +30,12 @@ SPEC_VERSIONS = {
     "i20": "18.2.0",
 }
 
-# The official YAML (its info.version) each service is evaluated against when no
-# reference is named — the Rel-18 YAML of each service in data/inputs/reference.
-# OPEN: the i00 banks come from spec V18.0.0, for which no YAML of matching version
-# is in data/inputs; they are measured against these too, until decided otherwise.
-OFFICIAL_REFERENCE = {
-    "ProvMnS": "18.2.0",
-    "PerfMnS": "18.1.0",
+# The official YAML (its info.version) of each service in each spec version, as the
+# annex of that spec holds it: an input is only ever evaluated against the official of
+# the spec version it came from — i00 with i00, i20 with i20.
+OFFICIAL_BY_SPEC = {
+    "i00": {"ProvMnS": "17.5.0", "PerfMnS": "17.1.0"},
+    "i20": {"ProvMnS": "18.2.0", "PerfMnS": "18.1.0"},
 }
 
 # Version of the JSON shape of every report this package emits. Bump it when a
