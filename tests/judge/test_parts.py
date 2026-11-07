@@ -32,7 +32,7 @@ def test_rulesbank_parts():
     bank = json.loads(BANK.read_text(encoding="utf-8"))
     parts = rulesbank_parts(evaluate_rules_bank(bank, OFFICIAL), bank, "i20")
     assert dict(Counter(p.aspect for p in parts)) == {
-        "different": 18, "duplicate": 2, "missing": 32, "extra": 39}
+        "different": 18, "duplicate": 2, "missing": 26, "extra": 39}
     assert len({p.id for p in parts}) == len(parts)
     get200 = next(p for p in parts if p.aspect == "different"
                   and p.owner == "response paths./{className}={id}.get.responses · 200")

@@ -46,21 +46,22 @@ def test_provmns_total_and_breakdown(provmns):
         "request_body": 11,      # media types across put/patch and the callbacks
         "response": 21,          # per code across operations and callbacks
         "callback": 5,           # notifyMOICreation/Deletion/AttributeValueChanges/Event/MOIChanges
-        "schema_property": 65,   # descending oneOf/allOf/properties/items
-        "total": 113,
+        "schema_property": 59,   # descending oneOf/allOf/properties/items; a property's
+                                 # own items is part of its value, no rule of its own
+        "total": 107,
     }
 
 
 @pytest.mark.parametrize("service, version, total", [
-    ("ProvMnS", "17.5.0", 103),
-    ("ProvMnS", "17.7.0", 112),
-    ("ProvMnS", "18.2.0", 113),
+    ("ProvMnS", "17.5.0", 97),
+    ("ProvMnS", "17.7.0", 106),
+    ("ProvMnS", "18.2.0", 107),
     ("PerfMnS", "17.1.0", 15),
     ("PerfMnS", "18.1.0", 15),
-    ("FaultMnS", "17.2.0", 260),
-    ("FileDataReportingMnS", "17.1.0", 40),
+    ("FaultMnS", "17.2.0", 259),
+    ("FileDataReportingMnS", "17.1.0", 38),
     ("HeartbeatNtf", "17.1.0", 3),
-    ("StreamingDataMnS", "17.1.0", 74),
+    ("StreamingDataMnS", "17.1.0", 70),
 ])
 def test_every_official_yaml_total(service, version, total):
     assert summarize(rules_from_yaml(_load(service, version)))["total"] == total

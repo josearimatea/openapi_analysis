@@ -572,3 +572,25 @@ tabela do método (12.1.1.3.2.1.3.4) lista `scope` e `array(Uri)`, e a de mapeam
 6.1.2 (scoping "not supported by any other method") e A.4.2 (a requisição com scope é
 inválida). O juiz decide pela tabela do método, como a mais específica, sem citar a TS 32.158.
 São 9 campos contados como melhoria; se forem indecisos, o gerado cai para 150/291 (51,5%).
+
+## O `items` de uma propriedade array não é regra própria (07/nov/2026)
+
+**O que estava errado.** Ao descer no schema, a extração do YAML oficial emitia o `items` de
+uma propriedade array como uma regra `items` na raiz do schema (`components/schemas/
+CorrelatedNotification · items`). O endereço não diz de qual propriedade é, e nenhuma regra do
+banco pode ocupá-lo; por isso essas regras apareciam sempre como faltantes. A propriedade já era
+comparada com o `$ref` do elemento (`properties.notificationIds` com `NotificationId`).
+
+**Quem decide a forma.** A spec e o YAML. A spec dá ao atributo um tipo só (`notificationIds |
+array(NotificationId)`); os 8 YAMLs oficiais têm 25 propriedades array, todas com `type: array` e
+`items` juntos na propriedade. A propriedade é uma regra, com o array e o elemento no valor. O
+`openapi_rulesbank` mudou o mesmo contrato do lado dele no mesmo dia.
+
+**Efeito.** Alvos: ProvMnS 18.2.0 113 -> 107 (os 6 `items` de `CorrelatedNotification`,
+`MoiChange` e dos quatro `NotifyMoi*`); 17.5.0 103 -> 97; 17.7.0 112 -> 106; FaultMnS 260 -> 259;
+FileDataReportingMnS 40 -> 38; StreamingDataMnS 74 -> 70; PerfMnS e HeartbeatNtf sem mudança.
+Banco i20 de 15/set: 81/107 (75,7%), antes 81/113 (71,7%) — as 6 faltantes eram do instrumento.
+Banco i00 de 28/08 × 17.5.0: 57/97, antes 59/103 — ele escrevia 2 regras `items` na raiz, que
+deixam de casar e viram extras. Números travados atualizados em `tests/rulesbank/
+test_extraction.py`, `tests/services/test_results.py` e `tests/judge/test_parts.py`.
+

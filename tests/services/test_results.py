@@ -26,8 +26,8 @@ OFFICIAL_PROVMNS = reference_yaml("ProvMnS", "18.2.0")
 # (expected, covered, value_equal, value_different, value_not_comparable,
 #  bank_rules, bank_extra, bank_invalid_rules, shared_addresses)
 RULES_BANK_RESULTS = {
-    "rules_bank_28532-i20_full_20260915_214107": (113, 81, 53, 19, 9, 122, 39, 14, 2),
-    "rules_bank_28532-i00_full_20260828_210819": (103, 59, 40, 15, 4, 97, 37, 5, 1),  # v17.5.0
+    "rules_bank_28532-i20_full_20260915_214107": (107, 81, 53, 19, 9, 122, 39, 14, 2),
+    "rules_bank_28532-i00_full_20260828_210819": (97, 57, 39, 14, 4, 97, 39, 5, 1),  # v17.5.0
     "rules_bank_28532-i20_full_20260915_232343": (15, 14, 13, 0, 1, 18, 4, 1, 0),
     "rules_bank_28532-i00_full_20260926_182802": (15, 14, 13, 0, 1, 22, 8, 0, 0),
     "rules_bank_28532-i00_full_20260818_214526": (15, 13, 11, 1, 1, 17, 3, 0, 1),
@@ -83,7 +83,7 @@ def test_rules_bank_i20_provmns_by_rule_type(bank_reports):
         "query_parameter": (5, 0, 0, 0, 0, 6, 6),       # all at path level (§3.22)
         "request_body":    (11, 8, 8, 0, 0, 9, 1),
         "response":        (21, 13, 2, 5, 6, 32, 19),
-        "schema_property": (65, 49, 37, 9, 3, 62, 12),
+        "schema_property": (59, 49, 37, 9, 3, 62, 12),
     }
 
 
@@ -146,7 +146,7 @@ def test_services_accept_parsed_documents():
 def test_extracted_official_rules_are_a_rules_bank_document():
     doc = extract_official_rules(OFFICIAL_PROVMNS)
     assert set(doc) == {"metadata", "summary", "rules"}
-    assert doc["summary"]["total"] == len(doc["rules"]) == 113
+    assert doc["summary"]["total"] == len(doc["rules"]) == 107
 
 
 def test_every_input_is_evaluated_against_the_official_of_its_spec_version():

@@ -52,6 +52,12 @@ Métodos aceitos: `get, put, post, delete, patch` (os mesmos nos três repos).
 
 - **Descida em schemas** por `oneOf/anyOf/allOf/properties/items/additionalProperties`,
   sempre endereçada pelo schema RAIZ. Um `$ref` é folha (§3.10).
+- **O `items` de uma propriedade array é parte do valor dela**, não uma regra própria:
+  `properties.<x>` leva o array e o `$ref` do elemento. A spec dá ao atributo um tipo só
+  (`array(X)`), e os YAMLs oficiais escrevem `type` e `items` juntos na propriedade (25 de
+  25). Antes (até 07/nov/2026), esse `items` saía como uma regra `items` na raiz do schema,
+  um endereço que nenhuma regra do banco pode ter. O `items` de um schema que é ele mesmo
+  um array (na raiz, como `Resource.additionalProperties`) continua sendo regra.
 - **Keyword-coleção = uma regra** (`enum`, `required`, `oneOf`...), valor = a coleção
   inteira (§3.27). Um banco que emite uma regra por item fica com o 1º item no
   endereço e o resto vira "endereço compartilhado".
@@ -61,9 +67,10 @@ Métodos aceitos: `get, put, post, delete, patch` (os mesmos nos três repos).
   (StreamingDataMnS tem 5).
 - `additionalProperties: true/false` (booleano) não é regra.
 
-Contagem por YAML oficial: ProvMnS 17.5.0 = 103, 17.7.0 = 112, **18.2.0 = 113**;
-PerfMnS 17.1.0 = 15, **18.1.0 = 15**; FaultMnS 17.2.0 = 260; FileDataReportingMnS
-17.1.0 = 40; HeartbeatNtf 17.1.0 = 3; StreamingDataMnS 17.1.0 = 74.
+Contagem por YAML oficial (desde 07/nov/2026): ProvMnS 17.5.0 = 97, 17.7.0 = 106,
+**18.2.0 = 107**; PerfMnS 17.1.0 = 15, **18.1.0 = 15**; FaultMnS 17.2.0 = 259;
+FileDataReportingMnS 17.1.0 = 38; HeartbeatNtf 17.1.0 = 3; StreamingDataMnS 17.1.0 = 70.
+Antes: 103, 112, 113, 15, 15, 260, 40, 3 e 74 (a diferença é o `items` de propriedade).
 
 ## 4. Decisões de comparação de valor (travadas em `tests/rulesbank/test_comparison.py`)
 

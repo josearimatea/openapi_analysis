@@ -215,12 +215,20 @@ def _keyword_value(kw: str, value: Any) -> str:
     return _schema_value(value)     # items, additionalProperties
 
 
-def _walk_schema(schema_name: str, node: Any, out: list[dict], seen: set[int]) -> None:
+def _walk_schema(schema_name: str, node: Any, out: list[dict], seen: set[int],
+                 is_property: bool = False) -> None:
     """Collect the rules of one root schema, descending inline composition.
 
     schema_name stays the ROOT schema for every rule (the bank addresses a schema
     rule by its root). Recursion follows inline oneOf/anyOf/allOf, object
     properties, items and additionalProperties, and stops at any $ref.
+
+    is_property: the node is the schema of a property. Its items (an array) or
+    additionalProperties (a map) are part of that property's value — the
+    properties.<name> rule carries them, $ref included, as the spec gives the
+    attribute one type ("array(X)") — so they are no rule of their own. Without
+    this, they came out as an 'items' rule at the root, an address no rule of the
+    bank can hold. The descent into the element goes on.
     """
     if not isinstance(node, dict) or id(node) in seen or "$ref" in node:
         return
@@ -232,6 +240,9 @@ def _walk_schema(schema_name: str, node: Any, out: list[dict], seen: set[int]) -
             continue
         # additionalProperties: true/false is a switch, not an addressable schema
         if kw == "additionalProperties" and not isinstance(node[kw], dict):
+            continue
+        if is_property and kw in ("items", "additionalProperties"):
+            _walk_schema(schema_name, node[kw], out, seen)
             continue
         out.append(_rule("schema_property", obj, kw, _keyword_value(kw, node[kw]),
                          refs_from=node[kw] if kw not in ("enum", "required") else None))
@@ -246,7 +257,7 @@ def _walk_schema(schema_name: str, node: Any, out: list[dict], seen: set[int]) -
         for pname, pnode in props.items():
             out.append(_rule("schema_property", obj, f"properties.{pname}",
                              _schema_value(pnode), refs_from=pnode))
-            _walk_schema(schema_name, pnode, out, seen)
+            _walk_schema(schema_name, pnode, out, seen, is_property=True)
 
 
 # ── public ───────────────────────────────────────────────────────────────────
