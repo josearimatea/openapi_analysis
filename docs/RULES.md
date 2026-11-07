@@ -90,6 +90,14 @@ fidelidade = valor certo onde dá para conferir.
 - **path_operation**: o método. **callback**: a expressão (sem `{}` e `$`).
   **request_body**: o media type é o próprio endereço — igual por definição.
 - **Sem o que comparar** (resposta sem corpo, propriedade sem tipo): `not_comparable`.
+- **`default` × 4XX/5XX** (desde 07/nov/2026): uma resposta `default` do oficial sem regra do
+  banco no mesmo endereço é coberta pelos `4XX`/`5XX` do banco na mesma operação ou no mesmo
+  callback, desde que o oficial não os declare ele mesmo. Os dois dizem "todo erro". O valor
+  do `default` é comparado com o de cada um: igual só se todos forem iguais, de modo que outro
+  `$ref` continua diferença (ex.: `ErrorResponseDefault` no oficial, `ErrorResponse` no
+  banco). Esses 4XX/5XX deixam de ser extras: o primeiro conta como cobertura e o segundo
+  como `range`, e a soma do banco passa a ser cobertura + duplicatas + `range` + extras. Um
+  `default` que o banco também declara casa pelo endereço, e os 4XX/5XX continuam extras.
 
 ## 5. Decisões em aberto
 

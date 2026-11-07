@@ -594,3 +594,33 @@ Banco i00 de 28/08 × 17.5.0: 57/97, antes 59/103 — ele escrevia 2 regras `ite
 deixam de casar e viram extras. Números travados atualizados em `tests/rulesbank/
 test_extraction.py`, `tests/services/test_results.py` e `tests/judge/test_parts.py`.
 
+## Um `default` oficial é coberto pelos 4XX/5XX do banco (07/nov/2026)
+
+**O que estava errado.** A cobertura casa endereço exato. Quando o oficial declara `default` e o
+banco declara `4XX` e `5XX` na mesma operação, o `default` saía faltante e os dois saíam extras,
+embora digam o mesmo: "todo erro". O número de faltantes e de extras era do instrumento.
+
+**A regra** (genérica, em `rulesbank/comparison.py`; RULES.md §4). O `default` sem regra no
+próprio endereço é coberto pelos `4XX`/`5XX` do banco na mesma operação ou callback que o oficial
+não declara. O valor é comparado com cada um, e outro `$ref` continua diferença. Para a soma do
+banco fechar sem contar o segundo como duplicata, há uma contagem nova, `range`.
+
+**Efeito** (medido nos bancos de `data/inputs`):
+
+| Banco | Coberto | Diferente | Extras | Range |
+|---|---|---|---|---|
+| ProvMnS i20 15/09 × 18.2.0 | 81 -> 87 de 107 | 19 -> 25 | 39 -> 28 | 5 |
+| ProvMnS i00 28/08 × 17.5.0 | 57 -> 59 de 97 | 14 -> 16 | 39 -> 35 | 2 |
+| PerfMnS i20 15/09 × 18.1.0 | 14 -> 15 de 15 | 0 -> 1 | 4 -> 2 | 1 |
+| PerfMnS i00 26/09 × 17.1.0 | 14 -> 15 de 15 | 0 -> 1 | 8 -> 6 | 1 |
+| PerfMnS i00 18/08 × 17.1.0 | 13 -> 14 de 15 | 1 -> 1 (iguais 11 -> 12) | 3 -> 1 | 1 |
+
+Os `default` recém-cobertos saem quase todos como diferentes: o banco perdeu o arquivo do
+`ErrorResponse` externo (§3.23), ou trocou o `$ref`. A fidelidade do i20 da ProvMnS cai de 53/72
+(73,6%) para 53/78 (67,9%) por isso: são diferenças que antes ficavam escondidas como faltantes.
+
+**Limite que apareceu.** O `default` do PATCH na ProvMnS 18.2.0 é um `oneOf` de dois `$ref`
+(`ErrorResponseDefault`, `ErrorResponsePatch`), e a extração grava o valor da resposta só como
+`oneOf`, sem as referências. A comparação diz "o banco tem `$ref` onde o YAML não tem": o status
+(diferente) está certo, a nota não. Fica para corrigir na extração.
+

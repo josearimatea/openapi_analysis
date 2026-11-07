@@ -40,19 +40,21 @@ def _mapping_line(rule: dict) -> str:
 _RULESBANK_LEGEND = """\
 LEGEND
   expected  rules extracted from the official YAML (one per address)
-  covered   … that have at least one bank rule on the same address
+  covered   … that have at least one bank rule on the same address; an official
+            default response is also covered by the bank's 4XX / 5XX of that operation
             covered = equal + diff + n/c
   coverage  covered / expected                       (is the ADDRESS there?)
-  equal     the bank rule's value is the official value
-  diff      the value is DIFFERENT from the official — not necessarily wrong: 4XX/5XX
-            instead of default differs and can be better. Only the semantic review
-            (layer 3) rules a difference an error or an improvement.
+  equal     the bank rule's value is the official value (for a default covered by
+            4XX / 5XX: the value of each of them)
+  diff      the value is DIFFERENT from the official — not necessarily wrong. Only the
+            semantic review (layer 3) rules a difference an error or an improvement.
   n/c       not comparable: the official YAML holds no value at that address to compare
   fidelity  equal / (equal + diff)                   (is the VALUE the official one?)
   dup       bank rules on an address another bank rule already holds (duplicates)
+  range     the second of the 4XX and 5XX that together cover one official default
   extra     bank rules on no official address (an invention, a wrong address, or
             something the spec asks for that the official YAML leaves out)
-  bank      rules in the bank = covered + dup + extra
+  bank      rules in the bank = covered + dup + range + extra
   ESTIMATE  fidelity applied to every covered rule — the n/c ones too: how many bank
             rules agree with the official, of the covered and of the expected (a
             missing rule counts as not there). An agreement estimate, not a
@@ -89,23 +91,25 @@ def render_rulesbank(ev: RulesBankEvaluation) -> str:
          f"→ coverage {_pct(t.coverage)}   ({t.missing} missing)"),
         (f"VALUE     {t.value_equal} equal · {t.value_different} different · "
          f"{t.value_not_comparable} not comparable  → fidelity {_pct(t.fidelity)}"),
-        (f"BANK      {t.covered} covering + {t.bank_duplicates} duplicates + {t.bank_extra} "
-         f"extra = {t.bank_rules} rules   ({ev.bank_invalid_rules} with "
-         f"validation_passed=False)"),
+        (f"BANK      {t.covered} covering + {t.bank_duplicates} duplicates + "
+         f"{t.bank_ranges} more ranges + {t.bank_extra} extra = {t.bank_rules} rules   "
+         f"({ev.bank_invalid_rules} with validation_passed=False)"),
         *_estimate(t.covered, t.value_equal, t.value_different, t.expected),
         "",
         (f"{'':16} {'':>8} {'covered = equal + diff + n/c':>28}"),
         (f"{'rule_type':16} {'expected':>8} {'covered':>8} {'coverage':>9} "
-         f"{'equal':>6} {'diff':>5} {'n/c':>4}   {'dup':>4} {'extra':>6} {'bank':>5}"),
+         f"{'equal':>6} {'diff':>5} {'n/c':>4}   {'dup':>4} {'range':>5} {'extra':>6} "
+         f"{'bank':>5}"),
     ]
     for name, c in ev.by_rule_type.items():
         lines.append(f"{name:16} {c.expected:8} {c.covered:8} {_pct(c.coverage):>9} "
                      f"{c.value_equal:6} {c.value_different:5} {c.value_not_comparable:4}   "
-                     f"{c.bank_duplicates:4} {c.bank_extra:6} {c.bank_rules:5}")
+                     f"{c.bank_duplicates:4} {c.bank_ranges:5} {c.bank_extra:6} "
+                     f"{c.bank_rules:5}")
     lines += [(f"{'TOTAL':16} {t.expected:8} {t.covered:8} {_pct(t.coverage):>9} "
                f"{t.value_equal:6} {t.value_different:5} {t.value_not_comparable:4}   "
-               f"{t.bank_duplicates:4} {t.bank_extra:6} {t.bank_rules:5}"),
-              f"{'':16} {'':8} bank = covered + dup + extra",
+               f"{t.bank_duplicates:4} {t.bank_ranges:5} {t.bank_extra:6} {t.bank_rules:5}"),
+              f"{'':16} {'':8} bank = covered + dup + range + extra",
               "", _RULESBANK_LEGEND]
 
     if ev.missing:
@@ -117,7 +121,9 @@ def render_rulesbank(ev: RulesBankEvaluation) -> str:
         for m in different:
             lines.append(f"  ! {_mapping_line(m.expected)}")
             lines.append(f"      official: {m.expected['openapi_mapping']['openapi_value']}")
-            lines.append(f"      bank    : {m.bank[0].openapi_value}")
+            for b in (m.bank if m.ranges else m.bank[:1]):
+                lines.append(f"      bank    : {b.openapi_field + ': ' if m.ranges else ''}"
+                             f"{b.openapi_value}")
             lines.append(f"      why     : {m.note}")
     if ev.shared_addresses:
         lines += ["", (f"DUPLICATES — one official address, several bank rules "

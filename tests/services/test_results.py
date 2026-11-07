@@ -24,13 +24,14 @@ BANK_I20_PROVMNS = ROOT / "data/inputs/rulesbank/ProvMnS/rules_bank_28532-i20_fu
 OFFICIAL_PROVMNS = reference_yaml("ProvMnS", "18.2.0")
 
 # (expected, covered, value_equal, value_different, value_not_comparable,
-#  bank_rules, bank_extra, bank_invalid_rules, shared_addresses)
+#  bank_rules, bank_extra, bank_invalid_rules, shared_addresses, bank_ranges)
+# since 07/nov/2026 an official default is covered by the bank's 4XX / 5XX (docs/RULES.md §4)
 RULES_BANK_RESULTS = {
-    "rules_bank_28532-i20_full_20260915_214107": (107, 81, 53, 19, 9, 122, 39, 14, 2),
-    "rules_bank_28532-i00_full_20260828_210819": (97, 57, 39, 14, 4, 97, 39, 5, 1),  # v17.5.0
-    "rules_bank_28532-i20_full_20260915_232343": (15, 14, 13, 0, 1, 18, 4, 1, 0),
-    "rules_bank_28532-i00_full_20260926_182802": (15, 14, 13, 0, 1, 22, 8, 0, 0),
-    "rules_bank_28532-i00_full_20260818_214526": (15, 13, 11, 1, 1, 17, 3, 0, 1),
+    "rules_bank_28532-i20_full_20260915_214107": (107, 87, 53, 25, 9, 122, 28, 14, 2, 5),
+    "rules_bank_28532-i00_full_20260828_210819": (97, 59, 39, 16, 4, 97, 35, 5, 1, 2),  # v17.5.0
+    "rules_bank_28532-i20_full_20260915_232343": (15, 15, 13, 1, 1, 18, 2, 1, 0, 1),
+    "rules_bank_28532-i00_full_20260926_182802": (15, 15, 13, 1, 1, 22, 6, 0, 0, 1),
+    "rules_bank_28532-i00_full_20260818_214526": (15, 14, 12, 1, 1, 17, 1, 0, 1, 1),
 }
 
 # contract leaves: (total, exact, absent, differing, extra)
@@ -66,7 +67,7 @@ def test_rules_bank_results(bank_reports, bank):
     t = r.totals
     assert (t.expected, t.covered, t.value_equal, t.value_different, t.value_not_comparable,
             t.bank_rules, t.bank_extra, r.bank_invalid_rules,
-            len(r.shared_addresses)) == RULES_BANK_RESULTS[bank]
+            len(r.shared_addresses), t.bank_ranges) == RULES_BANK_RESULTS[bank]
 
 
 def test_rules_bank_i20_provmns_by_rule_type(bank_reports):
@@ -82,7 +83,7 @@ def test_rules_bank_i20_provmns_by_rule_type(bank_reports):
         "path_parameter":  (2, 2, 2, 0, 0, 3, 1),
         "query_parameter": (5, 0, 0, 0, 0, 6, 6),       # all at path level (§3.22)
         "request_body":    (11, 8, 8, 0, 0, 9, 1),
-        "response":        (21, 13, 2, 5, 6, 32, 19),
+        "response":        (21, 19, 2, 11, 6, 32, 8),       # 6 defaults covered by 4XX/5XX
         "schema_property": (59, 49, 37, 9, 3, 62, 12),
     }
 
@@ -90,7 +91,7 @@ def test_rules_bank_i20_provmns_by_rule_type(bank_reports):
 def test_bank_rules_add_up_for_every_bank(bank_reports):
     for r in bank_reports.values():
         t = r.totals
-        assert t.bank_rules == t.covered + t.bank_duplicates + t.bank_extra
+        assert t.bank_rules == t.covered + t.bank_duplicates + t.bank_ranges + t.bank_extra
 
 
 def test_generated_provmns_defects_are_located(openapi_reports):

@@ -17,6 +17,11 @@ VALUE   — for a covered rule, the first bank rule's value is checked against t
             request_body   the media type is the address itself — equal by match.
           Where the official YAML has nothing to compare against (a body-less
           response, a property with no type), the value is "not_comparable".
+DEFAULT — an official `default` response with no bank rule on its address is covered by
+          the bank's 4XX / 5XX of the same operation or callback (those the official
+          does not declare itself): both say "every error". Its value is compared with
+          each of them, so another $ref stays a difference; they are its match, not
+          extras.
 """
 
 from __future__ import annotations
@@ -139,6 +144,31 @@ def _bank_ref(index: int, rule: dict) -> BankRuleRef:
     )
 
 
+_RANGES = ("4XX", "5XX")
+
+
+def _ranges_of(key: RuleKey, by_key: dict[RuleKey, list[int]],
+               official_keys: set[RuleKey]) -> list[RuleKey]:
+    """The bank's 4XX / 5XX on the operation of an official `default` response, those the
+    official does not declare itself."""
+    rule_type, obj, field, _ = key
+    if rule_type != "response" or field != "default":
+        return []
+    return [k for k in by_key if k[0] == rule_type and k[1] == obj
+            and k[2].upper() in _RANGES and k not in official_keys]
+
+
+def _compare_ranges(expected: dict, ranges: list[dict]) -> tuple[ValueStatus, str]:
+    """A default against each 4XX / 5XX standing for it: equal only if all are."""
+    judged = [(_mapping(r).get("openapi_field", ""), *compare_value(expected, r)) for r in ranges]
+    for status in ("different", "not_comparable"):
+        notes = [f"{field}: {note}" for field, s, note in judged if s == status]
+        if notes:
+            return status, "default covered by " + ", ".join(f for f, *_ in judged) + " — " \
+                + "; ".join(notes)
+    return "equal", ""
+
+
 def compare_rules(official_rules: list[dict], bank: dict, *,
                   official: SourceInfo | None = None,
                   bank_info: SourceInfo | None = None) -> RulesBankEvaluation:
@@ -151,28 +181,36 @@ def compare_rules(official_rules: list[dict], bank: dict, *,
     counts: dict[str, Counts] = defaultdict(Counts)
     matches: list[RuleMatch] = []
     missing: list[dict] = []
-    official_keys: set[RuleKey] = set()
+    official_keys = {rule_key(rule) for rule in official_rules}
+    matched_keys = set(official_keys)
     for rule in official_rules:
         key = rule_key(rule)
-        official_keys.add(key)
         c = counts[rule["rule_type"]]
         c.expected += 1
         hits = by_key.get(key)
-        if not hits:
+        ranges = [] if hits else _ranges_of(key, by_key, official_keys)
+        if not hits and not ranges:
             missing.append(rule)
             continue
         c.covered += 1
-        c.bank_duplicates += len(hits) - 1
-        status, note = compare_value(rule, bank_rules[hits[0]])
+        if ranges:
+            matched_keys.update(ranges)
+            hits = [i for k in ranges for i in by_key[k]]
+            c.bank_duplicates += len(hits) - len(ranges)
+            c.bank_ranges += len(ranges) - 1
+            status, note = _compare_ranges(rule, [bank_rules[by_key[k][0]] for k in ranges])
+        else:
+            c.bank_duplicates += len(hits) - 1
+            status, note = compare_value(rule, bank_rules[hits[0]])
         setattr(c, f"value_{status}", getattr(c, f"value_{status}") + 1)
         matches.append(RuleMatch(expected=rule, bank=[_bank_ref(i, bank_rules[i]) for i in hits],
-                                 value_status=status, note=note))
+                                 value_status=status, note=note, ranges=bool(ranges)))
 
     extra: list[ExtraRule] = []
     for i, rule in enumerate(bank_rules):
         c = counts[rule.get("rule_type", "")]
         c.bank_rules += 1
-        if rule_key(rule) in official_keys:
+        if rule_key(rule) in matched_keys:
             continue
         c.bank_extra += 1
         reason = ("unknown_rule_type" if rule.get("rule_type") not in KNOWN_RULE_TYPES

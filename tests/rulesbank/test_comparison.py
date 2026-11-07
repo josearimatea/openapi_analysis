@@ -130,6 +130,56 @@ def test_media_type_is_identity_for_request_body():
     assert ev.totals.covered == 1 and ev.totals.missing == 1
 
 
+R = "paths./x.get.responses"
+ERR = "$ref: '#/components/schemas/ErrorResponse'"
+
+
+def test_a_default_is_covered_by_the_4xx_and_5xx_of_its_operation():
+    official = [rule("response", R, "default", ERR, refs=[("", "ErrorResponse")])]
+    bank = {"rules": [rule("response", R, "4XX", ERR, refs=[("", "ErrorResponse")]),
+                      rule("response", R, "5XX", ERR, refs=[("", "ErrorResponse")]),
+                      rule("response", "paths./y.get.responses", "4XX", ERR)]}
+    ev = compare_rules(official, bank)
+    t = ev.totals
+    assert (t.covered, t.value_equal, t.bank_ranges, t.bank_duplicates, t.bank_extra) == (
+        1, 1, 1, 0, 1)                                 # /y is another operation: extra
+    assert t.bank_rules == t.covered + t.bank_duplicates + t.bank_ranges + t.bank_extra
+    assert ev.shared_addresses == [] and ev.matches[0].ranges
+
+
+def test_a_default_covered_by_one_range_compares_its_ref():
+    official = [rule("response", R, "default", "$ref: '#/components/schemas/ErrorResponseDefault'",
+                     refs=[("", "ErrorResponseDefault")])]
+    bank = {"rules": [rule("response", R, "4XX", ERR, refs=[("", "ErrorResponse")])]}
+    ev = compare_rules(official, bank)
+    m = ev.matches[0]
+    assert ev.totals.covered == 1 and ev.totals.bank_ranges == 0
+    assert m.value_status == "different" and "4XX" in m.note and "ErrorResponse" in m.note
+
+
+def test_ranges_the_official_declares_are_not_taken_by_its_default():
+    official = [rule("response", R, "default", ERR), rule("response", R, "4XX", ERR)]
+    bank = {"rules": [rule("response", R, "4XX", ERR)]}
+    t = compare_rules(official, bank).totals
+    assert (t.covered, t.missing, t.bank_ranges, t.bank_extra) == (1, 1, 0, 0)
+
+
+def test_a_bank_default_is_matched_by_address_not_by_ranges():
+    official = [rule("response", R, "default", ERR)]
+    bank = {"rules": [rule("response", R, "default", ERR), rule("response", R, "4XX", ERR)]}
+    ev = compare_rules(official, bank)
+    assert not ev.matches[0].ranges and ev.totals.bank_extra == 1
+
+
+def test_two_rules_on_one_range_are_a_duplicate():
+    official = [rule("response", R, "default", ERR)]
+    bank = {"rules": [rule("response", R, "4XX", ERR), rule("response", R, "4XX", ERR),
+                      rule("response", R, "5XX", ERR)]}
+    ev = compare_rules(official, bank)
+    assert (ev.totals.bank_duplicates, ev.totals.bank_ranges) == (1, 1)
+    assert len(ev.shared_addresses) == 1
+
+
 def test_coverage_and_fidelity_ratios():
     official = [rule("schema_property", S, "properties.a", "string"),
                 rule("schema_property", S, "properties.b", "string"),

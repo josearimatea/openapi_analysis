@@ -290,7 +290,7 @@ def rulesbank_parts(report: RulesBankEvaluation, bank: dict, input_label: str = 
     for m in report.matches:
         bank_rules = [rules[b.index] for b in m.bank]
         owner = _address(m.expected)
-        if len(m.bank) > 1:
+        if m.shared():
             parts.append(_rule_part(label, owner, "duplicate",
                                     f"{len(m.bank)} bank rules on one official address "
                                     f"(rules {[b.index for b in m.bank]}); first value: "

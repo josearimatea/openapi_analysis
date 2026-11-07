@@ -37,8 +37,14 @@ class RuleMatch(BaseModel):
     """An official rule found in the bank, and how its value compares."""
     expected: dict[str, Any]                 # the official rule (rules-bank format)
     bank: list[BankRuleRef]                  # every bank rule on that address
-    value_status: ValueStatus                # judged on bank[0]
+    value_status: ValueStatus                # judged on bank[0] (ranges: on each range)
     note: str = ""                           # why, when not "equal"
+    ranges: bool = False                     # an official default matched by the bank's
+    #                                          4XX / 5XX of the same operation
+
+    def shared(self) -> bool:
+        """More than one bank rule on one address (the 4XX and 5XX of a default are one)."""
+        return len(self.bank) > (len({b.openapi_field for b in self.bank}) if self.ranges else 1)
 
 
 class ExtraRule(BaseModel):
@@ -54,8 +60,10 @@ class Counts(BaseModel):
     value_equal: int = 0
     value_different: int = 0
     value_not_comparable: int = 0
-    bank_rules: int = 0          # rules in the bank = covered + bank_duplicates + bank_extra
+    bank_rules: int = 0          # rules in the bank = covered + bank_duplicates + bank_ranges
+    #                              + bank_extra
     bank_duplicates: int = 0     # … on an official address another bank rule already holds
+    bank_ranges: int = 0         # … a further 4XX / 5XX standing for one official default
     bank_extra: int = 0          # … on no official address
 
     @computed_field
@@ -101,4 +109,4 @@ class RulesBankEvaluation(BaseModel):
     @property
     def shared_addresses(self) -> list[RuleMatch]:
         """Official addresses held by more than one bank rule (§3.24 / §3.27)."""
-        return [m for m in self.matches if len(m.bank) > 1]
+        return [m for m in self.matches if m.shared()]
