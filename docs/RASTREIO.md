@@ -624,3 +624,30 @@ Os `default` recém-cobertos saem quase todos como diferentes: o banco perdeu o 
 `oneOf`, sem as referências. A comparação diz "o banco tem `$ref` onde o YAML não tem": o status
 (diferente) está certo, a nota não. Fica para corrigir na extração.
 
+## Composição dentro de uma propriedade ou de uma resposta (07/nov/2026)
+
+**O que estava errado.** Procurando o caso do PATCH nos 9 YAMLs oficiais, achei composição no
+lugar de um schema em 3 deles (ProvMnS 18.2.0, FaultMnS 17.2.0, StreamingDataMnS 17.1.0), com
+dois defeitos da extração:
+
+1. **Sem referências.** Um schema que é ele mesmo um `oneOf` (o corpo de uma resposta, uma
+   propriedade) saía com valor `oneOf` e sem `$ref`: a extração só pegava o `$ref` direto ou o
+   elemento de um array. O banco escreve `oneOf: [$ref: A, $ref: B]`, com as duas referências.
+2. **A composição da propriedade virava regra da raiz,** o mesmo defeito do `items`. O endereço
+   não dizia de qual propriedade era; duas propriedades com `oneOf` caíam na mesma chave, e a
+   segunda sumia (`streamInfo-Type.additionalInfo`, 4 tipos invisíveis); o `ThresholdHysteresis`
+   ganhava um `oneOf` na raiz que ele não tem. O contrato do gerador (`rules_check.py`) diz que a
+   palavra-chave vale para o schema inteiro e que o que está dentro de uma propriedade vai no
+   `openapi_value`.
+
+**Efeito.** Alvos: FaultMnS 259 -> 258, StreamingDataMnS 70 -> 69; os outros sem mudança. As
+referências mudam no `default` do PATCH (ProvMnS 18.2.0), no `streamId` e no `additionalInfo`
+(StreamingDataMnS), no `ThresholdHysteresis.high` e em 3 corpos de requisição (FaultMnS); estes
+não mudam a comparação, que casa o corpo pelo media type. Nos bancos de `data/inputs`, nenhum
+número muda: só a nota do `default` do PATCH, que agora diz o que falta (`ErrorResponseDefault`
+e `ErrorResponsePatch` externos, no lugar do `ErrorResponse` local).
+
+**Fica de fora.** O 200 de `/alarms` (FaultMnS) é um mapa (`additionalProperties`) de um `allOf`
+com `AlarmRecord`; a regra rasa trata "array de X" como tipado por X, mas não diz nada de "mapa de
+X". Fica assim até haver um banco da FaultMnS para comparar.
+

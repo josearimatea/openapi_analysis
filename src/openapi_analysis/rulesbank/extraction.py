@@ -25,6 +25,9 @@ Counting choices (pinned by tests):
     reference is the value, its interior belongs to the referenced schema (§3.10).
   - A collection keyword (enum, required, oneOf, ...) is ONE rule whose value is the
     whole collection (§3.27).
+  - The items, additionalProperties or oneOf / anyOf / allOf of a PROPERTY are part
+    of that property's rule, not rules at the root. A schema that is itself a
+    composition (the body of a response, a property) references its members.
   - A key met twice (the same property name at two nesting levels of one schema)
     is one rule; the first occurrence, in document order, gives its value.
 
@@ -54,15 +57,20 @@ def _ref_entry(ref: str) -> dict[str, str]:
     return {"file": file, "schema_name": pointer.rsplit("/", 1)[-1]}
 
 
-def _refs_in(node: Any) -> Iterator[str]:
+def _refs_in(node: Any, open_composition: bool = True) -> Iterator[str]:
     """The $refs the value of a rule points at — SHALLOW, never nested ones.
 
     A schema → its own $ref; an array schema → its element's $ref (an "array of X"
     is typed by X, which is what the bank writes); a list (oneOf/allOf members,
-    several media types) → that of each member. A $ref nested deeper (a property
+    several media types) → that of each member. A schema that is itself a oneOf /
+    anyOf / allOf (the body of a response, a property) → the $ref of each member,
+    as the bank writes "oneOf: [$ref: A, $ref: B]". A $ref nested deeper (a property
     inside an inline allOf member) belongs to the rule addressing that deeper
     element, not to this one — counting it here would make one missing ref fail
     two rules.
+
+    open_composition=False for the members of a composition keyword rule: a member
+    that is a composition again is the rule of that inner keyword.
     """
     members = node if isinstance(node, list) else [node]
     for member in members:
@@ -73,11 +81,15 @@ def _refs_in(node: Any) -> Iterator[str]:
         elif member.get("type") == "array" and isinstance(member.get("items"), dict) \
                 and isinstance(member["items"].get("$ref"), str):
             yield member["items"]["$ref"]
+        elif open_composition:
+            for kw in COMPOSITION_KEYWORDS:
+                if isinstance(member.get(kw), list):
+                    yield from _refs_in(member[kw], open_composition=False)
 
 
-def _references(node: Any) -> list[dict[str, str]]:
+def _references(node: Any, open_composition: bool = True) -> list[dict[str, str]]:
     seen: list[dict[str, str]] = []
-    for ref in _refs_in(node):
+    for ref in _refs_in(node, open_composition):
         entry = _ref_entry(ref)
         if entry not in seen:
             seen.append(entry)
@@ -95,8 +107,8 @@ def _schema_value(node: Any) -> str:
     if isinstance(node.get("type"), str):
         return node["type"]
     for kw in COMPOSITION_KEYWORDS:
-        if kw in node:
-            return kw
+        if isinstance(node.get(kw), list):
+            return f"{kw}: {_list_value(node[kw])}"
     return ""
 
 
@@ -106,11 +118,11 @@ def _list_value(items: list) -> str:
 
 
 def _rule(rule_type: str, obj: str, field: str, value: str = "",
-          refs_from: Any = None) -> dict[str, Any]:
+          refs_from: Any = None, open_composition: bool = True) -> dict[str, Any]:
     return {"rule_type": rule_type,
             "openapi_mapping": {"openapi_object": obj, "openapi_field": field,
                                 "openapi_value": value,
-                                "references": _references(refs_from)}}
+                                "references": _references(refs_from, open_composition)}}
 
 
 # ── paths ────────────────────────────────────────────────────────────────────
@@ -223,12 +235,14 @@ def _walk_schema(schema_name: str, node: Any, out: list[dict], seen: set[int],
     rule by its root). Recursion follows inline oneOf/anyOf/allOf, object
     properties, items and additionalProperties, and stops at any $ref.
 
-    is_property: the node is the schema of a property. Its items (an array) or
-    additionalProperties (a map) are part of that property's value — the
-    properties.<name> rule carries them, $ref included, as the spec gives the
-    attribute one type ("array(X)") — so they are no rule of their own. Without
-    this, they came out as an 'items' rule at the root, an address no rule of the
-    bank can hold. The descent into the element goes on.
+    is_property: the node is the schema of a property. Its items (an array),
+    additionalProperties (a map) or oneOf / anyOf / allOf (its alternatives) are part
+    of that property's value — the properties.<name> rule carries them, $refs
+    included, as the spec gives the attribute one type ("array(X)") — so they are no
+    rule of their own. Without this, they came out as a rule at the root, an address
+    that does not say which property it is: no rule of the bank can hold it, and two
+    properties with a oneOf fell on one key and the second was lost. The descent into
+    the element and the alternatives goes on.
     """
     if not isinstance(node, dict) or id(node) in seen or "$ref" in node:
         return
@@ -244,8 +258,13 @@ def _walk_schema(schema_name: str, node: Any, out: list[dict], seen: set[int],
         if is_property and kw in ("items", "additionalProperties"):
             _walk_schema(schema_name, node[kw], out, seen)
             continue
+        if is_property and kw in COMPOSITION_KEYWORDS:
+            for sub in node[kw]:
+                _walk_schema(schema_name, sub, out, seen, is_property=True)
+            continue
         out.append(_rule("schema_property", obj, kw, _keyword_value(kw, node[kw]),
-                         refs_from=node[kw] if kw not in ("enum", "required") else None))
+                         refs_from=node[kw] if kw not in ("enum", "required") else None,
+                         open_composition=False))
         if kw in COMPOSITION_KEYWORDS:
             for sub in node[kw]:
                 _walk_schema(schema_name, sub, out, seen)

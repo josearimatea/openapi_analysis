@@ -58,10 +58,10 @@ def test_provmns_total_and_breakdown(provmns):
     ("ProvMnS", "18.2.0", 107),
     ("PerfMnS", "17.1.0", 15),
     ("PerfMnS", "18.1.0", 15),
-    ("FaultMnS", "17.2.0", 259),
+    ("FaultMnS", "17.2.0", 258),            # a property's oneOf is part of its value
     ("FileDataReportingMnS", "17.1.0", 38),
     ("HeartbeatNtf", "17.1.0", 3),
-    ("StreamingDataMnS", "17.1.0", 70),
+    ("StreamingDataMnS", "17.1.0", 69),     # idem: two properties with a oneOf
 ])
 def test_every_official_yaml_total(service, version, total):
     assert summarize(rules_from_yaml(_load(service, version)))["total"] == total
@@ -153,6 +153,33 @@ def test_array_property_references_its_element(provmns):
                "properties.moiChanges")
     assert m["openapi_value"] == "array"
     assert m["references"] == [{"file": "", "schema_name": "MoiChange"}]
+
+
+def test_a_response_body_that_is_a_oneof_references_its_members(provmns):
+    m = _value(provmns, "response", "paths./{className}={id}.patch.responses", "default")
+    assert [r["schema_name"] for r in m["references"]] == ["ErrorResponseDefault",
+                                                           "ErrorResponsePatch"]
+    assert m["openapi_value"].startswith("oneOf: [$ref: 'TS28623_ComDefs.yaml#")
+
+
+def test_a_property_s_oneof_is_part_of_its_value():
+    """Not a 'oneOf' rule at the root: two such properties fell on one key."""
+    rules = rules_from_yaml(_load("StreamingDataMnS", "17.1.0"))
+    obj = "components/schemas/streamInfo-Type"
+    assert ("schema_property", obj, "oneOf", "") not in set(_by_key(rules))
+    stream = _value(rules, "schema_property", obj, "properties.streamId")
+    info = _value(rules, "schema_property", obj, "properties.additionalInfo")
+    assert [r["schema_name"] for r in stream["references"]] == ["streamId-Type",
+                                                                "traceReference-Type"]
+    assert len(info["references"]) == 4
+
+
+def test_a_schema_that_is_itself_a_composition_keeps_its_rule(provmns):
+    """Resource is a oneOf: that is its own rule, and the anyOf inside it another one."""
+    m = _value(provmns, "schema_property", "components/schemas/Resource", "oneOf")
+    assert m["references"] == []                     # the anyOf member is its own rule
+    assert len(_value(provmns, "schema_property", "components/schemas/Resource",
+                      "anyOf")["references"]) == 19         # the NRMs of 18.2.0
 
 
 def test_no_external_ref_interiors_leak_in(provmns):

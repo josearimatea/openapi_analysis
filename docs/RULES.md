@@ -58,6 +58,13 @@ Métodos aceitos: `get, put, post, delete, patch` (os mesmos nos três repos).
   25). Antes (até 07/nov/2026), esse `items` saía como uma regra `items` na raiz do schema,
   um endereço que nenhuma regra do banco pode ter. O `items` de um schema que é ele mesmo
   um array (na raiz, como `Resource.additionalProperties`) continua sendo regra.
+- **O `oneOf`/`anyOf`/`allOf` de uma propriedade também é parte do valor dela** (desde
+  07/nov/2026), pelo mesmo motivo e pelo contrato do gerador (`rules_check.py`: a palavra-chave
+  vale para o schema inteiro; o que está dentro de uma propriedade vai no `openapi_value`).
+  Antes, saía como regra `oneOf` na raiz do schema: o endereço não dizia de qual propriedade era,
+  e duas propriedades com `oneOf` caíam na mesma chave, de modo que a segunda sumia
+  (`streamInfo-Type.streamId` e `.additionalInfo`, StreamingDataMnS). A composição do próprio
+  schema (`Resource`, `PerfMetricValue`, o `allOf` dos `NotifyMoi*`) continua sendo regra.
 - **Keyword-coleção = uma regra** (`enum`, `required`, `oneOf`...), valor = a coleção
   inteira (§3.27). Um banco que emite uma regra por item fica com o 1º item no
   endereço e o resto vira "endereço compartilhado".
@@ -68,9 +75,10 @@ Métodos aceitos: `get, put, post, delete, patch` (os mesmos nos três repos).
 - `additionalProperties: true/false` (booleano) não é regra.
 
 Contagem por YAML oficial (desde 07/nov/2026): ProvMnS 17.5.0 = 97, 17.7.0 = 106,
-**18.2.0 = 107**; PerfMnS 17.1.0 = 15, **18.1.0 = 15**; FaultMnS 17.2.0 = 259;
-FileDataReportingMnS 17.1.0 = 38; HeartbeatNtf 17.1.0 = 3; StreamingDataMnS 17.1.0 = 70.
-Antes: 103, 112, 113, 15, 15, 260, 40, 3 e 74 (a diferença é o `items` de propriedade).
+**18.2.0 = 107**; PerfMnS 17.1.0 = 15, **18.1.0 = 15**; FaultMnS 17.2.0 = 258;
+FileDataReportingMnS 17.1.0 = 38; HeartbeatNtf 17.1.0 = 3; StreamingDataMnS 17.1.0 = 69.
+Antes: 103, 112, 113, 15, 15, 260, 40, 3 e 74. A diferença é o `items` de propriedade e, na
+FaultMnS e na StreamingDataMnS, mais 1 cada pelo `oneOf` de propriedade.
 
 ## 4. Decisões de comparação de valor (travadas em `tests/rulesbank/test_comparison.py`)
 
@@ -83,7 +91,12 @@ fidelidade = valor certo onde dá para conferir.
 - **Referências rasas**: uma regra referencia o `$ref` do próprio nó, ou dos membros
   de uma composição, ou do elemento de um array (`array of X`). Um `$ref` mais fundo
   pertence à regra que endereça aquele elemento — senão uma falta reprovaria duas
-  regras.
+  regras. Um schema que é ele mesmo uma composição (o corpo de uma resposta, uma
+  propriedade) referencia os membros, como o banco escreve (`oneOf: [$ref: A, $ref: B]`);
+  isso faltava até 07/nov/2026, e o `default` do PATCH da ProvMnS 18.2.0 saía sem
+  referências. Na regra de uma palavra-chave de composição, um membro que é outra
+  composição não é aberto: ele tem a sua própria regra (o `anyOf` dentro do `oneOf` do
+  `Resource`).
 - **`enum` / `required`**: conjunto de itens, ordem ignorada. Se o banco escreve os
   itens com prosa, confere-se só a presença de cada item oficial.
 - **Tipo**: o tipo JSON com que o valor do banco começa (`string (date-time)` = string).
