@@ -18,10 +18,12 @@ VALUE   — for a covered rule, the first bank rule's value is checked against t
           Where the official YAML has nothing to compare against (a body-less
           response, a property with no type), the value is "not_comparable".
 DEFAULT — an official `default` response with no bank rule on its address is covered by
-          the bank's 4XX / 5XX of the same operation or callback (those the official
-          does not declare itself): both say "every error". Its value is compared with
-          each of them, so another $ref stays a difference; they are its match, not
-          extras.
+          the bank's 4XX AND 5XX of the same operation or callback (those the official
+          does not declare itself): together they say "every error", as `default` does
+          (OpenAPI: default covers the codes not declared; 4XX covers 400-499 only). Its
+          value is compared with each of them, so another $ref stays a difference; they
+          are its match, not extras. With only one of them the default is missing, and
+          the one there stays extra, both with a note saying which range is lacking.
 """
 
 from __future__ import annotations
@@ -38,6 +40,7 @@ from openapi_analysis.schemas.rulesbank import (
     RulesBankEvaluation,
     SourceInfo,
     ValueStatus,
+    address_of,
 )
 
 _REF = re.compile(r"([A-Za-z0-9_.\-]+\.ya?ml)?#/components/[A-Za-z]+/([A-Za-z0-9_.\-]+)")
@@ -181,6 +184,8 @@ def compare_rules(official_rules: list[dict], bank: dict, *,
     counts: dict[str, Counts] = defaultdict(Counts)
     matches: list[RuleMatch] = []
     missing: list[dict] = []
+    missing_notes: dict[str, str] = {}
+    in_part: dict[RuleKey, str] = {}           # a lone 4XX / 5XX: why it is extra
     official_keys = {rule_key(rule) for rule in official_rules}
     matched_keys = set(official_keys)
     for rule in official_rules:
@@ -189,6 +194,14 @@ def compare_rules(official_rules: list[dict], bank: dict, *,
         c.expected += 1
         hits = by_key.get(key)
         ranges = [] if hits else _ranges_of(key, by_key, official_keys)
+        there = sorted({k[2].upper() for k in ranges})
+        if ranges and there != list(_RANGES):
+            lacking = ", ".join(r for r in _RANGES if r not in there)
+            note = (f"the bank replaced default by {', '.join(there)} only: {lacking} "
+                    "missing")
+            missing_notes[address_of(rule)] = note
+            in_part.update(dict.fromkeys(ranges, note))
+            ranges = []
         if not hits and not ranges:
             missing.append(rule)
             continue
@@ -215,7 +228,8 @@ def compare_rules(official_rules: list[dict], bank: dict, *,
         c.bank_extra += 1
         reason = ("unknown_rule_type" if rule.get("rule_type") not in KNOWN_RULE_TYPES
                   else "not_in_official_yaml")
-        extra.append(ExtraRule(rule=_bank_ref(i, rule), reason=reason))
+        extra.append(ExtraRule(rule=_bank_ref(i, rule), reason=reason,
+                               note=in_part.get(rule_key(rule), "")))
 
     totals = Counts()
     for c in counts.values():
@@ -230,5 +244,5 @@ def compare_rules(official_rules: list[dict], bank: dict, *,
         bank_invalid_rules=sum(1 for r in bank_rules if r.get("validation_passed") is False),
         totals=totals,
         by_rule_type=dict(sorted(counts.items())),
-        matches=matches, missing=missing, extra=extra,
+        matches=matches, missing=missing, missing_notes=missing_notes, extra=extra,
     )

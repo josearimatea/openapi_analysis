@@ -27,7 +27,7 @@ OFFICIAL_PROVMNS = reference_yaml("ProvMnS", "18.2.0")
 #  bank_rules, bank_extra, bank_invalid_rules, shared_addresses, bank_ranges)
 # since 07/nov/2026 an official default is covered by the bank's 4XX / 5XX (docs/RULES.md §4)
 RULES_BANK_RESULTS = {
-    "rules_bank_28532-i20_full_20260915_214107": (107, 87, 53, 25, 9, 122, 28, 14, 2, 5),
+    "rules_bank_28532-i20_full_20260915_214107": (107, 86, 53, 24, 9, 122, 29, 14, 2, 5),
     "rules_bank_28532-i00_full_20260828_210819": (97, 59, 39, 16, 4, 97, 35, 5, 1, 2),  # v17.5.0
     "rules_bank_28532-i20_full_20260915_232343": (15, 15, 13, 1, 1, 18, 2, 1, 0, 1),
     "rules_bank_28532-i00_full_20260926_182802": (15, 15, 13, 1, 1, 22, 6, 0, 0, 1),
@@ -83,7 +83,8 @@ def test_rules_bank_i20_provmns_by_rule_type(bank_reports):
         "path_parameter":  (2, 2, 2, 0, 0, 3, 1),
         "query_parameter": (5, 0, 0, 0, 0, 6, 6),       # all at path level (§3.22)
         "request_body":    (11, 8, 8, 0, 0, 9, 1),
-        "response":        (21, 19, 2, 11, 6, 32, 8),       # 6 defaults covered by 4XX/5XX
+        "response":        (21, 18, 2, 10, 6, 32, 9),       # 5 defaults covered by 4XX+5XX;
+                                                            # 1 replaced by 4XX alone: missing
         "schema_property": (59, 49, 37, 9, 3, 62, 12),
     }
 

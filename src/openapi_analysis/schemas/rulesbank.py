@@ -51,6 +51,7 @@ class ExtraRule(BaseModel):
     """A bank rule whose address is not in the official YAML."""
     rule: BankRuleRef
     reason: Literal["unknown_rule_type", "not_in_official_yaml"]
+    note: str = ""                           # e.g. a 4XX standing for a default in part
 
 
 class Counts(BaseModel):
@@ -103,6 +104,8 @@ class RulesBankEvaluation(BaseModel):
     by_rule_type: dict[str, Counts]
     matches: list[RuleMatch]
     missing: list[dict[str, Any]]             # official rules with no bank rule
+    missing_notes: dict[str, str] = Field(default_factory=dict)   # why, by address_of
+    #                                          (a default replaced by 4XX alone)
     extra: list[ExtraRule]
 
     @computed_field
@@ -110,3 +113,12 @@ class RulesBankEvaluation(BaseModel):
     def shared_addresses(self) -> list[RuleMatch]:
         """Official addresses held by more than one bank rule (§3.24 / §3.27)."""
         return [m for m in self.matches if m.shared()]
+
+    def missing_note(self, rule: dict[str, Any]) -> str:
+        return self.missing_notes.get(address_of(rule), "")
+
+
+def address_of(rule: dict[str, Any]) -> str:
+    """'<openapi_object> · <openapi_field>' of a rule: the key of missing_notes."""
+    m = rule.get("openapi_mapping") or {}
+    return f"{m.get('openapi_object', '')} · {m.get('openapi_field', '')}"

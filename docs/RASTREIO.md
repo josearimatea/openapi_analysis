@@ -624,6 +624,19 @@ Os `default` recém-cobertos saem quase todos como diferentes: o banco perdeu o 
 `oneOf`, sem as referências. A comparação diz "o banco tem `$ref` onde o YAML não tem": o status
 (diferente) está certo, a nota não. Fica para corrigir na extração.
 
+## `default` só é coberto pelos 4XX e 5XX juntos (07/nov/2026)
+
+**O que estava errado na regra acima.** Bastava um `4XX` ou um `5XX` para cobrir o `default`.
+Pela OpenAPI 3.0 (Responses Object), `default` documenta "responses other than the ones
+declared", e `4XX` cobre só de 400 a 499: com só o `4XX`, os erros 5xx ficam sem documentação.
+Agora são exigidos os dois. Com um só, o `default` conta como faltando e o range como extra,
+com a nota "the bank replaced default by 4XX only: 5XX missing"; se o extra é útil ou melhoria,
+é o juiz quem decide.
+
+**Efeito.** Um caso nos bancos de `data/inputs`: o callback `notifyMOIAttributeValueChanges`
+do i20 da ProvMnS, que tem só o `4XX`. Esse banco vai de 87 para 86/107 (80,4%), diferentes de
+25 para 24, extras de 28 para 29; fidelidade 53/77 (68,8%). Os outros quatro não mudam.
+
 ## Composição dentro de uma propriedade ou de uma resposta (07/nov/2026)
 
 **O que estava errado.** Procurando o caso do PATCH nos 9 YAMLs oficiais, achei composição no

@@ -41,7 +41,8 @@ _RULESBANK_LEGEND = """\
 LEGEND
   expected  rules extracted from the official YAML (one per address)
   covered   … that have at least one bank rule on the same address; an official
-            default response is also covered by the bank's 4XX / 5XX of that operation
+            default response is also covered by the bank's 4XX AND 5XX of that
+            operation (with only one of them it is missing, and that one is extra)
             covered = equal + diff + n/c
   coverage  covered / expected                       (is the ADDRESS there?)
   equal     the bank rule's value is the official value (for a default covered by
@@ -114,7 +115,10 @@ def render_rulesbank(ev: RulesBankEvaluation) -> str:
 
     if ev.missing:
         lines += ["", f"MISSING — official rules with no bank rule ({len(ev.missing)}):"]
-        lines += [f"  - {_mapping_line(r)}" for r in ev.missing]
+        for r in ev.missing:
+            lines.append(f"  - {_mapping_line(r)}")
+            if ev.missing_note(r):
+                lines.append(f"      why     : {ev.missing_note(r)}")
     different = [m for m in ev.matches if m.value_status == "different"]
     if different:
         lines += ["", f"WRONG VALUE — on the right address ({len(different)}):"]
@@ -138,6 +142,8 @@ def render_rulesbank(ev: RulesBankEvaluation) -> str:
             r = x.rule
             lines.append(f"  + [{r.index}] {r.rule_type:15} {r.openapi_object}  ·  "
                          f"{r.openapi_field}   ({x.reason})")
+            if x.note:
+                lines.append(f"      why     : {x.note}")
     return "\n".join(lines)
 
 

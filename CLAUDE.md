@@ -155,11 +155,11 @@ O padrão de pastas segue os irmãos (`config/`, `schemas/`, `services/`,
 
 **Resultados travados** (`uv run openapi-analysis all` → `data/outputs/rulesbank/<Serviço>/`
 e `data/outputs/generator/<Serviço>/`, um relatório `.json` + `.txt` por insumo):
-banco i20 ProvMnS × v18.2.0 = **87/107 cobertos (81,3%)**, fidelidade **53/78 (67,9%)**,
-28 regras do banco fora de qualquer endereço oficial, 5 casos de §3.23 medidos. Mudou duas
+banco i20 ProvMnS × v18.2.0 = **86/107 cobertos (80,4%)**, fidelidade **53/77 (68,8%)**,
+29 regras do banco fora de qualquer endereço oficial, 5 casos de §3.23 medidos. Mudou duas
 vezes em 07/nov/2026: era 81/113 até o `items` de propriedade deixar de ser regra própria
-(81/107), e 87/107 desde que um `default` oficial é coberto pelos 4XX/5XX do banco (antes,
-fidelidade 53/72 e 39 extras).
+(81/107), e 86/107 desde que um `default` oficial é coberto pelos 4XX e 5XX do banco, os
+dois juntos (antes, fidelidade 53/72 e 39 extras).
 Query params: 0/5 (todos no path — §3.22, banco anterior à correção do rulesbank).
 
 Rodar:

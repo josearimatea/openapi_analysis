@@ -300,11 +300,14 @@ def rulesbank_parts(report: RulesBankEvaluation, bank: dict, input_label: str = 
             parts.append(_rule_part(label, owner, "different", f"value differs — {m.note}",
                                     m.expected, bank_rules))
     for r in report.missing:
+        why = report.missing_note(r)
         parts.append(_rule_part(label, _address(r), "missing",
-                                "official rule with no bank rule on its address", r, []))
+                                "official rule with no bank rule on its address"
+                                + (f" — {why}" if why else ""), r, []))
     for x in report.extra:
         rule = rules[x.rule.index]
         parts.append(_rule_part(label, _address(rule), "extra",
-                                f"bank rule on no official address ({x.reason})", None, [rule],
+                                f"bank rule on no official address ({x.reason})"
+                                + (f" — {x.note}" if x.note else ""), None, [rule],
                                 suffix=f"#{x.rule.index}"))
     return parts

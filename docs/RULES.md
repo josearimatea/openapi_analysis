@@ -104,13 +104,21 @@ fidelidade = valor certo onde dá para conferir.
   **request_body**: o media type é o próprio endereço — igual por definição.
 - **Sem o que comparar** (resposta sem corpo, propriedade sem tipo): `not_comparable`.
 - **`default` × 4XX/5XX** (desde 07/nov/2026): uma resposta `default` do oficial sem regra do
-  banco no mesmo endereço é coberta pelos `4XX`/`5XX` do banco na mesma operação ou no mesmo
-  callback, desde que o oficial não os declare ele mesmo. Os dois dizem "todo erro". O valor
-  do `default` é comparado com o de cada um: igual só se todos forem iguais, de modo que outro
-  `$ref` continua diferença (ex.: `ErrorResponseDefault` no oficial, `ErrorResponse` no
-  banco). Esses 4XX/5XX deixam de ser extras: o primeiro conta como cobertura e o segundo
-  como `range`, e a soma do banco passa a ser cobertura + duplicatas + `range` + extras. Um
-  `default` que o banco também declara casa pelo endereço, e os 4XX/5XX continuam extras.
+  banco no mesmo endereço é coberta pelos `4XX` **e** `5XX` do banco na mesma operação ou no
+  mesmo callback, desde que o oficial não os declare ele mesmo. Pela OpenAPI 3.0 (Responses
+  Object), `default` documenta "responses other than the ones declared", e `4XX` cobre só de
+  400 a 499: só os dois juntos fazem o papel do `default`. O valor do `default` é comparado
+  com o de cada um: igual só se os dois forem iguais, de modo que outro `$ref` continua
+  diferença (ex.: `ErrorResponseDefault` no oficial, `ErrorResponse` no banco). Esses 4XX/5XX
+  deixam de ser extras: o primeiro conta como cobertura e o segundo como `range`, e a soma do
+  banco passa a ser cobertura + duplicatas + `range` + extras. Um `default` que o banco também
+  declara casa pelo endereço, e os 4XX/5XX continuam extras.
+  - **Só um dos dois** (ex.: só `4XX`): o `default` conta como faltando, e o `4XX` como extra,
+    os dois com a nota "the bank replaced default by 4XX only: 5XX missing". Se esse extra é
+    útil ou melhoria, é o juiz (camada 3) que decide, lendo a nota.
+  - **Premissa:** o `default` também cobriria 1xx, 2xx e 3xx não declarados, que `4XX` +
+    `5XX` não cobrem. A regra o trata como "todo erro", como nos YAMLs da TS 28.532: a
+    descrição dele é "Error case." e a spec lista só 4xx/5xx para os erros.
 
 ## 5. Decisões em aberto
 

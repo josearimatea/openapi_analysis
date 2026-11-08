@@ -147,14 +147,24 @@ def test_a_default_is_covered_by_the_4xx_and_5xx_of_its_operation():
     assert ev.shared_addresses == [] and ev.matches[0].ranges
 
 
-def test_a_default_covered_by_one_range_compares_its_ref():
+def test_a_default_covered_by_the_ranges_compares_its_ref():
     official = [rule("response", R, "default", "$ref: '#/components/schemas/ErrorResponseDefault'",
                      refs=[("", "ErrorResponseDefault")])]
-    bank = {"rules": [rule("response", R, "4XX", ERR, refs=[("", "ErrorResponse")])]}
-    ev = compare_rules(official, bank)
-    m = ev.matches[0]
-    assert ev.totals.covered == 1 and ev.totals.bank_ranges == 0
+    bank = {"rules": [rule("response", R, "4XX", ERR, refs=[("", "ErrorResponse")]),
+                      rule("response", R, "5XX", ERR, refs=[("", "ErrorResponse")])]}
+    m = compare_rules(official, bank).matches[0]
     assert m.value_status == "different" and "4XX" in m.note and "ErrorResponse" in m.note
+
+
+def test_a_default_replaced_by_one_range_only_is_missing():
+    """OpenAPI: default covers the codes not declared, 4XX only 400-499 — 5XX is lacking."""
+    official = [rule("response", R, "default", ERR)]
+    bank = {"rules": [rule("response", R, "4XX", ERR)]}
+    ev = compare_rules(official, bank)
+    t = ev.totals
+    assert (t.covered, t.missing, t.bank_ranges, t.bank_extra) == (0, 1, 0, 1)
+    assert ev.missing_note(official[0]) == "the bank replaced default by 4XX only: 5XX missing"
+    assert ev.extra[0].note == ev.missing_note(official[0])
 
 
 def test_ranges_the_official_declares_are_not_taken_by_its_default():
