@@ -664,3 +664,46 @@ e `ErrorResponsePatch` externos, no lugar do `ErrorResponse` local).
 com `AlarmRecord`; a regra rasa trata "array de X" como tipado por X, mas não diz nada de "mapa de
 X". Fica assim até haver um banco da FaultMnS para comparar.
 
+
+## O valor de um `additionalProperties` da raiz é uma regra só (08/nov/2026) — A VERIFICAR ANTES DE RODAR
+
+> **A VERIFICAR antes de rodar qualquer análise:** mudança de instrumento feita em 08/nov,
+> **sem commit**, a pedido do usuário. Revisar o diff de `rulesbank/extraction.py` e dos testes,
+> confirmar os números abaixo e só então commitar. Um banco medido antes deste commit e outro
+> depois não se comparam no total oficial da ProvMnS (107 -> 106).
+
+**O defeito.** A exceção de 07/nov ("o `items` de um schema que é ele mesmo um array, na raiz,
+como `Resource.additionalProperties`, continua sendo regra") estava errada para o `Resource`: ele
+não é um array, é um objeto; o array é o VALOR do mapa. A extração gerava
+`components/schemas/Resource · items` (valor `object`), endereço que diz que o `Resource` é um
+array de objetos — o mesmo problema já corrigido nas propriedades (um `items` na raiz que não diz
+a quem pertence). A spec dá uma linha, um tipo (`n/a | map(array(object))`, TS 28.532
+12.1.1.4.1a.1); o YAML escreve `type` e `items` juntos dentro do `additionalProperties`; a TS
+32.158 7.7 chaveia o objeto contido pelo nome da classe, com várias instâncias num array.
+
+**A mudança.** `_walk_schema` desce no valor de um `additionalProperties` da raiz como no schema de
+uma propriedade (`is_property=True`): o `items` e a composição dele são parte do valor da regra
+`additionalProperties`. O `items` de um schema que é ele mesmo um array na raiz
+(`CorrelatedNotifications`, `performanceMetrics-Type`) continua regra; o `Comments ·
+additionalProperties` ($ref) não muda.
+
+**Efeito, conferido nos 8 YAMLs de entrada.** Só a ProvMnS muda: 17.5.0 97 -> 96, 17.7.0 106 ->
+105, 18.2.0 107 -> 106 (schema_property 59 -> 58). Nos bancos de `data/inputs`, o total oficial e
+os faltantes caem 1 (nenhum tinha a regra `Resource · items`); cobertura e valores não mudam. Testes
+atualizados com o motivo (`test_extraction.py`, `test_results.py`, `test_parts.py`); 222 passam.
+A comparação de valor já aceitava a forma do banco: `array of object` tem `array` como primeiro
+tipo, igual ao oficial (no run do rulesbank de 02/nov a divergência veio do banco ter escrito
+JSON cru).
+
+**Origem.** openapi_rulesbank, Problems N.27 (03_Problems_ProvMnS.txt): o banco passa a escrever o
+mapa como uma regra `additionalProperties` com valor `array of object`.
+
+## Pendências vindas do rulesbank (08/nov/2026)
+
+Registradas em `RULES.md` §5, para não se perderem: (1) **verificar e commitar** a mudança do
+`additionalProperties` da raiz (seção acima) antes de qualquer análise; (2) decidir se o instrumento
+compara `style`/`explode`, que o banco passou a escrever no valor do `query_parameter` quando a spec os
+escreve; (3) decidir se o relatório mostra o campo novo `metadata.unresolved_missing`; (4) decidir se o
+corte próprio de `judge/spec_index.py`, que só os testes usam, sai — o índice já usa o do `qdrant_3gpp_rag`.
+Medir o banco novo só depois de (1).
+

@@ -28,6 +28,10 @@ Counting choices (pinned by tests):
   - The items, additionalProperties or oneOf / anyOf / allOf of a PROPERTY are part
     of that property's rule, not rules at the root. A schema that is itself a
     composition (the body of a response, a property) references its members.
+  - The same holds for the VALUE of a root additionalProperties (a map): its items
+    or composition are part of the additionalProperties rule (Resource: one rule,
+    value "array", no "Resource · items"). The items of a schema that is itself an
+    array (CorrelatedNotifications) stays a rule: it is that schema's own keyword.
   - A key met twice (the same property name at two nesting levels of one schema)
     is one rule; the first occurrence, in document order, gives its value.
 
@@ -268,8 +272,14 @@ def _walk_schema(schema_name: str, node: Any, out: list[dict], seen: set[int],
         if kw in COMPOSITION_KEYWORDS:
             for sub in node[kw]:
                 _walk_schema(schema_name, sub, out, seen)
-        elif kw in ("items", "additionalProperties"):
+        elif kw == "items":
             _walk_schema(schema_name, node[kw], out, seen)
+        else:
+            # additionalProperties: the map's VALUE type, which the rule above
+            # carries, as a property's rule carries its schema. Its own items (a
+            # map of arrays) or composition are part of that value, not rules at
+            # the root: "Resource · items" would say Resource is an array.
+            _walk_schema(schema_name, node[kw], out, seen, is_property=True)
 
     props = node.get("properties")
     if isinstance(props, dict):

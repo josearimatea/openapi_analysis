@@ -46,16 +46,18 @@ def test_provmns_total_and_breakdown(provmns):
         "request_body": 11,      # media types across put/patch and the callbacks
         "response": 21,          # per code across operations and callbacks
         "callback": 5,           # notifyMOICreation/Deletion/AttributeValueChanges/Event/MOIChanges
-        "schema_property": 59,   # descending oneOf/allOf/properties/items; a property's
-                                 # own items is part of its value, no rule of its own
-        "total": 107,
+        "schema_property": 58,   # descending oneOf/allOf/properties/items; a property's
+                                 # own items is part of its value, no rule of its own;
+                                 # so is the items of Resource's additionalProperties
+                                 # (a map of arrays), since 08/nov/2026: 59 -> 58
+        "total": 106,
     }
 
 
 @pytest.mark.parametrize("service, version, total", [
-    ("ProvMnS", "17.5.0", 97),
-    ("ProvMnS", "17.7.0", 106),
-    ("ProvMnS", "18.2.0", 107),
+    ("ProvMnS", "17.5.0", 96),              # -1 since 08/nov/2026: no "Resource · items"
+    ("ProvMnS", "17.7.0", 105),
+    ("ProvMnS", "18.2.0", 106),
     ("PerfMnS", "17.1.0", 15),
     ("PerfMnS", "18.1.0", 15),
     ("FaultMnS", "17.2.0", 258),            # a property's oneOf is part of its value

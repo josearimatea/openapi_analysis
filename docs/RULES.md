@@ -57,7 +57,13 @@ Métodos aceitos: `get, put, post, delete, patch` (os mesmos nos três repos).
   (`array(X)`), e os YAMLs oficiais escrevem `type` e `items` juntos na propriedade (25 de
   25). Antes (até 07/nov/2026), esse `items` saía como uma regra `items` na raiz do schema,
   um endereço que nenhuma regra do banco pode ter. O `items` de um schema que é ele mesmo
-  um array (na raiz, como `Resource.additionalProperties`) continua sendo regra.
+  um array na raiz (como `CorrelatedNotifications`) continua sendo regra: é palavra-chave do
+  próprio schema.
+- **O valor de um `additionalProperties` da raiz (um mapa) é parte dessa regra** (desde
+  08/nov/2026; A VERIFICAR antes de rodar as análises — ver RASTREIO). O `Resource` da
+  ProvMnS tem `additionalProperties: {type: array, items: {type: object}}`: uma regra
+  `additionalProperties` com valor `array`, sem a regra `Resource · items`, que dizia que o
+  próprio `Resource` é um array. A spec dá uma linha, um tipo (`n/a | map(array(object))`).
 - **O `oneOf`/`anyOf`/`allOf` de uma propriedade também é parte do valor dela** (desde
   07/nov/2026), pelo mesmo motivo e pelo contrato do gerador (`rules_check.py`: a palavra-chave
   vale para o schema inteiro; o que está dentro de uma propriedade vai no `openapi_value`).
@@ -79,6 +85,8 @@ Contagem por YAML oficial (desde 07/nov/2026): ProvMnS 17.5.0 = 97, 17.7.0 = 106
 FileDataReportingMnS 17.1.0 = 38; HeartbeatNtf 17.1.0 = 3; StreamingDataMnS 17.1.0 = 69.
 Antes: 103, 112, 113, 15, 15, 260, 40, 3 e 74. A diferença é o `items` de propriedade e, na
 FaultMnS e na StreamingDataMnS, mais 1 cada pelo `oneOf` de propriedade.
+Desde 08/nov/2026: ProvMnS 17.5.0 = 96, 17.7.0 = 105, **18.2.0 = 106** (o `items` do
+`additionalProperties` da raiz de `Resource` é parte do valor dele); os demais não mudam.
 
 ## 4. Decisões de comparação de valor (travadas em `tests/rulesbank/test_comparison.py`)
 
@@ -130,6 +138,25 @@ fidelidade = valor certo onde dá para conferir.
 - [ ] **`security_scheme`**: nenhum YAML atual tem `components/securitySchemes`.
 - [ ] **Valor de resposta prosa** ("Resource or array(Resource)"): hoje conta como
       `different` por não trazer `$ref`; o contrato pede `$ref: '...'`.
+- [ ] **A VERIFICAR E COMMITAR ANTES DE RODAR QUALQUER ANÁLISE (08/nov/2026):** o valor de
+      um `additionalProperties` da raiz passou a ser uma regra só (sem `Resource · items`);
+      ProvMnS 107 -> 106 regras oficiais. Feito sem commit; ver RASTREIO, seção de 08/nov.
+- [ ] **`style`/`explode` dos query params (08/nov/2026):** o rulesbank passou a escrever
+      no valor `<schema>; style: <s>; explode: <b>` quando a spec escreve (D.3 lá). A
+      comparação de valor olha só o primeiro tipo ou o `$ref`, então nada quebra; o oficial
+      tem os dois atributos em `scope`, `attributes` e `fields` do GET. Decidir se o
+      instrumento passa a comparar `style`/`explode` (extração: ler do Parameter Object;
+      comparação: só quando o oficial os tem).
+- [ ] **`metadata.unresolved_missing` (08/nov/2026):** campo novo do banco do rulesbank, com
+      as regras que o Validator pediu e o Extractor nunca criou (N.26 lá). Decidir se o
+      relatório do instrumento o mostra (é o "pedido e não feito", que hoje só aparece como
+      faltante).
+- [ ] **Código morto em `judge/spec_index.py`:** `split_sections`, `segments`,
+      `normative_only`, `annex_cut`, `corpus_text`, `heading_clause`, `chunk_clauses` e
+      `split_by_heading` não são chamados por `src/` (só por `tests/judge/test_spec_index.py`);
+      o índice que roda (`index_spec`) já usa o `chunk_spec_sections` do `qdrant_3gpp_rag`,
+      o mesmo corte que o rulesbank e o generator passaram a usar (N.29 lá, 08/nov). Remover
+      com os testes?
 
 ## 6. Pendências no gerador (registradas lá como prioridade, 01/out/2026)
 
