@@ -151,7 +151,9 @@ fidelidade = valor certo onde dá para conferir.
       as regras que o Validator pediu e o Extractor nunca criou (N.26 lá). Decidir se o
       relatório do instrumento o mostra (é o "pedido e não feito", que hoje só aparece como
       faltante).
-- [ ] **Código morto em `judge/spec_index.py`:** `split_sections`, `segments`,
+- [x] **Código morto em `judge/spec_index.py`** (removido em 09/nov/2026, com os testes; ficam
+      `clause_of`, `block_of` e `index_spec`; a exclusão do anexo segue travada em
+      `tests/judge/test_retrieval.py`): `split_sections`, `segments`,
       `normative_only`, `annex_cut`, `corpus_text`, `heading_clause`, `chunk_clauses` e
       `split_by_heading` não são chamados por `src/` (só por `tests/judge/test_spec_index.py`);
       o índice que roda (`index_spec`) já usa o `chunk_spec_sections` do `qdrant_3gpp_rag`,

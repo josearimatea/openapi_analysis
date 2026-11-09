@@ -75,6 +75,9 @@ dos irmãos: o generator corta todo o texto a partir do primeiro anexo
 (`utils/parsers.normative_only`), o rulesbank descarta o anexo do YAML.
 
 Consequências:
+- *(substituído em 08–09/nov/2026: o índice usa o corte do `qdrant_3gpp_rag`, que marca
+  cada chunk de anexo com `annex`, e toda busca na spec filtra `annex = False`; o corte
+  próprio abaixo foi removido de `judge/spec_index.py`)*
 - toda spec indexada passa por `normative_only` (sem sumário, sem anexo) antes de ser
   cortada em seções; um filtro extra descarta qualquer seção com linha `openapi: <n>`;
 - o **corpus compartilhado** (`3gpp_rel18_*`, do `qdrant_3gpp_rag`) **não é usado**:

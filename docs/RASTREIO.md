@@ -707,3 +707,17 @@ escreve; (3) decidir se o relatório mostra o campo novo `metadata.unresolved_mi
 corte próprio de `judge/spec_index.py`, que só os testes usam, sai — o índice já usa o do `qdrant_3gpp_rag`.
 Medir o banco novo só depois de (1).
 
+
+## Corte próprio da spec removido de `judge/spec_index.py` (09/nov/2026)
+
+Pendência (4) da seção acima. O índice que roda (`index_spec`) já usava o
+`chunk_spec_sections` do `qdrant_3gpp_rag` (anexo marcado em `annex`, filtrado em toda busca
+por `retrieval.spec_filters`). O corte antigo (`normative_only`, `split_sections`, `segments`)
+e o corte do corpus na recuperação (`annex_cut`, `corpus_text`, `heading_clause`,
+`chunk_clauses`, `split_by_heading`), mais `in_scope`, só eram chamados pelos testes: saíram,
+com os testes deles. Ficam `clause_of`, `block_of` e `index_spec`. A garantia "nenhum anexo
+chega ao juiz" continua travada em `tests/judge/test_retrieval.py` (`annex: False` em toda
+busca na spec, com ou sem escopo).
+
+Também em 09/nov: `RULES.md` §3 e `CLAUDE.md` ganharam a contagem desde 08/nov
+(ProvMnS 18.2.0 = 106; banco i20 = 86/106), sem apagar os valores anteriores.
