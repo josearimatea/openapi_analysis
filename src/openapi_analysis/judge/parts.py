@@ -10,7 +10,8 @@ Generator (both documents) — the parts come from the alignment of the two docu
 layer-2 issues.
 
 Rules bank (RulesBankEvaluation + the bank) — one part per rule:
-    different  a bank rule on an official address, with another value
+    different  a bank rule on an official address, with another value — or with a value
+               the official does not have (not_comparable in layer 1): not equal, judged
     duplicate  several bank rules on one official address (covers their values too)
     missing    an official rule the bank does not have
     extra      a bank rule on no official address
@@ -25,6 +26,15 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from openapi_analysis.judge.rules import (
+    ERROR_RESPONSES,
+    BankFacts,
+    error_field,
+    error_plan,
+    is_error_response,
+    ref_fact,
+    worst,
+)
 from openapi_analysis.judge.spec_index import clause_of
 from openapi_analysis.openapi.comparison import (
     SET_KEYWORDS,
@@ -34,7 +44,7 @@ from openapi_analysis.openapi.comparison import (
     join,
 )
 from openapi_analysis.rulesbank.rule_types import HTTP_METHODS, rule_key
-from openapi_analysis.schemas.judge import Part, SearchHints
+from openapi_analysis.schemas.judge import Difference, Part, SearchHints
 from openapi_analysis.schemas.rulesbank import RulesBankEvaluation
 
 _REF = re.compile(r"(?:([A-Za-z0-9_.\-]+\.ya?ml))?#/components/[A-Za-z]+/([A-Za-z0-9_.\-]+)")
@@ -282,32 +292,247 @@ def _rule_part(label: str, owner: str, aspect: str, summary: str, official: dict
                           terms=[t for t in {r.get("source_name", "") for r in bank_rules} if t]))
 
 
-def rulesbank_parts(report: RulesBankEvaluation, bank: dict, input_label: str = "") -> list[Part]:
-    """The divergent parts of a rules bank, from its evaluation report."""
-    label = input_label or report.bank.label
-    rules = [r for r in (bank.get("rules") or []) if isinstance(r, dict)]
-    parts: list[Part] = []
+_NOT_COMPARED = ("the official holds no value at this address, so it was not compared: "
+                 "the bank's value is judged")
+
+
+# (part, holds an official rule, bank rule indexes, aspect, key in an "error responses"
+# part: "official" or a bank rule index — "" elsewhere)
+Item = tuple["Part | None", bool, list[int], str, str]
+
+
+def _object(rule: dict) -> str:
+    return (rule.get("openapi_mapping") or {}).get("openapi_object", "")
+
+
+def _error_groups(report: RulesBankEvaluation, rules: list[dict]) -> dict[str, tuple]:
+    """The operations whose error responses (default, 1XX-5XX) are judged together, one
+    "error responses" part each (docs/FIX_PLAN.md, step 4): openapi_object -> (the official
+    default or None, {bank index: rule}, the bank indexes layer 1 matched with it).
+
+    Only by structure: the same openapi_object (the responses of one operation or
+    callback) and a key of the Responses Object that covers a set of codes. Left out: an
+    operation where the bank declares only a default (judged as any rule), and one where
+    the official itself declares a range (the criterion speaks of an official default)."""
+    official: dict[str, list[dict]] = {}
+    bank: dict[str, dict[int, dict]] = {}
+    matched: dict[str, set[int]] = {}
     for m in report.matches:
-        bank_rules = [rules[b.index] for b in m.bank]
-        owner = _address(m.expected)
-        if m.shared():
-            parts.append(_rule_part(label, owner, "duplicate",
-                                    f"{len(m.bank)} bank rules on one official address "
-                                    f"(rules {[b.index for b in m.bank]}); first value: "
-                                    f"{m.value_status}" + (f" — {m.note}" if m.note else ""),
-                                    m.expected, bank_rules))
-        elif m.value_status == "different":
-            parts.append(_rule_part(label, owner, "different", f"value differs — {m.note}",
-                                    m.expected, bank_rules))
+        if is_error_response(m.expected):
+            obj = _object(m.expected)
+            official.setdefault(obj, []).append(m.expected)
+            for b in m.bank:
+                bank.setdefault(obj, {})[b.index] = rules[b.index]
+                matched.setdefault(obj, set()).add(b.index)
     for r in report.missing:
-        why = report.missing_note(r)
-        parts.append(_rule_part(label, _address(r), "missing",
-                                "official rule with no bank rule on its address"
-                                + (f" — {why}" if why else ""), r, []))
+        if is_error_response(r):
+            official.setdefault(_object(r), []).append(r)
     for x in report.extra:
         rule = rules[x.rule.index]
-        parts.append(_rule_part(label, _address(rule), "extra",
-                                f"bank rule on no official address ({x.reason})"
-                                + (f" — {x.note}" if x.note else ""), None, [rule],
-                                suffix=f"#{x.rule.index}"))
-    return parts
+        if is_error_response(rule):
+            bank.setdefault(_object(rule), {})[x.rule.index] = rule
+    groups = {}
+    for obj, held in bank.items():
+        fields = sorted(error_field(r) for r in held.values())
+        off = official.get(obj, [])
+        if fields == ["default"] or any(error_field(r) != "default" for r in off) \
+                or len(off) > 1:
+            continue
+        groups[obj] = (off[0] if off else None, held, matched.get(obj, set()))
+    return groups
+
+
+def _rulesbank_items(report: RulesBankEvaluation, bank: dict, label: str) -> list[Item]:
+    """Every official rule and every bank rule, once: (part, official, bank rule indexes,
+    aspect). part is None when the rule is equal to the official — nothing to judge;
+    official says whether the item holds an official rule (False: an extra). A duplicate
+    whose first rule has the official value is aspect "duplicate=" (that address is the
+    same as the official; only the further rules are judged).
+
+    Layer 1 only SORTS here: equal to the official, or not. Everything that is not equal
+    — a different value, an official address with no value to compare (not_comparable),
+    a duplicate, a missing rule, an extra — is a part for the judge."""
+    rules = [r for r in (bank.get("rules") or []) if isinstance(r, dict)]
+    facts = BankFacts(bank)
+
+    def _part(owner: str, aspect: str, summary: str, official: dict | None,
+              bank_rules: list[dict], suffix: str = "") -> Part:
+        """A rule part, with what the bank's local $refs point to said in its summary: a
+        fact of the bank the judge cannot see in the rule (judge/rules.py)."""
+        fact = "; ".join(dict.fromkeys(f for f in (ref_fact(r, facts) for r in bank_rules)
+                                       if f))
+        return _rule_part(label, owner, aspect, summary + (f" — {fact}" if fact else ""),
+                          official, bank_rules, suffix)
+
+    groups = _error_groups(report, rules)
+
+    def grouped(rule: dict) -> bool:
+        return is_error_response(rule) and _object(rule) in groups
+
+    items: list[Item] = []
+    for m in report.matches:
+        if grouped(m.expected):
+            continue
+        idx = [b.index for b in m.bank]
+        bank_rules = [rules[i] for i in idx]
+        owner = _address(m.expected)
+        if m.shared():
+            part = _part(owner, "duplicate",
+                         f"{len(m.bank)} bank rules on one official address "
+                         f"(rules {idx}); first value: "
+                         f"{m.value_status}" + (f" — {m.note}" if m.note else ""),
+                         m.expected, bank_rules)
+            items.append((part, True, idx,
+                          "duplicate=" if m.value_status == "equal" else "duplicate", ""))
+        elif m.value_status == "different":
+            items.append((_part(owner, "different", f"value differs — {m.note}",
+                                m.expected, bank_rules), True, idx, "different", ""))
+        elif m.value_status == "not_comparable":
+            items.append((_part(owner, "different", _NOT_COMPARED, m.expected, bank_rules),
+                          True, idx, "different", ""))
+        else:
+            items.append((None, True, idx, "equal", ""))
+    for r in report.missing:
+        if grouped(r):
+            continue
+        why = report.missing_note(r)
+        items.append((_part(_address(r), "missing",
+                            "official rule with no bank rule on its address"
+                            + (f" — {why}" if why else ""), r, []), True, [], "missing", ""))
+    for x in report.extra:
+        rule = rules[x.rule.index]
+        if grouped(rule):
+            continue
+        items.append((_part(_address(rule), "extra",
+                            f"bank rule on no official address ({x.reason})"
+                            + (f" — {x.note}" if x.note else ""), None, [rule],
+                            suffix=f"#{x.rule.index}"),
+                      False, [x.rule.index], "extra", ""))
+    for obj, (official, held, matched) in groups.items():
+        items += _error_items(label, obj, official, held, matched, facts, _part)
+    return items
+
+
+def _error_items(label: str, obj: str, official: dict | None, held: dict[int, dict],
+                 matched: set[int], facts: BankFacts, make) -> list[Item]:
+    """The "error responses" part of one operation and its items: the official default (if
+    any) and each bank rule, each with its own key — every rule still counted once.
+
+    The part says the CASE, what the form decides by rule (judge/rules.error_plan) and the
+    question; its differences are only the rules the judge rules on."""
+    plan = error_plan(official, held, facts)
+    side = (official or {}).get("openapi_mapping", {}).get("openapi_value") if official else None
+    decided = " ".join(f"{'official default' if k == 'official' else 'rule #' + k}: "
+                       f"{v} ({plan.reasons[k]})." for k, v in plan.fixed.items())
+    summary = (f"CASE: {plan.case} — the bank's error responses of this operation, judged "
+               "together." + (f" Decided by their form: {decided}" if decided else "")
+               + (f" QUESTION: {plan.question}" if plan.question else ""))
+    owner = f"response {obj} · {ERROR_RESPONSES}"
+    ordered = sorted(held.items())
+    part = make(owner, ERROR_RESPONSES, summary, official, [r for _, r in ordered])
+    differences = []
+    for k in plan.asked:
+        rule = held[int(k)]
+        both = official is not None and int(k) in (
+            [i for i, r in held.items() if error_field(r) == "default"] or matched)
+        differences.append(Difference(
+            kind="differing" if both else "extra",
+            location=f"{error_field(rule)} (rule #{k})",
+            official=side if both else None,
+            generated=(rule.get("openapi_mapping") or {}).get("openapi_value")))
+    default = [i for i, r in ordered if error_field(r) == "default"]
+    counterpart = [] if official is None else default or sorted(matched)
+    part = part.model_copy(update={
+        "id": f"rulesbank|{label}|{owner}",
+        "generated": [{**_bank_side(r), "rule_index": i,
+                       "stands_for_official_default": i in counterpart} for i, r in ordered],
+        "differences": differences})
+    items: list[Item] = []
+    if official is not None:
+        items.append((part, True, counterpart, "group", "official"))
+    for i, _ in ordered:
+        items.append((part, False, [i], "group", str(i)))
+    return items
+
+
+def rulesbank_parts(report: RulesBankEvaluation, bank: dict, input_label: str = "") -> list[Part]:
+    """The parts of a rules bank to judge: every rule not equal to the official."""
+    label = input_label or report.bank.label
+    return list({p.id: p for p, *_ in _rulesbank_items(report, bank, label)
+                 if p is not None}.values())
+
+
+def rule_outcome(side: str, aspect: str, verdict: str | None) -> str:
+    """The row a rule takes in a view — the rows and the reading of the generated
+    document's report (judge/group_parts._outcome), a rule in the place of a field."""
+    if aspect == "equal":
+        return "same"
+    if verdict in (None, "uncertain"):
+        return "undecided"
+    if side == "official" and aspect == "missing":
+        return {"equivalent": "different but right", "improvement": "better"}.get(
+            verdict, "missing")
+    if side == "generated" and aspect in ("extra", "duplicate"):
+        return {"error": "extra wrong", "improvement": "better"}.get(verdict, "extra useful")
+    return {"equivalent": "different but right", "improvement": "better",
+            "error": "wrong"}.get(verdict, "undecided")
+
+
+def rulesbank_views(report: RulesBankEvaluation, bank: dict, verdicts: list,
+                    input_label: str = "") -> dict[str, dict[str, int]]:
+    """{"official": rows, "generated": rows}: every official rule and every bank rule by
+    outcome, as in the generated document's report. Each rule takes the verdict of its part;
+    a rule equal to the official is "same" without the judge.
+
+    official side — the official rules: the bank's rule on the address carries the verdict
+    (a missing one, judged error, stays "missing").
+    generated side — the bank rules: a rule on an official address takes the same row as
+    that address (both rules of a 4XX + 5XX pair too); the second and further rules on one
+    address (a duplicate) and the rules on no official address (extra) take the row of an
+    extra: better, extra useful or extra wrong."""
+    label = input_label or report.bank.label
+    by_id = {v.part_id: v for v in verdicts}
+    official: dict[str, int] = {}
+    generated: dict[str, int] = {}
+
+    def add(view: dict[str, int], row: str) -> None:
+        view[row] = view.get(row, 0) + 1
+
+    items = _rulesbank_items(report, bank, label)
+    groups = {p.id: p for p, *_ in items if p is not None and p.aspect == ERROR_RESPONSES}
+    for part, has_official, idx, aspect, key in items:
+        v = by_id.get(part.id) if part else None
+        verdict = v.answer.verdict if v else None
+        if aspect == "group":
+            per = dict(getattr(v, "rule_verdicts", None) or {}) if v else {}
+            mine = [per.get(str(i), verdict) for i in idx]
+            if key == "official":
+                got = per.get("official") or worst(mine) or (
+                    "same" if mine and all(m == "same" for m in mine) else verdict)
+                add(official, "same" if got == "same" else
+                    rule_outcome("official", "different" if idx else "missing", got))
+            else:
+                got = per.get(key, verdict)
+                counterpart = _counterpart(groups[part.id], int(key))
+                add(generated, "same" if got == "same" else
+                    rule_outcome("generated", "different" if counterpart else "extra", got))
+            continue
+        if has_official:
+            duplicate = aspect.startswith("duplicate")
+            row = ("same" if aspect == "duplicate=" else
+                   rule_outcome("official", "different" if duplicate else aspect, verdict))
+            add(official, row)
+            for n, _ in enumerate(idx):
+                add(generated, rule_outcome("generated", "duplicate", verdict)
+                    if duplicate and n else row)
+        else:
+            add(generated, rule_outcome("generated", "extra", verdict))
+    return {"official": official, "generated": generated}
+
+
+def _counterpart(part: Part, index: int) -> bool:
+    """Whether a bank rule of an "error responses" part stands for the official default
+    (its default, or — with no default in the bank — the ranges layer 1 matched with it):
+    its row is then on an official address, else an extra's."""
+    return any(r.get("rule_index") == index and r.get("stands_for_official_default")
+               for r in part.generated or [])

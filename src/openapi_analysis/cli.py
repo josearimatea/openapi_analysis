@@ -1,6 +1,10 @@
 """Command line — calls services/, never the evaluation logic directly.
 
-    openapi-analysis rulesbank <rules_bank.json> <official.yaml> [--json]
+    openapi-analysis rulesbank <rules_bank.json> <official.yaml> [--no-judge] [--json]
+                               # the COMPLETE analysis of one bank: layer 1 sorts what is
+                               # equal to the official, layer 3 judges every other rule;
+                               # one final report in data/outputs/reports/<Service>/rulesbank/
+                               # (needs [judge]; --no-judge: layer 1 only, printed, not saved)
     openapi-analysis openapi   <generated.yaml>  <official.yaml> [--json]
     openapi-analysis extract   <official.yaml> [-o official_rules.json]
     openapi-analysis all [--no-judge]   # every input in data/inputs → one report each in
@@ -48,10 +52,13 @@ def main(argv: list[str] | None = None) -> int:
         p.add_argument("--allow-other-version", action="store_true",
                        help="compare even if they are not (the report states it)")
 
-    p = sub.add_parser("rulesbank", help="rules bank × official YAML, rule by rule")
+    p = sub.add_parser("rulesbank", help="the complete analysis of one rules bank × the "
+                                         "official YAML: agreement + judgement, one report")
     p.add_argument("rules_bank", type=Path)
     p.add_argument("official", type=Path)
     p.add_argument("--json", action="store_true")
+    p.add_argument("--no-judge", action="store_true",
+                   help="layer 1 only: the rule-by-rule agreement table, no LLM, not saved")
     versioned(p)
 
     p = sub.add_parser("openapi", help="generated YAML × official YAML")
@@ -102,7 +109,15 @@ def _checked(args: argparse.Namespace, source: Path, kind: str) -> None:
 
 
 def _run(args: argparse.Namespace) -> int:
-    if args.command == "rulesbank":
+    if args.command == "rulesbank" and not args.no_judge:
+        from openapi_analysis.reporting.final import render_final_rulesbank
+        from openapi_analysis.services.judge_service import judge_rules_bank
+
+        report = judge_rules_bank(args.rules_bank, args.official, args.spec,
+                                  allow_other_version=args.allow_other_version)
+        print(report.model_dump_json(indent=2) if args.json
+              else render_final_rulesbank(report))
+    elif args.command == "rulesbank":
         _checked(args, args.rules_bank, "rulesbank")
         report = evaluate_rules_bank(args.rules_bank, args.official)
         print(report.model_dump_json(indent=2) if args.json else render_rulesbank(report))

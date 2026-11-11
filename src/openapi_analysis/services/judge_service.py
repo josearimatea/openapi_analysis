@@ -26,13 +26,20 @@ from openapi_analysis.config import judge_settings as s
 from openapi_analysis.config.paths import JUDGEMENTS_DIR, ROOT
 from openapi_analysis.judge.group_parts import group_parts, grouping_counts, regroup, views
 from openapi_analysis.judge.grouping import AskGrouping, run_grouping
-from openapi_analysis.judge.judge import AskLLM, default_ask, judge_part
-from openapi_analysis.judge.parts import rulesbank_parts
+from openapi_analysis.judge.judge import (
+    AskLLM,
+    default_ask,
+    judge_part,
+    rule_verdict,
+    with_rule_verdicts,
+)
+from openapi_analysis.judge.parts import rulesbank_parts, rulesbank_views
 from openapi_analysis.judge.retrieval import Search, default_search, retrieve_evidence
+from openapi_analysis.judge.rules import BankFacts, RuleVerdict
+from openapi_analysis.judge.rules import decide as decide_by_rule
 from openapi_analysis.judge.spec_index import block_of, clause_of, index_spec
 from openapi_analysis.openapi.alignment import Aligner
-from openapi_analysis.reporting.final import render_final
-from openapi_analysis.reporting.text import render_judge
+from openapi_analysis.reporting.final import render_final, render_final_rulesbank
 from openapi_analysis.schemas.judge import JudgeReport, Part
 from openapi_analysis.schemas.rulesbank import SourceInfo, now
 from openapi_analysis.services.inputs import (
@@ -107,7 +114,8 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
            grouping: Callable[[], dict[str, int]] | None = None,
            regroup: Callable[[list], tuple[list[Part], list[str]] | None] | None = None,
            version_notes: list[str] | None = None,
-           since: dict | None = None) -> JudgeReport:
+           since: dict | None = None,
+           decide: Callable[[Part], RuleVerdict | None] | None = None) -> JudgeReport:
     from openapi_analysis.config.llm_config import usage_tracker
 
     collection = _collection(spec_document)
@@ -126,9 +134,18 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
                                  release=spec_document.stem.partition("-")[2][:1],
                                  notes=release_notes)
 
+    def judge_one(p: Part):
+        decided = decide(p) if decide else None    # a rule (judge/rules.py): no LLM
+        if decided is not None and decided.complete:
+            return rule_verdict(p, decided.verdict, decided.reason, decided.per_rule)
+        verdict = judge_part(p, retrieve=retrieve, ask=ask, model=s.MODEL,
+                             cache_dir=JUDGEMENTS_DIR)
+        if decided is not None:                    # the judge ruled on the rest only
+            verdict = with_rule_verdicts(p, verdict, decided.per_rule)
+        return verdict
+
     def judge_all(chosen: list[Part]) -> list:
-        return [judge_part(p, retrieve=retrieve, ask=ask, model=s.MODEL,
-                           cache_dir=JUDGEMENTS_DIR) for p in chosen]
+        return [judge_one(p) for p in chosen]
 
     verdicts = judge_all(chosen)
     taken: list[str] = []
@@ -142,7 +159,8 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
     report = JudgeReport(evaluation=evaluation, input=label, spec_collection=collection,
                          spec=spec_document.stem,
                          service=service, scope=list(scope), model=s.MODEL,
-                         prompt_version=verdicts[0].prompt_version if verdicts else "",
+                         prompt_version=next((v.prompt_version for v in verdicts
+                                              if v.prompt_version), ""),
                          evaluated_at=now(), verdicts=verdicts, usage=usage,
                          parts_total=len(parts),
                          validity_generated=validity[0] if validity else None,
@@ -153,7 +171,8 @@ def _judge(parts: list[Part], evaluation: str, label: str, service: str,
                                         *dict.fromkeys(release_notes)])
     if save:            # ONE report per input and run: for a generated document, the
         # final analysis (validation, the two views of the fields, the detail)
-        text = render_final(report) if evaluation == "generator" else render_judge(report)
+        text = (render_final(report) if evaluation == "generator"
+                else render_final_rulesbank(report))
         save_report(report, service, evaluation, Path(label).stem, text)
     return report
 
@@ -227,10 +246,15 @@ def judge_rules_bank(rules_bank: Source, official_yaml: Source, spec: str | Path
     if service is None:
         service = _origin(label, "rulesbank")[0]
     scope = scope if scope is not None else scope_of_bank(bank)
-    report = evaluate_rules_bank(bank, official)
-    parts = rulesbank_parts(report, bank, Path(label).stem)
+    agreement = evaluate_rules_bank(bank, official)
+    name = Path(label).stem
+    parts = rulesbank_parts(agreement, bank, name)
+    facts = BankFacts(bank)
     return _judge(parts, "rulesbank", label, service, spec_document, scope, select=select,
-                  limit=limit, ask=ask, search=search, save=save, version_notes=notes)
+                  limit=limit, ask=ask, search=search, save=save, version_notes=notes,
+                  official=agreement.official.model_copy(update={"label": official_label}),
+                  view=lambda verdicts: rulesbank_views(agreement, bank, verdicts, name),
+                  decide=lambda part: decide_by_rule(part, facts))
 
 
 def judge_all_generated(*, save: bool = True) -> list[JudgeReport]:

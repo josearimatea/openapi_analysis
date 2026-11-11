@@ -179,10 +179,14 @@ class Verdict(BaseModel):
     differences: list[Difference] = Field(default_factory=list)
     difference_verdicts: list[str] = Field(default_factory=list)   # one per difference,
                                      # in order — the judge's, after the checks
+    rule_verdicts: dict[str, str] = Field(default_factory=dict)   # rules bank, "error
+                                     # responses" part: each rule's verdict (bank rule index,
+                                     # or "official"), by its form (judge/rules.py) or by the
+                                     # judge on its difference; "same": equal to the official
     official_focus: dict[str, Any] = Field(default_factory=dict)   # … and as it is on each
     generated_focus: dict[str, Any] = Field(default_factory=dict)  # side (location → node)
     evidence: list[Evidence]                 # what the judge read, with the ids it saw
-    decided_by: Literal["llm", "no_evidence"]
+    decided_by: Literal["llm", "no_evidence", "rule"]   # rule: judge/rules.py, no LLM
     overrides: list[str] = Field(default_factory=list)  # deterministic corrections applied
     model: str = ""
     prompt_version: str = ""

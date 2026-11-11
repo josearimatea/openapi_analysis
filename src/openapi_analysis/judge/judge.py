@@ -190,8 +190,18 @@ def _analysed(part: Part, verdict: Verdict) -> Verdict:
         "focus": part.focus, "differences": part.differences,
         "difference_verdicts": per_difference,
         "overrides": verdict.overrides + [n for n in notes if n not in verdict.overrides],
-        "official_focus": {loc: node_at(part.official, loc) for loc in part.focus},
-        "generated_focus": {loc: node_at(part.generated, loc) for loc in part.focus}})
+        "official_focus": (_rule_side(part.official) if part.evaluation == "rulesbank"
+                           else {loc: node_at(part.official, loc) for loc in part.focus}),
+        "generated_focus": (_rule_side(part.generated) if part.evaluation == "rulesbank"
+                            else {loc: node_at(part.generated, loc) for loc in part.focus})})
+
+
+def _rule_side(side: object) -> dict:
+    """A rules-bank part has no focus: the rule itself is what was judged (the official
+    rule, or the bank rule(s)) — kept with the verdict for the report."""
+    if side is None:
+        return {}
+    return {"rule": side}
 
 
 def judge_part(part: Part, *, retrieve: Retrieve, ask: AskLLM, model: str,
@@ -199,6 +209,40 @@ def judge_part(part: Part, *, retrieve: Retrieve, ask: AskLLM, model: str,
     """The verdict on one part (see the module docstring)."""
     return _analysed(part, _judge_part(part, retrieve=retrieve, ask=ask, model=model,
                                        cache_dir=cache_dir))
+
+
+def rule_verdict(part: Part, verdict: str, reason: str,
+                 per_rule: dict[str, str] | None = None) -> Verdict:
+    """The verdict of a part decided by a rule (judge/rules.py): no evidence read, no LLM,
+    nothing cached — the rule gives it again on every run."""
+    return _analysed(part, Verdict(
+        part_id=part.id, evaluation=part.evaluation, input=part.input, owner=part.owner,
+        aspect=part.aspect, summary=part.summary, evidence=[],
+        answer=JudgeAnswer(why_different=reason, verdict=verdict, spec_3gpp="",
+                           openapi="", clearer="same", clearer_why="not judged (a rule)",
+                           citations=[]),
+        rule_verdicts=dict(per_rule or {}), decided_by="rule", judged_at=now()))
+
+
+_RULE_INDEX = re.compile(r"\(rule #(\d+)\)")
+
+
+def with_rule_verdicts(part: Part, verdict: Verdict, fixed: dict[str, str]) -> Verdict:
+    """A part the judge ruled on in part only (an "error responses" part): each rule takes
+    the verdict its form fixed, or the judge's on its difference ("D1 4XX (rule #12)"); the
+    part's verdict is the most serious of them."""
+    per = dict(fixed)
+    for d, v in zip(part.differences, verdict.difference_verdicts, strict=False):
+        m = _RULE_INDEX.search(d.location)
+        if m:
+            per[m.group(1)] = v
+    given = [v for v in per.values() if v and v != "same"]
+    worst = next((v for v in _SEVERITY if v in given), verdict.answer.verdict)
+    return verdict.model_copy(update={
+        "rule_verdicts": per,
+        "answer": verdict.answer.model_copy(update={"verdict": worst}),
+        "overrides": verdict.overrides + [f"decided by the form (a rule): {fixed}"]
+                     if fixed else verdict.overrides})
 
 
 def _judge_part(part: Part, *, retrieve: Retrieve, ask: AskLLM, model: str,

@@ -32,8 +32,14 @@ def test_rulesbank_parts():
     bank = json.loads(BANK.read_text(encoding="utf-8"))
     parts = rulesbank_parts(evaluate_rules_bank(bank, OFFICIAL), bank, "i20")
     assert dict(Counter(p.aspect for p in parts)) == {
-        "different": 24, "duplicate": 2, "missing": 20, "extra": 29}   # missing 21 -> 20 on
-    # 08/nov/2026: "Resource · items" is no longer an official rule
+        "different": 16, "duplicate": 2, "missing": 19, "extra": 22,
+        "error responses": 9}                                          # missing 21 -> 20 on
+    # 08/nov/2026: "Resource · items" is no longer an official rule; different 23 -> 32 on
+    # 09/nov/2026: the 9 not_comparable (no official value to compare) are judged too;
+    # 32 -> 24 on 10/nov/2026: the official writes "no body" and {} / {nullable: true}, so
+    # 6 x 204 and MoiChange.value / .oldValue are equal (docs/PROBLEMS.md A.3, A.4);
+    # then the error responses (default, 4XX, 5XX) of 9 operations / callbacks go in one
+    # part each (A.1, A.2): different 24 -> 16, extra 29 -> 22, missing 20 -> 19
     assert len({p.id for p in parts}) == len(parts)
     get200 = next(p for p in parts if p.aspect == "different"
                   and p.owner == "response paths./{className}={id}.get.responses · 200")
@@ -43,3 +49,35 @@ def test_rulesbank_parts():
 
 def test_keys_keep_a_quoted_key_whole():
     assert _keys("callbacks.'$request.body#/x'.post") == ["callbacks", "$request.body#/x", "post"]
+
+
+def _stub_verdicts(parts, verdict):
+    from types import SimpleNamespace
+
+    return [SimpleNamespace(part_id=p.id, answer=SimpleNamespace(verdict=verdict))
+            for p in parts]
+
+
+def test_rulesbank_views_count_every_rule_once():
+    """The two views of the bank's final report (as the generated document's): every
+    official rule and every bank rule in one row; only a rule equal to the official is
+    "same" without the judge, every other row comes from the verdict of its part."""
+    from openapi_analysis.judge.parts import rulesbank_views
+
+    bank = json.loads(BANK.read_text(encoding="utf-8"))
+    ev = evaluate_rules_bank(bank, OFFICIAL)
+    parts = rulesbank_parts(ev, bank, "i20")
+    views = {verdict: rulesbank_views(ev, bank, _stub_verdicts(parts, verdict), "i20")
+             for verdict in ("error", "improvement", "equivalent", "useful")}
+    assert views["error"] == {                       # 106 official rules, 122 bank rules
+        "official": {"same": 61, "wrong": 25, "missing": 20},
+        "generated": {"same": 61, "wrong": 30, "extra wrong": 31}}
+    assert views["improvement"] == {"official": {"same": 61, "better": 45},
+                                    "generated": {"same": 61, "better": 61}}
+    assert views["equivalent"] == {
+        "official": {"same": 61, "different but right": 45},
+        "generated": {"same": 61, "different but right": 30, "extra useful": 31}}
+    assert views["useful"]["generated"]["extra useful"] == 31   # only an extra is useful
+    assert rulesbank_views(ev, bank, [], "i20") == {             # not judged: undecided
+        "official": {"same": 61, "undecided": 45},
+        "generated": {"same": 61, "undecided": 61}}
