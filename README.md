@@ -29,6 +29,31 @@ versioned and pinned by tests.
    equivalent, improvement, error or uncertain, citing what it read. Verdicts are
    cached, so a run is reproducible. See [docs/JUDGE_PLAN.md](docs/JUDGE_PLAN.md).
 
+Layers 1 and 2 never call an error an error: they say what differs and whether the
+document is valid. Only layer 3 rules a difference an error, an improvement or
+equivalent.
+
+Which layers apply to each evaluation:
+
+| Layer | openapi (generated YAML) | rulesbank (rules bank) |
+|---|---|---|
+| 1. Agreement | document × official, field by field | rule by rule × the rules extracted from the official |
+| 2. Validity | is it valid OpenAPI 3.0? | **does not apply**: a bank is a JSON of rules, not an OpenAPI document (its `validation_passed` is the generator's own flag, only repeated) |
+| 3. Judgement | each divergence | each missing rule, different value and extra rule |
+
+**A complete analysis** of one input is every layer that applies to it, judgements
+included, in **one report for that input**: for a generated YAML, layers 1 + 2 + 3; for
+a rules bank, layers 1 + 3. One bank is analysed at a time, never all the banks at
+once: `openapi-analysis rulesbank <bank> <official> --spec <spec>`.
+
+For a rules bank, layer 1 only **sorts**: a rule equal to the official needs no judge;
+every other one — a different value, a value the official does not write, a missing
+rule, an extra rule, a duplicate — is judged. The final report gives the same two views
+as a generated YAML's, a rule in the place of a field: how much of the official the bank
+reproduces (base: the official rules) and how much of the bank is right (base: the bank
+rules) — same, different but right, better, wrong, missing, extra useful, extra wrong,
+undecided.
+
 **A document is compared within its own spec version.** The spec is a required input
 (`--spec 28532-i00`): the version of the document and of the official YAML is checked
 against it, and a mismatch is an error unless `--allow-other-version` is given (the
@@ -77,7 +102,8 @@ uv sync --extra judge                              # + layer 3 (LLM, Qdrant, tor
 uv run pytest                                      # 184 tests, results pinned
 
 uv run openapi-analysis all [--no-judge]           # every input → data/outputs/reports/
-uv run openapi-analysis rulesbank <bank.json> <official.yaml> --spec <spec> [--json]
+uv run openapi-analysis rulesbank <bank.json> <official.yaml> --spec <spec> [--no-judge] [--json]
+                                                   # one bank, complete: layers 1 + 3
 uv run openapi-analysis openapi   <generated.yaml> <official.yaml> --spec <spec> [--json]
 uv run openapi-analysis judge     generator|rulesbank <input> <official.yaml> --spec <spec> [--limit N]
 uv run openapi-analysis extract   <official.yaml> [-o official_rules.json]

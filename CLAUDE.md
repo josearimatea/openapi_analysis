@@ -161,7 +161,8 @@ vezes em 07/nov/2026: era 81/113 até o `items` de propriedade deixar de ser reg
 (81/107), e 86/107 desde que um `default` oficial é coberto pelos 4XX e 5XX do banco, os
 dois juntos (antes, fidelidade 53/72 e 39 extras). Desde 08/nov/2026, **86/106 (81,1%)**:
 o `items` do `additionalProperties` da raiz de `Resource` deixou de ser regra própria
-(fidelidade e extras não mudam).
+(fidelidade e extras não mudam). Desde 10/nov/2026, fidelidade **61/86**: o oficial escreve
+`no body` e os schemas sem tipo como estão, e não sobra nenhum n/c (docs/PROBLEMS.md A.3, A.4).
 Query params: 0/5 (todos no path — §3.22, banco anterior à correção do rulesbank).
 
 Rodar:
@@ -182,6 +183,21 @@ uv run openapi-analysis all
    oficial_errado | incerto`, com citação; vereditos em cache (reprodutível),
    calibrados contra revisão humana, e reportados SEPARADOS da concordância.
    Ex.: 4XX/5XX × default — ambos válidos, decidir exige interpretar.
+
+**Camadas por avaliação e análise completa** (definido em 09/nov/2026):
+- YAML gerado: camadas 1 + 2 + 3. Banco de regras: camadas **1 + 3** — a camada 2 não se
+  aplica (o banco é JSON de regras, não documento OpenAPI; o `validation_passed` dele é do
+  próprio gerador, só repetido no relatório).
+- Camadas 1 e 2 nunca dizem "erro": dizem o que difere e se é válido. Só a camada 3 julga.
+- **Análise completa / "run completo"** de um insumo = todas as camadas que se aplicam a
+  ele, com todos os julgamentos, num **relatório só por insumo**. Para banco de regras: um
+  banco por vez (o pedido), nunca todos os bancos. Nunca chame de completo um comando que
+  faz só uma camada (`rulesbank` = camada 1; `judge rulesbank` = camada 3).
+- Banco: `openapi-analysis rulesbank <banco> <oficial> --spec X` = análise completa (09/nov):
+  a camada 1 só SEPARA o que é igual ao oficial; todo o resto (valor diferente, n/c,
+  faltante, extra, duplicata) vai ao juiz. Relatório final com as duas visões do YAML,
+  regra no lugar de campo (`reporting/final.render_final_rulesbank`). `--no-judge`: só a
+  tabela da camada 1, diagnóstico, sem LLM, não salva.
 
 ## 7. O que FALTA (roteiro)
 

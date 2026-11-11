@@ -721,3 +721,113 @@ busca na spec, com ou sem escopo).
 
 Também em 09/nov: `RULES.md` §3 e `CLAUDE.md` ganharam a contagem desde 08/nov
 (ProvMnS 18.2.0 = 106; banco i20 = 86/106), sem apagar os valores anteriores.
+
+## Camadas por avaliação e o que é uma análise completa (09/nov/2026)
+
+Ao avaliar o banco ProvMnS i20 de 09/nov (`20261109_102214`), a "análise completa" saiu em dois
+relatórios: a concordância (`rulesbank`, 18:57) e só os vereditos (`judge rulesbank`, 19:06). O
+juiz do banco nunca foi ligado a um relatório final, como o do YAML gerado (`render_final`).
+
+**Definido.** A camada 2 (validade OpenAPI) só existe para o YAML gerado: um banco é JSON de
+regras, e o `validation_passed` dele é do próprio rulesbank. Para o banco, completo = camadas
+1 + 3, num relatório só, um banco por vez (o pedido; nunca todos). Para o YAML, 1 + 2 + 3.
+Registrado no README e no CLAUDE.md. A fazer: um comando que grave esse relatório do banco.
+
+**Rótulo corrigido.** O relatório da camada 1 listava as diferenças de valor como
+`WRONG VALUE`, que contradizia a própria legenda ("diff … not necessarily wrong"): a camada 1
+não julga. Passou a `DIFFERENT VALUE — on the right address, not judged`. Os relatórios já
+gravados ficam como estão.
+
+## A análise completa de um banco: um comando, um relatório, duas visões (09/nov/2026)
+
+**Por quê.** A tabela da camada 1 chamava de `covered` toda regra com o endereço presente, com valor
+igual ou não, e de `n/c` as regras num endereço onde o oficial não escreve valor (o 204 sem corpo,
+um `value: {}`): coberta não é certa, e n/c esconde acerto e erro — `No response body` diz o mesmo
+que o 204 vazio; `object` no lugar de `{}` restringe o tipo. Só o julgamento diz o que está certo.
+
+**Decidido.** No banco, a camada 1 só separa: igual ao oficial (sem juiz) ou não. Tudo o que não é
+igual vai ao juiz — inclusive o n/c, que antes nem era julgado (`judge/parts.py`: parte
+`different`). O relatório final do banco segue o do YAML gerado (mesmo vocabulário e a mesma
+tradução de veredito para linha, `group_parts._outcome`), com a regra no lugar do campo:
+1. quanto do oficial o banco reproduz (base: as regras oficiais): igual, diferente mas certo,
+   melhor, errado, faltando, indeciso;
+2. quanto do banco está certo (base: as regras do banco): as mesmas linhas, mais extra útil e
+   extra errado (a segunda regra de um endereço — duplicata — conta como extra; as duas de um par
+   4XX + 5XX tomam a linha do `default` que cobrem).
+Cada linha vem explicada com um exemplo do próprio banco ("HOW TO READ").
+
+**Comando.** `openapi-analysis rulesbank <banco> <oficial> --spec X` faz a análise completa, de um
+banco só; `--no-judge` dá só a tabela da camada 1. O `all` não muda (não julga os bancos). Os números
+da camada 1 seguem travados em `test_results.py`; as visões, com vereditos fictícios, em
+`test_parts.py`. O banco de referência passa de 23 a 32 partes `different` (os 9 n/c).
+
+## O que o oficial escreve sem tipo chega inteiro (10/nov/2026 — PROBLEMS A.3, A.4)
+
+**Por quê.** Na revisão dos 33 julgamentos do banco de 09/nov, 8 vereditos errados vinham da
+entrada: a extração escrevia `""` para uma resposta sem `content` (o 204) e para um schema sem
+`$ref`, tipo nem composição (`{}`, `{nullable: true}`), e a parte dizia ao juiz "the official
+holds no value". Era falso.
+
+**Decidido.** Nada interpretado pelo código, nada específico de spec: uma resposta sem `content`
+é `no body` (fato da estrutura, Response Object); um schema que não é `$ref`/tipo/composição é
+escrito como está. Uma lista de chaves "que não restringem" foi considerada e descartada — o
+código passaria a decidir o significado, e qualquer lista erra num caso. Na camada 1, `no body` é
+igual a um valor do banco que não nomeia corpo (na dúvida, diferente); o schema escrito é igual
+só ao mesmo schema. O significado vai ao juiz como fatos da OpenAPI 3.0.1 no prompt (Schema
+Object `{}` e `nullable`; Response sem `content`): `judge-v25`.
+
+**Efeito.** Nenhum n/c sobra em nenhum insumo. Banco de 09/nov: igual 85 → 92 (7 × 204),
+diferente 9 → 12 (`MoiChange.value`/`.oldValue` `object` × `{}`, `PatchItem.value` `{}` ×
+`{nullable: true}`). Banco de referência (15/set): igual 53 → 61, diferente 24 → 25; partes
+`different` 32 → 24. Conferido regra a regra: nenhum igual falso.
+
+## Vereditos de regra e o `$ref` local sem alvo (10/nov/2026 — PROBLEMS A.5)
+
+**Por quê.** Seis regras do banco de 09/nov com o mesmo defeito — um `$ref` local para um schema
+que o banco não define e que ele mesmo declara nunca ter completado — receberam do juiz
+vereditos diferentes (um errado, cinco indecisos): o juiz não via nenhum dos dois fatos.
+
+**Decidido.** Um veredito pode vir de uma regra quando segue de um FATO da estrutura, nunca do
+significado de um nome. `judge/rules.py` reúne essas regras; o veredito é `decided_by="rule"`,
+sem evidência, sem LLM e sem cache (a regra o dá de novo a cada run), e o relatório conta à
+parte quantos vieram de regra. A primeira: `$ref` local para X, com o banco sem regra em
+`components/schemas/X` **e** X em `metadata.rules_never_completed` daquela regra → errado
+(OpenAPI 3.0.1, Reference Object). Os dois fatos são exigidos porque o formato do banco não
+declara um schema de tipo simples: só o primeiro condenaria um `$ref` certo. Com só o
+primeiro, a parte vai ao juiz com o fato no resumo.
+
+**Efeito.** Banco de 09/nov: 8 regras errado por regra (4 `default`, `4XX`/`5XX` do GET,
+`specificProblem`, `additionalText`). Os bancos anteriores não têm `rules_never_completed`:
+nenhum veredito por regra, só o fato no resumo.
+
+## Parâmetro repetido na operação (10/nov/2026 — PROBLEMS A.6)
+
+**Decidido.** Uma regra extra do banco que declara numa operação um parâmetro que o próprio banco
+já declara no nível do path, com o mesmo `in`, nome e valor, é extra errado, por regra
+(`judge/rules.py`, `repeated_path_parameter`): pela OpenAPI 3.0.1 (Path Item Object) os
+parâmetros do path valem para todas as operações, e repetir o mesmo não acrescenta nada. Com
+outro valor é uma sobrescrita (Operation Object), e vai ao juiz. **Efeito:** banco de 09/nov,
+`className` e `id` do DELETE; banco de 15/set, o `filter` do DELETE.
+
+## As respostas de erro de uma operação, julgadas juntas (10/nov/2026 — PROBLEMS A.1, A.2)
+
+**Por quê.** Cada `default`, `4XX` e `5XX` do banco ia ao juiz sozinho, sem o que mais a operação
+declara: o mesmo valor saiu "errado" no `4XX` do GET e "melhor" no `5XX`; e os `4XX` + `5XX` que
+fazem o papel do `default` com o mesmo valor eram "iguais" na camada 1, quando o critério de
+10/nov os diz melhoria.
+
+**Decidido (híbrido).** As regras de resposta com `default` ou `1XX`–`5XX` no mesmo
+`openapi_object` formam UMA parte (`error responses`) por operação ou callback, com o `default`
+oficial. O caso sai da estrutura (quais chaves, e se os valores são iguais); a forma decide por
+código as cinco situações estruturais (só `default` fica fora do grupo; só ranges → melhoria;
+três com o mesmo valor → `default` sobra, ranges melhoria; `default` + um range → o range
+errado; um range sem `default` → o range errado e o `default` faltando). O `$ref` sem alvo é
+conferido antes. A LLM recebe só o que pede leitura: `default` e ranges com valores
+diferentes (a pergunta: o tipo do `default` traz algo que a spec restringe à operação e os
+ranges não?), um valor diferente do oficial, ou um caso fora da tabela. Cada regra tem o seu
+veredito (`Verdict.rule_verdicts`) e a sua linha nas visões. Nenhum nome de tipo no código ou
+no prompt.
+
+**Efeito.** Banco de 09/nov: GET e os 5 callbacks decididos por regra; PUT e PATCH vão à LLM só
+nos ranges. Partes do banco de referência: 9 `error responses`. Um teste com LLM falsa gravou
+14 respostas falsas no cache de vereditos; foram apagadas (só elas, pela resposta "stub").
