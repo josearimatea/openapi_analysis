@@ -61,6 +61,7 @@ _BANKS = SIBLING_RULESBANK / "data/outputs/rules_bank"
 RULES_BANKS = {
     "ProvMnS": [
         _BANKS / "ProvMnS/Final_rules/rules_bank_28532-i20_full_20260915_214107.json",
+        _BANKS / "ProvMnS/Final_rules/rules_bank_28532-i20_full_20261109_102214.json",
         _BANKS / "ProvMnS/Final_rules/rules_bank_28532-i00_full_20260828_210819.json",
     ],
     "PerfMnS": [

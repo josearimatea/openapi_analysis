@@ -30,6 +30,8 @@ RULES_BANK_RESULTS = {
     # since 08/nov/2026 the official ProvMnS has one rule less ("Resource · items" is part
     # of the additionalProperties value), which none of these banks had: expected -1
     "rules_bank_28532-i20_full_20260915_214107": (106, 86, 53, 24, 9, 122, 29, 14, 2, 5),
+    # the bank of 09/nov/2026 (rulesbank run 20261109_102214), against the same official
+    "rules_bank_28532-i20_full_20261109_102214": (106, 104, 85, 9, 10, 121, 12, 0, 0, 5),
     "rules_bank_28532-i00_full_20260828_210819": (96, 59, 39, 16, 4, 97, 35, 5, 1, 2),  # v17.5.0
     "rules_bank_28532-i20_full_20260915_232343": (15, 15, 13, 1, 1, 18, 2, 1, 0, 1),
     "rules_bank_28532-i00_full_20260926_182802": (15, 15, 13, 1, 1, 22, 6, 0, 0, 1),
