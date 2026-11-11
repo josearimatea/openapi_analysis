@@ -121,7 +121,8 @@ def render_rulesbank(ev: RulesBankEvaluation) -> str:
                 lines.append(f"      why     : {ev.missing_note(r)}")
     different = [m for m in ev.matches if m.value_status == "different"]
     if different:
-        lines += ["", f"WRONG VALUE — on the right address ({len(different)}):"]
+        # a difference, not an error: only the judge (layer 3) rules on it
+        lines += ["", f"DIFFERENT VALUE — on the right address, not judged ({len(different)}):"]
         for m in different:
             lines.append(f"  ! {_mapping_line(m.expected)}")
             lines.append(f"      official: {m.expected['openapi_mapping']['openapi_value']}")

@@ -64,7 +64,7 @@ def evaluate_rules_bank(rules_bank: Source, official_yaml: Source, *,
     if save_as:
         service, name = save_as
         save_report(report, service, "rulesbank", name,
-                    text=render_rulesbank(report, max_items=10_000))
+                    text=render_rulesbank(report))
     return report
 
 

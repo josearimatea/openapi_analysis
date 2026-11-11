@@ -40,7 +40,7 @@ def evaluate_openapi(generated_yaml: Source, official_yaml: Source, *,
     if save_as:
         service, name = save_as
         save_report(report, service, "generator", name,
-                    text=render_openapi(report, max_items=10_000))
+                    text=render_openapi(report))
     return report
 
 
