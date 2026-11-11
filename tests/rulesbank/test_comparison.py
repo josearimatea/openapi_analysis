@@ -66,8 +66,28 @@ def test_nothing_to_compare_is_not_comparable():
                                    "No Content"))[0] == "not_comparable"
 
 
+def test_no_body_is_equal_to_a_value_that_names_no_body():
+    """Equal only when the bank names nothing a body carries; any doubt stays different."""
+    exp = rule("response", "paths./x.put.responses", "204", "no body")
+    for said in ("No Content", "No response body", "no message body is returned"):
+        assert compare_value(exp, rule("response", "paths./x.put.responses", "204",
+                                       said))[0] == "equal", said
+    for said in ("object", "array of Uri", "ErrorResponse body", "oneOf the two"):
+        assert compare_value(exp, rule("response", "paths./x.put.responses", "204",
+                                       said))[0] == "different", said
+
+
+def test_a_schema_written_as_it_is_is_equal_only_to_the_same_schema():
+    exp = rule("schema_property", S, "properties.v", "{nullable: true}")
+    assert compare_value(exp, rule("schema_property", S, "properties.v",
+                                   "{ nullable: true }"))[0] == "equal"
+    for said in ("{}", "object", "any type"):
+        assert compare_value(exp, rule("schema_property", S, "properties.v",
+                                       said))[0] == "different", said
+
+
 def test_body_where_the_yaml_has_none_is_different():
-    exp = rule("response", "paths./x.delete.responses", "200", "")
+    exp = rule("response", "paths./x.delete.responses", "200", "no body")
     act = rule("response", "paths./x.delete.responses", "200",
                "$ref: '#/components/schemas/Uri'")
     assert compare_value(exp, act)[0] == "different"

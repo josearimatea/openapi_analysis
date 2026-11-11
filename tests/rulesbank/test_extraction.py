@@ -143,6 +143,19 @@ def test_values_follow_the_bank_formats(provmns):
     assert m["references"] == [{"file": "TS28623_ComDefs.yaml", "schema_name": "Uri"}]
 
 
+def test_what_the_yaml_writes_without_a_type_is_kept(provmns):
+    """A schema with no $ref, type or composition is written as it is, never "" (the
+    judge was told "the official holds no value"); a response with no content has no
+    body (OpenAPI Response Object). Nothing is interpreted here."""
+    def value(rule_type, obj, field):
+        return _value(provmns, rule_type, obj, field)["openapi_value"]
+
+    assert value("schema_property", "components/schemas/MoiChange", "properties.value") == "{}"
+    assert value("schema_property", "components/schemas/PatchItem",
+                 "properties.value") == "{nullable: true}"
+    assert value("response", "paths./{className}={id}.put.responses", "204") == "no body"
+
+
 def test_references_are_shallow(provmns):
     """An allOf rule references its members — not the refs of properties inside them."""
     m = _value(provmns, "schema_property", "components/schemas/NotifyMoiChanges", "allOf")

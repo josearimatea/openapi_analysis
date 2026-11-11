@@ -15,8 +15,12 @@ VALUE   — for a covered rule, the first bank rule's value is checked against t
             a type         the JSON type the bank value starts with.
             path_operation the method; callback the runtime expression.
             request_body   the media type is the address itself — equal by match.
-          Where the official YAML has nothing to compare against (a body-less
-          response, a property with no type), the value is "not_comparable".
+            no body        (a response with no content) equal when the bank's value
+                           names no body: no $ref, JSON type, composition or schema name.
+            a schema as it is  ("{}", "{nullable: true}": no $ref, type or composition)
+                           equal only when the bank writes the same schema.
+          Where the official YAML has nothing to compare against, the value is
+          "not_comparable".
 DEFAULT — an official `default` response with no bank rule on its address is covered by
           the bank's 4XX AND 5XX of the same operation or callback (those the official
           does not declare itself): together they say "every error", as `default` does
@@ -31,7 +35,9 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 
-from openapi_analysis.rulesbank.rule_types import KNOWN_RULE_TYPES, RuleKey, rule_key
+import yaml
+
+from openapi_analysis.rulesbank.rule_types import KNOWN_RULE_TYPES, NO_BODY, RuleKey, rule_key
 from openapi_analysis.schemas.rulesbank import (
     BankRuleRef,
     Counts,
@@ -45,6 +51,7 @@ from openapi_analysis.schemas.rulesbank import (
 
 _REF = re.compile(r"([A-Za-z0-9_.\-]+\.ya?ml)?#/components/[A-Za-z]+/([A-Za-z0-9_.\-]+)")
 _JSON_TYPES = ("string", "integer", "number", "boolean", "array", "object")
+_COMPOSITION = ("oneOf", "anyOf", "allOf")
 
 
 # ── value comparison ─────────────────────────────────────────────────────────
@@ -95,6 +102,24 @@ def _first_type(value: str) -> str:
     return words[0] if words and words[0] in _JSON_TYPES else ""
 
 
+def _names_a_body(value: str) -> bool:
+    """Whether a bank value names something a body would carry: a JSON type, a
+    composition keyword or a schema name (CamelCase). A value with none of them ("No
+    response body", "No Content") says there is no body; any doubt leaves it different."""
+    words = re.findall(r"[A-Za-z][A-Za-z0-9]*", value)
+    return any(w.lower() in _JSON_TYPES or w in _COMPOSITION
+               or re.fullmatch(r"[A-Z][a-z0-9]+[A-Z]\w*", w) for w in words)
+
+
+def _as_yaml(value: str) -> object:
+    """A value read as YAML (so "{nullable: true}" and "{ nullable: true }" compare
+    equal); a value that is not YAML stays the text it is."""
+    try:
+        return yaml.safe_load(value)
+    except yaml.YAMLError:
+        return value
+
+
 def _expression(value: str) -> str:
     return value.strip().strip("{}").lstrip("$").strip()
 
@@ -128,6 +153,12 @@ def compare_value(expected: dict, actual: dict) -> tuple[ValueStatus, str]:
                              f"extra {sorted(act_refs - exp_refs)}")
     if act_refs:
         return "different", f"bank has $ref {sorted(act_refs)} where the YAML has none"
+    if exp_value == NO_BODY:
+        return (("equal", "") if not _names_a_body(act_value)
+                else ("different", f"bank has a body {act_value!r} where the YAML has none"))
+    if exp_value.startswith("{"):                  # a schema written as it is
+        same = _as_yaml(act_value) == _as_yaml(exp_value)
+        return ("equal", "") if same else ("different", f"the YAML writes {exp_value}")
     if exp_value in _JSON_TYPES:
         act_type = _first_type(act_value)
         return ("equal", "") if act_type == exp_value else ("different", f"type {act_value!r}")

@@ -26,16 +26,25 @@ OFFICIAL_PROVMNS = reference_yaml("ProvMnS", "18.2.0")
 # (expected, covered, value_equal, value_different, value_not_comparable,
 #  bank_rules, bank_extra, bank_invalid_rules, shared_addresses, bank_ranges)
 # since 07/nov/2026 an official default is covered by the bank's 4XX / 5XX (docs/RULES.md §4)
+# since 10/nov/2026 the official's value is never "": a response with no content is
+# "no body" (equal to a bank value naming no body) and a schema with no $ref, type or
+# composition is written as it is ({}, {nullable: true}); every not_comparable left
+# (docs/PROBLEMS.md A.3, A.4). Per bank, equal / different / not_comparable moved by:
+#   20260915_214107  +8 / +1 / -9  (6 x 204; MoiChange.value, .oldValue {} = {};
+#                                   PatchItem.value {} vs {nullable: true})
+#   20261109_102214  +7 / +3 / -10 (7 x 204; MoiChange.value, .oldValue object vs {};
+#                                   PatchItem.value)
+#   20260828_210819  +3 / +1 / -4  ·  the three PerfMnS banks  +1 / 0 / -1 (the 204)
 RULES_BANK_RESULTS = {
     # since 08/nov/2026 the official ProvMnS has one rule less ("Resource · items" is part
     # of the additionalProperties value), which none of these banks had: expected -1
-    "rules_bank_28532-i20_full_20260915_214107": (106, 86, 53, 24, 9, 122, 29, 14, 2, 5),
+    "rules_bank_28532-i20_full_20260915_214107": (106, 86, 61, 25, 0, 122, 29, 14, 2, 5),
     # the bank of 09/nov/2026 (rulesbank run 20261109_102214), against the same official
-    "rules_bank_28532-i20_full_20261109_102214": (106, 104, 85, 9, 10, 121, 12, 0, 0, 5),
-    "rules_bank_28532-i00_full_20260828_210819": (96, 59, 39, 16, 4, 97, 35, 5, 1, 2),  # v17.5.0
-    "rules_bank_28532-i20_full_20260915_232343": (15, 15, 13, 1, 1, 18, 2, 1, 0, 1),
-    "rules_bank_28532-i00_full_20260926_182802": (15, 15, 13, 1, 1, 22, 6, 0, 0, 1),
-    "rules_bank_28532-i00_full_20260818_214526": (15, 14, 12, 1, 1, 17, 1, 0, 1, 1),
+    "rules_bank_28532-i20_full_20261109_102214": (106, 104, 92, 12, 0, 121, 12, 0, 0, 5),
+    "rules_bank_28532-i00_full_20260828_210819": (96, 59, 42, 17, 0, 97, 35, 5, 1, 2),  # v17.5.0
+    "rules_bank_28532-i20_full_20260915_232343": (15, 15, 14, 1, 0, 18, 2, 1, 0, 1),
+    "rules_bank_28532-i00_full_20260926_182802": (15, 15, 14, 1, 0, 22, 6, 0, 0, 1),
+    "rules_bank_28532-i00_full_20260818_214526": (15, 14, 13, 1, 0, 17, 1, 0, 1, 1),
 }
 
 # contract leaves: (total, exact, absent, differing, extra)
@@ -87,9 +96,11 @@ def test_rules_bank_i20_provmns_by_rule_type(bank_reports):
         "path_parameter":  (2, 2, 2, 0, 0, 3, 1),
         "query_parameter": (5, 0, 0, 0, 0, 6, 6),       # all at path level (§3.22)
         "request_body":    (11, 8, 8, 0, 0, 9, 1),
-        "response":        (21, 18, 2, 10, 6, 32, 9),       # 5 defaults covered by 4XX+5XX;
-                                                            # 1 replaced by 4XX alone: missing
-        "schema_property": (58, 49, 37, 9, 3, 62, 12),   # 59 -> 58 on 08/nov/2026
+        "response":        (21, 18, 8, 10, 0, 32, 9),       # 5 defaults covered by 4XX+5XX;
+                                                            # 1 replaced by 4XX alone: missing;
+                                                            # 6 x 204 "no body" equal (10/nov)
+        "schema_property": (58, 49, 39, 10, 0, 62, 12),  # 59 -> 58 on 08/nov/2026;
+                                                         # {} / {nullable: true} (10/nov)
     }
 
 

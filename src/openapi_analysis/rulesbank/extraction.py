@@ -45,7 +45,9 @@ from collections import Counter
 from collections.abc import Iterator
 from typing import Any
 
-from openapi_analysis.rulesbank.rule_types import HTTP_METHODS, SCHEMA_KEYWORDS, rule_key
+import yaml
+
+from openapi_analysis.rulesbank.rule_types import HTTP_METHODS, NO_BODY, SCHEMA_KEYWORDS, rule_key
 
 # the keywords that also drive recursive descent into subschemas
 COMPOSITION_KEYWORDS = ("oneOf", "anyOf", "allOf")
@@ -100,8 +102,16 @@ def _references(node: Any, open_composition: bool = True) -> list[dict[str, str]
     return seen
 
 
+def inline_schema(node: dict) -> str:
+    """A schema written as it is, on one line: "{}", "{nullable: true}"."""
+    return yaml.safe_dump(node, default_flow_style=True, sort_keys=True,
+                          width=10_000).strip().removesuffix("...").strip()
+
+
 def _schema_value(node: Any) -> str:
-    """A schema as a short value: "$ref: '<ref>'", a type, or "" when it has neither."""
+    """A schema as a short value: "$ref: '<ref>'", a type, a composition — or, when it is
+    none of these, the schema as it is ("{}", "{nullable: true}"): never interpreted
+    here, so nothing the official writes is lost (what it means is the judge's reading)."""
     if isinstance(node, bool):
         return str(node).lower()
     if not isinstance(node, dict):
@@ -113,7 +123,7 @@ def _schema_value(node: Any) -> str:
     for kw in COMPOSITION_KEYWORDS:
         if isinstance(node.get(kw), list):
             return f"{kw}: {_list_value(node[kw])}"
-    return ""
+    return inline_schema(node)
 
 
 def _list_value(items: list) -> str:
@@ -156,14 +166,16 @@ def _emit_param(prm: Any, obj: str, spec: dict, out: list[dict]) -> None:
 def _response_value(resp: Any) -> tuple[str, Any]:
     """(value, node to take references from) for one response.
 
-    The value is the body schema; a response with no body (204) has value "". When
-    several media types carry different schemas, the value lists them all.
+    The value is the body schema; a response with no content (204) has value NO_BODY.
+    When several media types carry different schemas, the value lists them all.
     """
     if not isinstance(resp, dict):
         return "", None
     if isinstance(resp.get("$ref"), str):
         return f"$ref: '{resp['$ref']}'", resp
     content = resp.get("content") or {}
+    if not content:
+        return NO_BODY, None
     schemas = [mt.get("schema") for mt in content.values() if isinstance(mt, dict)]
     values = list(dict.fromkeys(_schema_value(s) for s in schemas if s is not None))
     if len(values) <= 1:

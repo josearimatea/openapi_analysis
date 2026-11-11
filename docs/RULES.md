@@ -38,7 +38,7 @@ da identidade)` — hoje só o `request_body` tem o valor (media type) na identi
 | path_parameter  | `paths.<path>` **ou** `paths.<path>.<método>` — o nível que o YAML declara | `parameters[in=path,name=<n>]` | tipo ou `$ref: '<ref>'` |
 | query_parameter | `paths.<path>.<método>` — **sempre** a operação | `parameters[in=query,name=<n>]`  | tipo ou `$ref: '<ref>'` |
 | request_body    | `paths.<path>.<método>.requestBody`             | `content`                        | media type (**identidade**) |
-| response        | `paths.<path>.<método>.responses`               | código / `1XX`–`5XX` / `default` | schema do corpo; vazio se não há corpo |
+| response        | `paths.<path>.<método>.responses`               | código / `1XX`–`5XX` / `default` | schema do corpo; `no body` se não há `content` |
 | callback        | `paths.<path>.<método registrador>.callbacks.<nome>` | método de **entrega**       | expressão `{...}` |
 | schema_property | `components/schemas/<Raiz>`                     | `properties.<n>` ou keyword      | tipo, `$ref`, ou a coleção inteira |
 | security_scheme | `components/securitySchemes/<Nome>`             | `type`                           | oauth2/http/apiKey/openIdConnect |
@@ -110,7 +110,16 @@ fidelidade = valor certo onde dá para conferir.
 - **Tipo**: o tipo JSON com que o valor do banco começa (`string (date-time)` = string).
 - **path_operation**: o método. **callback**: a expressão (sem `{}` e `$`).
   **request_body**: o media type é o próprio endereço — igual por definição.
-- **Sem o que comparar** (resposta sem corpo, propriedade sem tipo): `not_comparable`.
+- **Sem corpo** (desde 10/nov/2026): uma resposta sem `content` vale `no body` (OpenAPI,
+  Response Object: `content` descreve os payloads possíveis). É igual a um valor do banco que
+  não nomeia corpo — sem `$ref`, palavra de tipo JSON, `oneOf`/`anyOf`/`allOf` ou nome de
+  schema em CamelCase ("No response body", "No Content"). Na dúvida, diferente (vai ao juiz).
+- **Schema sem `$ref`, tipo nem composição** (desde 10/nov/2026): escrito **como está**, numa
+  linha (`{}`, `{nullable: true}`), sem interpretar; igual só ao mesmo schema escrito pelo
+  banco (lido como YAML). O que ele significa (`{}` aceita qualquer valor menos `null`) é a
+  leitura do juiz, que tem esses fatos da OpenAPI no prompt. Antes os dois viravam `""` e o
+  juiz lia "o oficial não tem valor" (docs/PROBLEMS.md A.3, A.4).
+- **Sem o que comparar** (o que sobra sem valor): `not_comparable`. Nos insumos atuais, nenhum.
 - **`default` × 4XX/5XX** (desde 07/nov/2026): uma resposta `default` do oficial sem regra do
   banco no mesmo endereço é coberta pelos `4XX` **e** `5XX` do banco na mesma operação ou no
   mesmo callback, desde que o oficial não os declare ele mesmo. Pela OpenAPI 3.0 (Responses

@@ -109,6 +109,10 @@ HTTP_METHODS = ("get", "put", "post", "delete", "patch")
 SCHEMA_KEYWORDS = ("enum", "required", "oneOf", "anyOf", "allOf", "items",
                    "additionalProperties")
 
+# The value of a response with no content: by the OpenAPI Response Object, it has no
+# body. Written out so neither the comparison nor the judge reads it as "no value".
+NO_BODY = "no body"
+
 _VALUE_IN_IDENTITY = frozenset(n for n, s in RULE_TYPES.items() if s.value_in_identity)
 
 RuleKey = tuple[str, str, str, str]
