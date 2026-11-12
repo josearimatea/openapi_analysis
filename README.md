@@ -136,13 +136,15 @@ src/openapi_analysis/
   schemas/       the reports and records (Pydantic)
   services/      entry points for callers (sibling repos, chat UI, CLI)
   reporting/     text rendering; final.py: the final analysis of a generated document
+                 or a rules bank; pdf.py: a saved report's text as a PDF
   api/           optional HTTP adapter (FastAPI) — not built yet
   cli.py
 data/
   inputs/        official YAMLs, banks, generated YAMLs + manifest.json (versioned)
   judgements/    cached verdicts and grouper answers (versioned: a run is reproducible)
   outputs/       reports (git-ignored): reports/<Service>/{generator,rulesbank}/
-                 YYYY-MM-DD_HH-MM-SS.txt|.json, one per run, never overwritten
+                 YYYY-MM-DD_HH-MM-SS.txt|.pdf|.json, one per run, never overwritten
+                 (the .pdf is the .txt laid out for reading: reporting/pdf.py)
 scripts/sync_data.py   copy inputs from the sibling repos, write the manifest
 docs/                  RULES, VALIDATION, JUDGE_PLAN, ALIGNMENT_PLAN, RASTREIO
 ```

@@ -831,3 +831,14 @@ no prompt.
 **Efeito.** Banco de 09/nov: GET e os 5 callbacks decididos por regra; PUT e PATCH vão à LLM só
 nos ranges. Partes do banco de referência: 9 `error responses`. Um teste com LLM falsa gravou
 14 respostas falsas no cache de vereditos; foram apagadas (só elas, pela resposta "stub").
+
+## Todo relatório salvo também em PDF (12/nov/2026)
+
+**Pedido.** Ler o relatório num PDF, que fica melhor de visualizar que o `.txt`.
+
+**Decidido.** `save_report` grava, ao lado do `.txt` e do `.json`, um `.pdf` com o MESMO texto,
+linha a linha (`reporting/pdf.py`): só o layout é acrescentado — os títulos entre `====` em
+destaque, as partes do detalhe entre `----` em negrito, o detalhe numa página nova, e uma linha
+mais larga que a página quebrada em espaços, recuada, nunca cortada. Nada resumido nem
+acrescentado (uma primeira versão, feita à mão, juntava seções próprias e foi descartada). Vale
+para todo relatório salvo, de banco e de YAML gerado. `reportlab` passa a ser dependência.

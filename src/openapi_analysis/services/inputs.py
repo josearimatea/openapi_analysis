@@ -109,21 +109,25 @@ def check_versions(spec: Path, label: str, kind: str, official: dict[str, Any],
 
 def save_report(report: Any, service: str, evaluation: str, name: str, text: str) -> Path:
     """Write ONE report of one run under data/outputs/reports/<service>/<evaluation>/,
-    named by when it was made — YYYY-MM-DD_HH-MM-SS.txt (to read) and .json (its data);
-    a second report in the same second gets _2, _3 ... A run never overwrites an earlier
-    one. Which input it evaluates (`name`) is stated inside the report."""
+    named by when it was made — YYYY-MM-DD_HH-MM-SS.txt (to read), .pdf (the same text,
+    laid out: reporting/pdf.py) and .json (its data); a second report in the same second
+    gets _2, _3 ... A run never overwrites an earlier one. Which input it evaluates
+    (`name`) is stated inside the report."""
     from datetime import datetime
 
     from openapi_analysis.config.paths import report_dir
+    from openapi_analysis.reporting.pdf import write_pdf
 
     out_dir = report_dir(service, evaluation)
     out_dir.mkdir(parents=True, exist_ok=True)
     base = f"{datetime.fromisoformat(report.evaluated_at):%Y-%m-%d_%H-%M-%S}"
     stem, n = base, 1
-    while (out_dir / f"{stem}.txt").exists() or (out_dir / f"{stem}.json").exists():
+    while any((out_dir / f"{stem}.{ext}").exists() for ext in ("txt", "json", "pdf")):
         n += 1
         stem = f"{base}_{n}"
+    text = text.rstrip("\n") + "\n"
     (out_dir / f"{stem}.json").write_text(report.model_dump_json(indent=2) + "\n",
                                           encoding="utf-8")
-    (out_dir / f"{stem}.txt").write_text(text.rstrip("\n") + "\n", encoding="utf-8")
+    (out_dir / f"{stem}.txt").write_text(text, encoding="utf-8")
+    write_pdf(text, out_dir / f"{stem}.pdf", title=f"{service} {evaluation} — {name}")
     return out_dir / f"{stem}.txt"

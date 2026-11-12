@@ -9,6 +9,7 @@ dependencies = [
     "PyYAML>=6.0",
     "openapi-spec-validator>=0.7",
     "pydantic>=2.0",   # reports (schemas/) — the siblings already use Pydantic 2
+    "reportlab>=4.0",  # every saved report also as .pdf (reporting/pdf.py)
 ]
 
 [project.scripts]

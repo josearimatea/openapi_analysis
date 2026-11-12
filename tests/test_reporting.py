@@ -97,3 +97,20 @@ def test_a_reason_names_what_its_ids_stand_for():
     assert _named(v, "see S1, O1 and C2; S9") == (
         "see S1 [clause 12.1.1], O1 [Schema Object] and C2 [generated]; S9")
     assert any("S1 [clause 12.1.1]: the row" in line for line in _sources(v))
+
+
+def test_a_report_is_also_written_as_pdf(tmp_path):
+    """reporting/pdf.py: the report's text laid out — a line wider than the page is broken
+    at spaces, never cut."""
+    from openapi_analysis.reporting.pdf import WIDTH, wrapped, write_pdf
+
+    long = "      official: " + ", ".join(f"$ref: 'F{i}.yaml#/components/schemas/S{i}'"
+                                         for i in range(40))
+    pieces = wrapped(long)
+    assert all(len(p) <= WIDTH for p in pieces) and len(pieces) > 1
+    assert "".join(p.strip() for p in pieces).replace(" ", "") == long.replace(" ", "")
+    text = "\n".join(["=" * 100, "RESULT", "=" * 100, "same as the official  87", long,
+                      "=" * 100, "DETAIL, PART BY PART", "-" * 100, "1. a part — different",
+                      "-" * 100, "  why: ─ · — •"])
+    out = write_pdf(text, tmp_path / "r.pdf")
+    assert out.read_bytes().startswith(b"%PDF")
