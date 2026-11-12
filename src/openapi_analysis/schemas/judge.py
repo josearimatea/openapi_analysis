@@ -144,6 +144,14 @@ class JudgeAnswer(BaseModel):
     clearer: Clearer = Field(description="Which version is easier to understand: official, "
                                          "generated, or same.")
     clearer_why: str = Field(description="Why that version is easier to understand.")
+    recommendation: Literal["", "default", "4XX + 5XX", "both"] = Field(
+        default="",
+        description="Only when SUMMARY asks to RECOMMEND (an 'error responses' part where the "
+                    "bank declares default and 4XX + 5XX): the configuration the spec indicates "
+                    "for this operation — 'default', '4XX + 5XX', or 'both' when the spec gives "
+                    "both forms and the ranges lose nothing. Empty otherwise.")
+    recommendation_why: str = Field(
+        default="", description="When recommending: which S passages show it and what they say.")
     grouping_wrong: bool = Field(
         default=False,
         description="True only if some blocks put together in this part do NOT play the same "

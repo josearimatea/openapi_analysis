@@ -159,19 +159,22 @@ def repeated_path_parameter(part: Part, facts: BankFacts) -> RuleVerdict | None:
 RULES = (unresolved_local_ref, repeated_path_parameter)
 
 
-# ── the error responses of one operation (docs/PROBLEMS.md, criterion of 10/nov) ──
+# ── the error responses of one operation (docs/PROBLEMS.md, A.1 and A.7) ──────────
 
 ERROR_RESPONSES = "error responses"     # the aspect of the part that holds them
+DISCARDABLE = "discardable"     # a rule the user may drop: default AND 4XX + 5XX declared,
+                                # which configuration to keep is the user's choice (A.7)
 
 _RANGES = {"4XX", "5XX"}
-# the question when the form needs reading (default and ranges with different values)
-QUESTION_SPECIFIC = (
-    "Does the type of the bank's default carry something the spec restricts to this "
-    "operation, or to a condition of it, that the ranges' type does not? yes: the default "
-    "is right (judge its value against the official as usual) and each range is an error — "
-    "it takes the error codes away from that type; no, the same concept: each range is an "
-    "improvement and the default is an error — it is left over; no evidence: uncertain, for "
-    "all of them.")
+# default and 4XX + 5XX declared: nothing is ruled on the choice; the judge recommends one
+QUESTION_RECOMMEND = (
+    "The bank declares default AND 4XX + 5XX: which configuration to keep is the user's "
+    "choice, so the ranges are not ruled (they are listed as discardable). RECOMMEND, in "
+    "`recommendation`, the configuration the spec indicates for this operation, citing the S "
+    "passages: '4XX + 5XX' if the spec gives the error only as 4xx/5xx codes; 'default' if it "
+    "gives only an error type with no code, or gives both but the type with no code carries a "
+    "condition (on the media type, on the request...) that the ranges' type loses; 'both' if "
+    "it gives both forms and the ranges lose nothing.")
 QUESTION_VALUE = (
     "The form is decided (see above). Judge only the VALUE of each listed rule against the "
     "official default: an error if it loses or contradicts the official's type; otherwise "
@@ -212,12 +215,14 @@ class ErrorPlan:
     reasons: dict[str, str] = field(default_factory=dict)
     asked: list[str] = field(default_factory=list)         # keys the judge rules on
     question: str = ""
+    recommend: bool = False     # the judge recommends a configuration (A.7)
 
 
 def error_plan(official: dict | None, bank: dict[int, dict], facts: BankFacts) -> ErrorPlan:
-    """The criterion of 10/nov/2026, by the STRUCTURE only (which keys the bank declares on
-    the operation, and whether their values are the same); a key is a bank rule's index,
-    or "official" for the official default. What needs reading is asked of the judge."""
+    """The criterion of 10/nov/2026, revised on 12/nov (A.7), by the STRUCTURE only (which
+    keys the bank declares on the operation, and whether their values are the same); a key
+    is a bank rule's index, or "official" for the official default. What needs reading is
+    asked of the judge."""
     keys = {str(i): r for i, r in bank.items()}
     fields = Counter(error_field(r) for r in keys.values())
     default = next((k for k, r in keys.items() if error_field(r) == "default"), None)
@@ -244,19 +249,22 @@ def error_plan(official: dict | None, bank: dict[int, dict], facts: BankFacts) -
         plan.case = "4XX + 5XX only"
         range_values_or_ask("improvement", f"{take} — the decided form: improvement")
     elif single and len(ranges) == 2 and same_ranges and default is not None:
-        if _same_value(keys[default], next(iter(ranges.values()))):
-            plan.case = "4XX + 5XX + default, the same value"
-            fix(default, "error", f"{take}: with the same value, default is left over")
-            range_values_or_ask("improvement", f"{take} — the decided form: improvement")
+        plan.case = "4XX + 5XX + default"
+        for k in ranges:
+            fix(k, DISCARDABLE, "default and 4XX + 5XX are two configurations of the same "
+                "errors (OpenAPI 3.0.1, Responses Object): which one to keep is the user's "
+                "choice")
+        if _equal_to_official(official, keys[default]):
+            fix(default, "same", "equal to the official default")
         else:
-            plan.case = "4XX + 5XX + default, different values"
-            plan.asked = [default, *ranges]
-            plan.question = QUESTION_SPECIFIC
+            plan.asked.append(default)
+            plan.question = QUESTION_VALUE.format(form="the default is judged as any rule")
+        plan.recommend = True
     elif single and len(ranges) == 1 and default is not None:
         plan.case = "default + one range"
         (k,) = ranges
-        fix(k, "error", "one range next to default splits the error responses: the codes "
-            "of the other range stay with default (decided form: the range is wrong)")
+        fix(k, "error", "one range next to default: default already covers every error, and "
+            "the range lacks its pair (decided form: extra, wrong)")
         if _equal_to_official(official, keys[default]):
             fix(default, "same", "equal to the official default")
         else:
@@ -282,6 +290,8 @@ def error_plan(official: dict | None, bank: dict[int, dict], facts: BankFacts) -
                 plan.asked.remove(k)
     if not plan.asked:
         plan.question = ""
+    if plan.recommend:
+        plan.question = " ".join(q for q in (plan.question, QUESTION_RECOMMEND) if q)
     return plan
 
 
@@ -298,7 +308,8 @@ def error_responses(part: Part, facts: BankFacts) -> RuleVerdict | None:
         f"{'official default' if k == 'official' else 'rule #' + k}: {v} — {plan.reasons[k]}."
         for k, v in plan.fixed.items())
     return RuleVerdict(worst(plan.fixed.values()) or "equivalent", reason.strip(),
-                       per_rule=dict(plan.fixed), complete=not plan.asked)
+                       per_rule=dict(plan.fixed),
+                       complete=not plan.asked and not plan.recommend)
 
 
 def decide(part: Part, facts: BankFacts) -> RuleVerdict | None:

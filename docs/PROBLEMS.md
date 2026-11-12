@@ -136,6 +136,42 @@ O banco declara `className` e `id` no nível do path e de novo no DELETE, com o 
 `name` e schema. O juiz deu "melhor"; o decidido em 10/nov é **extra errado** (redundante: o
 parâmetro do path já vale para a operação — OpenAPI 3.0.1, Path Item Object).
 
+## A.7 `[PLANEJADO]` Default + 4XX + 5XX julgado como erro de um dos lados
+
+**Resultado de 10/nov** (relatório `2026-11-10_20-23-44`): com o critério de 10/nov, quando o
+banco declara os três na mesma operação, um lado era errado — o `default` (sobra) ou os ranges
+(perdem o tipo). Para isso o juiz tinha de decidir se o tipo do `default` e o dos ranges são o
+mesmo conceito. No PUT nenhuma fonte disponível define `ErrorResponseDefault` (a TS 28.623 i40
+só define `ErrorResponse`): os `4XX`/`5XX` saíram **indecisos**. No PATCH saíram errados.
+
+**Decidido em 12/nov/2026 (usuário).** Usar `default` ou `4XX` + `5XX` é **preferência do
+usuário**: declarar os três não é erro de nenhum lado, e o banco não precisa de lógica para
+descartar um deles. O critério passa a ser:
+
+| No banco, na mesma operação | `default` | `4XX` / `5XX` |
+|---|---|---|
+| só `default` | julgado como qualquer regra | — |
+| só `4XX` + `5XX` | — | melhoria (continua) |
+| `4XX` + `5XX` + `default` | julgado contra o `default` oficial, como qualquer regra | **extra, descartável (decisão do usuário)** |
+| `default` + um só range | certo (cobre tudo) | o range: extra errado (faltou o par) |
+| um só range, sem `default` | faltando | o range: errado |
+
+O `$ref` sem alvo continua errado em qualquer caso (é defeito do valor, não da escolha).
+
+**"Extra, descartável (decisão do usuário)"** é uma linha própria da visão do banco: nem certo
+nem errado, contada na base do banco — o placar não pune nem premia uma preferência.
+
+**A análise diz qual configuração usar** (recomendação do juiz, com citação, fora do placar),
+pelo que a spec traz para a operação:
+- a spec traz uma forma só → recomenda essa;
+- a spec traz as duas → "a spec admite as duas" (ex.: PUT — o tipo do erro sem código na tabela
+  da operação, 12.1.1.1.2, e `ErrorResponse 4xx/5xx` na tabela do método, 12.1.1.3.2.1.3.1);
+- a spec traz as duas, mas o tipo do `default` tem uma condição que os ranges perdem → recomenda
+  `default` (ex.: PATCH — o tipo depende do media type do PATCH).
+
+A definição de `ErrorResponseDefault` não é necessária: nenhum veredito depende dela, e a
+recomendação sai do texto da spec da operação.
+
 ---
 
 ## Em aberto de antes

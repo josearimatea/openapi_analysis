@@ -27,6 +27,7 @@ import re
 from typing import Any
 
 from openapi_analysis.judge.rules import (
+    DISCARDABLE,
     ERROR_RESPONSES,
     BankFacts,
     error_field,
@@ -467,6 +468,8 @@ def rule_outcome(side: str, aspect: str, verdict: str | None) -> str:
     document's report (judge/group_parts._outcome), a rule in the place of a field."""
     if aspect == "equal":
         return "same"
+    if verdict == DISCARDABLE:          # default AND 4XX + 5XX: the user's choice (A.7)
+        return "extra discardable"
     if verdict in (None, "uncertain"):
         return "undecided"
     if side == "official" and aspect == "missing":

@@ -842,3 +842,23 @@ destaque, as partes do detalhe entre `----` em negrito, o detalhe numa página n
 mais larga que a página quebrada em espaços, recuada, nunca cortada. Nada resumido nem
 acrescentado (uma primeira versão, feita à mão, juntava seções próprias e foi descartada). Vale
 para todo relatório salvo, de banco e de YAML gerado. `reportlab` passa a ser dependência.
+
+## Default + 4XX + 5XX é escolha do usuário (12/nov/2026 — PROBLEMS A.7)
+
+**Por quê.** No run de 10/nov, com o banco declarando `default` e `4XX` + `5XX` na mesma operação,
+o critério exigia que um lado fosse errado; para isso o juiz tinha de saber se os tipos eram o
+mesmo conceito. No PUT nenhuma fonte disponível define `ErrorResponseDefault`: indeciso.
+
+**Decidido (usuário).** Usar `default` ou `4XX` + `5XX` é preferência do usuário: declarar os três
+não é erro de nenhum lado, e o banco não precisa de lógica para descartar um. O `default` é
+julgado contra o oficial como qualquer regra; os ranges são **extra, descartável (decisão do
+usuário)** — linha própria da visão do banco, nem certa nem errada, na base do banco. O `$ref`
+sem alvo continua errado. Os outros casos não mudam (`default` + um range: o range extra errado;
+só ranges: melhoria). A análise diz qual configuração usar — recomendação do juiz, fora do placar
+(`JudgeAnswer.recommendation`): a spec traz uma forma só → essa; traz as duas → "admite as duas";
+traz as duas mas o tipo do `default` tem uma condição que os ranges perdem → `default`. A
+definição de `ErrorResponseDefault` deixou de ser necessária. `judge-v26`.
+
+**Efeito esperado no banco de 09/nov.** PUT e PATCH: ranges descartáveis; GET: os três errados
+(`$ref` sem alvo); o relatório lista as três operações com a recomendação. Conferido com LLM
+falsa (as 15 respostas falsas gravadas no cache foram apagadas); o run real ainda não foi feito.

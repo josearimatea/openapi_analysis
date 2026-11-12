@@ -131,9 +131,12 @@ _LINES = {
         ("wrong", "wrong"),
         ("extra useful", "extra, useful          (not in the official)"),
         ("extra wrong", "extra, wrong           (not in the official)"),
+        ("extra discardable", "extra, discardable     (the user's choice)"),
         ("undecided", "undecided"),
     ),
 }
+# rows shown only where they can occur: a rules bank's default AND 4XX + 5XX (A.7)
+_RULES_ONLY = {"extra discardable"}
 
 
 def _view(report: JudgeReport, side: str, unit: str = "fields",
@@ -145,6 +148,8 @@ def _view(report: JudgeReport, side: str, unit: str = "fields",
     base = "official" if side == "official" else evaluated
     lines = [f"  {title:60}({base}: {total} {unit})"]
     for key, name in _LINES[side]:
+        if key in _RULES_ONLY and unit != "rules":
+            continue
         name = name.replace("generated", evaluated)
         n = view.get(key, 0)
         lines.append(f"     {name:46}{n:>6}   {_share(n, total) if n else '':>6}")
@@ -381,8 +386,45 @@ _RULE_ROWS = (
     ("extra wrong", "EXTRA, WRONG",
      ("a bank rule on no official address, or a further rule on one address, judged wrong "
       "(judge: error).")),
+    ("extra discardable", "EXTRA, DISCARDABLE (THE USER'S CHOICE)",
+     ("the bank declares default AND 4XX + 5XX on one operation: two configurations of the "
+      "same errors. Neither right nor wrong — which to keep is the user's choice; the report "
+      "gives the configuration the spec indicates. Counted in the bank's base, out of RIGHT.")),
     ("undecided", "UNDECIDED", "the evidence read did not decide (judge: uncertain)."),
 )
+
+_RECOMMENDATION = {"default": "default", "4XX + 5XX": "4XX + 5XX",
+                   "both": "either — the spec gives both forms"}
+
+
+def _choice_listing(report: JudgeReport) -> list[str]:
+    """The operations where the bank declares default AND 4XX + 5XX (A.7): each rule's
+    outcome and the configuration the spec indicates (the judge's recommendation)."""
+    parts = [v for v in report.verdicts if v.aspect == "error responses"
+             and v.summary.startswith("CASE: 4XX + 5XX + default —")]
+    plural = "" if len(parts) == 1 else "s"
+    lines = [f"DEFAULT OR 4XX + 5XX — the user's choice ({len(parts)} operation{plural})"]
+    if not parts:
+        return lines + ["  none"]
+    for v in parts:
+        lines.append(f"  • {v.owner.removesuffix(' · error responses')}")
+        rules = (v.generated_focus or {}).get("rule") or []
+        for r in rules if isinstance(rules, list) else [rules]:
+            m = r.get("openapi_mapping") or {}
+            got = v.rule_verdicts.get(str(r.get("rule_index")), v.answer.verdict)
+            lines.append(f"      {m.get('openapi_field', ''):8} {_flat(m.get('openapi_value', ''))}"
+                         f"   [{_choice_row(got)}]")
+        rec = v.answer.recommendation
+        lines += _wrap(f"recommended: {_RECOMMENDATION.get(rec, 'not given')}"
+                       + (f" — {v.answer.recommendation_why}" if v.answer.recommendation_why
+                          else ""), "      ")
+    return lines
+
+
+def _choice_row(verdict: str) -> str:
+    return {"discardable": "extra, discardable", "same": "same", "error": "wrong",
+            "improvement": "better", "equivalent": "different but right",
+            "uncertain": "undecided"}.get(verdict, verdict)
 
 
 def _rule_row(v: Verdict) -> str:
@@ -454,6 +496,13 @@ def _rule_part(i: int, v: Verdict) -> list[str]:
                         ("OpenAPI", a.openapi),
                         ("clearer", f"{a.clearer} — {a.clearer_why}")):
         lines += _wrap(_named(v, f"{label}: {text}"), "  ")
+    if a.recommendation:
+        lines += _wrap(_named(v, f"recommended configuration: "
+                                 f"{_RECOMMENDATION.get(a.recommendation, a.recommendation)} — "
+                                 f"{a.recommendation_why}"), "  ")
+    if v.rule_verdicts:
+        lines += _wrap("each rule: " + ", ".join(f"#{k} {_choice_row(x)}"
+                                                 for k, x in v.rule_verdicts.items()), "  ")
     lines += [f"  override: {o}" for o in v.overrides]
     return lines + _sources(v)
 
@@ -504,6 +553,7 @@ def render_final_rulesbank(report: JudgeReport) -> str:
                        by_row.get("extra wrong", [])), "",
         *_rule_listing("UNDECIDED — the evidence did not decide", by_row.get("undecided", [])),
         "",
+        *_choice_listing(report), "",
         *_rule_listing("EXTRA, USEFUL — only in the bank, not called for, contradicted by "
                        "nothing", by_row.get("extra useful", [])), "",
         *_rule_listing("DIFFERENT, BUT RIGHT — written another way, same meaning",

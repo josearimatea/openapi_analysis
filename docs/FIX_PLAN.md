@@ -202,6 +202,33 @@ O resultado é conferido regra a regra contra a tabela de PROBLEMS.md. Uma regra
 ainda errar vira um problema novo `A.x`, com a evidência — não um ajuste para o número bater.
 Depois: `RULES.md`, `CLAUDE.md` (resultados travados), `RASTREIO.md` (a entrada de cada passo).
 
+**Feito em 10/nov** (relatório `2026-11-10_20-23-44`, 14 chamadas, US$ 0,066): das 33 regras da
+revisão, 31 certas, 0 erradas e 2 indecisas (os `4XX`/`5XX` do PUT) — o que levou a A.7.
+
+---
+
+## Passo 6 — default + 4XX + 5XX é escolha do usuário (A.7) · código + LLM
+
+**Forma, por código** (`judge/rules.py`, `error_plan`): no caso `4XX + 5XX + default` (mesmo
+valor ou não), o `default` é julgado contra o `default` oficial como qualquer regra (igual → igual;
+diferente → o juiz julga o valor) e os ranges recebem `discardable`. O `$ref` sem alvo continua
+antes de tudo. Os outros casos não mudam. Sai a pergunta "o tipo do default traz algo...".
+
+**Recomendação, pela LLM**: a parte desse caso vai sempre ao juiz, que responde, além do valor
+do `default` quando ele difere, a configuração a usar — `default`, `4XX + 5XX` ou "a spec admite
+as duas" —, pelo que a spec traz para a operação (as três regras de PROBLEMS.md A.7), com a
+citação. Campo novo na resposta (`JudgeAnswer.recommendation`, `recommendation_why`); fora do
+placar. Prompt sem nomes de tipo; `PROMPT_VERSION` sobe.
+
+**Visões e relatório**: linha nova `extra discardable` — "extra, descartável (decisão do
+usuário)" — na visão do banco, fora de "certo" e de "errado", na base do banco. O relatório final
+lista essas regras com a recomendação da operação.
+
+**Esperado no banco de 09/nov**: PUT — `default` errado (`$ref`), ranges descartáveis,
+recomendação "admite as duas"; PATCH — `default` errado (`$ref`), ranges descartáveis,
+recomendação `default`; GET — os três errados (`$ref` sem alvo nos três). Testes: cada caso
+sintético e o banco de 09/nov em `test_rules.py`; a visão com a linha nova.
+
 ## Fora deste plano
 
 - O `default` × `4XX` / `5XX` na avaliação do YAML gerado (`openapi`): o critério de 10/nov foi

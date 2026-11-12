@@ -106,8 +106,8 @@ def test_a_parameter_with_another_value_at_the_operation_overrides_it_the_judge_
 def test_the_bank_of_09_nov_2026():
     """What a rule decides in the bank of 09/nov/2026 (docs/PROBLEMS.md): the local $refs
     that resolve to nothing (A.5), the path parameters repeated at the DELETE (A.6) and the
-    form of the error responses of each operation (A.1, A.2). Only the ranges of PUT and
-    PATCH — default and ranges with different values — are left to the judge."""
+    form of the error responses of each operation (A.1, A.2, A.7). GET, PUT and PATCH declare
+    default AND 4XX + 5XX: they go to the judge only for the recommended configuration."""
     path = ROOT / "data/inputs/rulesbank/ProvMnS/rules_bank_28532-i20_full_20261109_102214.json"
     bank = json.loads(path.read_text(encoding="utf-8"))
     official = yaml.safe_load(reference_yaml("ProvMnS", "18.2.0").read_text(encoding="utf-8"))
@@ -122,12 +122,14 @@ def test_the_bank_of_09_nov_2026():
     cb = f"{ops}.put.callbacks.NAME.post.responses · error responses"
     improvement = "improvement"
     assert decided == {
-        f"{ops}.get.responses · error responses": (    # the same value in the three: by form,
-            {"13": "error", "38": "error", "39": "error"}, True, []),   # all $ref to nothing
+        # default AND 4XX + 5XX (A.7): the ranges discardable, unless their $ref resolves to
+        # nothing (GET); the judge only recommends a configuration
+        f"{ops}.get.responses · error responses": (
+            {"13": "error", "38": "error", "39": "error"}, False, []),
         f"{ops}.put.responses · error responses": (
-            {"7": "error"}, False, ["4XX (rule #36)", "5XX (rule #37)"]),
+            {"7": "error", "36": "discardable", "37": "discardable"}, False, []),
         f"{ops}.patch.responses · error responses": (
-            {"18": "error"}, False, ["4XX (rule #41)", "5XX (rule #42)"]),
+            {"18": "error", "41": "discardable", "42": "discardable"}, False, []),
         **{cb.replace("NAME", n): ({str(a): improvement, str(a + 1): improvement}, True, [])
            for n, a in (("notifyMOICreation", 51), ("notifyMOIDeletion", 53),
                         ("notifyMOIAttributeValueChanges", 55), ("notifyMOIChanges", 57),
@@ -173,17 +175,22 @@ def test_ranges_alone_with_another_value_ask_only_the_value():
     assert (p.fixed, p.asked) == ({}, ["0", "1"]) and "VALUE" in p.question
 
 
-def test_default_with_the_same_value_as_the_ranges_is_left_over():
+def test_default_and_ranges_are_the_user_s_choice():
+    """docs/PROBLEMS.md A.7: default AND 4XX + 5XX are two configurations of the same errors;
+    the ranges are discardable (the user's choice), the default is judged as any rule, and
+    the judge recommends a configuration."""
     p = plan(resp("default"), resp("default"), resp("4XX"), resp("5XX"))
-    assert p.case == "4XX + 5XX + default, the same value"
-    assert p.fixed == {"0": "error", "1": "improvement", "2": "improvement"}
+    assert p.case == "4XX + 5XX + default"
+    assert (p.fixed, p.asked, p.recommend) == (
+        {"1": "discardable", "2": "discardable", "0": "same"}, [], True)
+    assert "RECOMMEND" in p.question
 
 
-def test_default_and_ranges_with_different_values_ask_the_question():
-    p = plan(resp("default", B), resp("default", B), resp("4XX"), resp("5XX"))
-    assert (p.case, p.fixed, p.asked) == ("4XX + 5XX + default, different values", {},
-                                          ["0", "1", "2"])
-    assert "restricts to this operation" in p.question
+def test_a_default_unlike_the_official_is_judged_and_the_ranges_stay_discardable():
+    p = plan(resp("default"), resp("default", B), resp("4XX"), resp("5XX"))
+    assert (p.fixed, p.asked, p.recommend) == (
+        {"1": "discardable", "2": "discardable"}, ["0"], True)
+    assert "VALUE" in p.question and "RECOMMEND" in p.question
 
 
 def test_one_range_next_to_default_is_wrong():
@@ -220,3 +227,19 @@ def test_the_views_take_each_rule_s_own_verdict():
     assert rulesbank_views(ev, bank, [verdict], "t") == {
         "official": {"wrong": 1},                      # the bank's default stands for it
         "generated": {"wrong": 1, "better": 2}}
+
+
+def test_a_discardable_range_has_its_own_row():
+    from types import SimpleNamespace
+
+    from openapi_analysis.judge.parts import rulesbank_views
+    from openapi_analysis.rulesbank.comparison import compare_rules
+
+    bank = {"rules": [resp("default"), resp("4XX"), resp("5XX")]}
+    ev = compare_rules([resp("default")], bank)
+    (part,) = rulesbank_parts(ev, bank, "t")
+    verdict = SimpleNamespace(part_id=part.id, answer=SimpleNamespace(verdict="equivalent"),
+                              rule_verdicts={"0": "same", "1": "discardable",
+                                             "2": "discardable"})
+    assert rulesbank_views(ev, bank, [verdict], "t") == {
+        "official": {"same": 1}, "generated": {"same": 1, "extra discardable": 2}}

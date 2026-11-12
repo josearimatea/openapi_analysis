@@ -9,7 +9,7 @@ import yaml
 
 from openapi_analysis.schemas.judge import Difference, Evidence, Part
 
-PROMPT_VERSION = "judge-v25"
+PROMPT_VERSION = "judge-v26"
 
 SYSTEM = """\
 You are a reviewer of OpenAPI 3.0 documents derived from 3GPP specifications. You judge
@@ -165,12 +165,14 @@ Rules:
   every error response the bank declares for one operation or callback — default and the
   ranges 1XX-5XX — and the official default. SUMMARY gives the CASE (which keys the bank
   declares), what their form already decided (do not rule on those: they are not in
-  DIFFERENCES) and the QUESTION for the differences listed; each difference names its
-  rule ("4XX (rule #12)"). OpenAPI 3.0.1, Responses Object: default covers only the codes
-  not declared individually, so with 4XX and 5XX declared default covers no error code.
-  Answer the QUESTION from the S passages (this operation's tables, the definition of each
-  type), and rule each difference as it says. Judge by what the spec says of the types, not
-  by their names alone.
+  DIFFERENCES) and the QUESTION; each difference names its rule ("4XX (rule #12)").
+  OpenAPI 3.0.1, Responses Object: default covers only the codes not declared
+  individually, so with 4XX and 5XX declared default covers no error code. Answer the
+  QUESTION from the S passages (this operation's tables, the definition of each type), and
+  rule each difference as it says. When it asks to RECOMMEND, the choice between default
+  and 4XX + 5XX is the user's: give the configuration in `recommendation` (and why, citing
+  the S passages), and never rule it as an error or an improvement. Judge by what the spec
+  says of the types, not by their names alone.
 - In a 3GPP table the column S is the support qualifier (TS 32.156, clause 6): M means the
   capability shall be supported, a requirement on the producer. It does not say a field is
   in every message. For the attributes of an NRM, TS 32.160 (6.1.10) adds that they may or
